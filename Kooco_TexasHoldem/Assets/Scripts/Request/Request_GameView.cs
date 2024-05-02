@@ -33,6 +33,7 @@ public class Request_GameView : BaseViewRequest
         RequestManager.Instance.RegisterBroadcast(ActionCode.BroadCastRequest_ActingCD, HandleRoomBroadcast);
         RequestManager.Instance.RegisterBroadcast(ActionCode.BroadCastRequest_ShowActing, HandleRoomBroadcast);
         RequestManager.Instance.RegisterBroadcast(ActionCode.BroadCast_Request_SideReault, HandleRoomBroadcast);
+        RequestManager.Instance.RegisterBroadcast(ActionCode.Request_ShowFoldPoker, HandleRoomBroadcast);
     }
 
     public override void SendRequest(MainPack pack)
@@ -104,6 +105,11 @@ public class Request_GameView : BaseViewRequest
             case ActionCode.BroadCast_Request_SideReault:
                 StartCoroutine(thisView.SideResult(pack));
                 break;
+
+            //顯示手牌
+            case ActionCode.Request_ShowFoldPoker:
+                thisView.GetShowFoldPoker(pack);
+                break;
         }
     }
 
@@ -135,6 +141,23 @@ public class Request_GameView : BaseViewRequest
         playerActedPack.BetValue = betValue;
 
         pack.PlayerActedPack = playerActedPack;
+        SendRequest(pack);
+    }
+
+    /// <summary>
+    /// 發送顯示棄牌手牌
+    /// </summary>
+    /// <param name="index"></param>
+    public void SendShowFoldPoker(int index)
+    {
+        MainPack pack = new MainPack();
+        pack.ActionCode = ActionCode.Request_ShowFoldPoker;
+
+        ShowFoldPokerPack showFoldPokerPack = new ShowFoldPokerPack();
+        showFoldPokerPack.HandPokerIndex = index;
+        showFoldPokerPack.UserID = Entry.TestInfoData.LocalUserId;
+
+        pack.ShowFoldPokerPack = showFoldPokerPack;
         SendRequest(pack);
     }
 

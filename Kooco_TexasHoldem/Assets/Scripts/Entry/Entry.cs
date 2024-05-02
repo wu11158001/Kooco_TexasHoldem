@@ -14,13 +14,18 @@ public class Entry : UnitySingleton<Entry>
 
     public static class TestInfoData
     {      
-        public static string LocalUserId = "001";
+        public static string LocalUserId = "LocalUser";
         public static string NickName = "LocalUserName";
 
         public static int newPlayerId = 10;
 
         public static DateTime foldTimd = DateTime.Now;
     }
+
+    /// <summary>
+    /// 進入房間的小盲值
+    /// </summary>
+    public int RoomSmallBlind { get; set; }
 
     public override void Awake()
     {
@@ -48,7 +53,7 @@ public class Entry : UnitySingleton<Entry>
     {
         if (gameView != null && gameView.gameObject.activeSelf)
         {
-            if ((DateTime.Now - TestInfoData.foldTimd).TotalSeconds > 1f)
+            if ((DateTime.Now - TestInfoData.foldTimd).TotalSeconds > 0.2f)
             {
                 if (Input.GetKeyDown(KeyCode.F))
                 {
@@ -103,12 +108,29 @@ public class Entry : UnitySingleton<Entry>
                     TestInfoData.foldTimd = DateTime.Now;
                     gameServer.TextPlayerAction(RequestBuf.ActingEnum.Fold, true);
                 }
-            }
 
-            if (Input.GetKeyDown(KeyCode.S))
-            {
-                isPause = !isPause;
-                Time.timeScale = isPause == true ? 0 : 1;
+                if (Input.GetKeyDown(KeyCode.S))
+                {
+                    isPause = !isPause;
+                    Time.timeScale = isPause == true ? 0 : 1;
+                }
+
+                if (Input.GetKeyDown(KeyCode.Keypad1))
+                {
+                    gameServer.TestShowFoldPoker(0, 0);
+                }
+                if (Input.GetKeyDown(KeyCode.Keypad2))
+                {
+                    gameServer.TestShowFoldPoker(1, 0);
+                }
+                if (Input.GetKeyDown(KeyCode.Keypad4))
+                {
+                    gameServer.TestShowFoldPoker(0, 1);
+                }
+                if (Input.GetKeyDown(KeyCode.Keypad5))
+                {
+                    gameServer.TestShowFoldPoker(1, 1);
+                }
             }
         }
         

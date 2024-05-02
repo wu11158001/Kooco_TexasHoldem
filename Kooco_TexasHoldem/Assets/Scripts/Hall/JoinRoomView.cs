@@ -42,9 +42,9 @@ public class JoinRoomView : MonoBehaviour
 
         start_Btn.onClick.AddListener(() =>
         {
-            Entry.Instance.gameServer.SmallBlind = (int)smallblindList[blind_Dr.value];
-            Entry.Instance.gameServer.gameObject.SetActive(true);
-            
+            Entry.Instance.RoomSmallBlind = smallblindList[blind_Dr.value];
+            Entry.Instance.gameServer.SmallBlind = smallblindList[blind_Dr.value];
+            Entry.Instance.gameServer.gameObject.SetActive(true);            
             
             MainPack pack = new MainPack();
             pack.ActionCode = ActionCode.Request_PlayerInOutRoom;

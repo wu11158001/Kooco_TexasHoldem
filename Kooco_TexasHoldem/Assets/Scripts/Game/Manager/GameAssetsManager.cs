@@ -38,12 +38,12 @@ public class GameAssetsManager : UnitySingleton<GameAssetsManager>
         pokerBackSpriteData = request.asset as ScriptableObject_SpriteData;
 
         //玩家訊息物件
-        request = Resources.LoadAsync<GameObject>("Prefab/GamePlayerInfo");
+        request = Resources.LoadAsync<GameObject>("ComponentPrefab/GamePlayerInfo");
         yield return request;
         GamePlayerInfoObj = request.asset as GameObject;
 
         //獲勝籌碼物件
-        request = Resources.LoadAsync<GameObject>("Prefab/WinChips");
+        request = Resources.LoadAsync<GameObject>("ComponentPrefab/WinChips");
         yield return request;
         WinChipsObj = request.asset as GameObject;
     }

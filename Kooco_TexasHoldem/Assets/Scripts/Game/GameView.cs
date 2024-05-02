@@ -22,6 +22,8 @@ public class GameView : BaseView
     Text raiseAndAllInBtn_Txt, callAndCheckBt_Txt, foldBtn_Txt;
     [SerializeField]
     RectTransform autoActionFrame_Tr;
+    [SerializeField]
+    Button[] showPokerBtnList;
 
     [Header("加注操作")]
     [SerializeField]
@@ -45,7 +47,7 @@ public class GameView : BaseView
     [SerializeField]
     Image pot_Img;
     [SerializeField]
-    RectTransform buttonSeat_Tr;
+    RectTransform buttonSeat_Tr, localHandPokerPoint_Tr;
 
     [Header("公共牌")]
     [SerializeField]
@@ -54,12 +56,6 @@ public class GameView : BaseView
     [Header("選單")]
     [SerializeField]
     Button menu_Btn, menuMask_Btn, exitRoom_Btn;
-
-    [Header("退回大廳提示")]
-    [SerializeField]
-    GameObject backHallTip_Obj;
-    [SerializeField]
-    Button backHallConfirm_Btn;
 
     [Header("遊戲暫停")]
     [SerializeField]
@@ -80,7 +76,7 @@ public class GameView : BaseView
     };
 
 
-    List<RectTransform> seatList = new List<RectTransform>();   //玩家座位位置
+    List<Button> seatList = new List<Button>();                 //玩家座位位置
     List<GamePlayerInfo> gamePlayerInfoList;                    //玩家資料
 
     Vector2 InitPotPointPos;    //初始底池位置
@@ -88,20 +84,22 @@ public class GameView : BaseView
     private GameData gameData;
     public class GameData
     {
-        public bool IsPlaying;                  //有參與遊戲
-        public bool isLocalPlayerTurn;          //本地玩家回合
-        public int LocalPlayerSeat;             //本地玩家座位
-        public int LocalPlayerChips;            //本地玩家籌碼
-        public int LocalPlayerCurrBetValue;     //本地玩家當前下注值
-        public int TotalPot;                    //當前底池
-        public int CallDifference;              //當前跟注差額
-        public int CurrCallValue;               //當前跟注值
-        public int CurrRaiseValue;              //當前加注值
-        public int MinRaiseValue;               //最小加注值
-        public int SmallBlindValue;             //小盲值
-        public bool IsFirstRaisePlayer;         //首位加注玩家
-        public bool IsUnableRaise;              //無法加注
-        public List<int> CurrCommunityPoker;    //當前公共牌
+        public GamePlayerInfo LocalGamePlayerInfo;      //本地玩家
+        public int LocalPlayerSeat;                     //本地玩家座位
+        public int LocalPlayerChips;                    //本地玩家籌碼
+        public int LocalPlayerCurrBetValue;             //本地玩家當前下注值
+        public int TotalPot;                            //當前底池
+        public int CallDifference;                      //當前跟注差額
+        public int CurrCallValue;                       //當前跟注值
+        public int CurrRaiseValue;                      //當前加注值
+        public int MinRaiseValue;                       //最小加注值
+        public int SmallBlindValue;                     //小盲值
+        public bool IsFirstRaisePlayer;                 //首位加注玩家
+        public bool IsUnableRaise;                      //無法加注
+        public bool IsPlaying;                          //有參與遊戲
+        public bool isLocalPlayerTurn;                  //本地玩家回合
+        public bool isFold;                             //是否已棄牌
+        public List<int> CurrCommunityPoker;            //當前公共牌
     }
 
     /// <summary>
@@ -267,7 +265,6 @@ public class GameView : BaseView
     /// </summary>
     private void Init()
     {
-        Debug.Log("Game Initial");
         foreach (var poker in communityPokerList)
         {
             poker.gameObject.SetActive(false);
@@ -277,6 +274,10 @@ public class GameView : BaseView
             player.SetPotWinnerActive = false;
             player.SetSideWinnerActive = false;
             player.SetTip = "";
+        }
+        foreach (var show in showPokerBtnList)
+        {
+            show.gameObject.SetActive(false);
         }
 
         totalPot_Txt.text = "$0";
@@ -289,6 +290,7 @@ public class GameView : BaseView
         callAndCheck_Btn.gameObject.SetActive(true);
         raiseAndAllIn_Btn.gameObject.SetActive(true);
 
+        gameData.isFold = false;
         gameData.CurrCommunityPoker = new List<int>();
     }
 
@@ -304,7 +306,7 @@ public class GameView : BaseView
         Transform seatPoint = transform.Find("SeatPoints");
         for (int i = 0; i < seatPoint.childCount; i++)
         {
-            seatList.Add(seatPoint.GetChild(i).GetComponent<RectTransform>());
+            seatList.Add(seatPoint.GetChild(i).GetComponent<Button>());
         }
 
         //初始底池位置
@@ -333,7 +335,6 @@ public class GameView : BaseView
         totalPot_Txt.text = "$0";
 
         menuMask_Btn.gameObject.SetActive(false);
-        backHallTip_Obj.SetActive(false);
         raise_Tr.gameObject.SetActive(false);
         SetActingButtonEnable = false;
 
@@ -347,7 +348,6 @@ public class GameView : BaseView
         raiseTo_Obj.SetActive(sliderClickDetection.GetSkiderClicked);
     }
 
-
     /// <summary>
     /// 聆聽事件
     /// </summary>
@@ -357,13 +357,6 @@ public class GameView : BaseView
         gameContinue_Btn.onClick.AddListener(() =>
         {
             GamePause = false;
-        });
-
-        //籌碼不足退回大廳確認
-        backHallConfirm_Btn.onClick.AddListener(() =>
-        {
-            Entry.Instance.gameServer.gameObject.SetActive(false);
-            UIManager.Instance.OpenView(ViewName.JoinRoomView);
         });
 
         //選單
@@ -385,6 +378,13 @@ public class GameView : BaseView
             Entry.Instance.gameServer.gameObject.SetActive(false);
             UIManager.Instance.OpenView(ViewName.JoinRoomView);
         });
+
+        //棄牌顯示手牌按鈕
+        for (int i = 0; i < showPokerBtnList.Count(); i++)
+        {
+            int index = i;
+            showPokerBtnList[i].onClick.AddListener(delegate { ShowFoldPoker(index); });
+        }
 
         //加注滑條
         raise_Sli.onValueChanged.AddListener((value) =>
@@ -459,8 +459,6 @@ public class GameView : BaseView
                 bool isAllIn = gameData.LocalPlayerChips < gameData.MinRaiseValue ||
                            gameData.CurrRaiseValue == gameData.LocalPlayerChips;
 
-                SetActingButtonEnable = isAllIn != true;
-
                 ActingEnum acting = isAllIn == true ?
                                     ActingEnum.AllIn :
                                     ActingEnum.Raise;
@@ -487,8 +485,6 @@ public class GameView : BaseView
     /// </summary>
     private void OnFold()
     {
-        SetActionButton = false;
-        SetActingButtonEnable = false;
         thisRequestView.SendRequest_PlayerActed(Entry.TestInfoData.LocalUserId,
                                                 ActingEnum.Fold,
                                                 0);       
@@ -518,6 +514,11 @@ public class GameView : BaseView
             {
                 acting = ActingEnum.Check;
             }
+            else if (gameData.LocalPlayerChips <= gameData.CurrCallValue)
+            {
+                acting = ActingEnum.AllIn;
+                betValue = gameData.LocalPlayerChips;
+            }
             else
             {
                 betValue = gameData.CurrCallValue;
@@ -527,6 +528,36 @@ public class GameView : BaseView
         thisRequestView.SendRequest_PlayerActed(Entry.TestInfoData.LocalUserId,
                                                 acting,
                                                 betValue);
+    }
+
+    /// <summary>
+    /// 顯示棄牌手牌
+    /// </summary>
+    /// <param name="index"></param>
+    private void ShowFoldPoker(int index)
+    {
+        showPokerBtnList[index].gameObject.SetActive(false);  
+        thisRequestView.SendShowFoldPoker(index);
+    }
+
+    /// <summary>
+    /// 接收顯示棄牌手牌
+    /// </summary>
+    /// <param name="pack"></param>
+    public void GetShowFoldPoker(MainPack pack)
+    {
+        string id = pack.ShowFoldPokerPack.UserID;
+        int pokerIndex = pack.ShowFoldPokerPack.HandPokerIndex;
+        int pokerNum = pack.ShowFoldPokerPack.PokerNum;
+
+        GamePlayerInfo gamePlayerInfo = GetPlayer(id);
+        gamePlayerInfo.GetHandPoker[pokerIndex].gameObject.SetActive(true);
+        gamePlayerInfo.GetHandPoker[pokerIndex].SetColor = 1;
+
+        if (id != Entry.TestInfoData.LocalUserId)
+        {
+            gamePlayerInfo.GetHandPoker[pokerIndex].PokerNum = pokerNum;
+        }        
     }
 
     /// <summary>
@@ -634,12 +665,6 @@ public class GameView : BaseView
         else
         {
             callAndCheck_Btn.gameObject.SetActive(isJustAllIn == false);
-        }
-
-        //底池百分比加注
-        foreach (var pecentBtn in potPercentRaiseBtnList)
-        {
-            pecentBtn.gameObject.SetActive(gameData.TotalPot * 0.33f >= gameData.CurrRaiseValue);
         }
 
         //加注區域物件
@@ -756,7 +781,7 @@ public class GameView : BaseView
         string id = pack.PlayerInOutRoomPack.PlayerInfoPack.UserID;
         if (id == Entry.TestInfoData.LocalUserId)
         {
-            backHallTip_Obj.SetActive(true);
+            
         }
         else
         {
@@ -772,28 +797,31 @@ public class GameView : BaseView
     {
         RectTransform rt = Instantiate(GameAssetsManager.Instance.GamePlayerInfoObj).GetComponent<RectTransform>();
         GamePlayerInfo gamePlayerInfo = rt.GetComponent<GamePlayerInfo>();
-        if (playerInfoPack.UserID == Entry.TestInfoData.LocalUserId)
+
+        int seatIndex = 0;//座位(本地玩家 = 0)
+        if (playerInfoPack.UserID != Entry.TestInfoData.LocalUserId)
         {
-            //本地玩家
-            rt.transform.SetParent(seatList[0]);           
+            seatIndex = playerInfoPack.Seat > gameData.LocalPlayerSeat ?
+            playerInfoPack.Seat - gameData.LocalPlayerSeat :
+            seatList.Count - (gameData.LocalPlayerSeat - playerInfoPack.Seat);            
         }
         else
         {
-            //其他玩家座位
-            int seat = playerInfoPack.Seat > gameData.LocalPlayerSeat ?
-                       playerInfoPack.Seat - gameData.LocalPlayerSeat :
-                       seatList.Count - (gameData.LocalPlayerSeat - playerInfoPack.Seat);
-
-            rt.transform.SetParent(seatList[seat]);
+            //本地玩家
+            gameData.LocalGamePlayerInfo = gamePlayerInfo;
+            gamePlayerInfo.SetLocalHandPokerPosition = localHandPokerPoint_Tr;
         }
+        seatList[seatIndex].image.enabled = false;
+        rt.transform.SetParent(seatList[seatIndex].transform);
         rt.anchoredPosition = Vector2.zero;
         rt.localScale = Vector3.one;
 
-        gamePlayerInfo.SetInitPlayerInfo(playerInfoPack.UserID,
-                                 playerInfoPack.NickName,
-                                 playerInfoPack.Chips,
-                                 null,
-                                 pot_Img.transform.position);
+        gamePlayerInfo.SetInitPlayerInfo(seatIndex,
+                                         playerInfoPack.UserID,
+                                         playerInfoPack.NickName,
+                                         playerInfoPack.Chips,
+                                         null,
+                                         pot_Img.transform.position);
 
         gamePlayerInfoList.Add(gamePlayerInfo);
         return gamePlayerInfo;
@@ -807,6 +835,7 @@ public class GameView : BaseView
     public GamePlayerInfo PlayerExitRoom(string id)
     {
         GamePlayerInfo exitPlayer = GetPlayer(id);
+        seatList[exitPlayer.SeatIndex].image.enabled = true;
         gamePlayerInfoList.Remove(exitPlayer);
         Destroy(exitPlayer.gameObject);
 
@@ -833,9 +862,10 @@ public class GameView : BaseView
         ActingEnum actionEnum = playerActedPack.ActingEnum;
         int betValue = playerActedPack.BetValue;
         int chips = playerActedPack.PlayerChips;
+        bool isLocalPlayer = id == Entry.TestInfoData.LocalUserId;
 
         //本地玩家
-        if (id == Entry.TestInfoData.LocalUserId)
+        if (isLocalPlayer)
         {
             SetActionButton = false;
 
@@ -846,6 +876,20 @@ public class GameView : BaseView
                     SetAutoAction(false);
                     SetActingButtonEnable = false;
                     raise_Tr.gameObject.SetActive(false);
+                    gameData.isFold = true;
+                    gameData.IsPlaying = false;
+
+                    //關閉所有撲克外框
+                    List<Poker> pokers = communityPokerList.Concat(gameData.LocalGamePlayerInfo.GetHandPoker.ToList()).ToList();
+                    foreach (var poker in pokers)
+                    {
+                        poker.PokerFrameEnable = false;
+                    }
+                    break;
+
+                //All In
+                case ActingEnum.AllIn:
+                    SetActingButtonEnable = false;
                     break;
             }
 
@@ -856,7 +900,8 @@ public class GameView : BaseView
         {
             playerInfo.PlayerAction(actionEnum,
                                     betValue,
-                                    chips);
+                                    chips,
+                                    isLocalPlayer);
         }
 
         if (actionEnum == ActingEnum.AllIn)
@@ -901,9 +946,10 @@ public class GameView : BaseView
         //清除座位上玩家
         for (int i = 1; i < seatList.Count; i++)
         {
-            if (seatList[i].childCount != 0)
+            if (seatList[i].transform.childCount != 0)
             {
-                Destroy(seatList[i].GetChild(0).gameObject);
+                Destroy(seatList[i].transform.GetChild(0).gameObject);
+                seatList[i].image.enabled = true;
             }
         }
 
@@ -953,7 +999,7 @@ public class GameView : BaseView
         buttonSeat_Tr.gameObject.SetActive(true);
         buttonSeat_Tr.position = buttonPlayer.gameObject.transform.position;
 
-        ObjMoveUtils.ObjMoveTowardsTarget(buttonSeat_Tr, pot_Img.transform.position, 0.5f, 150);
+        ObjMoveUtils.ObjMoveTowardsTarget(buttonSeat_Tr, pot_Img.transform.position, 0.5f, 160);
     }
 
     /// <summary>
@@ -1015,7 +1061,7 @@ public class GameView : BaseView
             {
                 communityPokerList[i].gameObject.SetActive(true);
                 communityPokerList[i].PokerNum = currCommunityPoker[i];
-                StartCoroutine(communityPokerList[i].IFlopEffect(currCommunityPoker[i]));
+                StartCoroutine(communityPokerList[i].IHorizontalFlopEffect(currCommunityPoker[i]));
                 yield return new WaitForSeconds(0.1f);
             }
         }
@@ -1272,6 +1318,14 @@ public class GameView : BaseView
 
             //主池結果
             case FlowEnum.PotResult:
+                //棄牌顯示手牌按鈕
+                if (gameData.isFold == true)
+                {
+                    foreach (var show in showPokerBtnList)
+                    {
+                        show.gameObject.SetActive(true);
+                    }
+                }
                 yield return IPotResult(pack);
                 break;
         }

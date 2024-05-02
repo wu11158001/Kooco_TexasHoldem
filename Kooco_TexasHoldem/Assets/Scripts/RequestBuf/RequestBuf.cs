@@ -50,6 +50,7 @@ namespace RequestBuf
         Request_PlayerActed,                    //玩家採取行動
         BroadCastRequest_ShowActing,            //演示玩家行動
         BroadCast_Request_SideReault,           //邊池結果
+        Request_ShowFoldPoker,                  //顯示棄牌手牌
     }
 
     public class MainPack
@@ -70,6 +71,7 @@ namespace RequestBuf
         public LicensingStagePack LicensingStagePack;
         public BlindStagePack BlindStagePack;
         public SidePack SidePack;
+        public ShowFoldPokerPack ShowFoldPokerPack;
     }
 
     /// <summary>
@@ -200,5 +202,15 @@ namespace RequestBuf
         public Dictionary<string, int> BackChips;           //退回籌碼
         public Dictionary<string, int> SideWinnerDic;       //邊池獲勝玩家(ID, 獲勝籌碼)
         public int TotalSideChips;                          //邊池總籌碼
+    }
+
+    /// <summary>
+    /// 顯示棄牌手牌包
+    /// </summary>
+    public class ShowFoldPokerPack
+    {
+        public int HandPokerIndex;          //手牌編號(0/1)
+        public string UserID;               //玩家ID
+        public int PokerNum;                //撲克編號
     }
 }

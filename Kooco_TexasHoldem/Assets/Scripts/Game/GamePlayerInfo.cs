@@ -9,21 +9,19 @@ using RequestBuf;
 
 public class GamePlayerInfo : MonoBehaviour
 {
-    [Header("頭像")]
-    [SerializeField]
-    Image avatar_Img;
-
     [Header("用戶訊息")]
     [SerializeField]
     Text nickName_Txt, chips_Txt, tip_Txt, pokerShape_Txt;
     [SerializeField]
     GameObject actionFrame_Obj, potWinner_Obj, sideWinner_Obj;
     [SerializeField]
-    Image cdMask_Img;
+    Image cdMask_Img, avatar_Img;
 
     [Header("手牌")]
     [SerializeField]
-    Poker[] handPoker;
+    RectTransform handPoker_Tr;
+    [SerializeField]
+    Poker[] handPokers;
 
     [Header("下注籌碼")]
     [SerializeField]
@@ -47,6 +45,11 @@ public class GamePlayerInfo : MonoBehaviour
 
     int currChips;              //當前擁有籌碼
     Vector2 potPointPos;        //底池位置
+
+    /// <summary>
+    /// 座位編號
+    /// </summary>
+    public int SeatIndex { get; set; }
 
     /// <summary>
     /// 用戶ID
@@ -130,13 +133,26 @@ public class GamePlayerInfo : MonoBehaviour
     }
 
     /// <summary>
+    /// 設定本地玩家手牌位置
+    /// </summary>
+    public RectTransform SetLocalHandPokerPosition
+    {
+        set
+        {
+            handPoker_Tr.SetParent(value);
+            handPoker_Tr.anchoredPosition = Vector2.zero;
+            handPoker_Tr.localScale = new Vector3(1.5f, 1.5f, 1.5f);
+        }
+    }
+
+    /// <summary>
     /// 獲取手牌
     /// </summary>
     public Poker[] GetHandPoker
     {
         get
         {
-            return handPoker;
+            return handPokers;
         }
     }
 
@@ -152,6 +168,24 @@ public class GamePlayerInfo : MonoBehaviour
     }
 
     /// <summary>
+    /// 開訊息遮罩
+    /// </summary>
+    public bool OpenInfoMask
+    {
+        set
+        {
+            avatar_Img.color = value == true ? new Color(1, 1, 1, 0.5f) : new Color(1, 1, 1, 1);
+            cdMask_Img.fillAmount = value == true ? 1 : 0;
+        }
+    }
+
+    private void OnEnable()
+    {
+        StopCountDown();
+        OpenInfoMask = true;
+    }
+
+    /// <summary>
     /// 初始化
     /// </summary>
     public void Init()
@@ -161,28 +195,28 @@ public class GamePlayerInfo : MonoBehaviour
         action_Obj.SetActive(false);
         betChips_Tr.gameObject.SetActive(false);
         ActionFrame = false;
-        handPoker[0].gameObject.SetActive(false);
-        handPoker[1].gameObject.SetActive(false);
+        handPokers[0].gameObject.SetActive(false);
+        handPokers[1].gameObject.SetActive(false);
         potWinner_Obj.SetActive(false);
         sideWinner_Obj.SetActive(false);
         SetTip = "";
         pokerShape_Txt.text = "";
         pokerShape_Ani.SetBool(isWinHash, false);
-        StopCountDown();
     }
 
     /// <summary>
     /// 設定初始玩家訊息
     /// </summary>
+    /// <param name="seatIndex">座位編號</param>
     /// <param name="userId">userId</param>
     /// <param name="nickName">暱稱</param>
     /// <param name="initChips">初始籌碼</param>
     /// <param name="avatar">頭像</param>
     /// <param name="potPointPos">底池位置</param>
-    public void SetInitPlayerInfo(string userId, string nickName, int initChips, Sprite avatar, Vector2 potPointPos)
+    public void SetInitPlayerInfo(int seatIndex, string userId, string nickName, int initChips, Sprite avatar, Vector2 potPointPos)
     {
+        SeatIndex = seatIndex;
         currChips = initChips;
-
         UserId = userId;
         avatar_Img.sprite = avatar;
         nickName_Txt.text = nickName;
@@ -200,11 +234,17 @@ public class GamePlayerInfo : MonoBehaviour
     public void SetHandPoker(int hand0, int hand1)
     {
         Init();
+        StopCountDown();
 
-        handPoker[0].gameObject.SetActive(true);
-        handPoker[1].gameObject.SetActive(true);
-        handPoker[0].PokerNum = hand0;
-        handPoker[1].PokerNum = hand1;
+        foreach (var poker in handPokers)
+        {
+            poker.gameObject.SetActive(true);
+            poker.SetColor = 1;
+        }
+
+        handPokers[0].PokerNum = hand0;
+        handPokers[1].PokerNum = hand1;
+        OpenInfoMask = false;
     }
 
     /// <summary>
@@ -308,7 +348,8 @@ public class GamePlayerInfo : MonoBehaviour
     /// <param name="actionEnum">行動</param>
     /// <param name="betValue">下注值</param>
     /// <param name="chips">玩家籌碼</param>
-    public void PlayerAction(ActingEnum actionEnum, int betValue, int chips)
+    /// <param name="isLocalPlayer">是否本地玩家</param>
+    public void PlayerAction(ActingEnum actionEnum, int betValue, int chips, bool isLocalPlayer = false)
     {
         if (!gameObject.activeSelf) return;
 
@@ -329,8 +370,23 @@ public class GamePlayerInfo : MonoBehaviour
 
             //棄牌
             case ActingEnum.Fold:
-                handPoker[0].gameObject.SetActive(false);
-                handPoker[1].gameObject.SetActive(false);
+                if (isLocalPlayer)
+                {
+                    //本地玩家
+                    foreach (var poker in handPokers)
+                    {
+                        poker.SetColor = 0.5f;
+                    }
+                    pokerShape_Txt.text = "";
+                }
+                else
+                {
+                    //其他玩家
+                    handPokers[0].gameObject.SetActive(false);
+                    handPokers[1].gameObject.SetActive(false);
+                }
+
+                OpenInfoMask = true;
                 break;
 
             //過牌
@@ -358,8 +414,6 @@ public class GamePlayerInfo : MonoBehaviour
     /// 設置牌型文字
     /// </summary>
     /// <param name="shapeIndex"></param>
-    /// <param name="matchPokerList"></param>
-    /// <param name="isOpenMatchPokerFrame"></param>
     public void SetPokerShapeStr(int shapeIndex)
     {
         pokerShape_Txt.text = PokerShape.shapeStr[shapeIndex];

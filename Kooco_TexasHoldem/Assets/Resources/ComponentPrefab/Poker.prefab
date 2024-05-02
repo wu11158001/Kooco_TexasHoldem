@@ -129,7 +129,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf568e290d00c324bbc005137c77a2ae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Poker_Img: {fileID: 1441181341953061075}
+  poker_Img: {fileID: 1441181341953061075}
   frame_Img: {fileID: 304997392785501540}
   shining_Obj: {fileID: 515341737599930932}
 --- !u!222 &450301754859431827

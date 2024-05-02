@@ -21,6 +21,12 @@ public class GameServer : MonoBehaviour
     public readonly int maxRoomPeople = 6;      //房間最大人數
     Client currTestClient;
 
+    //撲克名稱
+    string[] pokerName = new string[]
+    {
+        "Club", "Diamond","Heart","Spade"
+    };
+
     /// <summary>
     /// 小盲注
     /// </summary>
@@ -51,7 +57,7 @@ public class GameServer : MonoBehaviour
             pack.ActionCode = ActionCode.Request_PlayerInOutRoom;
 
             PlayerInfoPack playerInfoPack = new PlayerInfoPack();
-            playerInfoPack.UserID = $"00000{accumulationPlayer}";
+            playerInfoPack.UserID = $"Player{accumulationPlayer}";
             playerInfoPack.NickName = $"Player{accumulationPlayer}";
             playerInfoPack.Chips = ((Entry.Instance.gameServer.SmallBlind * 2) * 40) + 6000 + (i * 8000);
 
@@ -79,8 +85,9 @@ public class GameServer : MonoBehaviour
     public void TextPlayerAction(ActingEnum acting, bool isExit = false)
     {
         if (gameRoomData.CurrActingPlayer == null ||
-            gameRoomData.CurrActingPlayer.UserId == "001" ||
-            currTestClient == gameRoomData.CurrActingPlayer)
+            gameRoomData.CurrActingPlayer.UserId == Entry.TestInfoData.LocalUserId ||
+            currTestClient == gameRoomData.CurrActingPlayer ||
+            cdCoroutine == null)
         {
             return;
         }
@@ -108,7 +115,7 @@ public class GameServer : MonoBehaviour
         }
 
         bool isJustAllIn = gameRoomData.CurrActingPlayer.Chips <= gameRoomData.CurrCallValue;
-        currTestClient = gameRoomData.CurrActingPlayer;
+        
         int betValue = 0;
         if (acting == ActingEnum.Raise)
         {
@@ -119,7 +126,7 @@ public class GameServer : MonoBehaviour
             }
             else
             {
-                if (gameRoomData.CurrActingPlayer.Chips <= gameRoomData.CurrCallValue)
+                if (gameRoomData.CurrActingPlayer.Chips <= gameRoomData.CurrCallValue * 2)
                 {
                     acting = ActingEnum.AllIn;
                     betValue = gameRoomData.CurrActingPlayer.Chips;
@@ -218,12 +225,26 @@ public class GameServer : MonoBehaviour
     }
 
     /// <summary>
+    /// 發送協議
+    /// </summary>
+    /// <param name="pack"></param>
+    private void SendRequest(MainPack pack)
+    {
+        bool isLocalUser = clientList.Where(x => x.UserId == Entry.TestInfoData.LocalUserId).Count() > 0;
+        if (isLocalUser == true)
+        {
+            RequestManager.Instance.HandleRequest(pack);
+        }
+    }
+
+    /// <summary>
     /// 發送廣播
     /// </summary>
     /// <param name="pack"></param>
     /// <param name="isExcludeId">排除本地玩家</param>
-    private void SendBroadCast(MainPack pack, bool isExcludeId = false)
+    private void SendRoomBroadCast(MainPack pack, bool isExcludeId = false)
     {
+        pack.SendModeCode = SendModeCode.RoomBroadcast;
         bool isLocalUser = clientList.Where(x => x.UserId == Entry.TestInfoData.LocalUserId).Count() > 0;
         if (isExcludeId == false && isLocalUser == true)
         {
@@ -336,7 +357,7 @@ public class GameServer : MonoBehaviour
             playerInOutRoomPack.PlayerInfoPack = playerInfoPack;
 
             pack.PlayerInOutRoomPack = playerInOutRoomPack;
-            SendBroadCast(pack);
+            SendRoomBroadCast(pack);
         }
     }
 
@@ -388,7 +409,7 @@ public class GameServer : MonoBehaviour
 
         pack.PlayerInOutRoomPack = playerInOutRoomPack;
         bool isExclude = client.UserId == Entry.TestInfoData.LocalUserId;
-        SendBroadCast(pack, isExclude);
+        SendRoomBroadCast(pack, isExclude);
     }
 
     /// <summary>
@@ -417,12 +438,16 @@ public class GameServer : MonoBehaviour
             pokerList.Add(i);
         }
         
+        string str = "";
         //牌面結果
         for (int i = 0; i < 5; i++)
         {
             poker = Licensing();
             gameRoomData.CommunityPoker.Add(poker);
+            str += $"{pokerName[poker / 13]}{poker % 13 + 1} ,";
         }
+        Debug.Log($"CommunityPoker: {str}");
+
 
         //籌碼不足玩家
         List<Client> NotEnoughChipsPlayerList = new List<Client>();
@@ -450,6 +475,8 @@ public class GameServer : MonoBehaviour
             client.CurrBetValue = 0;
             playingList.Add(client);
             gameRoomData.HandPokerDic.Add(client.UserId, (handPoker[0], handPoker[1]));
+
+            Debug.Log($"{client.UserId} HandPoker: {pokerName[handPoker[0] / 13]}{handPoker[0] % 13 + 1} , {pokerName[handPoker[1] / 13]}{handPoker[1] % 13 + 1}");
         }
 
         //發送籌碼不足玩家
@@ -464,7 +491,7 @@ public class GameServer : MonoBehaviour
 
         /*
         //測試用
-        gameRoomData.CommunityPoker = new List<int>() {3, 21, 38, 9, 0};
+        gameRoomData.CommunityPoker = new List<int>() {27, 21, 38, 9, 0};
         clientList[0].HandPoker0 = 25;
         clientList[0].HandPoker1 = 2;
         clientList[0].State = PlayerStateEnum.Playing;
@@ -495,8 +522,8 @@ public class GameServer : MonoBehaviour
         
         if (clientList.Count >= 5)
         {
-            clientList[4].HandPoker0 = 10;
-            clientList[4].HandPoker1 = 9;
+            clientList[4].HandPoker0 = 1;
+            clientList[4].HandPoker1 = 14;
             clientList[4].State = PlayerStateEnum.Playing;
             gameRoomData.HandPokerDic.Add(clientList[4].UserId, (clientList[4].HandPoker0, clientList[4].HandPoker1));
             clientList[4].CurrBetValue = 0;
@@ -552,7 +579,6 @@ public class GameServer : MonoBehaviour
         }
 
         gameRoomData.CurrActingPlayer = playingList[curr];
-        Debug.Log($"Next Player : {gameRoomData.CurrActingPlayer.UserId}");
     }
 
     /// <summary>
@@ -578,6 +604,7 @@ public class GameServer : MonoBehaviour
         if (cdCoroutine != null)
         {
             StopCoroutine(cdCoroutine);
+            cdCoroutine = null;
         }
     }
 
@@ -599,7 +626,6 @@ public class GameServer : MonoBehaviour
             }
         }        
 
-        Debug.Log($"Side Chips:{sideValue}");
         return sideValue;
     }
 
@@ -691,7 +717,7 @@ public class GameServer : MonoBehaviour
         pack.CommunityPokerPack = currCommunityPokerPack;
         pack.UpdateRoomInfoPack = updateRoomInfoPack;
         pack.PlayerInfoPackList = playerInfoPacks;
-        SendBroadCast(pack);
+        SendRequest(pack);
 
         yield return null;
     }
@@ -722,37 +748,31 @@ public class GameServer : MonoBehaviour
         {
             //發牌
             case FlowEnum.Licensing:
-                Debug.Log("CurrFlow : Licensing");
                 yield return SendRequest_GameStage_Licensing(pack, gameStagePack);
                 break;
 
             //大小盲
             case FlowEnum.SetBlind:
-                Debug.Log("CurrFlow : SetBlind");
                 yield return SendRequest_GameStage_SetBlind(pack, gameStagePack);
                 break;
 
             //翻牌
             case FlowEnum.Flop:
-                Debug.Log("CurrFlow : Flop");
                 yield return SendRequest_TurnStage(pack, gameStagePack, 3);
                 break;
 
             //轉牌
             case FlowEnum.Turn:
-                Debug.Log("CurrFlow : Turn");
                 yield return SendRequest_TurnStage(pack, gameStagePack, 4);
                 break;
 
             //河牌
             case FlowEnum.River:
-                Debug.Log("CurrFlow : River");
                 yield return SendRequest_TurnStage(pack, gameStagePack, 5);
                 break;
 
             //遊戲結果
             case FlowEnum.PotResult:
-                Debug.Log("CurrFlow : Result");
                 yield return SendRequest_GameResult(pack, gameStagePack);
                 break;
         }
@@ -772,7 +792,7 @@ public class GameServer : MonoBehaviour
         pack.CommunityPokerPack = currCommunityPokerPack;
         pack.GameRoomInfoPack = GetGameRoomInfoPack();
         pack.GameStagePack = gameStagePack;
-        SendBroadCast(pack);
+        SendRoomBroadCast(pack);
 
         yield return new WaitForSeconds(2.1f);
 
@@ -797,7 +817,7 @@ public class GameServer : MonoBehaviour
 
         pack.LicensingStagePack = licensingStagePack;
         pack.GameStagePack = gameStagePack;
-        SendBroadCast(pack);
+        SendRoomBroadCast(pack);
 
         yield return new WaitForSeconds(1);
         yield return SendRequest_NextGameStage();
@@ -816,8 +836,7 @@ public class GameServer : MonoBehaviour
                                              .i;
 
         int sbPlayerSeat = (currButtonSeatIndex + 1) % playingList.Count;
-        int bbPlayerSeat = (sbPlayerSeat + 1) % playingList.Count;
-        gameRoomData.CurrActingPlayer = playingList[bbPlayerSeat];
+        int bbPlayerSeat = (sbPlayerSeat + 1) % playingList.Count;      
 
         playingList[sbPlayerSeat].Chips -= SmallBlind;
         playingList[bbPlayerSeat].Chips -= SmallBlind * 2;
@@ -825,7 +844,8 @@ public class GameServer : MonoBehaviour
         playingList[sbPlayerSeat].CurrBetValue = SmallBlind;
         playingList[bbPlayerSeat].CurrBetValue = SmallBlind * 2;
 
-        gameRoomData.IsFirstRaisePlayer = true;
+        gameRoomData.CurrActingPlayer = playingList[bbPlayerSeat];
+        gameRoomData.IsFirstRaisePlayer = false;
         gameRoomData.TotalPot = (SmallBlind + SmallBlind * 2);
         gameRoomData.CurrCallValue = SmallBlind * 2;
 
@@ -841,7 +861,7 @@ public class GameServer : MonoBehaviour
         pack.BlindStagePack = blindStagePack;
         pack.GameRoomInfoPack = GetGameRoomInfoPack();
         pack.GameStagePack = gameStagePack;
-        SendBroadCast(pack);
+        SendRoomBroadCast(pack);
 
         yield return new WaitForSeconds(1);
         yield return SendRequest_NextPlayerActingRound();
@@ -856,10 +876,14 @@ public class GameServer : MonoBehaviour
         Client preClient = gameRoomData.CurrActingPlayer;
 
         SetNextPlayer();
-
-        if (gameRoomData.CurrActingPlayer.UserId == "001")
+        if (currTestClient == gameRoomData.CurrActingPlayer || gameRoomData.CurrActingPlayer.UserId == Entry.TestInfoData.LocalUserId)
         {
-            Client client = playingList.Where(x => x.UserId == "001").FirstOrDefault();
+            currTestClient = gameRoomData.CurrActingPlayer;
+        }
+        
+        if (gameRoomData.CurrActingPlayer.UserId == Entry.TestInfoData.LocalUserId)
+        {
+            Client client = playingList.Where(x => x.UserId == Entry.TestInfoData.LocalUserId).FirstOrDefault();
 
             bool IsUnableRaise = false;
             if (allInDic.Count() > 0)
@@ -921,7 +945,7 @@ public class GameServer : MonoBehaviour
         {
             actingCDPack.CD = i;
             pack.ActingCDPack = actingCDPack;
-            SendBroadCast(pack);
+            SendRoomBroadCast(pack);
 
             yield return new WaitForSeconds(1);
         }
@@ -1014,8 +1038,7 @@ public class GameServer : MonoBehaviour
 
             pack.PlayerActedPack.PlayerChips = gameRoomData.CurrActingPlayer.Chips;
 
-            Debug.Log($"{gameRoomData.CurrActingPlayer.UserId} :{pack.PlayerActedPack.ActingEnum} / Bet : {betChips}");
-            SendBroadCast(pack);
+            SendRoomBroadCast(pack);
 
             currTestClient = null;
 
@@ -1110,7 +1133,7 @@ public class GameServer : MonoBehaviour
         pack.PlayerActedPack.BetValue = gameRoomData.CurrActingPlayer.CurrBetValue;
         pack.PlayerActedPack.PlayerChips = gameRoomData.CurrActingPlayer.Chips;
 
-        SendBroadCast(pack);
+        SendRoomBroadCast(pack);
 
         currTestClient = null;
 
@@ -1201,7 +1224,7 @@ public class GameServer : MonoBehaviour
         pack.GameStagePack = gameStagePack;
         pack.WinnerPack = winnerPack;
 
-        SendBroadCast(pack);
+        SendRoomBroadCast(pack);
 
         float winnerTime = winners.Count() * 2;
 
@@ -1250,9 +1273,9 @@ public class GameServer : MonoBehaviour
         pack.GameStagePack = GetGameStagePack();
         pack.WinnerPack = winnerPack;
 
-        SendBroadCast(pack);
+        SendRoomBroadCast(pack);
 
-        yield return new WaitForSeconds(5);
+        yield return new WaitForSeconds(7);
         yield return SendRequest_NextGameStage();
     }
 
@@ -1303,8 +1326,8 @@ public class GameServer : MonoBehaviour
         pack.LicensingStagePack = licensingStagePack;
         pack.GameStagePack = GetGameStagePack();
         pack.WinnerPack = winnerPack;
-        Debug.Log($"[Directly Game Result] Pot:{winChips}");
-        SendBroadCast(pack);
+
+        SendRoomBroadCast(pack);
 
         float winnerTime = winners.Count() * 2;
 
@@ -1382,12 +1405,55 @@ public class GameServer : MonoBehaviour
         sidePack.TotalSideChips = GetSideChipsValue();
 
         pack.SidePack = sidePack;
-        SendBroadCast(pack);
+        SendRoomBroadCast(pack);
 
         float winnerTime = sidewinnerList.Count() * 1.5f;
 
         yield return new WaitForSeconds(5 + winnerTime);
         yield return SendRequest_NextGameStage();
+    }
+
+    /// <summary>
+    /// 測試玩家顯示棄牌手牌
+    /// </summary>
+    /// <param name="index">手牌編號(0/1)</param>
+    /// <param testIndex="index">測試玩家編號</param>
+    public void TestShowFoldPoker(int index, int testIndex)
+    {
+        if (playingList[testIndex].State == PlayerStateEnum.Fold && gameRoomData.CurrFlow == FlowEnum.PotResult)
+        {
+            MainPack pack = new MainPack();
+            pack.ActionCode = ActionCode.Request_ShowFoldPoker;
+
+            ShowFoldPokerPack showFoldPokerPack = new ShowFoldPokerPack();
+            showFoldPokerPack.HandPokerIndex = index;
+            showFoldPokerPack.UserID = testIndex == 0 ? "Player0" : "Player1";
+
+            pack.ShowFoldPokerPack = showFoldPokerPack;
+            Request_ShowFoldPoker(pack);            
+        }
+        else
+        {
+            Debug.LogError("Test Player Not Flod");
+        }
+    }
+
+    /// <summary>
+    /// 請求_顯示棄牌撲克
+    /// </summary>
+    /// <param name="pack"></param>
+    public void Request_ShowFoldPoker(MainPack pack)
+    {
+        string id = pack.ShowFoldPokerPack.UserID;
+        int showPokerIndex = pack.ShowFoldPokerPack.HandPokerIndex;
+
+        Client client = clientList.Where(x => x.UserId == id).FirstOrDefault();
+
+        pack.ShowFoldPokerPack.PokerNum = showPokerIndex == 0 ? client.HandPoker0 : client.HandPoker1;
+        SendRoomBroadCast(pack);
+
+        int pokerNum = pack.ShowFoldPokerPack.PokerNum;
+        Debug.Log($"{client.UserId}:Show Fold Poker {pokerName[pokerNum / 13]} {pokerNum % 13 + 1}");
     }
 
     /// <summary>
