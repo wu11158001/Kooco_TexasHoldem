@@ -115,31 +115,77 @@ public static class StringUtils
     /// 籌碼變化效果
     /// </summary>
     /// <param name="txtObj"></param>
-    /// <param name="targetNumStr"></param>
+    /// <param name="targetNum"></param>
     /// <param name="addStartStr">起始添加文字</param>
     /// <param name="addEndStr">結束添加文字</param>
-    async public static void ChipsChangeEffect(Text txtObj, string targetNumStr, string addStartStr = "", string addEndStr = "")
+    async public static void ChipsChangeEffect(Text txtObj, double targetNum, string addStartStr = "", string addEndStr = "")
     {
         float during = 0.5f;
 
         DateTime startTime = DateTime.Now;
-        int number = RetrieveNumbers(txtObj.text);
-        float initNum = txtObj.text == "" ? 0 : number;
-        float targetNum = float.Parse(targetNumStr);
-        int num = int.MinValue;
+        string str = txtObj.text.Replace("$", "");
+        float initNum = txtObj.text == "" ? 0 : (float)JudgeUnit(str);
 
-        while (num != targetNum)
+        float currNum = initNum;
+
+        while (currNum != (float)targetNum)
         {
             float progress = (float)(DateTime.Now - startTime).TotalSeconds / during;
-            num = (int)Mathf.Lerp(initNum, targetNum, progress);
+            currNum = Mathf.Lerp(initNum, (float)targetNum, progress);
 
             if (txtObj != null)
             {
-                txtObj.text = $"{addStartStr}{SetChipsUnit(num)}{addEndStr}";
+                txtObj.text = $"{addStartStr}{SetChipsUnit(currNum)}{addEndStr}";
             }
 
             await Task.Yield();
         }
+    }
+
+    /// <summary>
+    /// 判斷單位
+    /// </summary>
+    /// <param name="str"></param>
+    /// <returns></returns>
+    public static double JudgeUnit(string str)
+    {
+        if (str.EndsWith("K")) return double.Parse(str.Replace("K", "")) * 10000;
+        else if (str.EndsWith("B")) return double.Parse(str.Replace("K", "")) * 1000000;
+        else if (str.EndsWith("T")) return double.Parse(str.Replace("K", "")) * 100000000;
+        else
+        {
+            //小於1萬
+            return double.Parse(str);
+        }
+    }
+
+    /// <summary>
+    /// 設定籌碼單位
+    /// </summary>
+    /// <param name="chips"></param>
+    /// <returns></returns>
+    public static string SetChipsUnit(double chips)
+    {
+        if (chips / 10000 < 1)
+        {
+            return $"${chips:f0}";
+        }
+        else if (chips / 10000 < 1000)
+        {
+            //萬
+            return $"${((double)chips / 10000):f2}K";
+        }
+        else if (chips / 10000000 < 1000)
+        {
+            //億
+            return $"${((double)chips / 10000000):f2}B";
+        }
+        else if (chips / 100000000 < 1000)
+        {
+            //兆
+            return $"${((double)chips / 100000000):f2}T";
+        }
+        return $"${chips:f0}";
     }
 
     /// <summary>
@@ -165,34 +211,5 @@ public static class StringUtils
         }
 
         return sb.ToString();
-    }
-
-    /// <summary>
-    /// 設定籌碼單位
-    /// </summary>
-    /// <param name="chips"></param>
-    /// <returns></returns>
-    public  static string SetChipsUnit(double chips)
-    {
-        if (chips / 10000 < 1)
-        {
-            return chips.ToString();
-        }
-        else if (chips / 10000 < 1000)
-        {
-            //萬
-            return $"{((double)chips / 10000).ToString("f2")}K";
-        }
-        else if (chips / 100000 < 1000)
-        {
-            //億
-            return $"{((double)chips / 100000).ToString("f2")}B";
-        }
-        else if (chips / 1000000 < 1000)
-        {
-            //兆
-            return $"{((double)chips / 1000000).ToString("f2")}T";
-        }
-        return chips.ToString();
     }
 }

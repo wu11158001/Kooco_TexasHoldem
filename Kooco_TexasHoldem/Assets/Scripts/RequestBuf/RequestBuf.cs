@@ -46,11 +46,12 @@ namespace RequestBuf
         BroadCastRequest_GameStage,             //遊戲階段
         BroadCastRequest_PlayerActingRound,     //玩家行動回合
         BroadCastRequest_ActingCD,              //玩家行動倒數
-        Request_NotEnoughChips,                 //籌碼不足
         Request_PlayerActed,                    //玩家採取行動
         BroadCastRequest_ShowActing,            //演示玩家行動
         BroadCast_Request_SideReault,           //邊池結果
         Request_ShowFoldPoker,                  //顯示棄牌手牌
+        Request_InsufficientChips,              //籌碼不足
+        Request_BuyChips,                       //購買籌碼
     }
 
     public class MainPack
@@ -72,6 +73,8 @@ namespace RequestBuf
         public BlindStagePack BlindStagePack;
         public SidePack SidePack;
         public ShowFoldPokerPack ShowFoldPokerPack;
+        public InsufficientChipsPack InsufficientChipsPack;
+        public BuyChipsPack BuyChipsPack;
     }
 
     /// <summary>
@@ -82,8 +85,8 @@ namespace RequestBuf
         public int Seat;                //座位
         public string UserID;           //ID
         public string NickName;         //暱稱
-        public int Chips;               //籌碼
-        public int CurrBetValue;        //當前下注籌碼
+        public double Chips;            //籌碼
+        public double CurrBetValue;     //當前下注籌碼
     }
 
     /// <summary>
@@ -91,8 +94,8 @@ namespace RequestBuf
     /// </summary>
     public class GameRoomInfoPack
     {
-        public int TotalPot;                                //底池籌碼
-        public Dictionary<string, int> AllPlayerChips;      //所有遊戲玩家籌碼
+        public double TotalPot;                                //底池籌碼
+        public Dictionary<string, double> AllPlayerChips;      //所有遊戲玩家籌碼
     }
 
     /// <summary>
@@ -110,7 +113,7 @@ namespace RequestBuf
     public class UpdateRoomInfoPack
     {
         public FlowEnum flowEnum;                           //遊戲階段
-        public int TotalPot;                                //底池籌碼
+        public double TotalPot;                             //底池籌碼
         public List<string> playingIdList;                  //遊戲中玩家ID
     }
 
@@ -127,8 +130,8 @@ namespace RequestBuf
     /// </summary>
     public class GameStagePack
     {
-        public FlowEnum flowEnum;                               //遊戲階段
-        public int SmallBlind;                                  //小盲值
+        public FlowEnum flowEnum;        //遊戲階段
+        public double SmallBlind;        //小盲值
     }
 
     /// <summary>
@@ -145,10 +148,10 @@ namespace RequestBuf
     /// </summary>
     public class BlindStagePack
     {
-        public string SBPlayerId;       //小盲玩家ID
-        public string BBPlayerId;       //大盲玩家ID
-        public int SBPlayerChips;       //小盲玩家籌碼
-        public int BBPlayerChips;       //大盲玩家籌碼
+        public string SBPlayerId;          //小盲玩家ID
+        public string BBPlayerId;          //大盲玩家ID
+        public double SBPlayerChips;       //小盲玩家籌碼
+        public double BBPlayerChips;       //大盲玩家籌碼
     }
 
     /// <summary>
@@ -156,13 +159,13 @@ namespace RequestBuf
     /// </summary>
     public class PlayerActingRoundPack
     {
-        public bool IsUnableRaise;          //是否無法在加注
-        public bool IsFirstRaisePlayer;     //首位加注玩家
-        public int CurrCallValue;           //當前跟注值
-        public int CallDifference;          //跟注差額
-        public int TotalPot;                //當前底池
-        public int PlayerChips;             //行動玩家籌碼
-        public int PlayerCurrBryValue;      //行動玩家當前下注值
+        public bool IsUnableRaise;             //是否無法在加注
+        public bool IsFirstRaisePlayer;        //首位加注玩家
+        public double CurrCallValue;           //當前跟注值
+        public double CallDifference;          //跟注差額
+        public double TotalPot;                //當前底池
+        public double PlayerChips;             //行動玩家籌碼
+        public double PlayerCurrBryValue;      //行動玩家當前下注值
     }
 
     /// <summary>
@@ -182,8 +185,8 @@ namespace RequestBuf
     {
         public string ActPlayerId;          //行動玩家ID
         public ActingEnum ActingEnum;       //採取動作
-        public int BetValue;                //下注值
-        public int PlayerChips;             //玩家籌碼
+        public double BetValue;             //下注值
+        public double PlayerChips;          //玩家籌碼
     }
 
     /// <summary>
@@ -191,17 +194,17 @@ namespace RequestBuf
     /// </summary>
     public class WinnerPack
     {
-        public Dictionary<string, int> WinnerDic;       //獲勝玩家(ID, 當前籌碼)
-        public int WinChips;                            //贏得籌碼
+        public Dictionary<string, double> WinnerDic;       //獲勝玩家(ID, 當前籌碼)
+        public double WinChips;                            //贏得籌碼
     }
 
     //邊池包
     public class SidePack
     {
-        public Dictionary<string, int> AllPlayerChips;      //所有遊戲玩家籌碼
-        public Dictionary<string, int> BackChips;           //退回籌碼
-        public Dictionary<string, int> SideWinnerDic;       //邊池獲勝玩家(ID, 獲勝籌碼)
-        public int TotalSideChips;                          //邊池總籌碼
+        public Dictionary<string, double> AllPlayerChips;      //所有遊戲玩家籌碼
+        public Dictionary<string, double> BackChips;           //退回籌碼
+        public Dictionary<string, double> SideWinnerDic;       //邊池獲勝玩家(ID, 獲勝籌碼)
+        public double TotalSideChips;                          //邊池總籌碼
     }
 
     /// <summary>
@@ -212,5 +215,22 @@ namespace RequestBuf
         public int HandPokerIndex;          //手牌編號(0/1)
         public string UserID;               //玩家ID
         public int PokerNum;                //撲克編號
+    }
+
+    /// <summary>
+    /// 籌碼不足包
+    /// </summary>
+    public class InsufficientChipsPack
+    {
+        public double SmallBlind;          //小盲值
+    }
+
+    /// <summary>
+    /// 購買籌碼包
+    /// </summary>
+    public class BuyChipsPack
+    {
+        public string UserId;              //ID
+        public double BuyChipsValue;       //購買籌碼數量
     }
 }

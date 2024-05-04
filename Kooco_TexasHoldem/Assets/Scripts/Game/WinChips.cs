@@ -15,7 +15,7 @@ public class WinChips : MonoBehaviour
     {
         set
         {
-            winChip_Txt.text = $"${StringUtils.SetChipsUnit(value)}";
+            winChip_Txt.text = $"{StringUtils.SetChipsUnit(value)}";
         }
     }
 }

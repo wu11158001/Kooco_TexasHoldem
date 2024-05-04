@@ -12,9 +12,9 @@ public class GameServer : MonoBehaviour
 {
     Coroutine cdCoroutine;
 
-    public List<Client> clientList;     //所有客戶端
-    List<Client> playingList;           //當前遊戲玩家
-    Dictionary<string, int> allInDic;   //AllIn玩家
+    public List<Client> clientList;        //所有客戶端
+    List<Client> playingList;              //當前遊戲玩家
+    Dictionary<string, double> allInDic;   //AllIn玩家
 
     int countDownTime = 8;                     //倒數時間
     int accumulationPlayer;                     //房間累積人數
@@ -30,7 +30,7 @@ public class GameServer : MonoBehaviour
     /// <summary>
     /// 小盲注
     /// </summary>
-    public int SmallBlind { get; set; }
+    public double SmallBlind { get; set; }
 
     private void Awake()
     {
@@ -42,7 +42,7 @@ public class GameServer : MonoBehaviour
         gameRoomData = new GameRoomData();
         clientList = new List<Client>();
         playingList = new List<Client>();
-        allInDic = new Dictionary<string, int>();
+        allInDic = new Dictionary<string, double>();
         StartCoroutine(ITest());
     }
 
@@ -114,22 +114,22 @@ public class GameServer : MonoBehaviour
             return;
         }
 
-        bool isJustAllIn = gameRoomData.CurrActingPlayer.Chips <= gameRoomData.CurrCallValue;
+        bool isJustAllIn = gameRoomData.CurrActingPlayer.RoomChips <= gameRoomData.CurrCallValue;
         
-        int betValue = 0;
+        double betValue = 0;
         if (acting == ActingEnum.Raise)
         {
             if (isJustAllIn)
             {
                 acting = ActingEnum.AllIn;
-                betValue = gameRoomData.CurrActingPlayer.Chips;
+                betValue = gameRoomData.CurrActingPlayer.RoomChips;
             }
             else
             {
-                if (gameRoomData.CurrActingPlayer.Chips <= gameRoomData.CurrCallValue * 2)
+                if (gameRoomData.CurrActingPlayer.RoomChips <= gameRoomData.CurrCallValue * 2)
                 {
                     acting = ActingEnum.AllIn;
-                    betValue = gameRoomData.CurrActingPlayer.Chips;
+                    betValue = gameRoomData.CurrActingPlayer.RoomChips;
                 }
                 else
                 {
@@ -142,7 +142,7 @@ public class GameServer : MonoBehaviour
             if (isJustAllIn)
             {
                 acting = ActingEnum.AllIn;
-                betValue = gameRoomData.CurrActingPlayer.Chips;
+                betValue = gameRoomData.CurrActingPlayer.RoomChips;
             }
             else
             {
@@ -172,7 +172,7 @@ public class GameServer : MonoBehaviour
         }
         else if (acting == ActingEnum.AllIn)
         {
-            betValue = gameRoomData.CurrActingPlayer.Chips;
+            betValue = gameRoomData.CurrActingPlayer.RoomChips;
         }
 
         MainPack pack = new MainPack();
@@ -196,13 +196,13 @@ public class GameServer : MonoBehaviour
         public int Seat;            //座位
         public string UserId;       //ID
         public string NickName;     //暱稱
-        public int Chips;           //籌碼
+        public double RoomChips;    //房間內持有籌碼
         public int HandPoker0;      //手牌0
         public int HandPoker1;      //手牌1
 
         public PlayerStateEnum State;           //玩家狀態
         public ActingEnum PreActingEnum;        //上回行動
-        public int CurrBetValue;                //當前下注值
+        public double CurrBetValue;             //當前下注值
         public bool IsActionTaken;              //該回合是否已行動過
     }
 
@@ -220,8 +220,8 @@ public class GameServer : MonoBehaviour
         public FlowEnum CurrFlow;           //當前遊戲階段
         public bool IsFirstRaisePlayer;     //首位加注玩家
         public int ButtonSeat;              //button座位玩家
-        public int TotalPot;                //底池籌碼
-        public int CurrCallValue;           //當前跟注值
+        public double TotalPot;             //底池籌碼
+        public double CurrCallValue;        //當前跟注值
     }
 
     /// <summary>
@@ -344,6 +344,7 @@ public class GameServer : MonoBehaviour
             }
 
             clientList.Remove(client);
+            Debug.Log($"{client.UserId}:Exit Room");
 
             pack = new MainPack();
             pack.ActionCode = ActionCode.Request_PlayerInOutRoom;
@@ -375,7 +376,7 @@ public class GameServer : MonoBehaviour
         {
             UserId = playerInfoPack.UserID,
             NickName = playerInfoPack.NickName,
-            Chips = playerInfoPack.Chips,
+            RoomChips = playerInfoPack.Chips,
             State = PlayerStateEnum.Waiting
         };
         clientList.Add(client);
@@ -456,7 +457,7 @@ public class GameServer : MonoBehaviour
         foreach (var client in clientList)
         {
             //籌碼 < 小盲注跳過
-            if (client.Chips <= SmallBlind)
+            if (client.RoomChips <= SmallBlind)
             {
                 NotEnoughChipsPlayerList.Add(client);                
                 continue;
@@ -482,6 +483,7 @@ public class GameServer : MonoBehaviour
         //發送籌碼不足玩家
         foreach (var client in NotEnoughChipsPlayerList)
         {
+            client.State = PlayerStateEnum.Waiting;
             SendRequest_NotEnoughChips(client);
         }
 
@@ -492,8 +494,8 @@ public class GameServer : MonoBehaviour
         /*
         //測試用
         gameRoomData.CommunityPoker = new List<int>() {27, 21, 38, 9, 0};
-        clientList[0].HandPoker0 = 25;
-        clientList[0].HandPoker1 = 2;
+        clientList[0].HandPoker0 = 13;
+        clientList[0].HandPoker1 = 26;
         clientList[0].State = PlayerStateEnum.Playing;
         gameRoomData.HandPokerDic.Add(clientList[0].UserId, (clientList[0].HandPoker0, clientList[0].HandPoker1));
         clientList[0].CurrBetValue = 0;
@@ -520,14 +522,15 @@ public class GameServer : MonoBehaviour
         clientList[3].CurrBetValue = 0;
         playingList.Add(clientList[3]);
         
-        if (clientList.Count >= 5)
+        if (clientList.Count == 3)
         {
-            clientList[4].HandPoker0 = 1;
-            clientList[4].HandPoker1 = 14;
-            clientList[4].State = PlayerStateEnum.Playing;
-            gameRoomData.HandPokerDic.Add(clientList[4].UserId, (clientList[4].HandPoker0, clientList[4].HandPoker1));
-            clientList[4].CurrBetValue = 0;
-            playingList.Add(clientList[4]);
+            int index = clientList.Count - 1;
+            clientList[index].HandPoker0 = 25;
+            clientList[index].HandPoker1 = 2;
+            clientList[index].State = PlayerStateEnum.Playing;
+            gameRoomData.HandPokerDic.Add(clientList[index].UserId, (clientList[index].HandPoker0, clientList[index].HandPoker1));
+            clientList[index].CurrBetValue = 0;
+            playingList.Add(clientList[index]);
         }*/
 
         //發牌
@@ -547,19 +550,13 @@ public class GameServer : MonoBehaviour
     private void SendRequest_NotEnoughChips(Client client)
     {
         MainPack pack = new MainPack();
-        pack.ActionCode = ActionCode.Request_NotEnoughChips;
+        pack.ActionCode = ActionCode.Request_InsufficientChips;
 
-        PlayerInfoPack playerInfoPack = new PlayerInfoPack();
-        playerInfoPack.UserID = client.UserId;
+        InsufficientChipsPack insufficientChipsPack = new InsufficientChipsPack();
+        insufficientChipsPack.SmallBlind = SmallBlind;
 
-        PlayerInOutRoomPack playerInOutRoomPack = new PlayerInOutRoomPack();
-        playerInOutRoomPack.IsInRoom = false;
-        playerInOutRoomPack.PlayerInfoPack = playerInfoPack;
-
-        pack.PlayerInOutRoomPack = playerInOutRoomPack;
-        Entry.gameView.OnNotEnoughChips(pack);
-
-        clientList.Remove(client);
+        pack.InsufficientChipsPack = insufficientChipsPack;
+        SendRequest(pack);
     }
 
     /// <summary>
@@ -585,12 +582,12 @@ public class GameServer : MonoBehaviour
     /// 獲取所有遊戲玩家籌碼
     /// </summary>
     /// <returns></returns>
-    private Dictionary<string, int> GetAllPlayerChips()
+    private Dictionary<string, double> GetAllPlayerChips()
     {
-        Dictionary<string, int> allPlayerChipsDic = new Dictionary<string, int>();
+        Dictionary<string, double> allPlayerChipsDic = new Dictionary<string, double>();
         foreach (var client in clientList)
         {
-            allPlayerChipsDic.Add(client.UserId, client.Chips);
+            allPlayerChipsDic.Add(client.UserId, client.RoomChips);
         }
 
         return allPlayerChipsDic;
@@ -612,13 +609,13 @@ public class GameServer : MonoBehaviour
     /// 獲取邊池籌碼值
     /// </summary>
     /// <returns></returns>
-    private int GetSideChipsValue()
+    private double GetSideChipsValue()
     {
-        int sideValue = 0;
+        double sideValue = 0;
 
         if (allInDic.Count() >= 2)
         {
-            int min = allInDic.Min(x => x.Value);
+            double min = allInDic.Min(x => x.Value);
 
             foreach (var allIn in allInDic)
             {
@@ -693,16 +690,16 @@ public class GameServer : MonoBehaviour
     public IEnumerator Request_UpdateRoomInfo(MainPack pack)
     {
         List<PlayerInfoPack> playerInfoPacks = new List<PlayerInfoPack>();
+        pack.PlayerInfoPackList = new List<PlayerInfoPack>();
         foreach (var player in clientList)
         {
             PlayerInfoPack playerInfoPack = new PlayerInfoPack();
             playerInfoPack.Seat = player.Seat;
             playerInfoPack.UserID = player.UserId;
             playerInfoPack.NickName = player.NickName;
-            playerInfoPack.Chips = player.Chips;
+            playerInfoPack.Chips = player.RoomChips;
             playerInfoPack.CurrBetValue = player.CurrBetValue;
-
-            pack.PlayerInfoPackList = new List<PlayerInfoPack>();
+            
             playerInfoPacks.Add(playerInfoPack);
         }
 
@@ -838,8 +835,8 @@ public class GameServer : MonoBehaviour
         int sbPlayerSeat = (currButtonSeatIndex + 1) % playingList.Count;
         int bbPlayerSeat = (sbPlayerSeat + 1) % playingList.Count;      
 
-        playingList[sbPlayerSeat].Chips -= SmallBlind;
-        playingList[bbPlayerSeat].Chips -= SmallBlind * 2;
+        playingList[sbPlayerSeat].RoomChips -= SmallBlind;
+        playingList[bbPlayerSeat].RoomChips -= SmallBlind * 2;
 
         playingList[sbPlayerSeat].CurrBetValue = SmallBlind;
         playingList[bbPlayerSeat].CurrBetValue = SmallBlind * 2;
@@ -855,8 +852,8 @@ public class GameServer : MonoBehaviour
         BlindStagePack blindStagePack = new BlindStagePack();
         blindStagePack.SBPlayerId = playingList[sbPlayerSeat].UserId;
         blindStagePack.BBPlayerId = playingList[bbPlayerSeat].UserId;
-        blindStagePack.SBPlayerChips = playingList[sbPlayerSeat].Chips;
-        blindStagePack.BBPlayerChips = playingList[bbPlayerSeat].Chips;
+        blindStagePack.SBPlayerChips = playingList[sbPlayerSeat].RoomChips;
+        blindStagePack.BBPlayerChips = playingList[bbPlayerSeat].RoomChips;
 
         pack.BlindStagePack = blindStagePack;
         pack.GameRoomInfoPack = GetGameRoomInfoPack();
@@ -888,7 +885,7 @@ public class GameServer : MonoBehaviour
             bool IsUnableRaise = false;
             if (allInDic.Count() > 0)
             {
-                int allInMin = allInDic.Min(x => x.Value);
+                double allInMin = allInDic.Min(x => x.Value);
                 IsUnableRaise = allInDic.Count() == playingList.Count - 1 ||
                                 (gameRoomData.CurrCallValue == allInMin && preClient.PreActingEnum == ActingEnum.Call);
             }
@@ -901,7 +898,7 @@ public class GameServer : MonoBehaviour
             playerActingRoundPack.IsFirstRaisePlayer = gameRoomData.IsFirstRaisePlayer;
             playerActingRoundPack.CurrCallValue = gameRoomData.CurrCallValue;
             playerActingRoundPack.CallDifference = gameRoomData.CurrCallValue - gameRoomData.CurrActingPlayer.CurrBetValue;
-            playerActingRoundPack.PlayerChips = gameRoomData.CurrActingPlayer.Chips;
+            playerActingRoundPack.PlayerChips = gameRoomData.CurrActingPlayer.RoomChips;
             playerActingRoundPack.PlayerCurrBryValue = gameRoomData.CurrActingPlayer.CurrBetValue;
             playerActingRoundPack.IsUnableRaise = IsUnableRaise;
             playerActingRoundPack.TotalPot = gameRoomData.TotalPot;
@@ -1007,7 +1004,7 @@ public class GameServer : MonoBehaviour
             }
 
             //下注籌碼
-            int betChips = 0;
+            double betChips = 0;
             if (pack.PlayerActedPack.ActingEnum == ActingEnum.Call ||
                 pack.PlayerActedPack.ActingEnum == ActingEnum.Raise)
             {
@@ -1022,7 +1019,7 @@ public class GameServer : MonoBehaviour
                 gameRoomData.CurrActingPlayer.State = PlayerStateEnum.Fold;
             }
             gameRoomData.CurrActingPlayer.IsActionTaken = true;
-            gameRoomData.CurrActingPlayer.Chips -= betChips;
+            gameRoomData.CurrActingPlayer.RoomChips -= betChips;
             if (pack.PlayerActedPack.ActingEnum == ActingEnum.Raise ||
                 pack.PlayerActedPack.ActingEnum == ActingEnum.Call)
             {
@@ -1036,7 +1033,7 @@ public class GameServer : MonoBehaviour
             pack.ActionCode = ActionCode.BroadCastRequest_ShowActing;
             pack.SendModeCode = SendModeCode.RoomBroadcast;
 
-            pack.PlayerActedPack.PlayerChips = gameRoomData.CurrActingPlayer.Chips;
+            pack.PlayerActedPack.PlayerChips = gameRoomData.CurrActingPlayer.RoomChips;
 
             SendRoomBroadCast(pack);
 
@@ -1103,7 +1100,7 @@ public class GameServer : MonoBehaviour
     /// <returns></returns>
     private IEnumerator AllInJudge(MainPack pack)
     {       
-        int allInValue = gameRoomData.CurrActingPlayer.Chips + gameRoomData.CurrActingPlayer.CurrBetValue;
+        double allInValue = gameRoomData.CurrActingPlayer.RoomChips + gameRoomData.CurrActingPlayer.CurrBetValue;
         allInDic.Add(gameRoomData.CurrActingPlayer.UserId, allInValue);
 
         //更新跟注值
@@ -1115,13 +1112,13 @@ public class GameServer : MonoBehaviour
         }
 
         //下注籌碼
-        int betChips = pack.PlayerActedPack.BetValue;
+        double betChips = pack.PlayerActedPack.BetValue;
 
         //更新玩家訊息
         gameRoomData.CurrActingPlayer.State = PlayerStateEnum.AllIn;
         gameRoomData.CurrActingPlayer.IsActionTaken = true;
         gameRoomData.CurrActingPlayer.CurrBetValue = allInValue;
-        gameRoomData.CurrActingPlayer.Chips = 0;      
+        gameRoomData.CurrActingPlayer.RoomChips = 0;      
 
         //更新底池
         gameRoomData.TotalPot += betChips;
@@ -1131,7 +1128,7 @@ public class GameServer : MonoBehaviour
         pack.SendModeCode = SendModeCode.RoomBroadcast;
 
         pack.PlayerActedPack.BetValue = gameRoomData.CurrActingPlayer.CurrBetValue;
-        pack.PlayerActedPack.PlayerChips = gameRoomData.CurrActingPlayer.Chips;
+        pack.PlayerActedPack.PlayerChips = gameRoomData.CurrActingPlayer.RoomChips;
 
         SendRoomBroadCast(pack);
 
@@ -1170,11 +1167,11 @@ public class GameServer : MonoBehaviour
         }
 
         //未AllIn玩家最小下注值
-        int playingMin = playingList.Where(x => x.State == PlayerStateEnum.Playing)
-                                    .Min(x => x.CurrBetValue);
+        double playingMin = playingList.Where(x => x.State == PlayerStateEnum.Playing)
+                                       .Min(x => x.CurrBetValue);
 
-        int allInMin = playingList.Where(x => x.State == PlayerStateEnum.AllIn)
-                                  .Min(x => x.CurrBetValue);
+        double allInMin = playingList.Where(x => x.State == PlayerStateEnum.AllIn)
+                                     .Min(x => x.CurrBetValue);
 
         return playingMin >= allInMin;
     }
@@ -1202,14 +1199,14 @@ public class GameServer : MonoBehaviour
         List<Client> judgePlayers = GetPlayingUser(new List<PlayerStateEnum>() { PlayerStateEnum.Playing, PlayerStateEnum.AllIn});
         List<Client> winners = JudgeWinner(judgePlayers);
 
-        int winChips = gameRoomData.TotalPot - GetSideChipsValue();
+        double winChips = gameRoomData.TotalPot - GetSideChipsValue();
         winChips = winChips / winners.Count();
         WinnerPack winnerPack = new WinnerPack();
-        winnerPack.WinnerDic = new Dictionary<string, int>();
+        winnerPack.WinnerDic = new Dictionary<string, double>();
         foreach (var winnerPlayer in winners)
         {
-            winnerPlayer.Chips += winChips;
-            winnerPack.WinnerDic.Add(winnerPlayer.UserId, winnerPlayer.Chips);
+            winnerPlayer.RoomChips += winChips;
+            winnerPack.WinnerDic.Add(winnerPlayer.UserId, winnerPlayer.RoomChips);
         }
         winnerPack.WinChips = winChips;
 
@@ -1254,9 +1251,9 @@ public class GameServer : MonoBehaviour
         pack.ActionCode = ActionCode.BroadCastRequest_GameStage;
         pack.SendModeCode = SendModeCode.RoomBroadcast;
 
-        winner.Chips += gameRoomData.TotalPot;
+        winner.RoomChips += gameRoomData.TotalPot;
         WinnerPack winnerPack = new WinnerPack();
-        winnerPack.WinnerDic = new Dictionary<string, int>() { { winner.UserId, winner.Chips } };
+        winnerPack.WinnerDic = new Dictionary<string, double>() { { winner.UserId, winner.RoomChips } };
         winnerPack.WinChips = gameRoomData.TotalPot;
 
         Dictionary<string, (int, int)> handPokerDic = new Dictionary<string, (int, int)>();
@@ -1305,14 +1302,14 @@ public class GameServer : MonoBehaviour
         List<Client> judgePlayers = GetPlayingUser(new List<PlayerStateEnum>() { PlayerStateEnum.Playing, PlayerStateEnum.AllIn });
         List<Client> winners = JudgeWinner(judgePlayers);
 
-        int winChips = gameRoomData.TotalPot - GetSideChipsValue();
+        double winChips = gameRoomData.TotalPot - GetSideChipsValue();
         winChips = winChips / winners.Count();
         WinnerPack winnerPack = new WinnerPack();
-        winnerPack.WinnerDic = new Dictionary<string, int>();
+        winnerPack.WinnerDic = new Dictionary<string, double>();
         foreach (var winnerPlayer in winners)
         {
-            winnerPlayer.Chips += winChips;
-            winnerPack.WinnerDic.Add(winnerPlayer.UserId, winnerPlayer.Chips);
+            winnerPlayer.RoomChips += winChips;
+            winnerPack.WinnerDic.Add(winnerPlayer.UserId, winnerPlayer.RoomChips);
         }
         winnerPack.WinChips = winChips;
 
@@ -1354,18 +1351,18 @@ public class GameServer : MonoBehaviour
         List<Client> sidewinnerList = JudgeWinner(judgePlayers);
 
         //最小allIn
-        int min = allInDic.Min(x => x.Value);
+        double min = allInDic.Min(x => x.Value);
 
         //初始退回籌碼
-        Dictionary<string, int> backDic = new Dictionary<string, int>();
+        Dictionary<string, double> backDic = new Dictionary<string, double>();
         foreach (var allInPlayer in allInDic)
         {
-            int backChips = allInPlayer.Value - min;
+            double backChips = allInPlayer.Value - min;
             backDic.Add(allInPlayer.Key, backChips);
         }
 
         //贏得籌碼
-        Dictionary<string, int> sideWinnerDic = new Dictionary<string, int>();
+        Dictionary<string, double> sideWinnerDic = new Dictionary<string, double>();
         foreach (var allInPlayer in allInDic)
         {
             Client player = playingList.Where(x => x.UserId == allInPlayer.Key).FirstOrDefault();
@@ -1379,7 +1376,7 @@ public class GameServer : MonoBehaviour
                     if(judgePlayer.Key != player.UserId &&
                        !sidewinnerList.Contains(player))
                     {
-                        int getChips = judgePlayer.Value - min;
+                        double getChips = judgePlayer.Value - min;
                         backDic[judgePlayer.Key] -= getChips;
                         sideWinnerDic[player.UserId] += getChips;
                     }
@@ -1391,7 +1388,7 @@ public class GameServer : MonoBehaviour
         foreach (var back in backDic)
         {
             Client c = playingList.Where(x => x.UserId == back.Key).FirstOrDefault();
-            c.Chips += back.Value;
+            c.RoomChips += back.Value;
         }
 
         MainPack pack = new MainPack();
@@ -1505,7 +1502,7 @@ public class GameServer : MonoBehaviour
                 if (shape.Value.Item1 == maxResult)
                 {
                     List<int> numList = shape.Value.Item2.Select(x => x % 13 == 0 ? 14 : x % 13).ToList();
-                    numList.Sort(new PokerShape.SpecialComparer());
+                    numList.Sort(new TexasHoldemUtil.SpecialComparer());
                     pairPlayer.Add(shape.Key, numList);
                 }
             }
@@ -1597,6 +1594,21 @@ public class GameServer : MonoBehaviour
                 }
             }
         }
+    }
+
+    /// <summary>
+    /// 請求_購買籌碼
+    /// </summary>
+    /// <param name="pack"></param>
+    public void Request_BuyChips(MainPack pack)
+    {
+        string id = pack.BuyChipsPack.UserId;
+        double buyChips = pack.BuyChipsPack.BuyChipsValue;
+
+        Client c = clientList.Where(x => x.UserId == id).FirstOrDefault();
+        c.RoomChips = buyChips;
+
+        SendRequest(pack);
     }
 
     private void OnDestroy()

@@ -27,9 +27,7 @@ public class JoinRoomView : MonoBehaviour
     {
         blind_Dr.onValueChanged.AddListener((value) =>
         {
-            carryChips_Sli.minValue = smallblindList[value] * 40;
-            carryChips_Sli.maxValue = smallblindList[value] * 200;
-            carryChips_Sli.value = carryChips_Sli.minValue;
+            TexasHoldemUtil.SetBuySlider(smallblindList[value], carryChips_Sli);
         });
 
         carryChips_Sli.onValueChanged.AddListener((value) =>

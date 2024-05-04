@@ -4,41 +4,39 @@ using UnityEngine;
 
 using RequestBuf;
 
-public class Request_GameView : BaseViewRequest
+public class Request_GameView : BaseRequest
 {
+    [SerializeField]
     GameView thisView;
 
-    bool isStartReceiveRequest;     //是否開始接收協議
+    private bool isStartReceiveRequest { get; set; }     //是否開始接收協議
 
     public override void Awake()
     {
+        requestDic = new List<ActionCode>()
+        {
+            ActionCode.Request_UpdateRoomInfo,
+            ActionCode.Request_InsufficientChips,
+        };
+
+        roomBroadcastDic = new List<ActionCode>()
+        {
+            ActionCode.Request_PlayerInOutRoom,
+            ActionCode.BroadCastRequest_GameStage,
+            ActionCode.BroadCastRequest_PlayerActingRound,
+            ActionCode.BroadCastRequest_ActingCD,
+            ActionCode.BroadCastRequest_ShowActing,
+            ActionCode.BroadCast_Request_SideReault,
+            ActionCode.Request_ShowFoldPoker,
+        };
+
         base.Awake();
     }
 
     private void OnEnable()
     {
         isStartReceiveRequest = false;
-    }
-
-    public override void SetThisView()
-    {
-        thisView = thisBaseView as GameView;
-    }
-
-    public override void RegisterBroadcast()
-    {
-        RequestManager.Instance.RegisterBroadcast(ActionCode.Request_PlayerInOutRoom, HandleRoomBroadcast);
-        RequestManager.Instance.RegisterBroadcast(ActionCode.BroadCastRequest_GameStage, HandleRoomBroadcast);
-        RequestManager.Instance.RegisterBroadcast(ActionCode.BroadCastRequest_PlayerActingRound, HandleRoomBroadcast);
-        RequestManager.Instance.RegisterBroadcast(ActionCode.BroadCastRequest_ActingCD, HandleRoomBroadcast);
-        RequestManager.Instance.RegisterBroadcast(ActionCode.BroadCastRequest_ShowActing, HandleRoomBroadcast);
-        RequestManager.Instance.RegisterBroadcast(ActionCode.BroadCast_Request_SideReault, HandleRoomBroadcast);
-        RequestManager.Instance.RegisterBroadcast(ActionCode.Request_ShowFoldPoker, HandleRoomBroadcast);
-    }
-
-    public override void SendRequest(MainPack pack)
-    {
-        base.SendRequest(pack);
+        SendRequest_UpdateRoomInfo();
     }
 
     public override void HandleRequest(MainPack pack)
@@ -51,6 +49,14 @@ public class Request_GameView : BaseViewRequest
             case ActionCode.Request_UpdateRoomInfo:
                 isStartReceiveRequest = true;
                 thisView.UpdateGameRoomInfo(pack);
+                break;
+
+            //籌碼不足
+            case ActionCode.Request_InsufficientChips:
+                BuyChipsView buyChipsView = UIManager.Instance.OpenPartsView(ViewName.BuyChipsView).GetComponent<BuyChipsView>();
+                buyChipsView.SetBuyChipsViewInfo(pack, thisView.BuyChipsGoBack);
+
+                thisView.OnInsufficientChips();
                 break;
         }
     }
@@ -130,7 +136,7 @@ public class Request_GameView : BaseViewRequest
     /// <param name="id">玩家ID</param>
     /// <param name="acting">採取行動</param>
     /// <param name="betValue">下注值</param>
-    public void SendRequest_PlayerActed(string id, ActingEnum acting, int betValue)
+    public void SendRequest_PlayerActed(string id, ActingEnum acting, double betValue)
     {
         MainPack pack = new MainPack();
         pack.ActionCode = ActionCode.Request_PlayerActed;
@@ -179,5 +185,10 @@ public class Request_GameView : BaseViewRequest
 
         pack.PlayerInOutRoomPack = playerInOutRoomPack;
         SendRequest(pack);
+    }
+
+    public override void OnDestroy()
+    {
+        base.OnDestroy();
     }
 }

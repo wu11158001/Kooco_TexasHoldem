@@ -7,6 +7,7 @@ public class UIManager : UnitySingleton<UIManager>
     static Canvas mainCanvas;
 
     private Dictionary<ViewName, RectTransform> viewDic = new Dictionary<ViewName, RectTransform>();
+    private Dictionary<ViewName, RectTransform> partsViewDic = new Dictionary<ViewName, RectTransform>();
     private Stack<RectTransform> viewStack = new Stack<RectTransform>();
 
     public override void Awake()
@@ -35,7 +36,7 @@ public class UIManager : UnitySingleton<UIManager>
     /// 開啟View
     /// </summary>
     /// <param name="viewName"></param>
-    public void OpenView(ViewName viewName)
+    public RectTransform OpenView(ViewName viewName)
     {
         if (viewStack.Count > 0)
         {
@@ -51,14 +52,37 @@ public class UIManager : UnitySingleton<UIManager>
         else
         {
             GameObject gameViewObj = Resources.Load<GameObject>($"View/{viewName}");
-            view = Instantiate(gameViewObj).GetComponent<RectTransform>();
-            view.SetParent(mainCanvas.transform);
-
+            view = CreateUIObj(gameViewObj);
             InitViewTr(view);
             viewDic.Add(viewName, view);
         }
 
         viewStack.Push(view);
+
+        return view;
+    }
+
+    /// <summary>
+    /// 開啟零件類View
+    /// </summary>
+    /// <param name="viewName"></param>
+    public RectTransform OpenPartsView(ViewName viewName)
+    {
+        RectTransform view = null;
+        if (partsViewDic.ContainsKey(viewName))
+        {
+            view = partsViewDic[viewName];
+            view.gameObject.SetActive(true);
+        }
+        else
+        {
+            GameObject gameViewObj = Resources.Load<GameObject>($"PartsView/{viewName}");
+            view = CreateUIObj(gameViewObj);
+            InitViewTr(view);
+            partsViewDic.Add(viewName, view);
+        }
+
+        return view;
     }
 
     /// <summary>
@@ -66,7 +90,7 @@ public class UIManager : UnitySingleton<UIManager>
     /// </summary>
     /// <param name="obj"></param>
     /// <returns></returns>
-    public RectTransform CreatePrefab(GameObject obj)
+    public RectTransform CreateUIObj(GameObject obj)
     {
         RectTransform rt = Instantiate(obj).GetComponent<RectTransform>();
         rt.SetParent(mainCanvas.transform);

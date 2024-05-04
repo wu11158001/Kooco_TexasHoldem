@@ -7,14 +7,11 @@ using System.Linq;
 
 using RequestBuf;
 
-public class GameView : BaseView
+public class GameView : MonoBehaviour
 {
-    Request_GameView thisRequestView;
-    public override void SetRequestView()
-    {
-        thisRequestView = requestView as Request_GameView;
-    }
-
+    [SerializeField]
+    Request_GameView baseRequest;
+    
     [Header("操作按鈕")]
     [SerializeField]
     Button raiseAndAllIn_Btn, callAndCheck_Btn, fold_Btn;
@@ -75,31 +72,30 @@ public class GameView : BaseView
         2.1f, 2.5f, 3.0f, 4.0f,
     };
 
-
     List<Button> seatList = new List<Button>();                 //玩家座位位置
     List<GamePlayerInfo> gamePlayerInfoList;                    //玩家資料
 
     Vector2 InitPotPointPos;    //初始底池位置
 
-    private GameData gameData;
-    public class GameData
+    private ThisData thisData;
+    public class ThisData
     {
-        public GamePlayerInfo LocalGamePlayerInfo;      //本地玩家
-        public int LocalPlayerSeat;                     //本地玩家座位
-        public int LocalPlayerChips;                    //本地玩家籌碼
-        public int LocalPlayerCurrBetValue;             //本地玩家當前下注值
-        public int TotalPot;                            //當前底池
-        public int CallDifference;                      //當前跟注差額
-        public int CurrCallValue;                       //當前跟注值
-        public int CurrRaiseValue;                      //當前加注值
-        public int MinRaiseValue;                       //最小加注值
-        public int SmallBlindValue;                     //小盲值
-        public bool IsFirstRaisePlayer;                 //首位加注玩家
-        public bool IsUnableRaise;                      //無法加注
-        public bool IsPlaying;                          //有參與遊戲
-        public bool isLocalPlayerTurn;                  //本地玩家回合
-        public bool isFold;                             //是否已棄牌
-        public List<int> CurrCommunityPoker;            //當前公共牌
+        public GamePlayerInfo LocalGamePlayerInfo;         //本地玩家
+        public int LocalPlayerSeat;                        //本地玩家座位
+        public double LocalPlayerChips;                    //本地玩家籌碼
+        public double LocalPlayerCurrBetValue;             //本地玩家當前下注值
+        public double TotalPot;                            //當前底池
+        public double CallDifference;                      //當前跟注差額
+        public double CurrCallValue;                       //當前跟注值
+        public double CurrRaiseValue;                      //當前加注值
+        public double MinRaiseValue;                       //最小加注值
+        public double SmallBlindValue;                     //小盲值
+        public bool IsFirstRaisePlayer;                    //首位加注玩家
+        public bool IsUnableRaise;                         //無法加注
+        public bool IsPlaying;                             //有參與遊戲
+        public bool isLocalPlayerTurn;                     //本地玩家回合
+        public bool isFold;                                //是否已棄牌
+        public List<int> CurrCommunityPoker;               //當前公共牌
     }
 
     /// <summary>
@@ -122,7 +118,7 @@ public class GameView : BaseView
     {
         set
         {
-            if (value >= gameData.LocalPlayerChips)
+            if (value >= thisData.LocalPlayerChips)
             {
                 //All In
                 raiseTo_Txt.text = $"<size=9><color=#000000>Raise To</color></size>\n<b><size=13><color=#2E1675>All In</color></size></b>";
@@ -130,8 +126,8 @@ public class GameView : BaseView
             }
             else
             {
-                raiseTo_Txt.text = $"<size=9><color=#000000>Raise To</color></size>\n<b><size=13><color=#2E1675>${StringUtils.SetChipsUnit(value)}</color></size></b>";
-                raiseSliHandle_Txt.text = $"${StringUtils.SetChipsUnit(value)}";
+                raiseTo_Txt.text = $"<size=9><color=#000000>Raise To</color></size>\n<b><size=13><color=#2E1675>{StringUtils.SetChipsUnit(value)}</color></size></b>";
+                raiseSliHandle_Txt.text = $"{StringUtils.SetChipsUnit(value)}";
             }            
         }
     }
@@ -143,7 +139,7 @@ public class GameView : BaseView
     {
         set
         {
-            gameData.isLocalPlayerTurn = value;
+            thisData.isLocalPlayerTurn = value;
             if (SetActingButtonEnable == true)
             {
                 if (value == false)
@@ -252,18 +248,34 @@ public class GameView : BaseView
     /// <summary>
     /// 設置底池籌碼
     /// </summary>
-    public int TotalPot
+    public double TotalPot
     {
         set
         {
-            StringUtils.ChipsChangeEffect(totalPot_Txt, value.ToString(), "$");
+            StringUtils.ChipsChangeEffect(totalPot_Txt, value);
         }
     }
 
     /// <summary>
     /// 初始化
     /// </summary>
-    private void Init()
+    public void Init()
+    {
+        tip_Txt.text = "Waiting...";
+        foldBtn_Txt.text = "Check / Fold";
+        callAndCheckBt_Txt.text = "Check";
+        raiseAndAllInBtn_Txt.text = "Call Any";
+        totalPot_Txt.text = "$0";
+
+        menuMask_Btn.gameObject.SetActive(false);
+        raise_Tr.gameObject.SetActive(false);
+        SetActingButtonEnable = false;
+    }
+
+    /// <summary>
+    /// 遊戲初始化
+    /// </summary>
+    public void GameInit()
     {
         foreach (var poker in communityPokerList)
         {
@@ -290,14 +302,12 @@ public class GameView : BaseView
         callAndCheck_Btn.gameObject.SetActive(true);
         raiseAndAllIn_Btn.gameObject.SetActive(true);
 
-        gameData.isFold = false;
-        gameData.CurrCommunityPoker = new List<int>();
+        thisData.isFold = false;
+        thisData.CurrCommunityPoker = new List<int>();
     }
 
-    public override void Awake()
+    public void Awake()
     {
-        base.Awake();
-
         Entry.gameView = this;
 
         ListenerEvent();
@@ -315,8 +325,8 @@ public class GameView : BaseView
 
     private void OnEnable()
     {
-        gameData = new GameData();
-        gameData.IsPlaying = false;
+        thisData = new ThisData();
+        thisData.IsPlaying = false;
 
         if (gamePlayerInfoList != null)
         {
@@ -328,18 +338,8 @@ public class GameView : BaseView
 
         gamePlayerInfoList = new List<GamePlayerInfo>();
 
-        tip_Txt.text = "Waiting...";
-        foldBtn_Txt.text = "Check / Fold";
-        callAndCheckBt_Txt.text = "Check";
-        raiseAndAllInBtn_Txt.text = "Call Any";
-        totalPot_Txt.text = "$0";
-
-        menuMask_Btn.gameObject.SetActive(false);
-        raise_Tr.gameObject.SetActive(false);
-        SetActingButtonEnable = false;
-
         Init();
-        thisRequestView.SendRequest_UpdateRoomInfo();
+        GameInit();
     }
 
     private void Update()
@@ -374,7 +374,7 @@ public class GameView : BaseView
         //離開房間
         exitRoom_Btn.onClick.AddListener(() =>
         {
-            thisRequestView.SendRequest_ExitRoom(Entry.TestInfoData.LocalUserId);
+            baseRequest.SendRequest_ExitRoom(Entry.TestInfoData.LocalUserId);
             Entry.Instance.gameServer.gameObject.SetActive(false);
             UIManager.Instance.OpenView(ViewName.JoinRoomView);
         });
@@ -389,29 +389,40 @@ public class GameView : BaseView
         //加注滑條
         raise_Sli.onValueChanged.AddListener((value) =>
         {
-            float stepSize = gameData.SmallBlindValue * 2;
+            float stepSize = (float)thisData.SmallBlindValue * 2;
             float newRaiseValue = sliderClickDetection.GetSkiderClicked ? Mathf.Round(value / stepSize) * stepSize : value;
-            raise_Sli.value = newRaiseValue >= raise_Sli.maxValue ? raise_Sli.maxValue : newRaiseValue;
+            //raise_Sli.value = newRaiseValue >= raise_Sli.maxValue ? raise_Sli.maxValue : newRaiseValue;
+
+            if (raise_Sli.value <= thisData.MinRaiseValue)
+            {
+                raise_Sli.value = (float)thisData.MinRaiseValue;
+                return;
+            }
+
+            if (newRaiseValue >= raise_Sli.maxValue && raise_Sli.value < raise_Sli.maxValue)
+            {
+                newRaiseValue -= (float)thisData.SmallBlindValue * 2;
+            }
 
             SetRaiseToText = newRaiseValue;
 
-            if (newRaiseValue <= gameData.CurrCallValue)
+            if (newRaiseValue <= thisData.CurrCallValue)
             {
-                newRaiseValue = gameData.CurrCallValue;
+                newRaiseValue = (float)thisData.CurrCallValue;
                 raise_Sli.value = newRaiseValue;
             }
 
-            if (newRaiseValue >= gameData.LocalPlayerChips)
+            if (newRaiseValue >= thisData.LocalPlayerChips)
             {
-                newRaiseValue = gameData.LocalPlayerChips;
-                raiseAndAllInBtn_Txt.text = $"All In\n${StringUtils.SetChipsUnit(gameData.LocalPlayerChips)}";
+                newRaiseValue = (float)thisData.LocalPlayerChips;
+                raiseAndAllInBtn_Txt.text = $"All In\n{StringUtils.SetChipsUnit(thisData.LocalPlayerChips)}";
             }
             else
             {
-                raiseAndAllInBtn_Txt.text = $"Raise to\n${StringUtils.SetChipsUnit(newRaiseValue)}";
+                raiseAndAllInBtn_Txt.text = $"Raise to\n{StringUtils.SetChipsUnit(newRaiseValue)}";
             }            
 
-            gameData.CurrRaiseValue = (int)newRaiseValue;
+            thisData.CurrRaiseValue = (int)newRaiseValue;
         });
 
         //底池百分比加註
@@ -424,7 +435,7 @@ public class GameView : BaseView
         //棄牌
         fold_Btn.onClick.AddListener(() =>
         {
-            if (gameData.isLocalPlayerTurn)
+            if (thisData.isLocalPlayerTurn)
             {
                 OnFold();
             }
@@ -439,7 +450,7 @@ public class GameView : BaseView
         //跟注/過牌
         callAndCheck_Btn.onClick.AddListener(() =>
         {
-            if (gameData.isLocalPlayerTurn)
+            if (thisData.isLocalPlayerTurn)
             {
                 OnCallAndCheck();
             }
@@ -454,22 +465,22 @@ public class GameView : BaseView
         //加注/All In
         raiseAndAllIn_Btn.onClick.AddListener(() =>
         {
-            if (gameData.isLocalPlayerTurn)
+            if (thisData.isLocalPlayerTurn)
             {
-                bool isAllIn = gameData.LocalPlayerChips < gameData.MinRaiseValue ||
-                           gameData.CurrRaiseValue == gameData.LocalPlayerChips;
+                bool isAllIn = thisData.LocalPlayerChips < thisData.MinRaiseValue ||
+                           thisData.CurrRaiseValue == thisData.LocalPlayerChips;
 
                 ActingEnum acting = isAllIn == true ?
                                     ActingEnum.AllIn :
                                     ActingEnum.Raise;
 
-                int betValue = isAllIn == true ?
-                               gameData.LocalPlayerChips :
-                               gameData.CurrRaiseValue;
+                double betValue = isAllIn == true ?
+                                  thisData.LocalPlayerChips :
+                                  thisData.CurrRaiseValue;
 
-                thisRequestView.SendRequest_PlayerActed(Entry.TestInfoData.LocalUserId,
-                                                        acting,
-                                                        betValue);
+                baseRequest.SendRequest_PlayerActed(Entry.TestInfoData.LocalUserId,
+                                                    acting,
+                                                    betValue);
             }
             else
             {
@@ -485,7 +496,7 @@ public class GameView : BaseView
     /// </summary>
     private void OnFold()
     {
-        thisRequestView.SendRequest_PlayerActed(Entry.TestInfoData.LocalUserId,
+        baseRequest.SendRequest_PlayerActed(Entry.TestInfoData.LocalUserId,
                                                 ActingEnum.Fold,
                                                 0);       
     }
@@ -495,37 +506,37 @@ public class GameView : BaseView
     /// </summary>
     private void OnCallAndCheck()
     {
-        int betValue = 0;
+        double betValue = 0;
         ActingEnum acting = ActingEnum.Call;
-        if (gameData.IsFirstRaisePlayer)
+        if (thisData.IsFirstRaisePlayer)
         {
-            if (gameData.CurrCallValue == gameData.SmallBlindValue)
+            if (thisData.CurrCallValue == thisData.SmallBlindValue)
             {
                 acting = ActingEnum.Check;
             }
             else
             {
-                betValue = gameData.CurrCallValue;
+                betValue = thisData.CurrCallValue;
             }
         }
         else
         {
-            if (gameData.LocalPlayerCurrBetValue == gameData.CurrCallValue)
+            if (thisData.LocalPlayerCurrBetValue == thisData.CurrCallValue)
             {
                 acting = ActingEnum.Check;
             }
-            else if (gameData.LocalPlayerChips <= gameData.CurrCallValue)
+            else if (thisData.LocalPlayerChips <= thisData.CurrCallValue)
             {
                 acting = ActingEnum.AllIn;
-                betValue = gameData.LocalPlayerChips;
+                betValue = thisData.LocalPlayerChips;
             }
             else
             {
-                betValue = gameData.CurrCallValue;
+                betValue = thisData.CurrCallValue;
             }
         }
 
-        thisRequestView.SendRequest_PlayerActed(Entry.TestInfoData.LocalUserId,
+        baseRequest.SendRequest_PlayerActed(Entry.TestInfoData.LocalUserId,
                                                 acting,
                                                 betValue);
     }
@@ -537,7 +548,7 @@ public class GameView : BaseView
     private void ShowFoldPoker(int index)
     {
         showPokerBtnList[index].gameObject.SetActive(false);  
-        thisRequestView.SendShowFoldPoker(index);
+        baseRequest.SendShowFoldPoker(index);
     }
 
     /// <summary>
@@ -566,9 +577,9 @@ public class GameView : BaseView
     /// <param name="btnIndex"></param>
     private void PotRaisePercent(int btnIndex)
     {
-        int raiseValue = gameData.IsFirstRaisePlayer ?
-                         (int)((float)(gameData.SmallBlindValue * 2) * potBbRate[btnIndex]) :
-                         (int)((float)gameData.TotalPot * (potPercentRate[btnIndex] / 100));
+        int raiseValue = thisData.IsFirstRaisePlayer ?
+                         (int)((float)(thisData.SmallBlindValue * 2) * potBbRate[btnIndex]) :
+                         (int)((float)thisData.TotalPot * (potPercentRate[btnIndex] / 100));
         raise_Sli.value = raiseValue;
     }
 
@@ -581,22 +592,22 @@ public class GameView : BaseView
         SetActionButton = true;
 
         //當前底池
-        gameData.TotalPot = playerActingRoundPack.TotalPot;
+        thisData.TotalPot = playerActingRoundPack.TotalPot;
         //玩家籌碼
-        gameData.LocalPlayerChips = playerActingRoundPack.PlayerChips;
+        thisData.LocalPlayerChips = playerActingRoundPack.PlayerChips;
         //首位加注玩家
-        gameData.IsFirstRaisePlayer = playerActingRoundPack.IsFirstRaisePlayer;
+        thisData.IsFirstRaisePlayer = playerActingRoundPack.IsFirstRaisePlayer;
         //當前跟注值
-        gameData.CurrCallValue = playerActingRoundPack.CurrCallValue;
+        thisData.CurrCallValue = playerActingRoundPack.CurrCallValue;
         //跟注差額
-        gameData.CallDifference = playerActingRoundPack.CallDifference;
+        thisData.CallDifference = playerActingRoundPack.CallDifference;
         //玩家當前下注值
-        gameData.LocalPlayerCurrBetValue = playerActingRoundPack.PlayerCurrBryValue;
+        thisData.LocalPlayerCurrBetValue = playerActingRoundPack.PlayerCurrBryValue;
         //無法加注
-        gameData.IsUnableRaise = playerActingRoundPack.IsUnableRaise;
+        thisData.IsUnableRaise = playerActingRoundPack.IsUnableRaise;
         //最小加注
-        gameData.MinRaiseValue = gameData.CurrCallValue * 2;
-        gameData.CurrRaiseValue = gameData.MinRaiseValue;
+        thisData.MinRaiseValue = thisData.CurrCallValue * 2;
+        thisData.CurrRaiseValue = thisData.MinRaiseValue;
 
 
         if (AutoActionState != AutoActingEnum.None)
@@ -614,16 +625,16 @@ public class GameView : BaseView
     private void ShowBetArea()
     {
         //是否無法在加注
-        bool IsUnableRaise = gameData.IsUnableRaise;
-        bool isJustAllIn = gameData.LocalPlayerChips <= gameData.CurrCallValue;
+        bool IsUnableRaise = thisData.IsUnableRaise;
+        bool isJustAllIn = thisData.LocalPlayerChips <= thisData.CurrCallValue;
 
         //棄牌
         fold_Btn.gameObject.SetActive(true);
 
         //加注&All In
         raiseAndAllInBtn_Txt.text = isJustAllIn == true ?
-                                    $"All In\n${gameData.LocalPlayerChips}" :
-                                    $"Raise to\n${gameData.CurrRaiseValue}";
+                                    $"All In\n${thisData.LocalPlayerChips}" :
+                                    $"Raise to\n${thisData.CurrRaiseValue}";
         if (IsUnableRaise == true && isJustAllIn == false)
         {
             raiseAndAllIn_Btn.gameObject.SetActive(false);
@@ -634,27 +645,27 @@ public class GameView : BaseView
         }
 
         //跟注&過牌
-        string callAndChcckStr = $"Call\n${gameData.CurrCallValue - gameData.CallDifference}";
-        if (gameData.IsFirstRaisePlayer == true)
+        string callAndChcckStr = $"Call\n${thisData.CurrCallValue - thisData.CallDifference}";
+        if (thisData.IsFirstRaisePlayer == true)
         {
-            if (gameData.CurrCallValue == gameData.SmallBlindValue)
+            if (thisData.CurrCallValue == thisData.SmallBlindValue)
             {
                 callAndChcckStr = "Check";
             }
             else
             {
-                callAndChcckStr = $"Call\n${gameData.CallDifference}";
+                callAndChcckStr = $"Call\n${thisData.CallDifference}";
             }
         }
         else
         {
-            if (gameData.LocalPlayerCurrBetValue == gameData.CurrCallValue)
+            if (thisData.LocalPlayerCurrBetValue == thisData.CurrCallValue)
             {
                 callAndChcckStr = "Check";
             }
             else
             {
-                callAndChcckStr = $"Call\n${gameData.CallDifference}";
+                callAndChcckStr = $"Call\n${thisData.CallDifference}";
             }
         }
         callAndCheckBt_Txt.text = callAndChcckStr;
@@ -669,25 +680,25 @@ public class GameView : BaseView
 
         //加注區域物件
         raise_Tr.gameObject.SetActive(isJustAllIn == false &&
-                                      gameData.LocalPlayerChips > gameData.MinRaiseValue);
+                                      thisData.LocalPlayerChips > thisData.MinRaiseValue);
         if (isJustAllIn == false)
         {
             //倍數
-            int multiple = (int)Mathf.Ceil((float)gameData.LocalPlayerChips / (float)(gameData.SmallBlindValue * 2));
-            raise_Sli.maxValue = (gameData.SmallBlindValue * 2) * multiple;
-            raise_Sli.minValue = gameData.MinRaiseValue;
-            raise_Sli.value = gameData.MinRaiseValue;
+            float multiple = (int)Mathf.Ceil((float)thisData.LocalPlayerChips / (float)(thisData.SmallBlindValue * 2));
+            raise_Sli.maxValue = (float)(thisData.SmallBlindValue * 2) * multiple;
+            raise_Sli.minValue = 0;//(float)thisData.MinRaiseValue;
+            raise_Sli.value = (float)thisData.MinRaiseValue;
 
             //加注值
-            SetRaiseToText = gameData.MinRaiseValue;
+            SetRaiseToText = thisData.MinRaiseValue;
 
             //All值
-            raiseAllIn_Txt.text = $"<color=#1FE822>All In</color>\n<color=#D3D3D3>${StringUtils.SetChipsUnit(gameData.LocalPlayerChips)}</color>";
+            raiseAllIn_Txt.text = $"<color=#1FE822>All In</color>\n<color=#D3D3D3>{StringUtils.SetChipsUnit(thisData.LocalPlayerChips)}</color>";
 
             //底池倍率
             for (int i = 0; i < potPercentRaiseTxtList.Count; i++)
             {
-                if (gameData.TotalPot <= gameData.SmallBlindValue * 3)
+                if (thisData.TotalPot <= thisData.SmallBlindValue * 3)
                 {
                     potPercentRaiseTxtList[i].text = $"{potBbRate[i]}BB";
                 }
@@ -715,9 +726,9 @@ public class GameView : BaseView
 
             //過牌
             case AutoActingEnum.Check:
-                if (gameData.IsFirstRaisePlayer == true)
+                if (thisData.IsFirstRaisePlayer == true)
                 {
-                    if (gameData.CurrCallValue == gameData.SmallBlindValue)
+                    if (thisData.CurrCallValue == thisData.SmallBlindValue)
                     {
                         OnCallAndCheck();
                     }
@@ -728,7 +739,7 @@ public class GameView : BaseView
                 }
                 else
                 {
-                    if (gameData.LocalPlayerCurrBetValue == gameData.CurrCallValue)
+                    if (thisData.LocalPlayerCurrBetValue == thisData.CurrCallValue)
                     {
                         OnCallAndCheck();
                     }
@@ -741,9 +752,9 @@ public class GameView : BaseView
 
             //過牌或棄牌
             case AutoActingEnum.CheckAndFold:
-                if (gameData.IsFirstRaisePlayer == true)
+                if (thisData.IsFirstRaisePlayer == true)
                 {
-                    if (gameData.CurrCallValue == gameData.SmallBlindValue)
+                    if (thisData.CurrCallValue == thisData.SmallBlindValue)
                     {
                         OnCallAndCheck();
                     }
@@ -754,7 +765,7 @@ public class GameView : BaseView
                 }
                 else
                 {
-                    if (gameData.LocalPlayerCurrBetValue == gameData.CurrCallValue)
+                    if (thisData.LocalPlayerCurrBetValue == thisData.CurrCallValue)
                     {
                         OnCallAndCheck();
                     }
@@ -801,14 +812,14 @@ public class GameView : BaseView
         int seatIndex = 0;//座位(本地玩家 = 0)
         if (playerInfoPack.UserID != Entry.TestInfoData.LocalUserId)
         {
-            seatIndex = playerInfoPack.Seat > gameData.LocalPlayerSeat ?
-            playerInfoPack.Seat - gameData.LocalPlayerSeat :
-            seatList.Count - (gameData.LocalPlayerSeat - playerInfoPack.Seat);            
+            seatIndex = playerInfoPack.Seat > thisData.LocalPlayerSeat ?
+            playerInfoPack.Seat - thisData.LocalPlayerSeat :
+            seatList.Count - (thisData.LocalPlayerSeat - playerInfoPack.Seat);            
         }
         else
         {
             //本地玩家
-            gameData.LocalGamePlayerInfo = gamePlayerInfo;
+            thisData.LocalGamePlayerInfo = gamePlayerInfo;
             gamePlayerInfo.SetLocalHandPokerPosition = localHandPokerPoint_Tr;
         }
         seatList[seatIndex].image.enabled = false;
@@ -860,8 +871,8 @@ public class GameView : BaseView
     {
         string id = playerActedPack.ActPlayerId;
         ActingEnum actionEnum = playerActedPack.ActingEnum;
-        int betValue = playerActedPack.BetValue;
-        int chips = playerActedPack.PlayerChips;
+        double betValue = playerActedPack.BetValue;
+        double chips = playerActedPack.PlayerChips;
         bool isLocalPlayer = id == Entry.TestInfoData.LocalUserId;
 
         //本地玩家
@@ -876,11 +887,11 @@ public class GameView : BaseView
                     SetAutoAction(false);
                     SetActingButtonEnable = false;
                     raise_Tr.gameObject.SetActive(false);
-                    gameData.isFold = true;
-                    gameData.IsPlaying = false;
+                    thisData.isFold = true;
+                    thisData.IsPlaying = false;
 
                     //關閉所有撲克外框
-                    List<Poker> pokers = communityPokerList.Concat(gameData.LocalGamePlayerInfo.GetHandPoker.ToList()).ToList();
+                    List<Poker> pokers = communityPokerList.Concat(thisData.LocalGamePlayerInfo.GetHandPoker.ToList()).ToList();
                     foreach (var poker in pokers)
                     {
                         poker.PokerFrameEnable = false;
@@ -954,7 +965,7 @@ public class GameView : BaseView
         }
 
         //本地玩家座位
-        gameData.LocalPlayerSeat = pack.PlayerInfoPackList.Where(x => x.UserID == Entry.TestInfoData.LocalUserId)
+        thisData.LocalPlayerSeat = pack.PlayerInfoPackList.Where(x => x.UserID == Entry.TestInfoData.LocalUserId)
                                                           .FirstOrDefault()
                                                           .Seat;
 
@@ -1011,13 +1022,13 @@ public class GameView : BaseView
         //小盲
         GamePlayerInfo sbPlayer = GetPlayer(blindStagePack.SBPlayerId);
         sbPlayer.PlayerAction(ActingEnum.Blind,
-                              gameData.SmallBlindValue,
+                              thisData.SmallBlindValue,
                               blindStagePack.SBPlayerChips);
 
         //大盲
         GamePlayerInfo bbPlayer = GetPlayer(blindStagePack.BBPlayerId);
         bbPlayer.PlayerAction(ActingEnum.Blind,
-                              gameData.SmallBlindValue * 2,
+                              thisData.SmallBlindValue * 2,
                               blindStagePack.BBPlayerChips);
     }
 
@@ -1051,7 +1062,7 @@ public class GameView : BaseView
     /// <returns></returns>
     private IEnumerator IFlopCommunityPoker(List<int> currCommunityPoker)
     {
-        gameData.CurrCommunityPoker = currCommunityPoker;
+        thisData.CurrCommunityPoker = currCommunityPoker;
 
         yield return IConcentrateBetChips();
 
@@ -1068,7 +1079,7 @@ public class GameView : BaseView
 
         yield return new WaitForSeconds(0.6f);
 
-        if (gameData.IsPlaying == true)
+        if (thisData.IsPlaying == true)
         {
             GamePlayerInfo localPlayer = gamePlayerInfoList.Where(x => x.UserId == Entry.TestInfoData.LocalUserId).FirstOrDefault();
             JudgePokerShape(localPlayer, true);
@@ -1092,7 +1103,7 @@ public class GameView : BaseView
         }
 
         //公共牌
-        judgePoker = judgePoker.Concat(gameData.CurrCommunityPoker).ToList();
+        judgePoker = judgePoker.Concat(thisData.CurrCommunityPoker).ToList();
 
         List<Poker> pokers = communityPokerList.Concat(handPoker.ToList()).ToList();
 
@@ -1165,7 +1176,7 @@ public class GameView : BaseView
             Vector2 winnerSeatPos = player.gameObject.transform.position;
 
             //產生贏得籌碼物件
-            RectTransform rt = UIManager.Instance.CreatePrefab(GameAssetsManager.Instance.WinChipsObj);
+            RectTransform rt = UIManager.Instance.CreateUIObj(GameAssetsManager.Instance.WinChipsObj);
             rt.anchoredPosition = pot_Img.rectTransform.anchoredPosition;
             WinChips winChips = rt.GetComponent<WinChips>();
             winChips.SetWinChips = pack.WinnerPack.WinChips;
@@ -1177,7 +1188,7 @@ public class GameView : BaseView
                                         () =>
                                         {
                                             Destroy(rt.gameObject);
-                                            player.Chips = winner.Value;
+                                            player.PlayerRoomChips = winner.Value;
                                         });
 
             yield return new WaitForSeconds(2);
@@ -1219,7 +1230,7 @@ public class GameView : BaseView
             //有贏得籌碼
             if (sideWinner.Value > 0)
             {
-                RectTransform rt = UIManager.Instance.CreatePrefab(GameAssetsManager.Instance.WinChipsObj);
+                RectTransform rt = UIManager.Instance.CreateUIObj(GameAssetsManager.Instance.WinChipsObj);
                 rt.anchoredPosition = pot_Img.rectTransform.anchoredPosition;
                 WinChips winChips = rt.GetComponent<WinChips>();
                 winChips.SetWinChips = sideWinner.Value;
@@ -1259,7 +1270,7 @@ public class GameView : BaseView
         //玩家籌碼
         foreach (var player in pack.SidePack.AllPlayerChips)
         {
-            GetPlayer(player.Key).Chips = player.Value;
+            GetPlayer(player.Key).PlayerRoomChips = player.Value;
         }
     }
 
@@ -1269,17 +1280,17 @@ public class GameView : BaseView
     /// <returns></returns>
     public IEnumerator IGameStage(MainPack pack)
     {
-        gameData.SmallBlindValue = pack.GameStagePack.SmallBlind;
-        gameData.CurrRaiseValue = gameData.SmallBlindValue * 2;
+        thisData.SmallBlindValue = pack.GameStagePack.SmallBlind;
+        thisData.CurrRaiseValue = thisData.SmallBlindValue * 2;
 
         //判斷當前遊戲進程
         switch (pack.GameStagePack.flowEnum)
         {
             //發牌
             case FlowEnum.Licensing:
-                Init();
+                GameInit();
                 tip_Txt.text = "";
-                gameData.IsPlaying = true;
+                thisData.IsPlaying = true;
 
                 //設置公共牌
                 List<string> userIdList = new List<string>();
@@ -1319,7 +1330,7 @@ public class GameView : BaseView
             //主池結果
             case FlowEnum.PotResult:
                 //棄牌顯示手牌按鈕
-                if (gameData.isFold == true)
+                if (thisData.isFold == true)
                 {
                     foreach (var show in showPokerBtnList)
                     {
@@ -1334,11 +1345,29 @@ public class GameView : BaseView
     }
 
     /// <summary>
+    /// 籌碼不足
+    /// </summary>
+    public void OnInsufficientChips()
+    {
+        thisData.LocalGamePlayerInfo.Init();
+    }
+
+    /// <summary>
+    /// 購買籌碼回到遊戲
+    /// </summary>
+    /// <param name="pack"></param>
+    public void BuyChipsGoBack(MainPack pack)
+    {
+        double newChips = pack.BuyChipsPack.BuyChipsValue;
+        thisData.LocalGamePlayerInfo.PlayerRoomChips = newChips;
+    }
+
+    /// <summary>
     /// 移除資料
     /// </summary>
     private void OnRemoveData()
     {
-        gameData = null;
+        thisData = null;
         StopAllCoroutines();
     }
 

@@ -2762,6 +2762,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6670946787786061185}
   - component: {fileID: 7434345039931009829}
+  - component: {fileID: 1901636849928286105}
   - component: {fileID: 657720542534820993}
   - component: {fileID: 4945923245624108558}
   m_Layer: 5
@@ -2810,6 +2811,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 91625074d96bf2c408186120c616cc01, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  baseRequest: {fileID: 1901636849928286105}
   raiseAndAllIn_Btn: {fileID: 1731130837798298710}
   callAndCheck_Btn: {fileID: 4507901033771419328}
   fold_Btn: {fileID: 415474277880085598}
@@ -2854,6 +2856,19 @@ MonoBehaviour:
   exitRoom_Btn: {fileID: 1326550848464399761}
   gamePause_Obj: {fileID: 2292812178963915797}
   gameContinue_Btn: {fileID: 2288723802441286916}
+--- !u!114 &1901636849928286105
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4348048500220203413}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 786c7209c44da5449a0b757bb5d8e8a2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  thisView: {fileID: 7434345039931009829}
 --- !u!222 &657720542534820993
 CanvasRenderer:
   m_ObjectHideFlags: 0

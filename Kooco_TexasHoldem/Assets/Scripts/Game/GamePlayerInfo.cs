@@ -39,11 +39,11 @@ public class GamePlayerInfo : MonoBehaviour
     [SerializeField]
     Animator pokerShape_Ani;
 
-    int isWinHash = Animator.StringToHash("IsWin");
+    readonly int isWinHash = Animator.StringToHash("IsWin");
 
     Coroutine cdCoroutine;      //倒數協程
 
-    int currChips;              //當前擁有籌碼
+    double currRoomChips;       //當前擁有籌碼
     Vector2 potPointPos;        //底池位置
 
     /// <summary>
@@ -59,21 +59,21 @@ public class GamePlayerInfo : MonoBehaviour
     /// <summary>
     /// 當前下注值
     /// </summary>
-    public int CurrBetValue { get; set; }
+    public double CurrBetValue { get; set; }
 
     /// <summary>
-    /// 籌碼值
+    /// 玩家房間籌碼值
     /// </summary>
-    public int Chips 
+    public double PlayerRoomChips 
     {
         get
         {
-            return currChips;
+            return currRoomChips;
         }
         set
         {
-            currChips = value;
-            StringUtils.ChipsChangeEffect(chips_Txt, currChips.ToString(), "$");
+            currRoomChips = value;
+            StringUtils.ChipsChangeEffect(chips_Txt, currRoomChips);
         }
     }
 
@@ -179,6 +179,11 @@ public class GamePlayerInfo : MonoBehaviour
         }
     }
 
+    private void Awake()
+    {
+        chips_Txt.text = "0";
+    }
+
     private void OnEnable()
     {
         StopCountDown();
@@ -213,17 +218,17 @@ public class GamePlayerInfo : MonoBehaviour
     /// <param name="initChips">初始籌碼</param>
     /// <param name="avatar">頭像</param>
     /// <param name="potPointPos">底池位置</param>
-    public void SetInitPlayerInfo(int seatIndex, string userId, string nickName, int initChips, Sprite avatar, Vector2 potPointPos)
+    public void SetInitPlayerInfo(int seatIndex, string userId, string nickName, double initChips, Sprite avatar, Vector2 potPointPos)
     {
+        Init();
+
         SeatIndex = seatIndex;
-        currChips = initChips;
+        currRoomChips = initChips;
         UserId = userId;
         avatar_Img.sprite = avatar;
         nickName_Txt.text = nickName;
-        chips_Txt.text = $"${StringUtils.SetChipsUnit(initChips)}";
+        chips_Txt.text = $"{StringUtils.SetChipsUnit(initChips)}";
         this.potPointPos = potPointPos;
-
-        Init();
     }
 
     /// <summary>
@@ -292,7 +297,7 @@ public class GamePlayerInfo : MonoBehaviour
     /// </summary>
     /// <param name="betValue">下注值</param>
     /// <param name="chips">玩家籌碼</param>
-    public void PlayerBet(int betValue, int chips)
+    public void PlayerBet(double betValue, double chips)
     {
         //下注籌碼移動效果
         if (!betChips_Tr.gameObject.activeSelf)
@@ -304,9 +309,9 @@ public class GamePlayerInfo : MonoBehaviour
         }
 
         //下注籌碼文字效果
-        StringUtils.ChipsChangeEffect(betChips_Txt, betValue.ToString());
+        StringUtils.ChipsChangeEffect(betChips_Txt, betValue);
 
-        Chips = chips;
+        PlayerRoomChips = chips;
     }
 
     /// <summary>
@@ -349,14 +354,13 @@ public class GamePlayerInfo : MonoBehaviour
     /// <param name="betValue">下注值</param>
     /// <param name="chips">玩家籌碼</param>
     /// <param name="isLocalPlayer">是否本地玩家</param>
-    public void PlayerAction(ActingEnum actionEnum, int betValue, int chips, bool isLocalPlayer = false)
+    public void PlayerAction(ActingEnum actionEnum, double betValue, double chips, bool isLocalPlayer = false)
     {
         if (!gameObject.activeSelf) return;
 
         StopCountDown();
 
-        CurrBetValue += int.Parse(StringUtils.StringAddition(CurrBetValue.ToString(), betValue.ToString()));
-
+        CurrBetValue += CurrBetValue + betValue;
         ActionFrame = false;
 
         StartCoroutine(ShowActionStr(actionEnum.ToString()));

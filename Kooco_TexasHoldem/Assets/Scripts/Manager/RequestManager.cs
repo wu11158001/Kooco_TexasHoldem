@@ -8,8 +8,8 @@ using RequestBuf;
 
 public class RequestManager : UnitySingleton<RequestManager>
 {
-    private Dictionary<ActionCode, UnityAction<MainPack>> requsetDic = new Dictionary<ActionCode, UnityAction<MainPack>>();
-    private Dictionary<ActionCode, UnityAction<MainPack>> broadcastDic = new Dictionary<ActionCode, UnityAction<MainPack>>();
+    private Dictionary<ActionCode, UnityAction<MainPack>> requestDic = new Dictionary<ActionCode, UnityAction<MainPack>>();
+    private Dictionary<ActionCode, UnityAction<MainPack>> roomBroadcastDic = new Dictionary<ActionCode, UnityAction<MainPack>>();
 
     public override void Awake()
     {
@@ -17,13 +17,41 @@ public class RequestManager : UnitySingleton<RequestManager>
     }
 
     /// <summary>
-    /// 註冊廣播事件
+    /// 注冊協議
     /// </summary>
     /// <param name="actionCode"></param>
     /// <param name="callback"></param>
-    public void RegisterBroadcast(ActionCode actionCode, UnityAction<MainPack> callback)
+    public void RegisterRequest(ActionCode actionCode, UnityAction<MainPack> callback)
     {
-        broadcastDic.Add(actionCode, callback);
+        requestDic.Add(actionCode, callback);
+    }
+
+    /// <summary>
+    /// 移除協議監聽
+    /// </summary>
+    /// <param name="actionCode"></param>
+    public void RemoveRequest(ActionCode actionCode)
+    {
+        requestDic.Remove(actionCode);
+    }
+
+    /// <summary>
+    /// 註冊房間廣播協議
+    /// </summary>
+    /// <param name="actionCode"></param>
+    /// <param name="callback"></param>
+    public void RegisterRoomBroadcast(ActionCode actionCode, UnityAction<MainPack> callback)
+    {
+        roomBroadcastDic.Add(actionCode, callback);
+    }
+
+    /// <summary>
+    /// 移除房間廣播監聽
+    /// </summary>
+    /// <param name="actionCode"></param>
+    public void RemoveRoomBroadcast(ActionCode actionCode)
+    {
+        roomBroadcastDic.Remove(actionCode);
     }
 
     /// <summary>
@@ -33,11 +61,6 @@ public class RequestManager : UnitySingleton<RequestManager>
     /// <param name="callback"></param>
     public void Send(MainPack pack, UnityAction<MainPack> callback)
     {
-        if (!requsetDic.ContainsKey(pack.ActionCode))
-        {
-            requsetDic.Add(pack.ActionCode, callback);
-        }
-
         string metname = pack.ActionCode.ToString();
         MethodInfo method = Entry.Instance.gameServer.GetType().GetMethod(metname);
         if (method != null)
@@ -60,11 +83,11 @@ public class RequestManager : UnitySingleton<RequestManager>
         if (pack.SendModeCode == SendModeCode.RoomBroadcast)
         {
             //房間廣播
-            if (broadcastDic.ContainsKey(pack.ActionCode))
+            if (roomBroadcastDic.ContainsKey(pack.ActionCode))
             {
                 UnityMainThreadDispatcher.Instance.Enqueue(() =>
                 {
-                    broadcastDic[pack.ActionCode](pack);
+                    roomBroadcastDic[pack.ActionCode](pack);
                 });                
             }
             else
@@ -75,12 +98,11 @@ public class RequestManager : UnitySingleton<RequestManager>
         else
         {
             //一般協議
-            if (requsetDic.ContainsKey(pack.ActionCode))
+            if (requestDic.ContainsKey(pack.ActionCode))
             {
                 UnityMainThreadDispatcher.Instance.Enqueue(() =>
                 {
-                    requsetDic[pack.ActionCode](pack);
-                    requsetDic.Remove(pack.ActionCode);
+                    requestDic[pack.ActionCode](pack);
                 });                
             }
             else

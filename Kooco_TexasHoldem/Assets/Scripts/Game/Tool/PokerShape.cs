@@ -7,24 +7,6 @@ using UnityEngine.Events;
 public static class PokerShape
 {
     /// <summary>
-    /// 特殊排序(0最大)
-    /// </summary>
-    public class SpecialComparer : IComparer<int>
-    {
-        public int Compare(int x, int y)
-        {
-            if (x == 0 && y != 0)
-                return -1;
-            else if (x != 0 && y == 0)
-                return 1;
-            else if (x == 0 && y == 0)
-                return 0;
-            else
-                return y.CompareTo(x);
-        }
-    }
-
-    /// <summary>
     /// 牌型名稱
     /// </summary>
     public static string[] shapeStr = new string[]
