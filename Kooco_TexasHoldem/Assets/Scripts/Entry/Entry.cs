@@ -25,7 +25,7 @@ public class Entry : UnitySingleton<Entry>
     /// <summary>
     /// 進入房間的小盲值
     /// </summary>
-    public int RoomSmallBlind { get; set; }
+    public double RoomSmallBlind { get; set; }
 
     public override void Awake()
     {
@@ -46,7 +46,7 @@ public class Entry : UnitySingleton<Entry>
         GameAssetsManager gameAssetsManager = gameAssetsManagerObj.AddComponent<GameAssetsManager>();
         yield return gameAssetsManager.ILoadAssets();
 
-        UIManager.Instance.OpenView(ViewName.JoinRoomView);
+        UIManager.Instance.OpenView(ViewEnum.LoginView);
     }
 
     private void Update()
@@ -141,7 +141,6 @@ public class Entry : UnitySingleton<Entry>
     /// </summary>
     public void OnWindowBlur()
     {
-        Debug.Log("OnWindowBlur");
         if (gameView != null && gameView.gameObject.activeSelf)
         {
             isPause = true;
@@ -154,14 +153,6 @@ public class Entry : UnitySingleton<Entry>
     /// </summary>
     public void OnWindowFocus()
     {
-        Debug.Log("OnWinndowFocus");
-    }
-
-    /// <summary>
-    /// 網頁視窗縮小
-    /// </summary>
-    public void OnWindowResize()
-    {
-        Debug.Log("OnWinndowResize");
+       
     }
 }

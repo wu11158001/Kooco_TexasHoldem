@@ -376,7 +376,7 @@ public class GameView : MonoBehaviour
         {
             baseRequest.SendRequest_ExitRoom(Entry.TestInfoData.LocalUserId);
             Entry.Instance.gameServer.gameObject.SetActive(false);
-            UIManager.Instance.OpenView(ViewName.JoinRoomView);
+            LoadSceneManager.Instance.LoadScene(SceneEnum.Lobby);
         });
 
         //棄牌顯示手牌按鈕
@@ -391,7 +391,6 @@ public class GameView : MonoBehaviour
         {
             float stepSize = (float)thisData.SmallBlindValue * 2;
             float newRaiseValue = sliderClickDetection.GetSkiderClicked ? Mathf.Round(value / stepSize) * stepSize : value;
-            //raise_Sli.value = newRaiseValue >= raise_Sli.maxValue ? raise_Sli.maxValue : newRaiseValue;
 
             if (raise_Sli.value <= thisData.MinRaiseValue)
             {
@@ -468,19 +467,27 @@ public class GameView : MonoBehaviour
             if (thisData.isLocalPlayerTurn)
             {
                 bool isAllIn = thisData.LocalPlayerChips < thisData.MinRaiseValue ||
-                           thisData.CurrRaiseValue == thisData.LocalPlayerChips;
+                               thisData.CurrRaiseValue == thisData.LocalPlayerChips;
 
                 ActingEnum acting = isAllIn == true ?
                                     ActingEnum.AllIn :
                                     ActingEnum.Raise;
 
-                double betValue = isAllIn == true ?
+                if (raise_Tr.gameObject.activeSelf || isAllIn == true)
+                {
+                    double betValue = isAllIn == true ?
                                   thisData.LocalPlayerChips :
                                   thisData.CurrRaiseValue;
 
-                baseRequest.SendRequest_PlayerActed(Entry.TestInfoData.LocalUserId,
-                                                    acting,
-                                                    betValue);
+                    baseRequest.SendRequest_PlayerActed(Entry.TestInfoData.LocalUserId,
+                                                        acting,
+                                                        betValue);
+                }
+                else
+                {
+                    raise_Tr.gameObject.SetActive(true);
+                    raiseAndAllInBtn_Txt.text = $"Raise To {thisData.CurrRaiseValue}";
+                }
             }
             else
             {
@@ -634,7 +641,7 @@ public class GameView : MonoBehaviour
         //加注&All In
         raiseAndAllInBtn_Txt.text = isJustAllIn == true ?
                                     $"All In\n${thisData.LocalPlayerChips}" :
-                                    $"Raise to\n${thisData.CurrRaiseValue}";
+                                    $"Raise";
         if (IsUnableRaise == true && isJustAllIn == false)
         {
             raiseAndAllIn_Btn.gameObject.SetActive(false);
@@ -679,8 +686,7 @@ public class GameView : MonoBehaviour
         }
 
         //加注區域物件
-        raise_Tr.gameObject.SetActive(isJustAllIn == false &&
-                                      thisData.LocalPlayerChips > thisData.MinRaiseValue);
+        raise_Tr.gameObject.SetActive(false);
         if (isJustAllIn == false)
         {
             //倍數

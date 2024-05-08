@@ -6,7 +6,7 @@ using UnityEngine;
 public class Request_BuyChipsView : BaseRequest
 {
     [SerializeField]
-    BuyChipsView thisView;
+    BuyChipsPartsView thisView;
 
     public override void Awake()
     {
@@ -58,7 +58,7 @@ public class Request_BuyChipsView : BaseRequest
     /// </summary>
     /// <param name="id">ID</param>
     /// <param name="buyChipsValue">購買籌碼數量</param>
-    public void SendRequest_BuyChips(string id, int buyChipsValue)
+    public void SendRequest_BuyChips(string id, double buyChipsValue)
     {
         MainPack pack = new MainPack();
         pack.ActionCode = ActionCode.Request_BuyChips;

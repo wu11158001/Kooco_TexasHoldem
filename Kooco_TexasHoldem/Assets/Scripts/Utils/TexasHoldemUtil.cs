@@ -5,9 +5,6 @@ using UnityEngine.UI;
 
 public static class TexasHoldemUtil
 {
-    public static int MinMagnification = 40;       //購買籌碼最小倍率
-    public static int MaxMagnification = 200;      //購買籌碼最大倍率
-
     /// <summary>
     /// 特殊排序(0最大)
     /// </summary>
@@ -33,8 +30,8 @@ public static class TexasHoldemUtil
     /// <param name="sli">Slider</param>
     public static void SetBuySlider(double smallBlind, Slider sli)
     {
-        sli.minValue = (float)smallBlind * MinMagnification;
-        sli.maxValue = (float)smallBlind * MaxMagnification;
+        sli.minValue = (float)smallBlind * GameDataManager.MinMagnification;
+        sli.maxValue = (float)smallBlind * GameDataManager.MaxMagnification;
         sli.value = sli.minValue;
     }
 }

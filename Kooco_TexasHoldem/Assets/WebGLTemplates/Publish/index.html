@@ -6,6 +6,8 @@
   <title>Unity Web Player | {{{ PRODUCT_NAME }}}</title>
   <link rel="shortcut icon" href="TemplateData/favicon.ico">
   <link rel="stylesheet" href="TemplateData/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+  <script src="https://cdn.ethers.io/lib/ethers-5.0.umd.min.js"></script>
 #if SHOW_DIAGNOSTICS
   <link rel="stylesheet" href="<<<TemplateData/diagnostics.css>>>">
   <script src="<<<TemplateData/diagnostics.js>>>"></script>
@@ -147,32 +149,13 @@
 		  window.addEventListener("focus", function() {
 			  // 在這裡處理網頁視窗獲得焦點的情況，例如繼續遊戲
 			  unityInstance.SendMessage('Entry', 'OnWindowFocus');
-		  });
-		  // 添加 resize 事件監聽器
-	  	  window.addEventListener('resize', function(event){
-			  // 獲取視窗寬度和高度
-			  var width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
-			  var height = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
-			
-			  // 判斷視窗是否被縮小了
-			  if (width < previousWidth || height < previousHeight) {
-				  // 視窗被縮小了，執行相應操作，例如暫停遊戲
-				  unityInstance.SendMessage('Entry', 'OnWindowResize');
-			  }
-			
-			  // 更新上一次的視窗寬度和高度
-			  previousWidth = width;
-			  previousHeight = height;
-		  });
-
+		  });		  
     }).catch((message) => {
       alert(message);
     });
   };	
-  
+
   document.body.appendChild(script);
-
-
 
 </script>
 </body>

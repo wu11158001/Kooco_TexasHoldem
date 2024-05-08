@@ -53,8 +53,8 @@ public class Request_GameView : BaseRequest
 
             //籌碼不足
             case ActionCode.Request_InsufficientChips:
-                BuyChipsView buyChipsView = UIManager.Instance.OpenPartsView(ViewName.BuyChipsView).GetComponent<BuyChipsView>();
-                buyChipsView.SetBuyChipsViewInfo(pack, thisView.BuyChipsGoBack);
+                BuyChipsPartsView buyChipsView = UIManager.Instance.OpenPartsView(ViewEnum.BuyChipsPartsView).GetComponent<BuyChipsPartsView>();
+                buyChipsView.SetBuyChipsViewInfo(pack.InsufficientChipsPack.SmallBlind, thisView.BuyChipsGoBack);
 
                 thisView.OnInsufficientChips();
                 break;

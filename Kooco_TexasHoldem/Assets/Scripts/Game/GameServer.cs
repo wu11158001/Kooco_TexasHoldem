@@ -34,6 +34,7 @@ public class GameServer : MonoBehaviour
 
     private void Awake()
     {
+        DontDestroyOnLoad(this.gameObject);
         gameObject.SetActive(false);
     }
 
