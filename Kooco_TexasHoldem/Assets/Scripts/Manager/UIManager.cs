@@ -6,9 +6,9 @@ public class UIManager : UnitySingleton<UIManager>
 {
     static Canvas mainCanvas;
 
-    private Dictionary<ViewEnum, RectTransform> viewDic = new Dictionary<ViewEnum, RectTransform>();
-    private Dictionary<ViewEnum, RectTransform> partsViewDic = new Dictionary<ViewEnum, RectTransform>();
-    private Stack<RectTransform> viewStack = new Stack<RectTransform>();
+    private Dictionary<ViewEnum, RectTransform> viewDic;
+    private Dictionary<ViewEnum, RectTransform> partsViewDic;
+    private Stack<RectTransform> viewStack;
 
     public override void Awake()
     {
@@ -22,9 +22,9 @@ public class UIManager : UnitySingleton<UIManager>
     /// </summary>
     public void Init()
     {
-        viewDic.Clear();
-        partsViewDic.Clear();
-        viewStack.Clear();
+        viewDic = new Dictionary<ViewEnum, RectTransform>();
+        partsViewDic = new Dictionary<ViewEnum, RectTransform>();
+        viewStack = new Stack<RectTransform>();
 
         mainCanvas = GameObject.Find("Canvas").GetComponent<Canvas>();
     }
@@ -39,7 +39,8 @@ public class UIManager : UnitySingleton<UIManager>
         view.anchorMax = new Vector2(0.5f, 1);
         view.anchorMin = new Vector2(0.5f, 0);
         view.offsetMax = Vector2.zero;
-        view.offsetMin = new Vector2(-540, 0);
+        view.offsetMin = Vector2.zero;
+        view.sizeDelta = new Vector2(540, 0);
         view.anchoredPosition = Vector2.zero;
         view.localScale = Vector3.one;
         view.eulerAngles = Vector3.zero;
@@ -66,13 +67,13 @@ public class UIManager : UnitySingleton<UIManager>
         else
         {
             GameObject gameViewObj = Resources.Load<GameObject>($"View/{viewName}");
+
             view = CreateUIObj(gameViewObj);
             InitViewTr(view, viewName.ToString());
             viewDic.Add(viewName, view);
         }
 
         viewStack.Push(view);
-
         return view;
     }
 

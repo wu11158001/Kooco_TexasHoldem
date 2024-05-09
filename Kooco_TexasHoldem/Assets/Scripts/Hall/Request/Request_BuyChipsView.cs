@@ -35,6 +35,35 @@ public class Request_BuyChipsView : BaseRequest
     }
 
     /// <summary>
+    /// 發送進入現金房
+    /// </summary>
+    /// <param name="smallBlind">小盲值</param>
+    /// <param name="carryChips">攜帶籌碼</param>
+    public void SendRequest_InCashRoom(double smallBlind, double carryChips)
+    {
+        Entry.Instance.RoomSmallBlind = smallBlind;
+        Entry.Instance.gameServer.SmallBlind = smallBlind;
+        Entry.Instance.gameServer.gameObject.SetActive(true);
+
+        MainPack pack = new MainPack();
+        pack.ActionCode = ActionCode.Request_PlayerInOutRoom;
+
+        PlayerInfoPack playerInfoPack = new PlayerInfoPack();
+        playerInfoPack.UserID = Entry.TestInfoData.LocalUserId;
+        playerInfoPack.NickName = Entry.TestInfoData.NickName;
+        playerInfoPack.Chips = carryChips;
+
+        PlayerInOutRoomPack playerInOutRoomPack = new PlayerInOutRoomPack();
+        playerInOutRoomPack.IsInRoom = true;
+        playerInOutRoomPack.PlayerInfoPack = playerInfoPack;
+
+        pack.PlayerInOutRoomPack = playerInOutRoomPack;
+        Entry.Instance.gameServer.Request_PlayerInOutRoom(pack);
+
+        LoadSceneManager.Instance.LoadScene(SceneEnum.Game);
+    }
+
+    /// <summary>
     /// 發送離開房間
     /// </summary>
     public void SendRequest_ExitRoom()

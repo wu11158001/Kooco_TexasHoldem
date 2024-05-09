@@ -38,7 +38,7 @@ public class LoadSceneManager : UnitySingleton<LoadSceneManager>
                 asyncLoad.allowSceneActivation = true;
                 GameDataManager.CurrScene = sceneEnum;
 
-                yield return null;
+                yield return new WaitForSeconds(0.5f);
 
                 UIManager.Instance.Init();
                 JudgeIntoScene(sceneEnum);
@@ -54,6 +54,7 @@ public class LoadSceneManager : UnitySingleton<LoadSceneManager>
     /// <param name="sceneEnum">進入場景</param>
     private void JudgeIntoScene(SceneEnum sceneEnum)
     {
+        Debug.Log($"In To Scene:{sceneEnum}");
         switch (sceneEnum)
         {
             case SceneEnum.Entry:
@@ -64,7 +65,19 @@ public class LoadSceneManager : UnitySingleton<LoadSceneManager>
                 break;
 
             case SceneEnum.Game:
-                UIManager.Instance.OpenView(ViewEnum.GameView);
+
+                switch (GameDataManager.CurrRoomType)
+                {
+                    //積分房
+                    case RoomEnum.BattleRoom:
+                        UIManager.Instance.OpenView(ViewEnum.BattleRoomView);
+                        break;
+                        
+                    //現金房
+                    case RoomEnum.CashRoom:
+                        UIManager.Instance.OpenView(ViewEnum.CashRoomView);
+                        break;
+                }
                 break;
         }
     }

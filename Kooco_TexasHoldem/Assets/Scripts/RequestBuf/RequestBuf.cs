@@ -18,7 +18,7 @@ namespace RequestBuf
         Flop,               //翻牌
         Turn,               //轉牌
         River,              //河牌
-        PotResult,             //遊戲結果
+        PotResult,          //遊戲結果
     }
 
     public enum PlayerStateEnum
@@ -52,6 +52,7 @@ namespace RequestBuf
         Request_ShowFoldPoker,                  //顯示棄牌手牌
         Request_InsufficientChips,              //籌碼不足
         Request_BuyChips,                       //購買籌碼
+        BroadCastRequest_BattleResult,          //積分結果
     }
 
     public class MainPack
@@ -75,6 +76,7 @@ namespace RequestBuf
         public ShowFoldPokerPack ShowFoldPokerPack;
         public InsufficientChipsPack InsufficientChipsPack;
         public BuyChipsPack BuyChipsPack;
+        public BattleResultPack BattleResultPack;
     }
 
     /// <summary>
@@ -232,5 +234,13 @@ namespace RequestBuf
     {
         public string UserId;              //ID
         public double BuyChipsValue;       //購買籌碼數量
+    }
+
+    /// <summary>
+    /// 積分結果包
+    /// </summary>
+    public class BattleResultPack
+    {
+        public string FailPlayerId;         //失敗玩家ID      
     }
 }

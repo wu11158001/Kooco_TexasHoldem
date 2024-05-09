@@ -79,26 +79,7 @@ public class BuyChipsPartsView : MonoBehaviour
             }
             else if (GameDataManager.CurrScene == SceneEnum.Lobby)
             {
-                Entry.Instance.RoomSmallBlind = thisData.SmallBlind;
-                Entry.Instance.gameServer.SmallBlind = thisData.SmallBlind;
-                Entry.Instance.gameServer.gameObject.SetActive(true);
-
-                MainPack pack = new MainPack();
-                pack.ActionCode = ActionCode.Request_PlayerInOutRoom;
-
-                PlayerInfoPack playerInfoPack = new PlayerInfoPack();
-                playerInfoPack.UserID = Entry.TestInfoData.LocalUserId;
-                playerInfoPack.NickName = Entry.TestInfoData.NickName;
-                playerInfoPack.Chips = buyChips_Sli.value;
-
-                PlayerInOutRoomPack playerInOutRoomPack = new PlayerInOutRoomPack();
-                playerInOutRoomPack.IsInRoom = true;
-                playerInOutRoomPack.PlayerInfoPack = playerInfoPack;
-
-                pack.PlayerInOutRoomPack = playerInOutRoomPack;
-                Entry.Instance.gameServer.Request_PlayerInOutRoom(pack);
-
-                LoadSceneManager.Instance.LoadScene(SceneEnum.Game);
+                baseRequest.SendRequest_InCashRoom(thisData.SmallBlind, buyChips_Sli.value);
             }
         });
 

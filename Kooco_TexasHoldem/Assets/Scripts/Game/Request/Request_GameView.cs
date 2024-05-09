@@ -28,6 +28,7 @@ public class Request_GameView : BaseRequest
             ActionCode.BroadCastRequest_ShowActing,
             ActionCode.BroadCast_Request_SideReault,
             ActionCode.Request_ShowFoldPoker,
+            ActionCode.BroadCastRequest_BattleResult,
         };
 
         base.Awake();
@@ -53,10 +54,17 @@ public class Request_GameView : BaseRequest
 
             //籌碼不足
             case ActionCode.Request_InsufficientChips:
-                BuyChipsPartsView buyChipsView = UIManager.Instance.OpenPartsView(ViewEnum.BuyChipsPartsView).GetComponent<BuyChipsPartsView>();
-                buyChipsView.SetBuyChipsViewInfo(pack.InsufficientChipsPack.SmallBlind, thisView.BuyChipsGoBack);
-
-                thisView.OnInsufficientChips();
+                if (GameDataManager.CurrRoomType == RoomEnum.CashRoom)
+                {
+                    BuyChipsPartsView buyChipsView = UIManager.Instance.OpenPartsView(ViewEnum.BuyChipsPartsView).GetComponent<BuyChipsPartsView>();
+                    buyChipsView.SetBuyChipsViewInfo(pack.InsufficientChipsPack.SmallBlind, thisView.BuyChipsGoBack);
+                    thisView.OnInsufficientChips();
+                }
+                else if (GameDataManager.CurrRoomType == RoomEnum.BattleRoom)
+                {
+                    BattleResultView battleResultView = UIManager.Instance.OpenPartsView(ViewEnum.BattleResultView).GetComponent<BattleResultView>();
+                    battleResultView.OnSetResult(false);
+                }
                 break;
         }
     }
@@ -115,6 +123,12 @@ public class Request_GameView : BaseRequest
             //顯示手牌
             case ActionCode.Request_ShowFoldPoker:
                 thisView.GetShowFoldPoker(pack);
+                break;
+
+            //積分結果
+            case ActionCode.BroadCastRequest_BattleResult:
+                BattleResultView battleResultView = UIManager.Instance.OpenPartsView(ViewEnum.BattleResultView).GetComponent<BattleResultView>();
+                battleResultView.OnSetResult(pack.BattleResultPack.FailPlayerId != Entry.TestInfoData.LocalUserId);
                 break;
         }
     }

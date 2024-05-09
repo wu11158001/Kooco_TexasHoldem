@@ -2,69 +2,62 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System;
 
 using RequestBuf;
 
 public class LobbyView : MonoBehaviour
 {
     [SerializeField]
+    Request_LobbyView baseRequest;
+
+    [Header("用戶訊息")]
+    [SerializeField]
+    Text walletId_Txt;
+
+    [Header("房間")]
+    [SerializeField]
     RectTransform cashRoomParent;
-
-
-
-    readonly List<int> smallblindList = new List<int>
-    {
-        50,
-        200,
-        400,
-    };
-
     [SerializeField]
-    Dropdown blind_Dr;
+    Button battle_Btn;
+
+    [Header("等待計時")]
     [SerializeField]
-    Slider carryChips_Sli;
+    RectTransform waitingTime_Tr;
     [SerializeField]
-    Text carryChips_Txt, walletId_Txt;
+    Text waitingTimg_Txt;
     [SerializeField]
-    Button start_Btn;
+    Button cancelWait_Btn;
+
+    DateTime startPairTime; //開始配對時間
 
     private void Awake()
     {
-        blind_Dr.onValueChanged.AddListener((value) =>
+        waitingTime_Tr.gameObject.SetActive(false);
+
+        ListenerEvent();
+    }
+
+    /// <summary>
+    /// 事件聆聽
+    /// </summary>
+    private void ListenerEvent()
+    {
+        //積分房
+        battle_Btn.onClick.AddListener(() =>
         {
-            TexasHoldemUtil.SetBuySlider(smallblindList[value], carryChips_Sli);
+            GameDataManager.CurrRoomType = RoomEnum.BattleRoom;
+
+            //開啟計時器
+            waitingTime_Tr.gameObject.SetActive(true);
+            waitingTime_Tr.anchoredPosition = new Vector2(0, waitingTime_Tr.rect.height);
+            startPairTime = DateTime.Now;
         });
 
-        carryChips_Sli.onValueChanged.AddListener((value) =>
+        //取消等待配對
+        cancelWait_Btn.onClick.AddListener(() =>
         {
-            float stepSize = smallblindList[blind_Dr.value] * 2;
-            float newRaiseValue = Mathf.Round(value / stepSize) * stepSize;
-            carryChips_Sli.value = newRaiseValue >= carryChips_Sli.maxValue ? carryChips_Sli.maxValue : newRaiseValue;
-            carryChips_Txt.text = StringUtils.SetChipsUnit(newRaiseValue);
-        });
-
-        start_Btn.onClick.AddListener(() =>
-        {
-            Entry.Instance.RoomSmallBlind = smallblindList[blind_Dr.value];
-            Entry.Instance.gameServer.SmallBlind = smallblindList[blind_Dr.value];
-            Entry.Instance.gameServer.gameObject.SetActive(true);            
-            
-            MainPack pack = new MainPack();
-            pack.ActionCode = ActionCode.Request_PlayerInOutRoom;
-
-            PlayerInfoPack playerInfoPack = new PlayerInfoPack();
-            playerInfoPack.UserID = Entry.TestInfoData.LocalUserId;
-            playerInfoPack.NickName = Entry.TestInfoData.NickName;
-            playerInfoPack.Chips = (int)carryChips_Sli.value;
-
-            PlayerInOutRoomPack playerInOutRoomPack = new PlayerInOutRoomPack();
-            playerInOutRoomPack.IsInRoom = true;
-            playerInOutRoomPack.PlayerInfoPack = playerInfoPack;
-
-            pack.PlayerInOutRoomPack = playerInOutRoomPack;
-            Entry.Instance.gameServer.Request_PlayerInOutRoom(pack);
-
-            UIManager.Instance.OpenView(ViewEnum.GameView);
+            waitingTime_Tr.gameObject.SetActive(false);
         });
     }
 
@@ -72,9 +65,27 @@ public class LobbyView : MonoBehaviour
     {
         SetUserInfo();
         CreateRoom();
+    }
 
+    private void Update()
+    {
+        //等待計時器
+        if (waitingTime_Tr.gameObject.activeSelf)
+        {
+            if (waitingTime_Tr.anchoredPosition.y > 0)
+            {
+                waitingTime_Tr.Translate(new Vector3(0, -100 * Time.deltaTime, 0), Space.Self);
+            }
 
-        blind_Dr.value = 1;
+            TimeSpan waitingTime = DateTime.Now - startPairTime;
+            waitingTimg_Txt.text = $"{(int)waitingTime.TotalMinutes} : {waitingTime.Seconds:00}";
+
+            if (waitingTime.Seconds >= 3)
+            {
+                baseRequest.SendRequest_InBattleRoom();
+                waitingTime_Tr.gameObject.SetActive(false);
+            }
+        }
     }
 
     /// <summary>
@@ -95,12 +106,12 @@ public class LobbyView : MonoBehaviour
         float cashRoomSpacing = cashRoomParent.GetComponent<HorizontalLayoutGroup>().spacing;
         Rect cashRoomRect = cashRoomBtnObj.GetComponent<RectTransform>().rect;
         cashRoomParent.sizeDelta = new Vector2((cashRoomRect.width + cashRoomSpacing) * GameDataManager.CashRoomSmallBlindList.Count, cashRoomRect.height);
-
         foreach (var smallBlind in GameDataManager.CashRoomSmallBlindList)
         {
             RectTransform rt = Instantiate(cashRoomBtnObj).GetComponent<RectTransform>();
             rt.SetParent(cashRoomParent);
             rt.GetComponent<CashRoomBtn>().SetCashRoomBtnInfo(smallBlind);
+            rt.localScale = Vector3.one;
         }
         cashRoomParent.anchoredPosition = Vector2.zero;
     }

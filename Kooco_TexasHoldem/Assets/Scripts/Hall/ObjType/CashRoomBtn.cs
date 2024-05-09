@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-using RequestBuf;
-
 public class CashRoomBtn : MonoBehaviour
 {
     [SerializeField]
@@ -23,6 +21,8 @@ public class CashRoomBtn : MonoBehaviour
 
         ThisRoom_Btn.onClick.AddListener(() =>
         {
+            GameDataManager.CurrRoomType = RoomEnum.CashRoom;
+
             BuyChipsPartsView buyChipsView = UIManager.Instance.OpenPartsView(ViewEnum.BuyChipsPartsView).GetComponent<BuyChipsPartsView>();
             buyChipsView.SetBuyChipsViewInfo(smallBlind, null);
         });

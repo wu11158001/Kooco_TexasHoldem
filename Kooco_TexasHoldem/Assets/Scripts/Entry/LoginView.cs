@@ -9,16 +9,25 @@ public class LoginView : MonoBehaviour
     [DllImport("__Internal")]
     private static extern void LoginMetaMask();//登入MetaMask
 
-    [Header("本地測試")]
-    public bool isLocalTest;
+    [DllImport("__Internal")]
+    private static extern void TestFunc();//登入MetaMask
+
 
     [SerializeField]
-    Button metaMaskLogin_Btn;
+    Button metaMaskLogin_Btn, tt;
 
 
     private void Awake()
     {
         ListenerEvent();
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.KeypadEnter))
+        {
+            LoginSuccess("Test123");
+        }
     }
 
     /// <summary>
@@ -29,14 +38,14 @@ public class LoginView : MonoBehaviour
         //MetaMask登入
         metaMaskLogin_Btn.onClick.AddListener(() =>
         {
-            if (isLocalTest)
-            {
-                LoginSuccess("Test123");
-            }
-            else
-            {
-                LoginMetaMask();
-            }            
+            LoginMetaMask();
+        });
+
+
+        //MetaMask登入
+        tt.onClick.AddListener(() =>
+        {
+            TestFunc();
         });
     }
 

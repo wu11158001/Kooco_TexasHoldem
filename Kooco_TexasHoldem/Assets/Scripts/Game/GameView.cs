@@ -856,6 +856,12 @@ public class GameView : MonoBehaviour
         gamePlayerInfoList.Remove(exitPlayer);
         Destroy(exitPlayer.gameObject);
 
+        if (GameDataManager.CurrRoomType == RoomEnum.BattleRoom)
+        {
+            BattleResultView battleResultView = UIManager.Instance.OpenPartsView(ViewEnum.BattleResultView).GetComponent<BattleResultView>();
+            battleResultView.OnSetResult(true);
+        }
+
         return exitPlayer;
     }
 

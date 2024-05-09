@@ -155,4 +155,13 @@ public class Entry : UnitySingleton<Entry>
     {
        
     }
+
+    /// <summary>
+    /// 網頁debug
+    /// </summary>
+    /// <param name="str"></param>
+    public void HtmlDebug(string str)
+    {
+        Debug.Log($"Html Debug: {str}");
+    }
 }

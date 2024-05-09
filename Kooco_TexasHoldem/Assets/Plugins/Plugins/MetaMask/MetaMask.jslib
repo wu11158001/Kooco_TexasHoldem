@@ -1,87 +1,124 @@
 mergeInto(LibraryManager.library, {
-    // 登入 MetaMask
-    LoginMetaMask: function(libraryManagerPtr) {
 
-        var serverIp = "https://localhost:44389";
-        //var serverIp = "https://8058-219-91-90-83.ngrok-free.app";
-
-        if (window.ethereum) {
-            // MetaMask 已安装
-            window.ethereum.request({ method: 'eth_requestAccounts' }).then((accounts) => {
-                var address = accounts[0];
-                console.log('钱包连接成功' + address);
-
-                SendMessage('LoginView', 'LoginSuccess', address);
-
-                // 开始获取 nonce 并签名
-                //getNonceAndSign(address); 
-            }).catch((error) => {
+        TestFunc: async function(libraryManagerPtr) {
+            try {
+                // 检查 ethereum 对象是否已定义
+                if (typeof ethereum !== 'undefined') {
+                    // 创建 Web3 实例并使用 ethereum 对象
+                    window.web3 = new Web3(ethereum);
+                    // 请求用户授权
+                    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                    var address = accounts[0];
+                    console.log('钱包连接成功' + address);
+                    SendMessage('Entry', 'HtmlDebug', "Phone Wallet is LoginSuccess");
+                    SendMessage('LoginView', 'LoginSuccess', address);
+                } else {
+                    throw new Error('ethereum 对象不存在');
+                }
+            } catch (error) {
                 console.error("钱包连接失败:", error);
-            });
-        } else {
-            window.open("https://metamask.io/download/");
+                SendMessage('Entry', 'HtmlDebug', "Error!!!!:" + error);
+            }
+        },
+
+
+    //登入MetaMask(Unity呼叫)
+    LoginMetaMask: async function(libraryManagerPtr) {
+
+        // 是否在移動平台
+        function isMobileDevice() {
+            return (typeof window.orientation !== "undefined") || (navigator.userAgent.indexOf('IEMobile') !== -1);
         }
 
-        async function getNonceAndSign(address) {
-            try {
-                // 从服务器获取 nonce
-                const nonce = await fetchNonceFromServer(address);
-                console.log("從服務器獲取 nonce 成功 :" + nonce);
-                // 对 nonce 进行签名
-                signNonce(nonce, address); 
-            } catch (error) {
-                console.error("无法获取 nonce：", error);
+        // 判斷移動平台
+        function getMobileOperatingSystem() {
+            var userAgent = navigator.userAgent || navigator.vendor || window.opera;
+            if (/android/i.test(userAgent)) {
+                return "Android";
+            }
+            if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+                return "iOS";
+            }
+            return "unknown";
+        }
+
+        // 检测应用程序是否安装（Android）
+        async function isAppInstalled(platform) {
+            if (platform === 'Android') {
+                var intentURI = "metamask://";
+                window.location.href = intentURI;
+                setTimeout(function() {
+                    if (window.location.href === "about:blank") {
+                        SendMessage('Entry', 'HtmlDebug', "Android is Not AppInstalled");
+                    } else {
+                        SendMessage('Entry', 'HtmlDebug', "Android is AppInstalled");                            
+                    }
+                }, 1000); // 假设超时时间为 1 秒
             }
         }
 
-        async function signNonce(nonce, address) {
-            try {
-                // 使用 ethers.js 进行签名
-                const provider = new ethers.providers.Web3Provider(window.ethereum);
-                const signer = provider.getSigner();
-                const signature = await signer.signMessage(nonce);
-
-                // 签名成功
-                console.log("签名结果：", signature);
-                // 将签名结果传递给后端进行验证
-                verifySignature(nonce, signature, address); 
-            } catch (error) {
-                // 签名失败
-                console.error("签名失败：", error);
+        // 連接 MetaMask
+        function connectToMetaMask() {
+            if (window.ethereum) {
+                window.ethereum.request({ method: 'eth_requestAccounts' }).then(accounts => {
+                    var address = accounts[0];
+                    console.log('钱包连接成功' + address);
+                    SendMessage('Entry', 'HtmlDebug', "Wallet is LoginSuccess");
+                    SendMessage('LoginView', 'LoginSuccess', address);
+                }).catch(error => {
+                    console.error("钱包连接失败:", error);
+                    SendMessage('Entry', 'HtmlDebug', "Wallet is Not LoginSuccess");
+                });
+            } else {
+                window.open("https://metamask.io/download/");
             }
         }
 
-        function verifySignature(nonce, signature, address) {
-            // 将 nonce 和 signature 传递给后端进行验证
-            console.log("準備驗證簽名...");
-            
-            fetch(serverIp + "/MetaMask/VerifySignature", {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ address: address, signature: signature }),
-            }).then(response => response.json())
-              .then(data => {
-                  if (data.success) {
-                      console.log("签名验证成功");
-                  } else {
-                      console.error("签名验证失败:", data.error);
-                      // 在这里处理签名验证失败的情况
-                  }
-              })
-              .catch(error => {
-                  console.error("签名验证请求失败:", error);
-                  // 在这里处理请求失败的情况
-              });
+        //移動端連接
+        async function phoneConnectToMetaMask() {
+            try {
+                // 检查 ethereum 对象是否已定义
+                if (typeof ethereum !== 'undefined') {
+                    // 创建 Web3 实例并使用 ethereum 对象
+                    window.web3 = new Web3(ethereum);
+                    // 请求用户授权
+                    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                    var address = accounts[0];
+                    console.log('钱包连接成功' + address);
+                    SendMessage('Entry', 'HtmlDebug', "Phone Wallet is LoginSuccess");
+                    SendMessage('LoginView', 'LoginSuccess', address);
+                } else {
+                    SendMessage('Entry', 'HtmlDebug', "ethereum not!!!!");
+                }
+            } catch (error) {
+                console.error("钱包连接失败:", error);
+                SendMessage('Entry', 'HtmlDebug', "Error!!!!:" + error);
+            }
         }
 
-        function fetchNonceFromServer(address) {
-            return fetch(serverIp + "/MetaMask/GetNonce?address=" + address)
-                .then(response => response.json())
-                .then(data => data.nonce)
-                .catch(error => Promise.reject(error));
+        //主邏輯
+        async function main() {
+            if (isMobileDevice()) {
+                var platform = getMobileOperatingSystem();
+                if (platform === 'Android') {
+                    try {
+                        await isAppInstalled(platform);
+                        setTimeout(async function() {
+                            SendMessage('Entry', 'HtmlDebug', "pre phone connect!!!");
+                            await ethereum.enable();
+                        }, 30000); // 30 秒後執行
+                    } catch (error) {
+                        // MetaMask未安装或超时
+                        SendMessage('Entry', 'HtmlDebug', "metamasko Time out" + error);
+                    }
+                } else if (platform === 'iOS') {
+                    // Add iOS specific logic here
+                }
+            } else {
+                connectToMetaMask();
+            }
         }
+
+        await main();
     },
-
 });
