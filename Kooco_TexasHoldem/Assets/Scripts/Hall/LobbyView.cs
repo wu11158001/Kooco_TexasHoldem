@@ -13,7 +13,7 @@ public class LobbyView : MonoBehaviour
 
     [Header("用戶訊息")]
     [SerializeField]
-    Text walletId_Txt;
+    Text walletAddress_Txt, balanceETH_Txt;
 
     [Header("房間")]
     [SerializeField]
@@ -93,7 +93,8 @@ public class LobbyView : MonoBehaviour
     /// </summary>
     private void SetUserInfo()
     {
-        walletId_Txt.text = $"WalletID:{GameDataManager.UserWalletId}";
+        walletAddress_Txt.text = $"Wallet Address : {GameDataManager.UserWalletAddress}";
+        balanceETH_Txt.text = $"ETH : {GameDataManager.UserWalletBalance}";
     }
 
     /// <summary>

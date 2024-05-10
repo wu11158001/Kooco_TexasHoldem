@@ -104,6 +104,9 @@ namespace MetaMask.Transports.Unity
 
         public void OnMetaMaskConnectRequest(string universalLink, string deepLink)
         {
+            Debug.Log($"My universalLink : {universalLink}");
+            Debug.Log($"My deepLink : {deepLink}");
+
             for (int i = 0; i < this.allListeners.Count; i++)
             {
                 var listener = this.allListeners[i];

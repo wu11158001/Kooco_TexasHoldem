@@ -193,7 +193,7 @@ namespace MetaMask.IO
         }
 
         private IEnumerator SendRequestUnity(string method, UnityHttpServiceRequest request)
-        {
+        {            
             string url = request.url;
             string @params = request.@params;
             bool isGet = request.requestType == RequestType.GET;
@@ -298,12 +298,11 @@ namespace MetaMask.IO
         public void OnFetchResponseCallback(string resultJson)
         {
             var result = JsonConvert.DeserializeObject<FetchResponse>(resultJson);
-
             if (fetchResults.ContainsKey(result.id))
             {
                 fetchResults[result.id].TrySetResult(resultJson);
             }
         }
-#endif
+#endif        
     }
 }

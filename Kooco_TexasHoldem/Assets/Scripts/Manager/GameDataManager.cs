@@ -9,7 +9,8 @@ public static class GameDataManager
 
 
     [Header("用戶")]
-    public static string UserWalletId { get; set; }     //用戶錢包ID
+    public static string UserWalletAddress { get; set; }     //用戶錢包地址
+    public static string UserWalletBalance { get; set; }     //用戶錢包餘額
 
 
     [Header("大廳")]
