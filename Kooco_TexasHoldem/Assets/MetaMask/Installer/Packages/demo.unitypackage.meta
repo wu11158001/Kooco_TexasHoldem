@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: d367fe89fd3c8ca4a9c6c14ff2d75669
+DefaultImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 246786
+  packageName: MetaMask
+  packageVersion: 2.0.0
+  assetPath: Assets/MetaMask/Installer/Packages/demo.unitypackage
+  uploadId: 660555

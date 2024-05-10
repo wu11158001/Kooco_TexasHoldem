@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 8a846bc2232f9384c9214f3883806eda
+DefaultImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 246786
+  packageName: MetaMask
+  packageVersion: 2.0.0
+  assetPath: Assets/MetaMask/Installer/Packages/external-dependency-manager-1.2.175.unitypackage
+  uploadId: 660555
