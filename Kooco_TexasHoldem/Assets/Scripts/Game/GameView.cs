@@ -794,7 +794,7 @@ public class GameView : MonoBehaviour
     /// <param name="pack"></param>
     public GamePlayerInfo AddPlayer(PlayerInfoPack playerInfoPack)
     {
-        RectTransform rt = Instantiate(GameAssetsManager.Instance.GamePlayerInfoObj).GetComponent<RectTransform>();
+        RectTransform rt = Instantiate(AssetsManager.Instance.GetObjtypeAsset(ObjTypeEnum.GamePlayerInfo)).GetComponent<RectTransform>();
         GamePlayerInfo gamePlayerInfo = rt.GetComponent<GamePlayerInfo>();
 
         int seatIndex = 0;//座位(本地玩家 = 0)
@@ -840,7 +840,7 @@ public class GameView : MonoBehaviour
 
         if (GameDataManager.CurrRoomType == RoomEnum.BattleRoom)
         {
-            BattleResultView battleResultView = UIManager.Instance.OpenPartsView(ViewEnum.BattleResultView).GetComponent<BattleResultView>();
+            BattleResultView battleResultView = UIManager.Instance.OpenPartsView(PartsViewEnum.BattleResultView).GetComponent<BattleResultView>();
             battleResultView.OnSetResult(true);
         }
 
@@ -1170,7 +1170,7 @@ public class GameView : MonoBehaviour
             Vector2 winnerSeatPos = player.gameObject.transform.position;
 
             //產生贏得籌碼物件
-            RectTransform rt = UIManager.Instance.CreateUIObj(GameAssetsManager.Instance.WinChipsObj);
+            RectTransform rt = UIManager.Instance.CreateUIObj(AssetsManager.Instance.GetObjtypeAsset(ObjTypeEnum.WinChips));
             rt.anchoredPosition = pot_Img.rectTransform.anchoredPosition;
             WinChips winChips = rt.GetComponent<WinChips>();
             winChips.SetWinChips = pack.WinnerPack.WinChips;
@@ -1224,7 +1224,7 @@ public class GameView : MonoBehaviour
             //有贏得籌碼
             if (sideWinner.Value > 0)
             {
-                RectTransform rt = UIManager.Instance.CreateUIObj(GameAssetsManager.Instance.WinChipsObj);
+                RectTransform rt = UIManager.Instance.CreateUIObj(AssetsManager.Instance.GetObjtypeAsset(ObjTypeEnum.WinChips));
                 rt.anchoredPosition = pot_Img.rectTransform.anchoredPosition;
                 WinChips winChips = rt.GetComponent<WinChips>();
                 winChips.SetWinChips = sideWinner.Value;

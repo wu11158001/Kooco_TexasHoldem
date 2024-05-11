@@ -9,9 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c02acb23c90e7a84eb2cc39d34079f4f, type: 3}
-  m_Name: PokerBackSpriteData
+  m_Script: {fileID: 11500000, guid: ede173b4f2d04194b8318a1957fdff40, type: 3}
+  m_Name: pokerBackAlbum
   m_EditorClassIdentifier: 
-  sprites:
-    spritesList:
-    - {fileID: 21300000, guid: c4e3a8bd7cdaafb40a0161a3c719a477, type: 3}
+  album:
+  - {fileID: 21300000, guid: c4e3a8bd7cdaafb40a0161a3c719a477, type: 3}

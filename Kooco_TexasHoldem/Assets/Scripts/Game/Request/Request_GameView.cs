@@ -56,13 +56,13 @@ public class Request_GameView : BaseRequest
             case ActionCode.Request_InsufficientChips:
                 if (GameDataManager.CurrRoomType == RoomEnum.CashRoom)
                 {
-                    BuyChipsPartsView buyChipsView = UIManager.Instance.OpenPartsView(ViewEnum.BuyChipsPartsView).GetComponent<BuyChipsPartsView>();
+                    BuyChipsPartsView buyChipsView = UIManager.Instance.OpenPartsView(PartsViewEnum.BuyChipsPartsView).GetComponent<BuyChipsPartsView>();
                     buyChipsView.SetBuyChipsViewInfo(pack.InsufficientChipsPack.SmallBlind, thisView.BuyChipsGoBack);
                     thisView.OnInsufficientChips();
                 }
                 else if (GameDataManager.CurrRoomType == RoomEnum.BattleRoom)
                 {
-                    BattleResultView battleResultView = UIManager.Instance.OpenPartsView(ViewEnum.BattleResultView).GetComponent<BattleResultView>();
+                    BattleResultView battleResultView = UIManager.Instance.OpenPartsView(PartsViewEnum.BattleResultView).GetComponent<BattleResultView>();
                     battleResultView.OnSetResult(false);
                 }
                 break;
@@ -127,7 +127,7 @@ public class Request_GameView : BaseRequest
 
             //積分結果
             case ActionCode.BroadCastRequest_BattleResult:
-                BattleResultView battleResultView = UIManager.Instance.OpenPartsView(ViewEnum.BattleResultView).GetComponent<BattleResultView>();
+                BattleResultView battleResultView = UIManager.Instance.OpenPartsView(PartsViewEnum.BattleResultView).GetComponent<BattleResultView>();
                 battleResultView.OnSetResult(pack.BattleResultPack.FailPlayerId != Entry.TestInfoData.LocalUserId);
                 break;
         }

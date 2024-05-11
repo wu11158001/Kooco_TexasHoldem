@@ -40,7 +40,7 @@ namespace MetaMask.Unity.Samples
             {
                 if (instance == null)
                 {
-                    instance = GameObject.FindObjectOfType<UIModalManager>();
+                    instance = GameObject.FindFirstObjectByType<UIModalManager>();
                 }
                 return instance;
             }

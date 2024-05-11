@@ -35,19 +35,16 @@ public class Entry : UnitySingleton<Entry>
         gameObject.AddComponent<UnityMainThreadDispatcher>();
         gameObject.AddComponent<UIManager>();
         gameObject.AddComponent<RequestManager>();
+        gameObject.AddComponent<AssetsManager>(); ;
     }
 
     private IEnumerator Start()
     {
-        gameServer.gameObject.SetActive(false);
-
-        //遊戲資源
-        GameObject gameAssetsManagerObj = new GameObject();
-        gameAssetsManagerObj.name = "gameAssetsManager";
-        GameAssetsManager gameAssetsManager = gameAssetsManagerObj.AddComponent<GameAssetsManager>();
-        yield return gameAssetsManager.ILoadAssets();
+        yield return AssetsManager.Instance.ILoadAssets();
 
         UIManager.Instance.OpenView(ViewEnum.LoginView);
+
+        gameServer.gameObject.SetActive(false);
     }
 
     private void Update()

@@ -23,7 +23,7 @@ public class CashRoomBtn : MonoBehaviour
         {
             GameDataManager.CurrRoomType = RoomEnum.CashRoom;
 
-            BuyChipsPartsView buyChipsView = UIManager.Instance.OpenPartsView(ViewEnum.BuyChipsPartsView).GetComponent<BuyChipsPartsView>();
+            BuyChipsPartsView buyChipsView = UIManager.Instance.OpenPartsView(PartsViewEnum.BuyChipsPartsView).GetComponent<BuyChipsPartsView>();
             buyChipsView.SetBuyChipsViewInfo(smallBlind, null);
         });
     }

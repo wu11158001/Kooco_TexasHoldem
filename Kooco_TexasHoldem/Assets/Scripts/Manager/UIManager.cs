@@ -7,7 +7,7 @@ public class UIManager : UnitySingleton<UIManager>
     static Canvas mainCanvas;
 
     private Dictionary<ViewEnum, RectTransform> viewDic;
-    private Dictionary<ViewEnum, RectTransform> partsViewDic;
+    private Dictionary<PartsViewEnum, RectTransform> partsViewDic;
     private Stack<RectTransform> viewStack;
 
     public override void Awake()
@@ -23,7 +23,7 @@ public class UIManager : UnitySingleton<UIManager>
     public void Init()
     {
         viewDic = new Dictionary<ViewEnum, RectTransform>();
-        partsViewDic = new Dictionary<ViewEnum, RectTransform>();
+        partsViewDic = new Dictionary<PartsViewEnum, RectTransform>();
         viewStack = new Stack<RectTransform>();
 
         mainCanvas = GameObject.Find("Canvas").GetComponent<Canvas>();
@@ -81,7 +81,7 @@ public class UIManager : UnitySingleton<UIManager>
     /// 開啟零件類View
     /// </summary>
     /// <param name="viewName"></param>
-    public RectTransform OpenPartsView(ViewEnum viewName)
+    public RectTransform OpenPartsView(PartsViewEnum viewName)
     {
         RectTransform view = null;
         if (partsViewDic.ContainsKey(viewName))

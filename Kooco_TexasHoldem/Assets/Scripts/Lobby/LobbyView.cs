@@ -103,7 +103,7 @@ public class LobbyView : MonoBehaviour
     private void CreateRoom()
     {
         //現金桌        
-        GameObject cashRoomBtnObj = GameAssetsManager.Instance.CashRoomBtnObj;
+        GameObject cashRoomBtnObj = AssetsManager.Instance.GetObjtypeAsset(ObjTypeEnum.CashRoomBtn);
         float cashRoomSpacing = cashRoomParent.GetComponent<HorizontalLayoutGroup>().spacing;
         Rect cashRoomRect = cashRoomBtnObj.GetComponent<RectTransform>().rect;
         cashRoomParent.sizeDelta = new Vector2((cashRoomRect.width + cashRoomSpacing) * GameDataManager.CashRoomSmallBlindList.Count, cashRoomRect.height);

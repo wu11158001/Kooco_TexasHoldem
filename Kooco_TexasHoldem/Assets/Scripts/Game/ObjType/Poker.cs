@@ -27,11 +27,11 @@ public class Poker : MonoBehaviour
             pokerNumber = value;
             if (value <= -1)
             {
-                poker_Img.sprite = GameAssetsManager.Instance.GetPokerBack(0);
+                poker_Img.sprite = AssetsManager.Instance.GetAlbumAsset(AlbumEnum.PokerBack).album[0];
             }
             else
             {
-                poker_Img.sprite = GameAssetsManager.Instance.GetPokerNum(value);
+                poker_Img.sprite = AssetsManager.Instance.GetAlbumAsset(AlbumEnum.PokerNum).album[value];
             }            
         }
     }
@@ -86,7 +86,7 @@ public class Poker : MonoBehaviour
     public IEnumerator IHorizontalFlopEffect(int frontNum)
     {
         poker_Img.rectTransform.rotation = Quaternion.Euler(poker_Img.rectTransform.eulerAngles.x, 180, poker_Img.rectTransform.eulerAngles.z);
-        poker_Img.sprite = GameAssetsManager.Instance.GetPokerBack(0);
+        poker_Img.sprite = AssetsManager.Instance.GetAlbumAsset(AlbumEnum.PokerBack).album[0];
 
         float turnTime = 0.5f;
         DateTime startTime = DateTime.Now;
