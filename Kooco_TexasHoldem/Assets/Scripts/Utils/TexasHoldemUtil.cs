@@ -31,7 +31,42 @@ public static class TexasHoldemUtil
     public static void SetBuySlider(double smallBlind, Slider sli)
     {
         sli.minValue = (float)smallBlind * GameDataManager.MinMagnification;
-        sli.maxValue = (float)smallBlind * GameDataManager.MaxMagnification;
+        sli.maxValue = (float)Entry.TestInfoData.HaveChips;
         sli.value = sli.minValue;
+    }
+
+    /// <summary>
+    /// Slider變化
+    /// </summary>
+    /// <param name="sli">Slider物件</param>
+    /// <param name="currValue">當前滑條值</param>
+    /// <param name="stepSize">每單位編更值</param>
+    /// <param name="minValue">最小值</param>
+    /// <param name="maxValue">最大值</param>
+    /// <param name="sliderClickDetection">Slider點擊判斷</param>
+    /// <returns></returns>
+    public static float SliderValueChange(Slider sli, float currValue, float stepSize, float minValue, float maxValue, SliderClickDetection sliderClickDetection = null)
+    {
+        float newRaiseValue = sliderClickDetection != null && sliderClickDetection.GetSkiderClicked ? 
+                              Mathf.Round(currValue / stepSize) * stepSize : 
+                              currValue;
+
+        if (sli.value <= minValue)
+        {
+            sli.value = minValue;
+            return minValue;
+        }
+
+        if (newRaiseValue >= sli.maxValue && sli.value < sli.maxValue)
+        {
+            newRaiseValue -= stepSize;
+        }
+
+        if (newRaiseValue >= maxValue)
+        {
+            newRaiseValue = maxValue;
+        }
+
+        return newRaiseValue;
     }
 }

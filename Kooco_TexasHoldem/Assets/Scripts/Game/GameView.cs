@@ -286,6 +286,9 @@ public class GameView : MonoBehaviour
             player.SetPotWinnerActive = false;
             player.SetSideWinnerActive = false;
             player.SetTip = "";
+            player.GetHandPoker[0].gameObject.SetActive(false);
+            player.GetHandPoker[1].gameObject.SetActive(false);
+            player.OpenInfoMask = true;
         }
         foreach (var show in showPokerBtnList)
         {
@@ -389,38 +392,17 @@ public class GameView : MonoBehaviour
         //加注滑條
         raise_Sli.onValueChanged.AddListener((value) =>
         {
-            float stepSize = (float)thisData.SmallBlindValue * 2;
-            float newRaiseValue = sliderClickDetection.GetSkiderClicked ? Mathf.Round(value / stepSize) * stepSize : value;
+            float newRaiseValue = TexasHoldemUtil.SliderValueChange(raise_Sli,
+                                                                    value,
+                                                                    (float)thisData.SmallBlindValue * 2,
+                                                                    (float)thisData.MinRaiseValue,
+                                                                    (float)thisData.LocalPlayerChips,
+                                                                    sliderClickDetection);
 
-            if (raise_Sli.value <= thisData.MinRaiseValue)
-            {
-                raise_Sli.value = (float)thisData.MinRaiseValue;
-                return;
-            }
-
-            if (newRaiseValue >= raise_Sli.maxValue && raise_Sli.value < raise_Sli.maxValue)
-            {
-                newRaiseValue -= (float)thisData.SmallBlindValue * 2;
-            }
-
+            raiseAndAllInBtn_Txt.text = newRaiseValue >= thisData.LocalPlayerChips ?
+                                        $"All In\n{StringUtils.SetChipsUnit(thisData.LocalPlayerChips)}" :
+                                        raiseAndAllInBtn_Txt.text = $"Raise to\n{StringUtils.SetChipsUnit(newRaiseValue)}";
             SetRaiseToText = newRaiseValue;
-
-            if (newRaiseValue <= thisData.CurrCallValue)
-            {
-                newRaiseValue = (float)thisData.CurrCallValue;
-                raise_Sli.value = newRaiseValue;
-            }
-
-            if (newRaiseValue >= thisData.LocalPlayerChips)
-            {
-                newRaiseValue = (float)thisData.LocalPlayerChips;
-                raiseAndAllInBtn_Txt.text = $"All In\n{StringUtils.SetChipsUnit(thisData.LocalPlayerChips)}";
-            }
-            else
-            {
-                raiseAndAllInBtn_Txt.text = $"Raise to\n{StringUtils.SetChipsUnit(newRaiseValue)}";
-            }            
-
             thisData.CurrRaiseValue = (int)newRaiseValue;
         });
 

@@ -434,6 +434,7 @@ public class GameServer : MonoBehaviour
         playingList = new List<Client>();
         allInDic.Clear();
         gameRoomData.CommunityPoker = new List<int>();
+        gameRoomData.CurrCommunityPoker = new List<int>();
         gameRoomData.HandPokerDic = new Dictionary<string, (int, int)>();
     }
 
@@ -499,7 +500,10 @@ public class GameServer : MonoBehaviour
             foreach (var client in NotEnoughChipsPlayerList)
             {
                 client.State = PlayerStateEnum.Waiting;
-                SendRequest_NotEnoughChips(client);
+                if (client.UserId == Entry.TestInfoData.LocalUserId)
+                {
+                    SendRequest_NotEnoughChips(client);
+                }
             }
         }
         else
@@ -1256,7 +1260,7 @@ public class GameServer : MonoBehaviour
         licensingStagePack.HandPokerDic = handPokerDic;
 
         CommunityPokerPack currCommunityPokerPack = new CommunityPokerPack();
-        currCommunityPokerPack.CurrCommunityPoker = gameRoomData.CommunityPoker;
+        currCommunityPokerPack.CurrCommunityPoker = gameRoomData.CurrCommunityPoker;
 
         pack.CommunityPokerPack = currCommunityPokerPack;
         pack.LicensingStagePack = licensingStagePack;
@@ -1361,7 +1365,7 @@ public class GameServer : MonoBehaviour
         licensingStagePack.HandPokerDic = handPokerDic;
 
         CommunityPokerPack currCommunityPokerPack = new CommunityPokerPack();
-        currCommunityPokerPack.CurrCommunityPoker = gameRoomData.CommunityPoker;
+        currCommunityPokerPack.CurrCommunityPoker = gameRoomData.CurrCommunityPoker;
 
         pack.CommunityPokerPack = currCommunityPokerPack;
         pack.LicensingStagePack = licensingStagePack;

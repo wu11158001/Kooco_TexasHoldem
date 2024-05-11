@@ -61,9 +61,11 @@ public class BuyChipsPartsView : MonoBehaviour
         //購買Slider單位設定
         buyChips_Sli.onValueChanged.AddListener((value) =>
         {
-            float stepSize = (float)thisData.SmallBlind * 2;
-            float newRaiseValue = Mathf.Round(value / stepSize) * stepSize;
-            buyChips_Sli.value = newRaiseValue >= buyChips_Sli.maxValue ? buyChips_Sli.maxValue : newRaiseValue;
+            float newRaiseValue = TexasHoldemUtil.SliderValueChange(buyChips_Sli,
+                                                                    value,
+                                                                    (float)thisData.SmallBlind * 2,
+                                                                    buyChips_Sli.minValue,
+                                                                    buyChips_Sli.maxValue);
             preBuyChips_Txt.text = StringUtils.SetChipsUnit(newRaiseValue);
         });
 

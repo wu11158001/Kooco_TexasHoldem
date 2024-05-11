@@ -18,6 +18,7 @@ public class Entry : UnitySingleton<Entry>
         public static string NickName = "LocalUserName";
 
         public static int newPlayerId = 10;
+        public static double HaveChips = 153000; 
 
         public static DateTime foldTimd = DateTime.Now;
     }
