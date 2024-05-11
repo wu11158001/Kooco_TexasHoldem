@@ -33,7 +33,7 @@ public class Request_LobbyView : BaseRequest
     /// </summary>
     public void SendRequest_InBattleRoom()
     {
-        Entry.Instance.RoomSmallBlind = 500;
+        GameDataManager.RoomSmallBlind = 500;
         Entry.Instance.gameServer.SmallBlind = 500;
         Entry.Instance.gameServer.gameObject.SetActive(true);
 

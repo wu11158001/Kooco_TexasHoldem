@@ -21,4 +21,8 @@ public static class GameDataManager
     {
         50, 100, 200, 400,
     };
+
+
+    [Header("遊戲")]
+    public static double RoomSmallBlind { get; set; }           //進入房間的小盲值
 }

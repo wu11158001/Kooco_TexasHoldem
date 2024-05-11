@@ -41,7 +41,7 @@ public class Request_BuyChipsView : BaseRequest
     /// <param name="carryChips">攜帶籌碼</param>
     public void SendRequest_InCashRoom(double smallBlind, double carryChips)
     {
-        Entry.Instance.RoomSmallBlind = smallBlind;
+        GameDataManager.RoomSmallBlind = smallBlind;
         Entry.Instance.gameServer.SmallBlind = smallBlind;
         Entry.Instance.gameServer.gameObject.SetActive(true);
 

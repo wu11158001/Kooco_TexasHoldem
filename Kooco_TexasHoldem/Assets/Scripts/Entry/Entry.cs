@@ -23,28 +23,18 @@ public class Entry : UnitySingleton<Entry>
         public static DateTime foldTimd = DateTime.Now;
     }
 
-    /// <summary>
-    /// 進入房間的小盲值
-    /// </summary>
-    public double RoomSmallBlind { get; set; }
-
     public override void Awake()
     {
         base.Awake();
-
-        gameObject.AddComponent<UnityMainThreadDispatcher>();
-        gameObject.AddComponent<UIManager>();
-        gameObject.AddComponent<RequestManager>();
-        gameObject.AddComponent<AssetsManager>(); ;
     }
 
     private IEnumerator Start()
     {
-        yield return AssetsManager.Instance.ILoadAssets();
-
         UIManager.Instance.OpenView(ViewEnum.LoginView);
 
         gameServer.gameObject.SetActive(false);
+
+        yield return AssetsManager.Instance.ILoadAssets();
     }
 
     private void Update()

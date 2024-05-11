@@ -2,12 +2,18 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class LoadSceneManager : UnitySingleton<LoadSceneManager>
 {
+    [SerializeField]
+    RectTransform lodingView;
+
     public override void Awake()
     {
         base.Awake();
+
+        lodingView.gameObject.SetActive(false);
     }
 
     /// <summary>
@@ -26,6 +32,8 @@ public class LoadSceneManager : UnitySingleton<LoadSceneManager>
     /// <returns></returns>
     private IEnumerator ILoadScene(SceneEnum sceneEnum)
     {
+        lodingView.gameObject.SetActive(true);
+
         // 异步加载场景
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneEnum.ToString());
         asyncLoad.allowSceneActivation = false;
@@ -42,6 +50,9 @@ public class LoadSceneManager : UnitySingleton<LoadSceneManager>
 
                 UIManager.Instance.Init();
                 JudgeIntoScene(sceneEnum);
+
+                yield return new WaitForSeconds(0.5f);
+                lodingView.gameObject.SetActive(false);
             }
 
             yield return null;
