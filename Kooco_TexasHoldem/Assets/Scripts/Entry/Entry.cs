@@ -30,6 +30,7 @@ public class Entry : UnitySingleton<Entry>
 
     private IEnumerator Start()
     {
+        LanguageManager.LoadLangageJson();
         UIManager.Instance.OpenView(ViewEnum.LoginView);
 
         gameServer.gameObject.SetActive(false);
