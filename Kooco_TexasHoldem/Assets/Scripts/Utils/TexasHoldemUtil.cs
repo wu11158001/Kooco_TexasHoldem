@@ -31,7 +31,7 @@ public static class TexasHoldemUtil
     public static void SetBuySlider(double smallBlind, Slider sli)
     {
         sli.minValue = (float)smallBlind * GameDataManager.MinMagnification;
-        sli.maxValue = (float)Entry.TestInfoData.HaveChips;
+        sli.maxValue = (float)Entry.TestInfoData.LocalUserChips;
         sli.value = sli.minValue;
     }
 

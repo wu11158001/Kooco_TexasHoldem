@@ -6,6 +6,26 @@ using System.Runtime.InteropServices;
 
 public class LoginView : MonoBehaviour
 {
+    [SerializeField]
+    Button metaMaskConnect_Btn;
+
+    private void Awake()
+    {
+        ListenerEvent();
+    }
+
+    /// <summary>
+    /// 事件聆聽
+    /// </summary>
+    private void ListenerEvent()
+    {
+        //MetaMask連接
+        metaMaskConnect_Btn.onClick.AddListener(() =>
+        {
+            MetaMaskManager.Instance.MetaMaskConnectAndSign();
+        });
+    }
+
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.KeypadEnter))
@@ -13,16 +33,16 @@ public class LoginView : MonoBehaviour
             LoadSceneManager.Instance.LoadScene(SceneEnum.Lobby);
         }
 
-        if (Input.GetKeyDown(KeyCode.Keypad0))
+        if (Input.GetKeyDown(KeyCode.Keypad2))
         {
-            LanguageManager.CurrLanguage = 0;
-            LanguageManager.GetText("Test1");
+            LanguageManager.Instance.CurrLanguage = 0;
+            Debug.LogError(LanguageManager.Instance.GetText("Test1"));
         }
 
-        if (Input.GetKeyDown(KeyCode.Keypad1))
+        if (Input.GetKeyDown(KeyCode.Keypad3))
         {
-            LanguageManager.CurrLanguage = 1;
-            LanguageManager.GetText("Test1");
+            LanguageManager.Instance.CurrLanguage = 1;
+            Debug.LogError(LanguageManager.Instance.GetText("Test1"));
         }
     }
 }

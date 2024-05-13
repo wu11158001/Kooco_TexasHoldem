@@ -1,6 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Threading.Tasks;
+using MetaMask.Unity;
+using System.Numerics;
+using System;
 
 public static class GameDataManager
 {
@@ -24,5 +28,5 @@ public static class GameDataManager
 
 
     [Header("遊戲")]
-    public static double RoomSmallBlind { get; set; }           //進入房間的小盲值
+    public static double RoomSmallBlind { get; set; }           //進入房間的小盲值 
 }

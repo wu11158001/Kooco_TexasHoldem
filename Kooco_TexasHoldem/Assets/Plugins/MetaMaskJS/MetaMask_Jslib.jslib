@@ -41,9 +41,9 @@ mergeInto(LibraryManager.library, {
             var ethBalance = web3.utils.fromWei(balance, 'ether');
             console.log('ETH餘額:' + ethBalance);
             
-            myUnityInstance.SendMessage('MetaMaskConnect', 'GetAddress', address);
-            myUnityInstance.SendMessage('MetaMaskConnect', 'GetEthBlance', ethBalance);
-            myUnityInstance.SendMessage('MetaMaskConnect', 'WindowConnectSuccess');
+            myUnityInstance.SendMessage('MetaMaskManager', 'SetAddress', address);
+            myUnityInstance.SendMessage('MetaMaskManager', 'SetEthBlance', ethBalance);
+            myUnityInstance.SendMessage('MetaMaskManager', 'WindowConnectSuccess');
         }
 
         //主邏輯

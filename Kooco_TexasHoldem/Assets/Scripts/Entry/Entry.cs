@@ -18,7 +18,7 @@ public class Entry : UnitySingleton<Entry>
         public static string NickName = "LocalUserName";
 
         public static int newPlayerId = 10;
-        public static double HaveChips = 153000; 
+        public static double LocalUserChips = 153000; 
 
         public static DateTime foldTimd = DateTime.Now;
     }
@@ -30,7 +30,7 @@ public class Entry : UnitySingleton<Entry>
 
     private IEnumerator Start()
     {
-        LanguageManager.LoadLangageJson();
+        LanguageManager.Instance.LoadLangageJson();
         UIManager.Instance.OpenView(ViewEnum.LoginView);
 
         gameServer.gameObject.SetActive(false);
