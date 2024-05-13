@@ -80,24 +80,36 @@ public class UIManager : UnitySingleton<UIManager>
     /// <summary>
     /// 開啟零件類View
     /// </summary>
-    /// <param name="viewName"></param>
-    public RectTransform OpenPartsView(PartsViewEnum viewName)
+    /// <param name="partsView"></param>
+    public RectTransform OpenPartsView(PartsViewEnum partsView)
     {
         RectTransform view = null;
-        if (partsViewDic.ContainsKey(viewName))
+        if (partsViewDic.ContainsKey(partsView))
         {
-            view = partsViewDic[viewName];
+            view = partsViewDic[partsView];
             view.gameObject.SetActive(true);
         }
         else
         {
-            GameObject gameViewObj = Resources.Load<GameObject>($"PartsView/{viewName}");
+            GameObject gameViewObj = Resources.Load<GameObject>($"PartsView/{partsView}");
             view = CreateUIObj(gameViewObj);
-            InitViewTr(view, viewName.ToString());
-            partsViewDic.Add(viewName, view);
+            InitViewTr(view, partsView.ToString());
+            partsViewDic.Add(partsView, view);
         }
 
         return view;
+    }
+
+    /// <summary>
+    /// 關閉零件類View
+    /// </summary>
+    /// <param name="partsView"></param>
+    public void ClosePartsView(PartsViewEnum partsView)
+    {
+        if (partsViewDic.ContainsKey(partsView))
+        {
+            partsViewDic[partsView].gameObject.SetActive(false);
+        }
     }
 
     /// <summary>

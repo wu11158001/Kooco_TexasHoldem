@@ -21,10 +21,14 @@ using MetaMask;
 public class MetaMaskManager : UnitySingleton<MetaMaskManager>
 {
     [DllImport("__Internal")]
-    private static extern bool IsMobilePlatform();//檢測瀏覽器是否在移動平台
+    private static extern bool IsMobilePlatform();                  //檢測瀏覽器是否在移動平台
 
     [DllImport("__Internal")]
-    private static extern void WindowsLoginMetaMask();//登入電腦網頁MetaMask
+    private static extern void WindowsLoginMetaMask();              //登入電腦網頁MetaMask
+
+    [DllImport("__Internal")]
+    private static extern void Reload();                            //重新整理頁面
+
 
     public override void Awake()
     {
@@ -60,16 +64,26 @@ public class MetaMaskManager : UnitySingleton<MetaMaskManager>
     }
 
     /// <summary>
+    /// 斷開Metamask連接
+    /// </summary>
+    public void DoWalletDisconnected()
+    {
+        MetaMaskUnity.Instance.Disconnect(true);
+    }
+
+    /// <summary>
     /// MataMask連接與簽名
     /// </summary>
     public void MetaMaskConnectAndSign()
     {
         if (IsMobilePlatform())
         {
-            MetaMaskUnity.Instance.ConnectAndSign("Test Info");
+            //MetaMaskUnity.Instance.ConnectAndSign("Test Info");
+            MetaMaskUnity.Instance.Connect();
         }
         else
         {
+            UIManager.Instance.OpenPartsView(PartsViewEnum.WaitingView);
             WindowsLoginMetaMask();
         }
     }
@@ -84,8 +98,13 @@ public class MetaMaskManager : UnitySingleton<MetaMaskManager>
         LoadSceneManager.Instance.LoadScene(SceneEnum.Lobby);
     }
 
+    public void WindowConnectFail()
+    {
+        UIManager.Instance.ClosePartsView(PartsViewEnum.WaitingView);
+    }
+
     /// <summary>
-    /// 獲取錢包地址
+    /// 網頁登入設置錢包地址
     /// </summary>
     /// <param name="address"></param>
     public void SetAddress(string address)
@@ -95,10 +114,10 @@ public class MetaMaskManager : UnitySingleton<MetaMaskManager>
     }
 
     /// <summary>
-    /// 獲取ETH餘額
+    /// 網頁登入設置ETH餘額
     /// </summary>
     /// <param name="eth"></param>
-    public void GetEthBlance(string eth)
+    public void SetEthBlance(string eth)
     {
         Debug.Log($"GetEthBlance:{eth}");
         GameDataManager.UserWalletBalance = eth;
@@ -113,7 +132,7 @@ public class MetaMaskManager : UnitySingleton<MetaMaskManager>
     {
         UnityThread.executeInUpdate(() =>
         {
-            Debug.Log("Wallet WalletConnected!!!");
+            Debug.Log("Wallet Connected!!!");
         });
     }
 
@@ -137,6 +156,7 @@ public class MetaMaskManager : UnitySingleton<MetaMaskManager>
         public string id;
         public string method;
         public string[] result;
+        public double date;
     }
     /// <summary>
     /// 請求結果成功
@@ -147,11 +167,33 @@ public class MetaMaskManager : UnitySingleton<MetaMaskManager>
     {
         Debug.Log("Wallet OnEthereumRequestResultReceived!!!!!" + e.Result);
         EthereumRequestData data = JsonUtility.FromJson<EthereumRequestData>(e.Result);
-        if (data.method == "eth_requestAccounts")
+
+        switch (data.method)
         {
-            Debug.Log($"IsConnected : {MetaMaskUnity.Instance.Wallet.IsConnected}");
-            Debug.Log($"IsAuthorized : {MetaMaskUnity.Instance.Wallet.IsAuthorized}");
-            ConnectSuccess();
+            //首次發起連接請求
+            case "wallet_requestPermissions":
+                if (data.result != null &&
+                    data.result.Length != 0)
+                {
+                    ConnectSuccess();
+                }
+                break;
+
+            //連接請求
+            case "eth_requestAccounts":
+                if (data.result != null)
+                {
+                    ConnectSuccess();
+                }
+                break;
+
+            //鏈更改
+            case "eth_chainId":
+                //Reload();
+                break;
+
+            default:
+                break;
         }
     }
 
@@ -198,16 +240,16 @@ public class MetaMaskManager : UnitySingleton<MetaMaskManager>
     /// <param name="e"></param>
     private void OnConnectedFeedback(object sender, EventArgs e)
     {
-        Debug.Log("Wallet ConnectedFeedback");
+        Debug.Log("Wallet ConnectedFeedback" + e.ToString()); ;
         StopAllCoroutines();
 
-        if (MetaMaskUnity.Instance.Wallet.IsConnected)
+        if (MetaMaskUnity.Instance.Wallet.IsConnected &&
+            MetaMaskUnity.Instance.Wallet.IsAuthorized)
         {
             Debug.Log("MetaMask is connected!!!");
         }
         else
         {
-            MetaMaskUnity.Instance.Wallet.Disconnect();
             Debug.Log("MetaMask is not connected!!!");
         }
     }
@@ -217,7 +259,7 @@ public class MetaMaskManager : UnitySingleton<MetaMaskManager>
     /// </summary>
     private void OnWalletUnauthorized(object sender, EventArgs e)
     {
-        Debug.Log("Wallet WalletUnauthorized");
+        Debug.Log("Wallet Unauthorized");
     }
 
     /// <summary>
@@ -225,6 +267,8 @@ public class MetaMaskManager : UnitySingleton<MetaMaskManager>
     /// </summary>
     async private void ConnectSuccess()
     {
+        UIManager.Instance.OpenPartsView(PartsViewEnum.WaitingView);
+
         try
         {
             //獲取訊息
@@ -233,7 +277,7 @@ public class MetaMaskManager : UnitySingleton<MetaMaskManager>
             {
                 string address = accounts[0];
                 GameDataManager.UserWalletAddress = address;
-                Debug.Log("Metamask Address: " + address);
+                Debug.Log("Set Metamask Address: " + address);
 
                 // Request account balance
                 string balance = await MetaMaskUnity.Instance.Request<string>("eth_getBalance", new object[] { address, "latest" });
@@ -251,7 +295,7 @@ public class MetaMaskManager : UnitySingleton<MetaMaskManager>
                 decimal balanceEth = (decimal)balanceWei / (decimal)Math.Pow(10, 18);
 
                 GameDataManager.UserWalletBalance = balanceEth.ToString();
-                Debug.Log("Metamask Balance: " + balanceEth.ToString());
+                Debug.Log("Set Metamask Balance: " + balanceEth.ToString());
             }
             else
             {
@@ -263,7 +307,10 @@ public class MetaMaskManager : UnitySingleton<MetaMaskManager>
             Debug.LogError("Error retrieving account information: " + ex.Message);
         }
 
-        if (MetaMaskUnity.Instance.Wallet.IsConnected)
+        Debug.Log($"IsConnected : {MetaMaskUnity.Instance.Wallet.IsConnected}");
+        Debug.Log($"IsAuthorized : {MetaMaskUnity.Instance.Wallet.IsAuthorized}");
+        if (MetaMaskUnity.Instance.Wallet.IsConnected &&
+            MetaMaskUnity.Instance.Wallet.IsAuthorized)
         {
             LoadSceneManager.Instance.LoadScene(SceneEnum.Lobby);
         }

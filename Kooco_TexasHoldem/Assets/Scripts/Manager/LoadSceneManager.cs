@@ -32,6 +32,7 @@ public class LoadSceneManager : UnitySingleton<LoadSceneManager>
     /// <returns></returns>
     private IEnumerator ILoadScene(SceneEnum sceneEnum)
     {
+        UIManager.Instance.ClosePartsView(PartsViewEnum.WaitingView);
         lodingView.gameObject.SetActive(true);
 
         // 异步加载场景

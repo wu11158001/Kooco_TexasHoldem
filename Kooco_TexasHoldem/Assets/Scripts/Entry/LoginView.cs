@@ -22,6 +22,7 @@ public class LoginView : MonoBehaviour
         //MetaMask連接
         metaMaskConnect_Btn.onClick.AddListener(() =>
         {
+            MetaMaskManager.Instance.DoWalletDisconnected();
             MetaMaskManager.Instance.MetaMaskConnectAndSign();
         });
     }
@@ -37,12 +38,14 @@ public class LoginView : MonoBehaviour
         {
             LanguageManager.Instance.CurrLanguage = 0;
             Debug.LogError(LanguageManager.Instance.GetText("Test1"));
+            UIManager.Instance.ClosePartsView(PartsViewEnum.WaitingView);
         }
 
         if (Input.GetKeyDown(KeyCode.Keypad3))
         {
             LanguageManager.Instance.CurrLanguage = 1;
             Debug.LogError(LanguageManager.Instance.GetText("Test1"));
+            UIManager.Instance.OpenPartsView(PartsViewEnum.WaitingView);
         }
     }
 }

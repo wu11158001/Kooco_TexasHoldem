@@ -1,5 +1,10 @@
 mergeInto(LibraryManager.library, {
 
+    //重新整理頁面
+    Reload: function(libraryManagerPtr) {
+        window.location.reload();
+    },
+
     //檢測平台
     IsMobilePlatform: function(libraryManagerPtr) {
         return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
@@ -18,7 +23,8 @@ mergeInto(LibraryManager.library, {
                     await window.ethereum.request({ method: 'eth_requestAccounts' });
                     console.log('連接最新版本的以太坊 dApp 瀏覽器');
                 } catch (error) {
-                    console.error('連接最新版本的以太坊 dApp 瀏覽器錯誤:' + error);
+                    console.error('用戶取消連接MetaMask');
+                    myUnityInstance.SendMessage('MetaMaskManager', 'WindowConnectFail');
                     return;
                 }
             } else if (window.web3) {
@@ -43,12 +49,38 @@ mergeInto(LibraryManager.library, {
             
             myUnityInstance.SendMessage('MetaMaskManager', 'SetAddress', address);
             myUnityInstance.SendMessage('MetaMaskManager', 'SetEthBlance', ethBalance);
-            myUnityInstance.SendMessage('MetaMaskManager', 'WindowConnectSuccess');
+            myUnityInstance.SendMessage('MetaMaskManager', 'WindowConnectSuccess');         
+        }
+
+        // 請求 MetaMask 簽名
+        async function SignMessage() {
+            try {
+                // 獲取用戶的帳戶信息
+                const accounts = await ethereum.request({ method: 'eth_accounts' });
+                const from = accounts[0];
+
+                // 要簽名的消息
+                const message = 'Web Test Sign';
+
+                // 使用 MetaMask 簽名消息
+                const signature = await ethereum.request({
+                method: 'personal_sign',
+                params: [message, from]
+                });
+
+                //簽名結果
+                console.log("Signature:", signature);
+                myUnityInstance.SendMessage('MetaMaskManager', 'WindowConnectSuccess');
+                
+            } catch (error) {
+                console.error('Sign Error : '+ error);
+            }
         }
 
         //主邏輯
         async function main() {
             await ConncetMetamask();
+            //await SignMessage();  
         }
 
         main();
