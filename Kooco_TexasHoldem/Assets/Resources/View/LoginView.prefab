@@ -53,6 +53,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   metaMaskConnect_Btn: {fileID: 6529305865818223236}
+  t_Btn: {fileID: 0}
+  t2_Btn: {fileID: 0}
 --- !u!222 &837559756044227817
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -289,4 +291,4 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Version: 0.46'
+  m_Text: 'Version: 0.55'

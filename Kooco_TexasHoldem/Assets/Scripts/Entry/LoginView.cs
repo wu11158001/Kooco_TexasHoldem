@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 public class LoginView : MonoBehaviour
 {
     [SerializeField]
-    Button metaMaskConnect_Btn;
+    Button metaMaskConnect_Btn, t_Btn, t2_Btn;
 
     private void Awake()
     {
@@ -22,8 +22,17 @@ public class LoginView : MonoBehaviour
         //MetaMask連接
         metaMaskConnect_Btn.onClick.AddListener(() =>
         {
-            MetaMaskManager.Instance.DoWalletDisconnected();
             MetaMaskManager.Instance.MetaMaskConnectAndSign();
+        });
+
+        t_Btn.onClick.AddListener(() =>
+        {
+            MetaMaskManager.Instance.DoRevokePermissions();
+        });
+
+        t2_Btn.onClick.AddListener(() =>
+        {
+            MetaMaskManager.Instance.DoReload();
         });
     }
 

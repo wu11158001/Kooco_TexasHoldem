@@ -21,14 +21,19 @@ using MetaMask;
 public class MetaMaskManager : UnitySingleton<MetaMaskManager>
 {
     [DllImport("__Internal")]
-    private static extern bool IsMobilePlatform();                  //檢測瀏覽器是否在移動平台
+    private static extern bool IsMobilePlatform();                                  //檢測瀏覽器是否在移動平台
 
     [DllImport("__Internal")]
-    private static extern void WindowsLoginMetaMask();              //登入電腦網頁MetaMask
+    private static extern void WindowsConnectAndSignMetaMask();                     //登入電腦網頁MetaMask(簽名訊息)
 
     [DllImport("__Internal")]
-    private static extern void Reload();                            //重新整理頁面
+    private static extern void Reload();                                            //重新整理頁面
 
+    [DllImport("__Internal")]
+    private static extern void RevokePermissions();                                 //移除權限
+
+    [DllImport("__Internal")]
+    private static extern void DisconnectFromMetaMask();                            //斷開連接
 
     public override void Awake()
     {
@@ -63,6 +68,21 @@ public class MetaMaskManager : UnitySingleton<MetaMaskManager>
         }
     }
 
+    private void Start()
+    {
+        DoRevokePermissions();
+    }
+
+    #region 外部接口
+
+    /// <summary>重新整理頁面
+    /// 
+    /// </summary>
+    public void DoReload()
+    {
+        Reload();
+    }
+
     /// <summary>
     /// 斷開Metamask連接
     /// </summary>
@@ -72,32 +92,50 @@ public class MetaMaskManager : UnitySingleton<MetaMaskManager>
     }
 
     /// <summary>
+    /// 移除權限
+    /// </summary>
+    public void DoRevokePermissions()
+    {
+        MetaMaskUnity.Instance.Wallet.Disconnect();
+        MetaMaskUnity.Instance.Wallet.Dispose();
+        RevokePermissions();
+    }
+
+    /// <summary>
     /// MataMask連接與簽名
     /// </summary>
     public void MetaMaskConnectAndSign()
-    {
+    {        
+        DoWalletDisconnected();
+
         if (IsMobilePlatform())
         {
-            //MetaMaskUnity.Instance.ConnectAndSign("Test Info");
-            MetaMaskUnity.Instance.Connect();
+            MetaMaskUnity.Instance.ConnectAndSign("Test Sign Info");
         }
         else
         {
             UIManager.Instance.OpenPartsView(PartsViewEnum.WaitingView);
-            WindowsLoginMetaMask();
+            WindowsConnectAndSignMetaMask();
         }
     }
+
+    #endregion
+
+    #region 電腦網頁
 
     /// <summary>
     /// 電腦網頁登入成功
     /// </summary>
-    /// <param name="address">錢包地址</param>
-    /// <param name="blance">ETH餘額</param>
-    public void WindowConnectSuccess()
+    /// <param name="signature">簽名結果</param>
+    public void WindowConnectSuccess(string signature)
     {
+        Debug.Log($"Signature:{signature}");
         LoadSceneManager.Instance.LoadScene(SceneEnum.Lobby);
     }
 
+    /// <summary>
+    /// 電腦網頁登入失敗
+    /// </summary>
     public void WindowConnectFail()
     {
         UIManager.Instance.ClosePartsView(PartsViewEnum.WaitingView);
@@ -109,7 +147,7 @@ public class MetaMaskManager : UnitySingleton<MetaMaskManager>
     /// <param name="address"></param>
     public void SetAddress(string address)
     {
-        Debug.Log($"GetAddress:{address}");
+        Debug.Log($"Set Wallet Address:{address}");
         GameDataManager.UserWalletAddress = address;
     }
 
@@ -119,9 +157,13 @@ public class MetaMaskManager : UnitySingleton<MetaMaskManager>
     /// <param name="eth"></param>
     public void SetEthBlance(string eth)
     {
-        Debug.Log($"GetEthBlance:{eth}");
+        Debug.Log($"Set Wallet EthBlance:{eth}");
         GameDataManager.UserWalletBalance = eth;
     }
+
+    #endregion
+
+    #region 移動平台
 
     /// <summary>
     /// 移動平台錢包連線後呼叫
@@ -134,67 +176,6 @@ public class MetaMaskManager : UnitySingleton<MetaMaskManager>
         {
             Debug.Log("Wallet Connected!!!");
         });
-    }
-
-    /// <summary>
-    /// 請求失敗
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    private void OnEthereumRequestFailed(object sender, MetaMaskEthereumRequestFailedEventArgs e)
-    {
-        Debug.Log("Wallet EthereumRequestFailed!!!!");
-    }
-
-    /// <summary>
-    /// 請求結果訊息
-    /// </summary>
-    [System.Serializable]
-    public class EthereumRequestData
-    {
-        public string jsonrpc;
-        public string id;
-        public string method;
-        public string[] result;
-        public double date;
-    }
-    /// <summary>
-    /// 請求結果成功
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    private void OnEthereumRequestResultReceived(object sender, MetaMaskEthereumRequestResultEventArgs e)
-    {
-        Debug.Log("Wallet OnEthereumRequestResultReceived!!!!!" + e.Result);
-        EthereumRequestData data = JsonUtility.FromJson<EthereumRequestData>(e.Result);
-
-        switch (data.method)
-        {
-            //首次發起連接請求
-            case "wallet_requestPermissions":
-                if (data.result != null &&
-                    data.result.Length != 0)
-                {
-                    ConnectSuccess();
-                }
-                break;
-
-            //連接請求
-            case "eth_requestAccounts":
-                if (data.result != null)
-                {
-                    ConnectSuccess();
-                }
-                break;
-
-            //鏈更改
-            case "eth_chainId":
-                //Reload();
-                break;
-
-            default:
-                break;
-        }
     }
 
     /// <summary>
@@ -240,18 +221,8 @@ public class MetaMaskManager : UnitySingleton<MetaMaskManager>
     /// <param name="e"></param>
     private void OnConnectedFeedback(object sender, EventArgs e)
     {
-        Debug.Log("Wallet ConnectedFeedback" + e.ToString()); ;
+        Debug.Log("Wallet ConnectedFeedback"); ;
         StopAllCoroutines();
-
-        if (MetaMaskUnity.Instance.Wallet.IsConnected &&
-            MetaMaskUnity.Instance.Wallet.IsAuthorized)
-        {
-            Debug.Log("MetaMask is connected!!!");
-        }
-        else
-        {
-            Debug.Log("MetaMask is not connected!!!");
-        }
     }
 
     /// <summary>
@@ -263,12 +234,83 @@ public class MetaMaskManager : UnitySingleton<MetaMaskManager>
     }
 
     /// <summary>
+    /// 請求失敗
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void OnEthereumRequestFailed(object sender, MetaMaskEthereumRequestFailedEventArgs e)
+    {
+        Debug.Log("Wallet EthereumRequestFailed!!!!");
+    }
+
+    /// <summary>
+    /// 請求結果訊息
+    /// </summary>
+    [System.Serializable]
+    public class EthereumRequestData
+    {
+        public string jsonrpc;
+        public string id;
+        public string method;
+        public string result;
+        public string[] resultArr;
+        public double date;
+    }
+    /// <summary>
+    /// 請求結果
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void OnEthereumRequestResultReceived(object sender, MetaMaskEthereumRequestResultEventArgs e)
+    {
+        Debug.Log("Wallet OnEthereumRequestResultReceived!!!!!" + e.Result);
+        EthereumRequestData data = JsonUtility.FromJson<EthereumRequestData>(e.Result);
+
+        switch (data.method)
+        {
+            //首次發起連接請求
+            case "wallet_requestPermissions":
+                if (data.resultArr != null &&
+                    data.resultArr.Length != 0)
+                {
+                    
+                }
+                break;
+
+            //連接請求
+            case "eth_requestAccounts":
+
+                break;
+
+            //簽名結果
+            case "metamask_connectSign":
+                UIManager.Instance.OpenPartsView(PartsViewEnum.WaitingView);
+                if (data.result != "")
+                {                    
+                    Debug.Log($"Unity Singatrue:{data.result}");
+                    ConnectSuccess();
+                }
+                else
+                {
+                    Debug.Log("Sign Not Agree!!!");
+                }
+                break;
+
+            //鏈更改
+            case "eth_chainId":
+               
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    /// <summary>
     /// 連接成功
     /// </summary>
     async private void ConnectSuccess()
     {
-        UIManager.Instance.OpenPartsView(PartsViewEnum.WaitingView);
-
         try
         {
             //獲取訊息
@@ -315,4 +357,6 @@ public class MetaMaskManager : UnitySingleton<MetaMaskManager>
             LoadSceneManager.Instance.LoadScene(SceneEnum.Lobby);
         }
     }
+
+    #endregion
 }

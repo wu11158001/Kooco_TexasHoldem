@@ -142,7 +142,7 @@ public class Entry : UnitySingleton<Entry>
     /// </summary>
     public void OnWindowFocus()
     {
-        UIManager.Instance.ClosePartsView(PartsViewEnum.WaitingView);
+        
     }
 
     /// <summary>

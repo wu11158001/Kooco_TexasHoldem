@@ -47,12 +47,12 @@ public class LoadSceneManager : UnitySingleton<LoadSceneManager>
                 asyncLoad.allowSceneActivation = true;
                 GameDataManager.CurrScene = sceneEnum;
 
-                yield return new WaitForSeconds(0.5f);
+                yield return new WaitForSeconds(1);
 
                 UIManager.Instance.Init();
                 JudgeIntoScene(sceneEnum);
 
-                yield return new WaitForSeconds(0.5f);
+                yield return new WaitForSeconds(1);
                 lodingView.gameObject.SetActive(false);
             }
 
