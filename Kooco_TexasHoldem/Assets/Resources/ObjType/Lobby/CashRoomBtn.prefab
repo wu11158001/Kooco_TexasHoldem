@@ -55,7 +55,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ThisRoom_Btn: {fileID: 486495569691631378}
   smallBlind_Txt: {fileID: 1562921302305846783}
-  buyRange_Txt: {fileID: 673639769074208485}
+  buyMinChips_Txt: {fileID: 673639769074208485}
 --- !u!222 &7100449776665653317
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -229,7 +229,7 @@ GameObject:
   - component: {fileID: 5988634986971399290}
   - component: {fileID: 673639769074208485}
   m_Layer: 5
-  m_Name: BuyRange_Txt
+  m_Name: BuyMinChips_Txt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -295,4 +295,4 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: $1000~$200
+  m_Text: $1000

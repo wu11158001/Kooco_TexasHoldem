@@ -8,7 +8,7 @@ public class CashRoomBtn : MonoBehaviour
     [SerializeField]
     Button ThisRoom_Btn;
     [SerializeField]
-    Text smallBlind_Txt, buyRange_Txt;
+    Text smallBlind_Txt, buyMinChips_Txt;
 
     /// <summary>
     /// 設定現金房間按鈕訊息
@@ -16,14 +16,14 @@ public class CashRoomBtn : MonoBehaviour
     /// <param name="smallBlind"></param>
     public void SetCashRoomBtnInfo(double smallBlind)
     {
-        smallBlind_Txt.text = $"({StringUtils.SetChipsUnit(smallBlind)} / {StringUtils.SetChipsUnit(smallBlind * 2)})";
-        buyRange_Txt.text = $"{StringUtils.SetChipsUnit(smallBlind * GameDataManager.MinMagnification)} ~ {StringUtils.SetChipsUnit(smallBlind * GameDataManager.MaxMagnification)}";
+        smallBlind_Txt.text = $"{StringUtils.SetChipsUnit(smallBlind)} / {StringUtils.SetChipsUnit(smallBlind * 2)}";
+        buyMinChips_Txt.text = $"{StringUtils.SetChipsUnit(smallBlind * GameDataManager.MinMagnification)}";
 
         ThisRoom_Btn.onClick.AddListener(() =>
         {
-            GameDataManager.CurrRoomType = RoomEnum.CashRoom;
+            GameDataManager.CurrRoomType = GameRoomEnum.CashRoomView;
 
-            BuyChipsPartsView buyChipsView = UIManager.Instance.OpenPartsView(PartsViewEnum.BuyChipsPartsView).GetComponent<BuyChipsPartsView>();
+            BuyChipsPartsView buyChipsView = ViewManager.Instance.OpenPartsView(PartsViewEnum.BuyChipsPartsView).GetComponent<BuyChipsPartsView>();
             buyChipsView.SetBuyChipsViewInfo(smallBlind, null);
         });
     }

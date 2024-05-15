@@ -7,11 +7,9 @@ using RequestBuf;
 
 public class Entry : UnitySingleton<Entry>
 {
-    public GameServer gameServer;
+    #region 測試
     public static GameView gameView { get; set; }
-
     public static bool isPause;
-
     public static class TestInfoData
     {      
         public static string LocalUserId = "LocalUser";
@@ -23,24 +21,33 @@ public class Entry : UnitySingleton<Entry>
         public static DateTime foldTimd = DateTime.Now;
     }
 
+    public GameObject gameServerObj;
+    #endregion
+
+    [Header("Debug工具")]
+    [SerializeField]
+    GameObject debugObj;
+    [SerializeField]
+    bool isShowDebug;
+
     public override void Awake()
     {
         base.Awake();
+
+        debugObj.SetActive(isShowDebug);
     }
 
     private IEnumerator Start()
     {
         LanguageManager.Instance.LoadLangageJson();
-        UIManager.Instance.OpenView(ViewEnum.LoginView);
-
-        gameServer.gameObject.SetActive(false);
+        ViewManager.Instance.OpenView(ViewEnum.LoginView);
 
         yield return AssetsManager.Instance.ILoadAssets();
     }
 
     private void Update()
     {
-        if (gameView != null && gameView.gameObject.activeSelf)
+        /*if (gameView != null && gameView.gameObject.activeSelf)
         {
             if ((DateTime.Now - TestInfoData.foldTimd).TotalSeconds > 0.2f)
             {
@@ -121,7 +128,7 @@ public class Entry : UnitySingleton<Entry>
                     gameServer.TestShowFoldPoker(1, 1);
                 }
             }
-        }
+        }*/
         
     }
 

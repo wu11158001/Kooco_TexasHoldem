@@ -59,14 +59,15 @@ public class RequestManager : UnitySingleton<RequestManager>
     /// </summary>
     /// <param name="pack"></param>
     /// <param name="callback"></param>
-    public void Send(MainPack pack, UnityAction<MainPack> callback)
+    /// <param name="gameServer"></param>
+    public void Send(MainPack pack, UnityAction<MainPack> callback, GameServer gameServer)
     {
         string metname = pack.ActionCode.ToString();
-        MethodInfo method = Entry.Instance.gameServer.GetType().GetMethod(metname);
+        MethodInfo method = gameServer.GetType().GetMethod(metname);
         if (method != null)
         {
             object[] objs = new object[] { pack };
-            StartCoroutine(InvokeMethod(method, Entry.Instance.gameServer, objs));
+            StartCoroutine(InvokeMethod(method, gameServer, objs));
         }
         else
         {

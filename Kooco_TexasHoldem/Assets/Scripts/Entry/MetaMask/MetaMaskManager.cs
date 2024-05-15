@@ -70,10 +70,12 @@ public class MetaMaskManager : UnitySingleton<MetaMaskManager>
 
     private void Start()
     {
+#if !UNITY_EDITOR
         DoRevokePermissions();
+#endif
     }
 
-    #region 外部接口
+#region 外部接口
 
     /// <summary>重新整理頁面
     /// 
@@ -114,14 +116,14 @@ public class MetaMaskManager : UnitySingleton<MetaMaskManager>
         }
         else
         {
-            UIManager.Instance.OpenPartsView(PartsViewEnum.WaitingView);
+            ViewManager.Instance.OpenPartsView(PartsViewEnum.WaitingView);
             WindowsConnectAndSignMetaMask();
         }
     }
 
-    #endregion
+#endregion
 
-    #region 電腦網頁
+#region 電腦網頁
 
     /// <summary>
     /// 電腦網頁登入成功
@@ -138,7 +140,7 @@ public class MetaMaskManager : UnitySingleton<MetaMaskManager>
     /// </summary>
     public void WindowConnectFail()
     {
-        UIManager.Instance.ClosePartsView(PartsViewEnum.WaitingView);
+        ViewManager.Instance.ClosePartsView(PartsViewEnum.WaitingView);
     }
 
     /// <summary>
@@ -161,9 +163,9 @@ public class MetaMaskManager : UnitySingleton<MetaMaskManager>
         GameDataManager.UserWalletBalance = eth;
     }
 
-    #endregion
+#endregion
 
-    #region 移動平台
+#region 移動平台
 
     /// <summary>
     /// 移動平台錢包連線後呼叫
@@ -284,7 +286,7 @@ public class MetaMaskManager : UnitySingleton<MetaMaskManager>
 
             //簽名結果
             case "metamask_connectSign":
-                UIManager.Instance.OpenPartsView(PartsViewEnum.WaitingView);
+                ViewManager.Instance.OpenPartsView(PartsViewEnum.WaitingView);
                 if (data.result != "")
                 {                    
                     Debug.Log($"Unity Singatrue:{data.result}");
@@ -358,5 +360,5 @@ public class MetaMaskManager : UnitySingleton<MetaMaskManager>
         }
     }
 
-    #endregion
+#endregion
 }

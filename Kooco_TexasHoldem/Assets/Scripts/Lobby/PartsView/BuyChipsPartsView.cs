@@ -54,7 +54,6 @@ public class BuyChipsPartsView : MonoBehaviour
         {
             baseRequest.SendRequest_ExitRoom();
             gameObject.SetActive(false);
-            Entry.Instance.gameServer.gameObject.SetActive(false);
             LoadSceneManager.Instance.LoadScene(SceneEnum.Lobby);
         });
 

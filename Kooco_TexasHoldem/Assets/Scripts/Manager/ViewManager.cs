@@ -2,13 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class UIManager : UnitySingleton<UIManager>
+public class ViewManager : UnitySingleton<ViewManager>
 {
     static Canvas mainCanvas;
 
-    private Dictionary<ViewEnum, RectTransform> viewDic;
-    private Dictionary<PartsViewEnum, RectTransform> partsViewDic;
-    private Stack<RectTransform> viewStack;
+    Dictionary<ViewEnum, RectTransform> viewDic;
+    Dictionary<PartsViewEnum, RectTransform> partsViewDic;
+    Stack<RectTransform> viewStack;
 
     public override void Awake()
     {
@@ -34,7 +34,7 @@ public class UIManager : UnitySingleton<UIManager>
     /// </summary>
     /// <param name="view"></param>
     /// <param name="viewName"></param>
-    private void InitViewTr(RectTransform view, string viewName)
+    public void InitViewTr(RectTransform view, string viewName)
     {
         view.anchorMax = new Vector2(0.5f, 1);
         view.anchorMin = new Vector2(0.5f, 0);

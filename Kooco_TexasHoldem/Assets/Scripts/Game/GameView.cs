@@ -377,9 +377,9 @@ public class GameView : MonoBehaviour
         //離開房間
         exitRoom_Btn.onClick.AddListener(() =>
         {
-            baseRequest.SendRequest_ExitRoom(Entry.TestInfoData.LocalUserId);
-            Entry.Instance.gameServer.gameObject.SetActive(false);
-            LoadSceneManager.Instance.LoadScene(SceneEnum.Lobby);
+            //baseRequest.SendRequest_ExitRoom(Entry.TestInfoData.LocalUserId);
+            //LoadSceneManager.Instance.LoadScene(SceneEnum.Lobby);
+            GameRoomManager.Instance.RemoveGameRoom(transform.name);
         });
 
         //棄牌顯示手牌按鈕
@@ -481,6 +481,14 @@ public class GameView : MonoBehaviour
     }
 
     /// <summary>
+    /// 發送更新房間
+    /// </summary>
+    public void SendRequest_UpdateRoomInfo()
+    {
+        baseRequest.SendRequest_UpdateRoomInfo();
+    }
+
+    /// <summary>
     /// 棄牌
     /// </summary>
     private void OnFold()
@@ -526,8 +534,8 @@ public class GameView : MonoBehaviour
         }
 
         baseRequest.SendRequest_PlayerActed(Entry.TestInfoData.LocalUserId,
-                                                acting,
-                                                betValue);
+                                            acting,
+                                            betValue);
     }
 
     /// <summary>
@@ -703,7 +711,7 @@ public class GameView : MonoBehaviour
     /// </summary>
     private IEnumerator JudgeAutoAction()
     {
-        yield return null;
+        yield return new WaitForSeconds(0.2f);
 
         switch (AutoActionState)
         {
@@ -838,9 +846,9 @@ public class GameView : MonoBehaviour
         gamePlayerInfoList.Remove(exitPlayer);
         Destroy(exitPlayer.gameObject);
 
-        if (GameDataManager.CurrRoomType == RoomEnum.BattleRoom)
+        if (GameDataManager.CurrRoomType == GameRoomEnum.BattleRoomView)
         {
-            BattleResultView battleResultView = UIManager.Instance.OpenPartsView(PartsViewEnum.BattleResultView).GetComponent<BattleResultView>();
+            BattleResultView battleResultView = ViewManager.Instance.OpenPartsView(PartsViewEnum.BattleResultView).GetComponent<BattleResultView>();
             battleResultView.OnSetResult(true);
         }
 
@@ -1170,7 +1178,8 @@ public class GameView : MonoBehaviour
             Vector2 winnerSeatPos = player.gameObject.transform.position;
 
             //產生贏得籌碼物件
-            RectTransform rt = UIManager.Instance.CreateUIObj(AssetsManager.Instance.GetObjtypeAsset(ObjTypeEnum.WinChips));
+            RectTransform rt = Instantiate(AssetsManager.Instance.GetObjtypeAsset(ObjTypeEnum.WinChips)).GetComponent<RectTransform>();
+            rt.SetParent(transform);
             rt.anchoredPosition = pot_Img.rectTransform.anchoredPosition;
             WinChips winChips = rt.GetComponent<WinChips>();
             winChips.SetWinChips = pack.WinnerPack.WinChips;
@@ -1224,7 +1233,8 @@ public class GameView : MonoBehaviour
             //有贏得籌碼
             if (sideWinner.Value > 0)
             {
-                RectTransform rt = UIManager.Instance.CreateUIObj(AssetsManager.Instance.GetObjtypeAsset(ObjTypeEnum.WinChips));
+                RectTransform rt = Instantiate(AssetsManager.Instance.GetObjtypeAsset(ObjTypeEnum.WinChips)).GetComponent<RectTransform>();
+                rt.SetParent(transform);
                 rt.anchoredPosition = pot_Img.rectTransform.anchoredPosition;
                 WinChips winChips = rt.GetComponent<WinChips>();
                 winChips.SetWinChips = sideWinner.Value;

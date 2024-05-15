@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 public class LoginView : MonoBehaviour
 {
     [SerializeField]
-    Button metaMaskConnect_Btn, t_Btn, t2_Btn;
+    Button metaMaskConnect_Btn;
 
     private void Awake()
     {
@@ -24,16 +24,6 @@ public class LoginView : MonoBehaviour
         {
             MetaMaskManager.Instance.MetaMaskConnectAndSign();
         });
-
-        t_Btn.onClick.AddListener(() =>
-        {
-            MetaMaskManager.Instance.DoRevokePermissions();
-        });
-
-        t2_Btn.onClick.AddListener(() =>
-        {
-            MetaMaskManager.Instance.DoReload();
-        });
     }
 
     private void Update()
@@ -47,14 +37,14 @@ public class LoginView : MonoBehaviour
         {
             LanguageManager.Instance.CurrLanguage = 0;
             Debug.LogError(LanguageManager.Instance.GetText("Test1"));
-            UIManager.Instance.ClosePartsView(PartsViewEnum.WaitingView);
+            ViewManager.Instance.ClosePartsView(PartsViewEnum.WaitingView);
         }
 
         if (Input.GetKeyDown(KeyCode.Keypad3))
         {
             LanguageManager.Instance.CurrLanguage = 1;
             Debug.LogError(LanguageManager.Instance.GetText("Test1"));
-            UIManager.Instance.OpenPartsView(PartsViewEnum.WaitingView);
+            ViewManager.Instance.OpenPartsView(PartsViewEnum.WaitingView);
         }
     }
 }

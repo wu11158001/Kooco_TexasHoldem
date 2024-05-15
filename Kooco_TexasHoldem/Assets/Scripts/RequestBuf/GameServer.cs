@@ -12,6 +12,9 @@ public class GameServer : MonoBehaviour
 {
     Coroutine cdCoroutine;
 
+    public BaseRequest targetBaseRequest;   //對應的協議接收物件
+
+
     public List<Client> clientList;        //所有客戶端
     List<Client> playingList;              //當前遊戲玩家
     Dictionary<string, double> allInDic;   //AllIn玩家
@@ -43,16 +46,24 @@ public class GameServer : MonoBehaviour
         gameRoomData = new GameRoomData();
         clientList = new List<Client>();
         playingList = new List<Client>();
-        allInDic = new Dictionary<string, double>();
-        StartCoroutine(ITest());
+        allInDic = new Dictionary<string, double>();        
     }
 
-    private IEnumerator ITest()
+    /// <summary>
+    /// Server開始
+    /// </summary>
+    /// <param name="roomType">房間類型</param>
+    public void ServerStart(GameRoomEnum roomType)
     {
-        maxRoomPeople = GameDataManager.CurrRoomType == RoomEnum.CashRoom ? 6 : 2;
+        StartCoroutine(ITest(roomType));
+    }
+
+    private IEnumerator ITest(GameRoomEnum roomType)
+    {
+        maxRoomPeople = GameDataManager.CurrRoomType == GameRoomEnum.CashRoomView ? 6 : 2;
 
         //測試用
-        int initPlayerCount = GameDataManager.CurrRoomType == RoomEnum.CashRoom ? UnityEngine.Random.Range(2, 6) : 1;
+        int initPlayerCount = GameDataManager.CurrRoomType == GameRoomEnum.CashRoomView ? UnityEngine.Random.Range(2, 6) : 1;
         gameRoomData.ButtonSeat = UnityEngine.Random.Range(0, initPlayerCount);
         for (int i = 0; i < initPlayerCount; i++)
         {
@@ -61,8 +72,8 @@ public class GameServer : MonoBehaviour
 
             PlayerInfoPack playerInfoPack = new PlayerInfoPack();
             playerInfoPack.UserID = $"Player{accumulationPlayer}";
-            playerInfoPack.NickName = GameDataManager.CurrRoomType == RoomEnum.CashRoom ? $"Player{accumulationPlayer}" : $"Battle{i}";
-            playerInfoPack.Chips = GameDataManager.CurrRoomType == RoomEnum.CashRoom ?  ((Entry.Instance.gameServer.SmallBlind * 2) * 40) + 6000 + (i * 8000) : 10000;
+            playerInfoPack.NickName = GameDataManager.CurrRoomType == GameRoomEnum.CashRoomView ? $"Player{accumulationPlayer}" : $"Battle{i}";
+            playerInfoPack.Chips = GameDataManager.CurrRoomType == GameRoomEnum.CashRoomView ?  ((SmallBlind * 2) * 40) + 6000 + (i * 8000) : 10000;
 
             PlayerInOutRoomPack playerInOutRoomPack = new PlayerInOutRoomPack();
             playerInOutRoomPack.IsInRoom = true;
@@ -72,7 +83,7 @@ public class GameServer : MonoBehaviour
             Request_PlayerInOutRoom(pack);
         }
 
-        if (GameDataManager.CurrRoomType == RoomEnum.CashRoom)
+        if (roomType == GameRoomEnum.CashRoomView)
         {
             SetPoker();
             gameRoomData.CurrFlow = FlowEnum.River;
@@ -80,7 +91,7 @@ public class GameServer : MonoBehaviour
             gameRoomData.TotalPot = 1000;
             gameRoomData.CurrCallValue = SmallBlind;
         }
-        else if (GameDataManager.CurrRoomType == RoomEnum.BattleRoom)
+        else if (roomType == GameRoomEnum.BattleRoomView)
         {
             gameRoomData.CurrFlow = FlowEnum.PotResult;
             gameRoomData.TotalPot = 0;
@@ -246,7 +257,8 @@ public class GameServer : MonoBehaviour
         bool isLocalUser = clientList.Where(x => x.UserId == Entry.TestInfoData.LocalUserId).Count() > 0;
         if (isLocalUser == true)
         {
-            RequestManager.Instance.HandleRequest(pack);
+            //RequestManager.Instance.HandleRequest(pack);
+            targetBaseRequest.HandleRequest(pack);
         }
     }
 
@@ -261,7 +273,8 @@ public class GameServer : MonoBehaviour
         bool isLocalUser = clientList.Where(x => x.UserId == Entry.TestInfoData.LocalUserId).Count() > 0;
         if (isExcludeId == false && isLocalUser == true)
         {
-            RequestManager.Instance.HandleRequest(pack);
+            //RequestManager.Instance.HandleRequest(pack);
+            targetBaseRequest.HandleRoomBroadcast(pack);
         }
     }
 
@@ -495,7 +508,7 @@ public class GameServer : MonoBehaviour
         }
 
         //發送籌碼不足玩家
-        if (GameDataManager.CurrRoomType != RoomEnum.BattleRoom)
+        if (GameDataManager.CurrRoomType != GameRoomEnum.BattleRoomView)
         {
             foreach (var client in NotEnoughChipsPlayerList)
             {
@@ -951,7 +964,7 @@ public class GameServer : MonoBehaviour
 
             pack.PlayerActingRoundPack = playerActingRoundPack;
 
-            RequestManager.Instance.HandleRequest(pack);
+            SendRequest(pack);
         }
 
         yield return null;

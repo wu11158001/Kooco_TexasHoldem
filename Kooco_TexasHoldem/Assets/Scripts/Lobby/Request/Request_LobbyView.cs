@@ -33,10 +33,6 @@ public class Request_LobbyView : BaseRequest
     /// </summary>
     public void SendRequest_InBattleRoom()
     {
-        GameDataManager.RoomSmallBlind = 500;
-        Entry.Instance.gameServer.SmallBlind = 500;
-        Entry.Instance.gameServer.gameObject.SetActive(true);
-
         MainPack pack = new MainPack();
         pack.ActionCode = ActionCode.Request_PlayerInOutRoom;
 
@@ -50,9 +46,9 @@ public class Request_LobbyView : BaseRequest
         playerInOutRoomPack.PlayerInfoPack = playerInfoPack;
 
         pack.PlayerInOutRoomPack = playerInOutRoomPack;
-        Entry.Instance.gameServer.Request_PlayerInOutRoom(pack);
 
-        LoadSceneManager.Instance.LoadScene(SceneEnum.Game);
+        GameRoomManager.Instance.CerateGameRoom(pack, GameRoomEnum.BattleRoomView, 500);
+        //LoadSceneManager.Instance.LoadScene(SceneEnum.Game);
     }
 
     public override void OnDestroy()

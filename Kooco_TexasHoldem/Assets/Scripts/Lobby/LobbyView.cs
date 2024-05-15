@@ -48,7 +48,7 @@ public class LobbyView : MonoBehaviour
         //積分房
         battle_Btn.onClick.AddListener(() =>
         {
-            GameDataManager.CurrRoomType = RoomEnum.BattleRoom;
+            GameDataManager.CurrRoomType = GameRoomEnum.BattleRoomView;
 
             //開啟計時器
             waitingTime_Tr.gameObject.SetActive(true);

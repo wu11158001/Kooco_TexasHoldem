@@ -34,7 +34,6 @@ public class BattleResultView : MonoBehaviour
     /// <param name="isWin"></param>
     public void OnSetResult(bool isWin)
     {
-        Entry.Instance.gameServer.gameObject.SetActive(false);
         result_Txt.text = isWin ? "Win" : "Fail";
     }
 }

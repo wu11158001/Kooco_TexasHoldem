@@ -41,10 +41,6 @@ public class Request_BuyChipsView : BaseRequest
     /// <param name="carryChips">攜帶籌碼</param>
     public void SendRequest_InCashRoom(double smallBlind, double carryChips)
     {
-        GameDataManager.RoomSmallBlind = smallBlind;
-        Entry.Instance.gameServer.SmallBlind = smallBlind;
-        Entry.Instance.gameServer.gameObject.SetActive(true);
-
         MainPack pack = new MainPack();
         pack.ActionCode = ActionCode.Request_PlayerInOutRoom;
 
@@ -58,9 +54,13 @@ public class Request_BuyChipsView : BaseRequest
         playerInOutRoomPack.PlayerInfoPack = playerInfoPack;
 
         pack.PlayerInOutRoomPack = playerInOutRoomPack;
-        Entry.Instance.gameServer.Request_PlayerInOutRoom(pack);
 
-        LoadSceneManager.Instance.LoadScene(SceneEnum.Game);
+        GameRoomManager.Instance.CerateGameRoom(pack, GameRoomEnum.CashRoomView, smallBlind);
+
+        gameObject.SetActive(false);
+
+        /*Entry.Instance.gameServer.Request_PlayerInOutRoom(pack);
+        LoadSceneManager.Instance.LoadScene(SceneEnum.Game);*/
     }
 
     /// <summary>

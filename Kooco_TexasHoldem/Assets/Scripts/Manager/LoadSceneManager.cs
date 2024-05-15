@@ -32,7 +32,7 @@ public class LoadSceneManager : UnitySingleton<LoadSceneManager>
     /// <returns></returns>
     private IEnumerator ILoadScene(SceneEnum sceneEnum)
     {
-        UIManager.Instance.ClosePartsView(PartsViewEnum.WaitingView);
+        ViewManager.Instance.ClosePartsView(PartsViewEnum.WaitingView);
         lodingView.gameObject.SetActive(true);
 
         // 异步加载场景
@@ -47,12 +47,12 @@ public class LoadSceneManager : UnitySingleton<LoadSceneManager>
                 asyncLoad.allowSceneActivation = true;
                 GameDataManager.CurrScene = sceneEnum;
 
-                yield return new WaitForSeconds(1);
+                yield return new WaitForSeconds(0.5f);
 
-                UIManager.Instance.Init();
+                ViewManager.Instance.Init();
                 JudgeIntoScene(sceneEnum);
 
-                yield return new WaitForSeconds(1);
+                yield return new WaitForSeconds(0.5f);
                 lodingView.gameObject.SetActive(false);
             }
 
@@ -73,23 +73,23 @@ public class LoadSceneManager : UnitySingleton<LoadSceneManager>
                 break;
 
             case SceneEnum.Lobby:
-                UIManager.Instance.OpenView(ViewEnum.LobbyView);
+                ViewManager.Instance.OpenView(ViewEnum.LobbyView);
                 break;
 
             case SceneEnum.Game:
 
-                switch (GameDataManager.CurrRoomType)
+               /* switch (GameDataManager.CurrRoomType)
                 {
                     //積分房
-                    case RoomEnum.BattleRoom:
-                        UIManager.Instance.OpenView(ViewEnum.BattleRoomView);
+                    case GameRoomEnum.BattleRoomView:
+                        ViewManager.Instance.OpenView(ViewEnum.BattleRoomView);
                         break;
                         
                     //現金房
-                    case RoomEnum.CashRoom:
-                        UIManager.Instance.OpenView(ViewEnum.CashRoomView);
+                    case GameRoomEnum.CashRoomView:
+                        ViewManager.Instance.OpenView(ViewEnum.CashRoomView);
                         break;
-                }
+                }*/
                 break;
         }
     }

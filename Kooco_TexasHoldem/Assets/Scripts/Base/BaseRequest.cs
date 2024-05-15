@@ -6,13 +6,16 @@ using RequestBuf;
 
 abstract public class BaseRequest : MonoBehaviour
 {
+    [SerializeField]
+    GameServer gameServer;
+
     protected List<ActionCode> requestDic;
     protected List<ActionCode> roomBroadcastDic;
 
     public virtual void Awake()
     {
-        RegisterRequest();
-        RegisterRoomBroadcast();
+        //RegisterRequest();
+        //RegisterRoomBroadcast();
     }
 
     /// <summary>
@@ -43,7 +46,7 @@ abstract public class BaseRequest : MonoBehaviour
     /// <param name="pack"></param>
     protected void SendRequest(MainPack pack)
     {
-        RequestManager.Instance.Send(pack, HandleRequest);
+        RequestManager.Instance.Send(pack, HandleRequest, gameServer);
     }
 
     /// <summary>
@@ -66,7 +69,7 @@ abstract public class BaseRequest : MonoBehaviour
 
     public virtual void OnDestroy()
     {
-        foreach (var request in requestDic)
+        /*foreach (var request in requestDic)
         {
             RequestManager.Instance.RemoveRequest(request);
         }
@@ -74,6 +77,6 @@ abstract public class BaseRequest : MonoBehaviour
         foreach (var broadCast in roomBroadcastDic)
         {
             RequestManager.Instance.RemoveRoomBroadcast(broadCast);
-        }
+        }*/
     }
 }

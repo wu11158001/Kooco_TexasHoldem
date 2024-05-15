@@ -36,8 +36,7 @@ public class Request_GameView : BaseRequest
 
     private void OnEnable()
     {
-        isStartReceiveRequest = false;
-        SendRequest_UpdateRoomInfo();
+        isStartReceiveRequest = false;       
     }
 
     public override void HandleRequest(MainPack pack)
@@ -52,17 +51,23 @@ public class Request_GameView : BaseRequest
                 thisView.UpdateGameRoomInfo(pack);
                 break;
 
+
+            //本地玩家行動回合
+            case ActionCode.BroadCastRequest_PlayerActingRound:
+                thisView.ILocalPlayerRound(pack.PlayerActingRoundPack);
+                break;
+
             //籌碼不足
             case ActionCode.Request_InsufficientChips:
-                if (GameDataManager.CurrRoomType == RoomEnum.CashRoom)
+                if (GameDataManager.CurrRoomType == GameRoomEnum.CashRoomView)
                 {
-                    BuyChipsPartsView buyChipsView = UIManager.Instance.OpenPartsView(PartsViewEnum.BuyChipsPartsView).GetComponent<BuyChipsPartsView>();
+                    BuyChipsPartsView buyChipsView = ViewManager.Instance.OpenPartsView(PartsViewEnum.BuyChipsPartsView).GetComponent<BuyChipsPartsView>();
                     buyChipsView.SetBuyChipsViewInfo(pack.InsufficientChipsPack.SmallBlind, thisView.BuyChipsGoBack);
                     thisView.OnInsufficientChips();
                 }
-                else if (GameDataManager.CurrRoomType == RoomEnum.BattleRoom)
+                else if (GameDataManager.CurrRoomType == GameRoomEnum.BattleRoomView)
                 {
-                    BattleResultView battleResultView = UIManager.Instance.OpenPartsView(PartsViewEnum.BattleResultView).GetComponent<BattleResultView>();
+                    BattleResultView battleResultView = ViewManager.Instance.OpenPartsView(PartsViewEnum.BattleResultView).GetComponent<BattleResultView>();
                     battleResultView.OnSetResult(false);
                 }
                 break;
@@ -95,11 +100,6 @@ public class Request_GameView : BaseRequest
                 StartCoroutine(thisView.IGameStage(pack));
                 break;
 
-            //本地玩家行動回合
-            case ActionCode.BroadCastRequest_PlayerActingRound:
-                thisView.ILocalPlayerRound(pack.PlayerActingRoundPack);
-                break;
-
             //玩家行動倒數
             case ActionCode.BroadCastRequest_ActingCD:
                 //行動框
@@ -127,7 +127,7 @@ public class Request_GameView : BaseRequest
 
             //積分結果
             case ActionCode.BroadCastRequest_BattleResult:
-                BattleResultView battleResultView = UIManager.Instance.OpenPartsView(PartsViewEnum.BattleResultView).GetComponent<BattleResultView>();
+                BattleResultView battleResultView = ViewManager.Instance.OpenPartsView(PartsViewEnum.BattleResultView).GetComponent<BattleResultView>();
                 battleResultView.OnSetResult(pack.BattleResultPack.FailPlayerId != Entry.TestInfoData.LocalUserId);
                 break;
         }
