@@ -17,6 +17,7 @@ public class Request_GameView : BaseRequest
         {
             ActionCode.Request_UpdateRoomInfo,
             ActionCode.Request_InsufficientChips,
+            ActionCode.Request_BuyChips,
         };
 
         roomBroadcastDic = new List<ActionCode>()
@@ -59,17 +60,12 @@ public class Request_GameView : BaseRequest
 
             //籌碼不足
             case ActionCode.Request_InsufficientChips:
-                if (GameDataManager.CurrRoomType == GameRoomEnum.CashRoomView)
-                {
-                    BuyChipsPartsView buyChipsView = ViewManager.Instance.OpenPartsView(PartsViewEnum.BuyChipsPartsView).GetComponent<BuyChipsPartsView>();
-                    buyChipsView.SetBuyChipsViewInfo(pack.InsufficientChipsPack.SmallBlind, thisView.BuyChipsGoBack);
-                    thisView.OnInsufficientChips();
-                }
-                else if (GameDataManager.CurrRoomType == GameRoomEnum.BattleRoomView)
-                {
-                    BattleResultView battleResultView = ViewManager.Instance.OpenPartsView(PartsViewEnum.BattleResultView).GetComponent<BattleResultView>();
-                    battleResultView.OnSetResult(false);
-                }
+                thisView.OnInsufficientChips(pack);
+                break;
+
+            //購買籌碼
+            case ActionCode.Request_BuyChips:
+                thisView.BuyChipsGoBack(pack);
                 break;
         }
     }
@@ -127,8 +123,7 @@ public class Request_GameView : BaseRequest
 
             //積分結果
             case ActionCode.BroadCastRequest_BattleResult:
-                BattleResultView battleResultView = ViewManager.Instance.OpenPartsView(PartsViewEnum.BattleResultView).GetComponent<BattleResultView>();
-                battleResultView.OnSetResult(pack.BattleResultPack.FailPlayerId != Entry.TestInfoData.LocalUserId);
+                thisView.SetBattleResult(pack.BattleResultPack.FailPlayerId != Entry.TestInfoData.LocalUserId);
                 break;
         }
     }
@@ -178,6 +173,24 @@ public class Request_GameView : BaseRequest
         showFoldPokerPack.UserID = Entry.TestInfoData.LocalUserId;
 
         pack.ShowFoldPokerPack = showFoldPokerPack;
+        SendRequest(pack);
+    }
+
+    /// <summary>
+    /// 發送購買籌碼
+    /// </summary>
+    /// <param name="id">ID</param>
+    /// <param name="buyChipsValue">購買籌碼數量</param>
+    public void SendRequest_BuyChips(string id, double buyChipsValue)
+    {
+        MainPack pack = new MainPack();
+        pack.ActionCode = ActionCode.Request_BuyChips;
+
+        BuyChipsPack buyChipsPack = new BuyChipsPack();
+        buyChipsPack.UserId = id;
+        buyChipsPack.BuyChipsValue = buyChipsValue;
+
+        pack.BuyChipsPack = buyChipsPack;
         SendRequest(pack);
     }
 

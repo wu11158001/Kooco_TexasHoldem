@@ -1,7 +1,32 @@
 ﻿[
   {
-    "ID": "Test1",
-    "English": "Is Test",
-    "zh_TW": "我是測試"
+    "ID": "大廳",
+    "English": null,
+    "zh_TW": null
+  },
+  {
+    "ID": "BattleRoom",
+    "English": "Battle",
+    "zh_TW": "積分對戰"
+  },
+  {
+    "ID": "CashRoom",
+    "English": "Cash",
+    "zh_TW": "現金桌"
+  },
+  {
+    "ID": "Pairing",
+    "English": "Pairing",
+    "zh_TW": "配對中"
+  },
+  {
+    "ID": "MaxRoomTip",
+    "English": "Maximum number of rooms reached",
+    "zh_TW": "已達最大房間數"
+  },
+  {
+    "ID": "通用",
+    "English": null,
+    "zh_TW": null
   }
 ]

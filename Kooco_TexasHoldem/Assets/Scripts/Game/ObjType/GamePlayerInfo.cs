@@ -44,7 +44,7 @@ public class GamePlayerInfo : MonoBehaviour
     Coroutine cdCoroutine;      //倒數協程
 
     double currRoomChips;       //當前擁有籌碼
-    Vector2 potPointPos;        //底池位置
+    RectTransform potPoint;     //底池位置
 
     /// <summary>
     /// 座位編號
@@ -217,8 +217,8 @@ public class GamePlayerInfo : MonoBehaviour
     /// <param name="nickName">暱稱</param>
     /// <param name="initChips">初始籌碼</param>
     /// <param name="avatar">頭像</param>
-    /// <param name="potPointPos">底池位置</param>
-    public void SetInitPlayerInfo(int seatIndex, string userId, string nickName, double initChips, Sprite avatar, Vector2 potPointPos)
+    /// <param name="potPoint">底池位置</param>
+    public void SetInitPlayerInfo(int seatIndex, string userId, string nickName, double initChips, Sprite avatar, RectTransform potPoint)
     {
         Init();
 
@@ -228,7 +228,7 @@ public class GamePlayerInfo : MonoBehaviour
         avatar_Img.sprite = avatar;
         nickName_Txt.text = nickName;
         chips_Txt.text = $"{StringUtils.SetChipsUnit(initChips)}";
-        this.potPointPos = potPointPos;
+        this.potPoint = potPoint;
     }
 
     /// <summary>
@@ -305,7 +305,7 @@ public class GamePlayerInfo : MonoBehaviour
             betChips_Txt.text = "0";
             betChips_Tr.gameObject.SetActive(true);
             betChips_Tr.anchoredPosition = Vector2.zero;
-            ObjMoveUtils.ObjMoveTowardsTarget(betChips_Tr, potPointPos, 0.5f, 240);
+            ObjMoveUtils.ObjMoveTowardsTarget(betChips_Tr, potPoint.transform.position, 0.5f, 240);
         }
 
         //下注籌碼文字效果

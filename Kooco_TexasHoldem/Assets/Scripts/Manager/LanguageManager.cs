@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using LitJson;
+using UnityEngine.Events;
 
 public class LanguageManager
 {
@@ -24,12 +25,20 @@ public class LanguageManager
             return language;
         }
     }
-    private LanguageManager() { }
+    private LanguageManager() 
+    {
+        thisData = new ThisData();
+    }
 
     /// <summary>
     /// 紀錄翻譯文本
     /// </summary>
     Dictionary<string, string[]> languageDic = new Dictionary<string, string[]>();
+
+    /// <summary>
+    /// 紀錄更新語言方法
+    /// </summary>
+    List<UnityAction> updateLanguageFuncList = new List<UnityAction>();
 
     /// <summary>
     /// 翻譯攔名稱
@@ -55,18 +64,21 @@ public class LanguageManager
             {
                 case "English":
                     return English;
+
                 case "zh_TW":
                     return zh_TW;
+
                 default:
                     return "";
             }
         }
     }
 
-    /// <summary>
-    /// 當前語言Index
-    /// </summary>
-    public int CurrLanguage { get; set; }
+    private ThisData thisData;
+    public class ThisData
+    {
+        public int CurrLanguageIndex;       //當前語言Index
+    }
 
     /// <summary>
     /// 載入翻譯文本
@@ -99,12 +111,66 @@ public class LanguageManager
     {
         if (languageDic.ContainsKey(id))
         {
-            return languageDic[id][CurrLanguage];
+            return languageDic[id][thisData.CurrLanguageIndex];
         }
         else
         {
             Debug.LogError($"{id}:翻譯文本不存在");
             return "";
         }
+    }
+
+    /// <summary>
+    /// 添加更新語言方法
+    /// </summary>
+    /// <param name="updateFunc"></param>
+    public void AddUpdateLanguageFunc(UnityAction updateFunc)
+    {
+        updateFunc();
+        updateLanguageFuncList.Add(updateFunc);
+    }
+
+    /// <summary>
+    /// 移除更新語言方法
+    /// </summary>
+    /// <param name="func"></param>
+    public void RemoveLanguageFun(UnityAction func)
+    {
+        if (updateLanguageFuncList.Contains(func))
+        {
+            updateLanguageFuncList.Remove(func);
+        }
+        else
+        {
+            Debug.LogError("移除更新語言方法錯誤!!!");
+        }    
+    }
+
+    /// <summary>
+    /// 更新翻譯
+    /// </summary>
+    private void UpdateLanguage()
+    {
+        foreach (var func in updateLanguageFuncList)
+        {
+            func();
+        }
+    }
+
+    /// <summary>
+    /// 更換語言
+    /// </summary>
+    /// <param name="index"></param>
+    public void ChangeLanguage(int index)
+    {
+        if (index >= languageId.Length || 
+            index < 0)
+        {
+            Debug.LogError($"Change Language Index:{index}:Error!!!");
+            return;
+        }
+
+        thisData.CurrLanguageIndex = index;
+        UpdateLanguage();
     }
 }

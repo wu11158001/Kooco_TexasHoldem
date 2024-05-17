@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ViewManager : UnitySingleton<ViewManager>
 {
-    static Canvas mainCanvas;
+    Canvas mainCanvas;
 
     Dictionary<ViewEnum, RectTransform> viewDic;
     Dictionary<PartsViewEnum, RectTransform> partsViewDic;
@@ -81,18 +81,28 @@ public class ViewManager : UnitySingleton<ViewManager>
     /// 開啟零件類View
     /// </summary>
     /// <param name="partsView"></param>
-    public RectTransform OpenPartsView(PartsViewEnum partsView)
+    /// <param name="parent">父物件</param>
+    /// <returns></returns>
+    public RectTransform OpenPartsView(PartsViewEnum partsView, Transform parent = null)
     {
+        if (parent == null)
+        {
+            parent = mainCanvas.transform;
+        }
+
         RectTransform view = null;
         if (partsViewDic.ContainsKey(partsView))
         {
             view = partsViewDic[partsView];
+            view.SetParent(parent);
             view.gameObject.SetActive(true);
         }
         else
         {
             GameObject gameViewObj = Resources.Load<GameObject>($"PartsView/{partsView}");
-            view = CreateUIObj(gameViewObj);
+            view = Instantiate(gameViewObj).GetComponent<RectTransform>();
+            view.SetParent(parent);
+            view.gameObject.SetActive(true);
             InitViewTr(view, partsView.ToString());
             partsViewDic.Add(partsView, view);
         }

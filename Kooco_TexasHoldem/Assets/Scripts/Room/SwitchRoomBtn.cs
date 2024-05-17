@@ -37,6 +37,8 @@ public class SwitchRoomBtn : MonoBehaviour
             GameRoomManager.Instance.CloseAllBtnFrame();
             GameRoomManager.Instance.IsShowGameRoom = true;
             SetSelectFrameActive = true;
+
+            Entry.CurrGameServer = controlTr.GetComponent<GameServer>();
         });
     }
 }

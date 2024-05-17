@@ -66,7 +66,6 @@ public class LoadSceneManager : UnitySingleton<LoadSceneManager>
     /// <param name="sceneEnum">進入場景</param>
     private void JudgeIntoScene(SceneEnum sceneEnum)
     {
-        Debug.Log($"In To Scene:{sceneEnum}");
         switch (sceneEnum)
         {
             case SceneEnum.Entry:
@@ -77,19 +76,6 @@ public class LoadSceneManager : UnitySingleton<LoadSceneManager>
                 break;
 
             case SceneEnum.Game:
-
-               /* switch (GameDataManager.CurrRoomType)
-                {
-                    //積分房
-                    case GameRoomEnum.BattleRoomView:
-                        ViewManager.Instance.OpenView(ViewEnum.BattleRoomView);
-                        break;
-                        
-                    //現金房
-                    case GameRoomEnum.CashRoomView:
-                        ViewManager.Instance.OpenView(ViewEnum.CashRoomView);
-                        break;
-                }*/
                 break;
         }
     }

@@ -8,8 +8,7 @@ using RequestBuf;
 public class Entry : UnitySingleton<Entry>
 {
     #region 測試
-    public static GameView gameView { get; set; }
-    public static bool isPause;
+    public static GameServer CurrGameServer;
     public static class TestInfoData
     {      
         public static string LocalUserId = "LocalUser";
@@ -20,8 +19,6 @@ public class Entry : UnitySingleton<Entry>
 
         public static DateTime foldTimd = DateTime.Now;
     }
-
-    public GameObject gameServerObj;
     #endregion
 
     [Header("Debug工具")]
@@ -47,38 +44,48 @@ public class Entry : UnitySingleton<Entry>
 
     private void Update()
     {
-        /*if (gameView != null && gameView.gameObject.activeSelf)
+        if (Input.GetKeyDown(KeyCode.Keypad7))
+        {
+            LanguageManager.Instance.ChangeLanguage(0);
+        }
+
+        if (Input.GetKeyDown(KeyCode.Keypad8))
+        {
+            LanguageManager.Instance.ChangeLanguage(1);
+        }
+
+        if (CurrGameServer != null && CurrGameServer.gameObject.activeSelf)
         {
             if ((DateTime.Now - TestInfoData.foldTimd).TotalSeconds > 0.2f)
             {
                 if (Input.GetKeyDown(KeyCode.F))
                 {
                     TestInfoData.foldTimd = DateTime.Now;
-                    gameServer.TextPlayerAction(RequestBuf.ActingEnum.Fold);
+                    CurrGameServer.TextPlayerAction(RequestBuf.ActingEnum.Fold);
                 }
 
                 if (Input.GetKeyDown(KeyCode.R))
                 {
                     TestInfoData.foldTimd = DateTime.Now;
-                    gameServer.TextPlayerAction(RequestBuf.ActingEnum.Raise);
+                    CurrGameServer.TextPlayerAction(RequestBuf.ActingEnum.Raise);
                 }
 
                 if (Input.GetKeyDown(KeyCode.C))
                 {
                     TestInfoData.foldTimd = DateTime.Now;
-                    gameServer.TextPlayerAction(RequestBuf.ActingEnum.Call);
+                    CurrGameServer.TextPlayerAction(RequestBuf.ActingEnum.Call);
                 }
 
                 if (Input.GetKeyDown(KeyCode.I))
                 {
                     TestInfoData.foldTimd = DateTime.Now;
-                    gameServer.TextPlayerAction(RequestBuf.ActingEnum.AllIn);
+                    CurrGameServer.TextPlayerAction(RequestBuf.ActingEnum.AllIn);
                 }
 
                 if (Input.GetKeyDown(KeyCode.A))
                 {
                     TestInfoData.foldTimd = DateTime.Now;
-                    if (gameServer.clientList.Count < gameServer.maxRoomPeople)
+                    if (CurrGameServer.clientList.Count < CurrGameServer.maxRoomPeople)
                     {
                         MainPack pack = new MainPack();
                         pack.ActionCode = ActionCode.Request_PlayerInOutRoom;
@@ -86,14 +93,14 @@ public class Entry : UnitySingleton<Entry>
                         PlayerInfoPack playerInfoPack = new PlayerInfoPack();
                         playerInfoPack.UserID = $"00000{TestInfoData.newPlayerId}";
                         playerInfoPack.NickName = $"Player{TestInfoData.newPlayerId}";
-                        playerInfoPack.Chips = 100000;
+                        playerInfoPack.Chips = 2000;
 
                         PlayerInOutRoomPack playerInOutRoomPack = new PlayerInOutRoomPack();
                         playerInOutRoomPack.IsInRoom = true;
                         playerInOutRoomPack.PlayerInfoPack = playerInfoPack;
 
                         pack.PlayerInOutRoomPack = playerInOutRoomPack;
-                        gameServer.Request_PlayerInOutRoom(pack);
+                        CurrGameServer.Request_PlayerInOutRoom(pack);
 
                         TestInfoData.newPlayerId++;
                     }
@@ -102,33 +109,27 @@ public class Entry : UnitySingleton<Entry>
                 if (Input.GetKeyDown(KeyCode.E))
                 {
                     TestInfoData.foldTimd = DateTime.Now;
-                    gameServer.TextPlayerAction(RequestBuf.ActingEnum.Fold, true);
-                }
-
-                if (Input.GetKeyDown(KeyCode.S))
-                {
-                    isPause = !isPause;
-                    Time.timeScale = isPause == true ? 0 : 1;
-                }
+                    CurrGameServer.TextPlayerAction(RequestBuf.ActingEnum.Fold, true);
+                }                
 
                 if (Input.GetKeyDown(KeyCode.Keypad1))
                 {
-                    gameServer.TestShowFoldPoker(0, 0);
+                    CurrGameServer.TestShowFoldPoker(0, 0);
                 }
                 if (Input.GetKeyDown(KeyCode.Keypad2))
                 {
-                    gameServer.TestShowFoldPoker(1, 0);
+                    CurrGameServer.TestShowFoldPoker(1, 0);
                 }
                 if (Input.GetKeyDown(KeyCode.Keypad4))
                 {
-                    gameServer.TestShowFoldPoker(0, 1);
+                    CurrGameServer.TestShowFoldPoker(0, 1);
                 }
                 if (Input.GetKeyDown(KeyCode.Keypad5))
                 {
-                    gameServer.TestShowFoldPoker(1, 1);
+                    CurrGameServer.TestShowFoldPoker(1, 1);
                 }
             }
-        }*/
+        }
         
     }
 
@@ -137,11 +138,7 @@ public class Entry : UnitySingleton<Entry>
     /// </summary>
     public void OnWindowBlur()
     {
-        if (gameView != null && gameView.gameObject.activeSelf)
-        {
-            isPause = true;
-            gameView.GamePause = true;
-        }
+        GameRoomManager.Instance.OnGamePause(true);
     }
 
     /// <summary>

@@ -18,11 +18,11 @@ public static class GameDataManager
 
 
     [Header("大廳")]
-    public static GameRoomEnum CurrRoomType;                                    //當前選擇房間類型 
     public static int MinMagnification = 40;                                    //購買籌碼最小倍率
     public static int MaxMagnification = 200;                                   //購買籌碼最大倍率
-    public static List<double> CashRoomSmallBlindList = new List<double>        //現金房間小盲值
+    public static List<double> CashRoomSmallBlindList = new List<double>        //現金房小盲值
     {
         50, 100, 200, 400,
     };
+    public static int MaxRoomCount = 8;                                         //最大房間數量
 }

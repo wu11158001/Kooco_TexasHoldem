@@ -15,18 +15,19 @@ public class GameRoomManager : UnitySingleton<GameRoomManager>
     [SerializeField]
     Canvas gameRoomCanvas, swtichBtnCanvas;
 
-
     [Header("房間")]
     [SerializeField]
-    RectTransform gameRoomList_Tr, switchBtnParent;
-    [SerializeField]
-    GameObject switchBtnSample;
+    RectTransform gameRoomList_Tr;
 
-    [Header("新增房間按鈕")]
+    [Header("房間按鈕")]
+    [SerializeField]
+    RectTransform switchBtnSample;
     [SerializeField]
     Button addRoom_Btn;
     [SerializeField]
-    RectTransform addRoomBtn_Tr;
+    RectTransform switchBtnParent, addRoomBtn_Tr;
+
+    public readonly int maxRoomCount = 2;
 
     private ThisData thisData;
     public class ThisData
@@ -37,6 +38,43 @@ public class GameRoomManager : UnitySingleton<GameRoomManager>
         /// (房間名, (房間View, 切換按鈕))
         /// </summary>
         public Dictionary<string, (RectTransform, SwitchRoomBtn)> roomDic;
+
+        public float addSwitchBtnParnetWidth;  //切換按鈕父物件每單位寬度
+    }
+
+    public override void Awake()
+    {
+        base.Awake();
+
+        Init();
+        ListenerEnent();
+    }
+
+    /// <summary>
+    /// 初始化
+    /// </summary>
+    private void Init()
+    {
+        thisData = new ThisData();
+        thisData.roomDic = new Dictionary<string, (RectTransform, SwitchRoomBtn)>();
+        thisData.addSwitchBtnParnetWidth = switchBtnSample.rect.width + (switchBtnParent.GetComponent<HorizontalLayoutGroup>().spacing * 2);
+
+
+        switchBtnSample.gameObject.SetActive(false);
+        StartCoroutine(IJudgeShowSwitchBtn());
+    }
+
+    /// <summary>
+    /// 事件聆聽
+    /// </summary>
+    private void ListenerEnent()
+    {
+        //新增房間按鈕(返回大廳)
+        addRoom_Btn.onClick.AddListener(() =>
+        {
+            IsShowGameRoom = false;
+            CloseAllBtnFrame();
+        });
     }
 
     /// <summary>
@@ -57,43 +95,26 @@ public class GameRoomManager : UnitySingleton<GameRoomManager>
     {
         set
         {
-            gameRoomCanvas.sortingOrder = value == true ?
-                                          50 :
-                                          -1;
+            if (value == true)
+            {
+                gameRoomCanvas.sortingOrder = 50;
+                addRoom_Btn.interactable = true;
+            }
+            else
+            {
+                gameRoomCanvas.sortingOrder = -1;
+                addRoom_Btn.interactable = false;
+            }
         }
     }
 
-    public override void Awake()
-    {
-        base.Awake();
-
-        Init();
-        ListenerEnent();
-    }
-
     /// <summary>
-    /// 初始化
+    /// 判斷是否可以創建房間
     /// </summary>
-    private void Init()
+    /// <returns></returns>
+    public bool JudgeIsCanBeCreateRoom()
     {
-        thisData = new ThisData();
-        thisData.roomDic = new Dictionary<string, (RectTransform, SwitchRoomBtn)>();
-
-        switchBtnSample.gameObject.SetActive(false);
-        StartCoroutine(IJudgeShowSwitchBtn());
-    }
-
-    /// <summary>
-    /// 事件聆聽
-    /// </summary>
-    private void ListenerEnent()
-    {
-        //新增房間按鈕(返回大廳)
-        addRoom_Btn.onClick.AddListener(() =>
-        {
-            IsShowGameRoom = false;
-            CloseAllBtnFrame();
-        });
+        return GetRoomCount < maxRoomCount;
     }
 
     /// <summary>
@@ -135,17 +156,6 @@ public class GameRoomManager : UnitySingleton<GameRoomManager>
     }
 
     /// <summary>
-    /// 判斷顯示切換房間按鈕
-    /// </summary>
-    private IEnumerator IJudgeShowSwitchBtn()
-    {
-        yield return null;
-        swtichBtnCanvas.sortingOrder = GetRoomCount > 0 ?
-                                       50 :
-                                       -1;
-    }
-
-    /// <summary>
     /// 創建遊戲房間
     /// </summary>
     /// <param name="pack"></param>
@@ -155,6 +165,12 @@ public class GameRoomManager : UnitySingleton<GameRoomManager>
         IsShowGameRoom = true;
         thisData.currRoomIndex++;
 
+        if (GetRoomCount > maxRoomCount)
+        {
+            Debug.LogError("Room Count Max!!!");
+            return;
+        }
+
         //創建房間介面
         GameObject roomObj = Resources.Load<GameObject>($"GameRoom/{roomType}");
         RectTransform room = Instantiate(roomObj).GetComponent<RectTransform>();
@@ -162,23 +178,27 @@ public class GameRoomManager : UnitySingleton<GameRoomManager>
         room.SetParent(gameRoomList_Tr);
         string roomName = $"{roomType}{thisData.currRoomIndex}";
         ViewManager.Instance.InitViewTr(room, roomName);
-
+        
         //假Server
         GameServer gameServer = room.GetComponent<GameServer>();
         gameServer.SmallBlind = smallBlind;
+        gameServer.RoomType = roomType;
         gameServer.ServerStart(roomType);
         gameServer.Request_PlayerInOutRoom(pack);
+        Entry.CurrGameServer = gameServer;
 
         GameView gameView = room.GetComponent<GameView>();
         gameView.SendRequest_UpdateRoomInfo();
+        gameView.RoomType = roomType;
 
         //關閉其他切換房間按鈕框
         CloseAllBtnFrame();
 
         //創建切換房間按鈕
-        RectTransform switchBtnObj = Instantiate(switchBtnSample).GetComponent<RectTransform>();
+        RectTransform switchBtnObj = Instantiate(switchBtnSample.gameObject).GetComponent<RectTransform>();
         switchBtnObj.gameObject.SetActive(true);
         switchBtnObj.SetParent(switchBtnParent);
+        switchBtnObj.localScale = Vector3.one;
         SwitchRoomBtn switchRoomBtn = switchBtnObj.GetComponent<SwitchRoomBtn>();
         switchRoomBtn.SetSwitchBtnInfo(room, GetRoomName(roomType));
         switchRoomBtn.SetSelectFrameActive = true;
@@ -217,5 +237,37 @@ public class GameRoomManager : UnitySingleton<GameRoomManager>
         }
 
         StartCoroutine(IJudgeShowSwitchBtn());
+    }
+
+    /// <summary>
+    /// 判斷顯示切換房間按鈕
+    /// </summary>
+    private IEnumerator IJudgeShowSwitchBtn()
+    {
+        yield return null;
+        swtichBtnCanvas.sortingOrder = GetRoomCount > 0 ?
+                                       50 :
+                                       -1;
+
+        //切換按鈕空間大小
+        float sizeX = (GetRoomCount + 1) * thisData.addSwitchBtnParnetWidth;
+        switchBtnParent.sizeDelta = new Vector2(sizeX, switchBtnParent.sizeDelta.y);
+    }
+
+    /// <summary>
+    /// 遊戲暫停/繼續
+    /// </summary>
+    /// <param name="isPause"></param>
+    public void OnGamePause(bool isPause)
+    {
+        if (thisData.roomDic.Count > 0)
+        {
+            Time.timeScale = isPause == true ? 0 : 1;
+        }        
+
+        foreach (var room in thisData.roomDic)
+        {
+            room.Value.Item1.GetComponent<GameView>().GamePause = isPause;
+        }
     }
 }

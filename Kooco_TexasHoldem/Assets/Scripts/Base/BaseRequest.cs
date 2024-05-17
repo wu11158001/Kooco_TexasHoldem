@@ -6,8 +6,7 @@ using RequestBuf;
 
 abstract public class BaseRequest : MonoBehaviour
 {
-    [SerializeField]
-    GameServer gameServer;
+    public GameServer gameServer;
 
     protected List<ActionCode> requestDic;
     protected List<ActionCode> roomBroadcastDic;

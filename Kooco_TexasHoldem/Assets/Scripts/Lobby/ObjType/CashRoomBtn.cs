@@ -13,18 +13,24 @@ public class CashRoomBtn : MonoBehaviour
     /// <summary>
     /// 設定現金房間按鈕訊息
     /// </summary>
-    /// <param name="smallBlind"></param>
-    public void SetCashRoomBtnInfo(double smallBlind)
+    /// <param name="smallBlind">小盲</param>
+    /// <param name="lobbyView">大廳</param>
+    public void SetCashRoomBtnInfo(double smallBlind, LobbyView lobbyView)
     {
         smallBlind_Txt.text = $"{StringUtils.SetChipsUnit(smallBlind)} / {StringUtils.SetChipsUnit(smallBlind * 2)}";
         buyMinChips_Txt.text = $"{StringUtils.SetChipsUnit(smallBlind * GameDataManager.MinMagnification)}";
 
         ThisRoom_Btn.onClick.AddListener(() =>
         {
-            GameDataManager.CurrRoomType = GameRoomEnum.CashRoomView;
-
-            BuyChipsPartsView buyChipsView = ViewManager.Instance.OpenPartsView(PartsViewEnum.BuyChipsPartsView).GetComponent<BuyChipsPartsView>();
-            buyChipsView.SetBuyChipsViewInfo(smallBlind, null);
+            if (GameRoomManager.Instance.JudgeIsCanBeCreateRoom())
+            {
+                CreateCashRoomView createCashRoomView = ViewManager.Instance.OpenPartsView(PartsViewEnum.CreateCashRoomView).GetComponent<CreateCashRoomView>();
+                createCashRoomView.SetCreatRoomViewInfo(smallBlind, null);
+            }
+            else
+            {
+                lobbyView.ShowMaxRoomTip();
+            }            
         });
     }
 }

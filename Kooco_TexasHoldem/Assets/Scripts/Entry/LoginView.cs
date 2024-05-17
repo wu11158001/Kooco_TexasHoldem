@@ -31,20 +31,6 @@ public class LoginView : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.KeypadEnter))
         {
             LoadSceneManager.Instance.LoadScene(SceneEnum.Lobby);
-        }
-
-        if (Input.GetKeyDown(KeyCode.Keypad2))
-        {
-            LanguageManager.Instance.CurrLanguage = 0;
-            Debug.LogError(LanguageManager.Instance.GetText("Test1"));
-            ViewManager.Instance.ClosePartsView(PartsViewEnum.WaitingView);
-        }
-
-        if (Input.GetKeyDown(KeyCode.Keypad3))
-        {
-            LanguageManager.Instance.CurrLanguage = 1;
-            Debug.LogError(LanguageManager.Instance.GetText("Test1"));
-            ViewManager.Instance.OpenPartsView(PartsViewEnum.WaitingView);
-        }
+        }   
     }
 }
