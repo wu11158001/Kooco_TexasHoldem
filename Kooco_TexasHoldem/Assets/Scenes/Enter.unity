@@ -799,10 +799,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 738096534}
-  - component: {fileID: 738096535}
   - component: {fileID: 738096536}
+  - component: {fileID: 738096538}
+  - component: {fileID: 738096537}
   m_Layer: 0
-  m_Name: MetaMaskManager
+  m_Name: WalletManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -823,7 +824,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &738096535
+--- !u!114 &738096536
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 738096533}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 340bb01ce83382c49bd159bf86491fcd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &738096537
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -835,7 +848,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d1c40ab539cc80e4c8b6ae622140d1bb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &738096536
+--- !u!114 &738096538
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -844,7 +857,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 738096533}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 340bb01ce83382c49bd159bf86491fcd, type: 3}
+  m_Script: {fileID: 11500000, guid: 0519677d492fc6c4aaf0ddc763a31374, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &795297913
@@ -2208,8 +2221,8 @@ SceneRoots:
   - {fileID: 1940597939}
   - {fileID: 1097503358}
   - {fileID: 1282735215}
-  - {fileID: 1872152925}
-  - {fileID: 1991625964}
+  - {fileID: 622196589}
   - {fileID: 1554861337}
   - {fileID: 738096534}
-  - {fileID: 622196589}
+  - {fileID: 1872152925}
+  - {fileID: 1991625964}

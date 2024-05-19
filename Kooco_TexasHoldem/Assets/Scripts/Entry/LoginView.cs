@@ -2,12 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using System.Runtime.InteropServices;
 
 public class LoginView : MonoBehaviour
 {
     [SerializeField]
-    Button metaMaskConnect_Btn;
+    Button metaMaskConnect_Btn, trustConnect_Btn;
 
     private void Awake()
     {
@@ -22,7 +21,13 @@ public class LoginView : MonoBehaviour
         //MetaMask連接
         metaMaskConnect_Btn.onClick.AddListener(() =>
         {
-            MetaMaskManager.Instance.MetaMaskConnectAndSign();
+            Web3WalletManager.Instance.ConnectAndSign(Web3Enum.MetaMask);
+        });
+
+        //TrustWallet連接
+        trustConnect_Btn.onClick.AddListener(() =>
+        {
+            Web3WalletManager.Instance.ConnectAndSign(Web3Enum.TrustWallet);
         });
     }
 
