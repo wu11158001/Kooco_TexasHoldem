@@ -2,11 +2,19 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Security.Cryptography;
+using System.Text;
+using ZXing;
+using ZXing.QrCode;
+using System;
 
 public class LoginView : MonoBehaviour
 {
     [SerializeField]
-    Button metaMaskConnect_Btn, trustConnect_Btn;
+    Button metaMaskConnect_Btn, trustConnect_Btn, binanceConnect_Btn, okxConnect_Btn;
+
+    [SerializeField]
+    RawImage qrCodeImage;
 
     private void Awake()
     {
@@ -28,6 +36,18 @@ public class LoginView : MonoBehaviour
         trustConnect_Btn.onClick.AddListener(() =>
         {
             Web3WalletManager.Instance.ConnectAndSign(Web3Enum.TrustWallet);
+        });
+
+        //Binance連接
+        binanceConnect_Btn.onClick.AddListener(() =>
+        {
+            Web3WalletManager.Instance.ConnectAndSign(Web3Enum.Binance);
+        });
+
+        //OKX連接
+        okxConnect_Btn.onClick.AddListener(() =>
+        {
+            Web3WalletManager.Instance.ConnectAndSign(Web3Enum.OKX);
         });
     }
 

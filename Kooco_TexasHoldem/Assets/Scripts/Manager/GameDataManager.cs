@@ -9,8 +9,7 @@ using System;
 public static class GameDataManager
 {
     [Header("場景")]
-    public static SceneEnum CurrScene { get; set; }     //當前場景
-
+    public static SceneEnum CurrScene { get; set; }         //當前場景
 
     [Header("用戶")]
     public static string UserWalletAddress { get; set; }     //用戶錢包地址

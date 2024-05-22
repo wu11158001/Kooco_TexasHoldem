@@ -20,11 +20,17 @@ using MetaMask;
 public class Web3WalletManager : UnitySingleton<Web3WalletManager>
 {
     [DllImport("__Internal")]
-    private static extern void MetaMaskConnectAndSignFormWindows();                //登入電腦網頁MetaMask
+    private static extern void MetaMaskConnectAndSignFormWindow();           //電腦網頁連接MetaMask
     [DllImport("__Internal")]
-    private static extern void TrustConnectAndSignFormWindows();                   //登入電腦網頁TrustWallet
+    private static extern void TrustConnectAndSignFormWindow();              //電腦網頁連接TrustWallet
     [DllImport("__Internal")]
-    private static extern void TrustConnectAndSignFormMobile();                    //移動平台連接TrustWallet
+    private static extern void TrustConnectAndSignFormMobile();              //移動平台連接TrustWallet
+    [DllImport("__Internal")]
+    private static extern void OKXConnectAndSignFormWindow();                //電腦網頁連接OKX
+    [DllImport("__Internal")]
+    private static extern void OKXConnectAndSignFormMobile();                //移動平台連接OKX
+    [DllImport("__Internal")]
+    private static extern void BinanceConnectAndSign();                      //連接Binance
 
     public override void Awake()
     {
@@ -62,6 +68,70 @@ public class Web3WalletManager : UnitySingleton<Web3WalletManager>
     #region 外部接口
 
     /// <summary>
+    /// 連接與簽名
+    /// </summary>
+    /// <param name="web3Type">Web3類型</param>
+    public void ConnectAndSign(Web3Enum web3Type)
+    {
+        if (WalletManager.Instance.DoIsMobilePlatform())
+        {
+            //移動平台
+            switch (web3Type)
+            {
+                //MetaMask
+                case Web3Enum.MetaMask:
+                    RevokePermissions();
+                    DoWalletDisconnected();
+                    MetaMaskUnity.Instance.ConnectAndSign("MetaMask SignMessage");
+                    break;
+
+                //TrustWallet
+                case Web3Enum.TrustWallet:
+                    TrustConnectAndSignFormMobile();
+                    break;
+
+                case Web3Enum.OKX:
+                    OKXConnectAndSignFormMobile();
+                    break;
+
+                //Binance
+                case Web3Enum.Binance:
+                    //BinanceConnectAndSign();
+                    break;
+            }
+        }
+        else
+        {
+            ViewManager.Instance.OpenPartsView(PartsViewEnum.WaitingView);
+
+            //Window平台
+            switch (web3Type)
+            {
+                //MetaMask
+                case Web3Enum.MetaMask:
+                    MetaMaskConnectAndSignFormWindow();
+                    break;
+
+                //TrustWallet
+                case Web3Enum.TrustWallet:
+                    TrustConnectAndSignFormWindow();
+                    break;
+
+                //OKX
+                case Web3Enum.OKX:
+                    OKXConnectAndSignFormWindow();
+                    break;
+
+                //Binance
+                case Web3Enum.Binance:
+                    //BinanceConnectAndSign();
+                    break;
+            }
+            
+        }
+    }
+
+    /// <summary>
     /// 斷開連接
     /// </summary>
     public void DoWalletDisconnected()
@@ -77,50 +147,6 @@ public class Web3WalletManager : UnitySingleton<Web3WalletManager>
         MetaMaskUnity.Instance.Wallet.Disconnect();
         MetaMaskUnity.Instance.Wallet.Dispose();
         WalletManager.Instance.DoRevokePermissions();
-    }
-
-    /// <summary>
-    /// 連接與簽名
-    /// </summary>
-    /// <param name="web3Type">Web3類型</param>
-    public void ConnectAndSign(Web3Enum web3Type)
-    {
-        RevokePermissions();
-        DoWalletDisconnected();
-
-        if (WalletManager.Instance.DoIsMobilePlatform())
-        {
-            switch (web3Type)
-            {
-                //MetaMask
-                case Web3Enum.MetaMask:
-                    MetaMaskUnity.Instance.ConnectAndSign("MetaMask MobilePlatform Sign Info");
-                    break;
-
-                //TrustWallet
-                case Web3Enum.TrustWallet:
-                    TrustConnectAndSignFormMobile();
-                    break;
-            }
-        }
-        else
-        {
-            ViewManager.Instance.OpenPartsView(PartsViewEnum.WaitingView);
-
-            switch (web3Type)
-            {
-                //MetaMask
-                case Web3Enum.MetaMask:
-                    MetaMaskConnectAndSignFormWindows();
-                    break;
-
-                //TrustWallet
-                case Web3Enum.TrustWallet:
-                    TrustConnectAndSignFormWindows();
-                    break;
-            }
-            
-        }
     }
 
     #endregion
@@ -250,7 +276,7 @@ public class Web3WalletManager : UnitySingleton<Web3WalletManager>
                 if (data.result != "")
                 {                    
                     Debug.Log($"Unity Singatrue:{data.result}");
-                    ConnectSuccess();
+                    MataMaskConnectSuccess();
                 }
                 else
                 {
@@ -269,9 +295,9 @@ public class Web3WalletManager : UnitySingleton<Web3WalletManager>
     }
 
     /// <summary>
-    /// 連接成功
+    /// MataMask連接成功
     /// </summary>
-    async private void ConnectSuccess()
+    async private void MataMaskConnectSuccess()
     {
         try
         {
@@ -283,7 +309,6 @@ public class Web3WalletManager : UnitySingleton<Web3WalletManager>
                 GameDataManager.UserWalletAddress = address;
                 Debug.Log("Set Metamask Address: " + address);
 
-                // Request account balance
                 string balance = await MetaMaskUnity.Instance.Request<string>("eth_getBalance", new object[] { address, "latest" });
                 //將十六進位字串轉換為 BigInteger
                 BigInteger balanceWei;

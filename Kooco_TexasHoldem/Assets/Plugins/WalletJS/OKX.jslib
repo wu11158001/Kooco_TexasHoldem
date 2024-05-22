@@ -1,21 +1,21 @@
 mergeInto(LibraryManager.library, {
-
-    // 電腦網頁連接TrustWallet
-    TrustConnectAndSignFormWindow: function () {
-        // 連接 TrustWallet
+    
+    // 電腦網頁連接OKX
+    OKXConnectAndSignFormWindow: function () {
+        // 連接 OKX
         async function OnConnect() {
-            console.log('準備連接TrustWallet');
+            console.log('準備連接OKX');
 
             try {
-                if (window.ethereum && window.ethereum.isTrust) {
+                if (typeof window.okxwallet !== 'undefined') {
                         window.web3 = new Web3(window.ethereum);
                         await window.ethereum.request({ method: 'eth_requestAccounts' });
-                        console.log('Trust 連接以太坊瀏覽器');
+                        console.log('OKX 連接以太坊瀏覽器');
                 } else {
-                    // 未安裝 Trust
-                    console.log('未安裝 Trust');
+                    // 未安裝 OKX
+                    console.log('未安裝 OKX');
                     myUnityInstance.SendMessage('WalletManager', 'WindowConnectFail');
-                    window.open("https://trustwallet.com/");                    
+                    window.open("https://chromewebstore.google.com/detail/okx-web3-%E9%8C%A2%E5%8C%85/mcohilncbfahbmgdjkbpemcciiolgcge?pli=1");
                     return;
                 }
 
@@ -46,7 +46,7 @@ mergeInto(LibraryManager.library, {
                     }                    
                 }
             } catch (error) {
-                console.error('連接TrustWallet時發生錯誤:', error);
+                console.error('連接OKX時發生錯誤:', error);
                 myUnityInstance.SendMessage('WalletManager', 'WindowConnectFail');
             }
         }
@@ -83,35 +83,26 @@ mergeInto(LibraryManager.library, {
 
         main();
     },
-    
 
-    // 移動平台連接TrustWallet
-    TrustConnectAndSignFormMobile: function() {   
+    // 移動平台連接OKX
+    OKXConnectAndSignFormMobile: function() {   
 
         async function OnConnect(){
-            //連接
-            const ethersProvider = new ethers.providers.Web3Provider(window.ethereum);
-            await provider.send("eth_requestAccounts", []);
-            const signer = provider.getSigner();
-            
-            //簽名
-            signature = await signer.signMessage("Sign Message");
-            //簽名結果
-            console.log('簽名結果:', signature);
-            myUnityInstance.SendMessage('WalletManager', 'WindowConnectSuccess', signature);       
-
-            const balance = await provider.getBalance("ethers.eth");
-            const ethBalance = ethers.utils.formatEther(balance);
-        }         
-
-        // 主邏輯
-        async function main() {
-            const redirectUri = '';
-            const deepLink = 'https://link.trustwallet.com/open_url?coin_id=60&url=https://wu11158001.github.io/kooco_Holdem_Self/kooco_Holdem_Demo/index.html';
-            window.location.href = deepLink;
-            await OnConnect();
+            if (typeof window.okxwallet !== 'undefined') {
+                const dappUrl = "https://wu11158001.github.io/kooco_Self/kooco_Holdem_Demo/index.html";
+                const encodedDappUrl = encodeURIComponent(dappUrl);
+                const deepLink = "okx://wallet/dapp/url?dappUrl=" + encodedDappUrl;
+                const encodedUrl = "https://www.okx.com/download?deeplink=" + encodeURIComponent(deepLink);
+                //重定向到 OKX 钱包的深度链接
+                window.location.href = encodedUrl;
+            }
+            else {
+                // 未安裝 OKX
+                window.open("https://www.okx.com/download");
+                return;
+            }        
         }
-
-        main();
+        
+        OnConnect();
     },
 });

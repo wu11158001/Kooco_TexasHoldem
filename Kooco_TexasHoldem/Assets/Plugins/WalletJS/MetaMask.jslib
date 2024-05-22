@@ -1,20 +1,21 @@
 mergeInto(LibraryManager.library, {
 
     // 電腦網頁連接MetaMask
-    MetaMaskConnectAndSignFormWindows: function () {
+    MetaMaskConnectAndSignFormWindow: function () {
         // 連接 MetaMask
-        async function MetaMaskConncet() {
+        async function OnConnect() {
             console.log('準備連接MetaMask');
             
             try {
                 if (window.ethereum) {
                         window.web3 = new Web3(window.ethereum);
                         await window.ethereum.request({ method: 'eth_requestAccounts' });
-                        console.log('MetaMask 連接以太坊 dApp 瀏覽器');
+                        console.log('MetaMask 連接以太坊瀏覽器');
                 } else {
                     // 未安裝 MetaMask
                     console.log('未安裝 MetaMask');
-                    window.open("https://metamask.io/download/");
+                    myUnityInstance.SendMessage('WalletManager', 'WindowConnectFail');
+                    window.open("https://metamask.io/download/");                    
                     return;
                 }
 
@@ -34,7 +35,7 @@ mergeInto(LibraryManager.library, {
                     myUnityInstance.SendMessage('WalletManager', 'SetEthBlance', ethBalance);
 
                     //請求簽名
-                    await SignMessage();
+                    await OnSignature();
 
                 } catch (error) {
                     throw new Error('無法獲取錢包地址和 ETH 餘額: ' + error.message);
@@ -46,14 +47,14 @@ mergeInto(LibraryManager.library, {
         }
 
         // 請求簽名
-        async function SignMessage() {
+        async function OnSignature() {
             try {
                 // 獲取用戶的帳戶信息
                 const accounts = await window.ethereum.request({ method: 'eth_accounts' });
                 const from = accounts[0];
 
                 // 要簽名的消息
-                const message = 'MetaMask Web Sign Test Info';
+                const message = "Sign Message";
 
                 // 使用簽名消息
                 const signature = await window.ethereum.request({
@@ -72,7 +73,7 @@ mergeInto(LibraryManager.library, {
 
         // 主邏輯
         async function main() {
-            await MetaMaskConncet();            
+            await OnConnect();            
         }
 
         main();

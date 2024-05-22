@@ -12,36 +12,16 @@ public class CreateCashRoomView : MonoBehaviour
     Request_CreateCashRoom baseRequest;
 
     [SerializeField]
-    Text title_Txt, preBuyChips_Txt, minBuyChips_Txt, maxBuyChips_Txt, roomCount_Txt;
+    Text title_Txt, preBuyChips_Txt, minBuyChips_Txt, maxBuyChips_Txt;
     [SerializeField]
     Slider buyChips_Sli;
     [SerializeField]
-    Button cancel_Btn, create_Btn, buyPlus_Btn, buyMinus_Btn, roomCountPlus_Btn, roomCountMinus_Btn;
+    Button cancel_Btn, create_Btn, buyPlus_Btn, buyMinus_Btn;
 
     private ThisData thisData;
     public class ThisData
     {
         public double SmallBlind;   //小盲值
-        public int CreateCount;     //創建房間數量
-    }
-
-    /// <summary>
-    /// 設置創建房間數量
-    /// </summary>
-    private int CreateRoomCount
-    {
-        get
-        {
-            return thisData.CreateCount;
-        }
-        set
-        {
-            if (value > 0 && value <= GameRoomManager.Instance.maxRoomCount)
-            {
-                roomCount_Txt.text = value.ToString();
-                thisData.CreateCount = value;
-            }            
-        }
     }
 
     public void Awake()
@@ -79,7 +59,7 @@ public class CreateCashRoomView : MonoBehaviour
         //創建按鈕
         create_Btn.onClick.AddListener(() =>
         {
-            baseRequest.SendRequest_CreateCashRoom(thisData.SmallBlind, buyChips_Sli.value, thisData.CreateCount);
+            baseRequest.SendRequest_CreateCashRoom(thisData.SmallBlind, buyChips_Sli.value, 1);
         });
 
         //購買+按鈕
@@ -93,18 +73,6 @@ public class CreateCashRoomView : MonoBehaviour
         {
             buyChips_Sli.value -= (float)thisData.SmallBlind * 2;
         });
-
-        //房間數量+按鈕
-        roomCountPlus_Btn.onClick.AddListener(() =>
-        {
-            CreateRoomCount++;
-        });
-
-        //房間數量-按鈕
-        roomCountMinus_Btn.onClick.AddListener(() =>
-        {
-            CreateRoomCount--;
-        });
     }
 
     /// <summary>
@@ -115,7 +83,6 @@ public class CreateCashRoomView : MonoBehaviour
     public void SetCreatRoomViewInfo(double smallBlind, UnityAction<MainPack> buyChipsCallback)
     {
         thisData.SmallBlind = smallBlind;
-        CreateRoomCount = 1;
 
         title_Txt.text = $"{thisData.SmallBlind} / {thisData.SmallBlind * 2} Texas Holdem";
         TexasHoldemUtil.SetBuySlider(thisData.SmallBlind, buyChips_Sli);
