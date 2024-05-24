@@ -15,6 +15,8 @@ public class LoginView : MonoBehaviour
     private static extern void JS_ConnectWalletFromWindow(int walletIndex);           //電腦網頁_連接錢包
     [DllImport("__Internal")]
     private static extern void JS_WindowDisconnect();                                 //電腦網頁_斷開連接
+    [DllImport("__Internal")]
+    private static extern void JS_RevokePermissions();                                //電腦網頁_撤銷權限
 
     [Header("錢包連接")]
     [SerializeField]
@@ -42,7 +44,8 @@ public class LoginView : MonoBehaviour
             }
             else
             {
-                ConnectWalletFromWindow(0);
+                StartConnect("WalletConnect");
+                //ConnectWalletFromWindow(0);
             }
         });
 
@@ -55,7 +58,8 @@ public class LoginView : MonoBehaviour
             }
             else
             {
-                ConnectWalletFromWindow(1);
+                StartConnect("WalletConnect");
+                //ConnectWalletFromWindow(1);
             }
         });
 
@@ -68,7 +72,8 @@ public class LoginView : MonoBehaviour
             }
             else
             {
-                ConnectWalletFromWindow(2);
+                StartConnect("WalletConnect");
+                //ConnectWalletFromWindow(2);
             }
         });
 
@@ -81,7 +86,7 @@ public class LoginView : MonoBehaviour
         //Coonbase連接
         coinbaseConnect_Btn.onClick.AddListener(() =>
         {
-            StartConnect("WalletConnect");
+            StartConnect("Coinbase");
         });
     }
 
@@ -92,6 +97,7 @@ public class LoginView : MonoBehaviour
         if (!GameDataManager.IsMobilePlatform)
         {
             JS_WindowDisconnect();
+            JS_RevokePermissions();
         }
 #endif
     }
@@ -198,7 +204,7 @@ public class LoginView : MonoBehaviour
     {
         //onConnectionRequested.Invoke(wc);
 
-        await new WaitForSeconds(0.5f);
+        await new WaitForSeconds(0.1f);
 
         try
         {
@@ -225,7 +231,7 @@ public class LoginView : MonoBehaviour
         Debug.Log($"Connected to {_address}");
 
         var addy = _address.ShortenAddress();
-        GameDataManager.UserWalletAddress = addy;
+        GameDataManager.UserWalletAddress = _address;
 
         var bal = await ThirdwebManager.Instance.SDK.Wallet.GetBalance();
         var balStr = $"{bal.value.ToEth()} {bal.symbol}";

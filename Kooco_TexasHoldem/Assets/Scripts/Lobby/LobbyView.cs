@@ -168,7 +168,7 @@ public class LobbyView : MonoBehaviour
     private void SetUserInfo()
     {
         walletAddress_Txt.text = $"Wallet Address : {GameDataManager.UserWalletAddress}";
-        balanceETH_Txt.text = $"ETH : {GameDataManager.UserWalletBalance}";
+        balanceETH_Txt.text = $"Balance : {GameDataManager.UserWalletBalance}";
     }
 
     /// <summary>

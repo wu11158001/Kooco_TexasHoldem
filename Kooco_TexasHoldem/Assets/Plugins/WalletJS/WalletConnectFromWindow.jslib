@@ -13,6 +13,22 @@ mergeInto(LibraryManager.library, {
         }
     },
 
+    //撤銷權限
+    JS_RevokePermissions: function() {
+        async function Revoke() {
+            try {
+                await window.ethereum.request({
+                    method: 'wallet_revokePermissions',
+                    params: [{ eth_accounts: {}, },],
+                });
+                console.log('權限已移除');
+            } catch (error) {
+                console.error('權限移除錯誤:' + error);
+            }
+        }
+
+        Revoke();        
+    },
 
     // 電腦網頁連接錢包
     JS_ConnectWalletFromWindow: function (walletIndex) {        
