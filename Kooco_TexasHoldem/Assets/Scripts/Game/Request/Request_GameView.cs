@@ -9,6 +9,10 @@ public class Request_GameView : BaseRequest
     [SerializeField]
     GameView thisView;
 
+    [Header("Demo")]
+    [SerializeField]
+    DemoControl demoControl;
+
     private bool isStartReceiveRequest { get; set; }     //是否開始接收協議
 
     public override void Awake()
@@ -98,6 +102,7 @@ public class Request_GameView : BaseRequest
 
             //玩家行動倒數
             case ActionCode.BroadCastRequest_ActingCD:
+                demoControl.IsShowDemoControl(pack.ActingCDPack.ActingPlayerId != Entry.TestInfoData.LocalUserId);
                 //行動框
                 GamePlayerInfo player = thisView.GetPlayer(pack.ActingCDPack.ActingPlayerId);
                 player.ActionFrame = true;

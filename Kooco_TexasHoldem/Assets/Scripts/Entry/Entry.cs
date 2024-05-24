@@ -37,9 +37,10 @@ public class Entry : UnitySingleton<Entry>
     private IEnumerator Start()
     {
         LanguageManager.Instance.LoadLangageJson();
-        ViewManager.Instance.OpenView(ViewEnum.LoginView);
 
         yield return AssetsManager.Instance.ILoadAssets();
+
+        LoadSceneManager.Instance.LoadScene(SceneEnum.Login);
     }
 
     private void Update()
@@ -147,6 +148,15 @@ public class Entry : UnitySingleton<Entry>
     public void OnWindowFocus()
     {
         
+    }
+
+    /// <summary>
+    /// 是否為移動平台
+    /// </summary>
+    public void IsMobilePlatform(string isMobile)
+    {
+        GameDataManager.IsMobilePlatform = isMobile == "true";
+        Debug.Log($"IsMobilePlatform:{isMobile}");
     }
 
     /// <summary>

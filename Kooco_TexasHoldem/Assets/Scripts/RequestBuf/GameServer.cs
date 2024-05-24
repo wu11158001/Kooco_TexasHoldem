@@ -19,7 +19,8 @@ public class GameServer : MonoBehaviour
     List<Client> playingList;              //當前遊戲玩家
     Dictionary<string, double> allInDic;   //AllIn玩家
 
-    int countDownTime = 8;                      //倒數時間
+    int countDownTime = 20;                     //倒數時間
+    int autoActionTime = 2;                    //自動行動時間
     int accumulationPlayer;                     //房間累積人數
     public int maxRoomPeople;                   //房間最大人數
     Client currTestClient;
@@ -1078,7 +1079,7 @@ public class GameServer : MonoBehaviour
             yield return new WaitForSeconds(1);
 
             //AI自動
-            if (i == 8 && gameRoomData.CurrActingPlayer.UserId != Entry.TestInfoData.LocalUserId)
+            if (i == autoActionTime && gameRoomData.CurrActingPlayer.UserId != Entry.TestInfoData.LocalUserId)
             {
                 ActingEnum aiActing = ActingEnum.Fold;
                 double aiBetValue = 0;

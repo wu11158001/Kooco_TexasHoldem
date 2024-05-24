@@ -1,6 +1,6 @@
 public enum SceneEnum
 {
-    Entry,
+    Login,
     Lobby,
     Game,
 }

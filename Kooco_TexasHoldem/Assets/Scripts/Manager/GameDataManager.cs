@@ -8,6 +8,9 @@ using System;
 
 public static class GameDataManager
 {
+    [Header("公用")]
+    public static bool IsMobilePlatform { get; set; }       //是否為移動平台
+
     [Header("場景")]
     public static SceneEnum CurrScene { get; set; }         //當前場景
 

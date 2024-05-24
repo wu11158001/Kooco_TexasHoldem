@@ -8,7 +8,8 @@
     <link rel="stylesheet" href="TemplateData/style.css">
     <script src="TemplateData/socket.io.js"></script>
     <script src="https://c0f4f41c-2f55-4863-921b-sdk-docs.github.io/cdn/metamask-sdk-unity.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/web3@1.5.2/dist/web3.min.js"></script>	
+	<script src="https://cdn.jsdelivr.net/npm/web3@1.5.2/dist/web3.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/web3/dist/web3.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/web3modal@1.9.5/dist/index.min.js"></script>
 	<script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js" type="application/javascript"></script>
@@ -152,7 +153,6 @@
           };  
 		  
 		  window.unityInstance = unityInstance;
-		  myUnityInstance = unityInstance;
 		  
 		  //當網頁視窗焦點改變時觸發
 		  window.addEventListener("blur", function() {
@@ -164,6 +164,21 @@
 			  // 在這裡處理網頁視窗獲得焦點的情況，例如繼續遊戲
 			  unityInstance.SendMessage('Entry', 'OnWindowFocus');
 		  });
+		  
+		  
+		  
+		async function connectWallet() {
+            if (typeof window.ethereum !== 'undefined') {
+                try {
+                    const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+                    console.log('Connected', accounts);
+                } catch (error) {
+                    console.error('User denied account access', error);
+                }
+            } else {
+                console.log('Please install MetaMask or another Ethereum wallet.');
+            }
+        }
 		  
         }).catch((message) => {
           alert(message);

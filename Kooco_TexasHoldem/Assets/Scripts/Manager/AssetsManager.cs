@@ -11,7 +11,6 @@ public class AssetsManager : UnitySingleton<AssetsManager>
         {ObjTypeEnum.GamePlayerInfo, "ObjType/Game/GamePlayerInfo"},            //遊戲_玩家訊息
         {ObjTypeEnum.Poker, "ObjType/Game/Poker"},                              //撲克牌物件
         {ObjTypeEnum.WinChips, "ObjType/Game/WinChips"},                        //獲勝籌碼物件
-        {ObjTypeEnum.CashRoomBtn, "ObjType/Lobby/CashRoomBtn"},                 //現金房按鈕
     };
 
     [Header("圖集資源")]

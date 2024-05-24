@@ -68,7 +68,8 @@ public class LoadSceneManager : UnitySingleton<LoadSceneManager>
     {
         switch (sceneEnum)
         {
-            case SceneEnum.Entry:
+            case SceneEnum.Login:
+                ViewManager.Instance.OpenView(ViewEnum.LoginView);
                 break;
 
             case SceneEnum.Lobby:
