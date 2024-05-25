@@ -1,5 +1,5 @@
 mergeInto(LibraryManager.library, {
-    
+
     //重新整理頁面
     JS_Reload: function() {
         window.location.reload();
@@ -7,9 +7,18 @@ mergeInto(LibraryManager.library, {
 
     //斷開連接
     JS_WindowDisconnect: function() {
-        if (window.ethereum && window.ethereum.disconnect) {
-            window.ethereum.disconnect();
-            console.log('錢包斷開連接');
+        if (typeof window.ethereum !== 'undefined') {
+            if (window.ethereum.isConnected()) {
+                window.ethereum
+                    .request({ method: 'eth_requestAccounts' })
+                    .then(() => {
+                        window.ethereum.disconnect();
+                        console.log("錢包连接已断开");
+                    })
+                    .catch((e) => {
+                        console.error(e);
+                    });
+            } 
         }
     },
 

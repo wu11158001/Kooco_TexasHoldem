@@ -64,6 +64,7 @@ public class LobbyView : MonoBehaviour
         //斷開連接
         disconnect_Btn.onClick.AddListener(() =>
         {
+            WalletManager.Instance.OnWalletDisconnect();
             LoadSceneManager.Instance.LoadScene(SceneEnum.Login);
         });
 

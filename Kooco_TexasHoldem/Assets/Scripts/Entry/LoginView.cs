@@ -8,15 +8,12 @@ using RotaryHeart.Lib.SerializableDictionary;
 using Thirdweb;
 using System;
 using System.Runtime.InteropServices;
+using MetaMask.Unity;
 
 public class LoginView : MonoBehaviour
 {
     [DllImport("__Internal")]
     private static extern void JS_ConnectWalletFromWindow(int walletIndex);           //電腦網頁_連接錢包
-    [DllImport("__Internal")]
-    private static extern void JS_WindowDisconnect();                                 //電腦網頁_斷開連接
-    [DllImport("__Internal")]
-    private static extern void JS_RevokePermissions();                                //電腦網頁_撤銷權限
 
     [Header("錢包連接")]
     [SerializeField]
@@ -38,15 +35,7 @@ public class LoginView : MonoBehaviour
         //MetaMask連接
         metaMaskConnect_Btn.onClick.AddListener(() =>
         {
-            if (GameDataManager.IsMobilePlatform)
-            {
-                StartConnect("WalletConnect");
-            }
-            else
-            {
-                StartConnect("WalletConnect");
-                //ConnectWalletFromWindow(0);
-            }
+            StartConnect("Metamask");
         });
 
         //Trust連接
@@ -88,18 +77,6 @@ public class LoginView : MonoBehaviour
         {
             StartConnect("Coinbase");
         });
-    }
-
-    private void OnEnable()
-    {
-#if !UNITY_EDITOR
-        Disconnect();
-        if (!GameDataManager.IsMobilePlatform)
-        {
-            JS_WindowDisconnect();
-            JS_RevokePermissions();
-        }
-#endif
     }
 
     private void Start()
@@ -163,9 +140,9 @@ public class LoginView : MonoBehaviour
         GameDataManager.UserWalletBalance = eth;
     }
 
-#endregion
+    #endregion
 
-#region ThirdWallet
+    #region ThirdWallet
 
     /// <summary>
     /// 開始連接
@@ -180,32 +157,11 @@ public class LoginView : MonoBehaviour
     }
 
     /// <summary>
-    /// 斷開連接
-    /// </summary>
-    public async void Disconnect()
-    {
-        Debug.Log("Disconnecting...");
-        try
-        {
-            _address = null;
-            await ThirdwebManager.Instance.SDK.Wallet.Disconnect(true);
-        }
-        catch (Exception e)
-        {
-            Debug.LogError($"Failed to disconnect: {e}");
-        }
-    }
-
-    /// <summary>
     /// 連接錢包
     /// </summary>
     /// <param name="wc"></param>
     private async void Connect(WalletConnection wc)
     {
-        //onConnectionRequested.Invoke(wc);
-
-        await new WaitForSeconds(0.1f);
-
         try
         {
             _address = await ThirdwebManager.Instance.SDK.Wallet.Connect(wc);
