@@ -48,7 +48,7 @@ public class GameServer : MonoBehaviour
         gameRoomData = new GameRoomData();
         clientList = new List<Client>();
         playingList = new List<Client>();
-        allInDic = new Dictionary<string, double>();        
+        allInDic = new Dictionary<string, double>();
     }
 
     /// <summary>
@@ -65,7 +65,7 @@ public class GameServer : MonoBehaviour
         maxRoomPeople = RoomType == GameRoomEnum.CashRoomView ? 6 : 2;
 
         //測試用
-        int initPlayerCount =  RoomType == GameRoomEnum.CashRoomView ? UnityEngine.Random.Range(2, 6) : 1;
+        int initPlayerCount = RoomType == GameRoomEnum.CashRoomView ? UnityEngine.Random.Range(2, 6) : 1;
         gameRoomData.ButtonSeat = UnityEngine.Random.Range(0, initPlayerCount);
         for (int i = 0; i < initPlayerCount; i++)
         {
@@ -75,20 +75,20 @@ public class GameServer : MonoBehaviour
             PlayerInfoPack playerInfoPack = new PlayerInfoPack();
             playerInfoPack.UserID = $"Player{accumulationPlayer}";
             playerInfoPack.NickName = RoomType == GameRoomEnum.CashRoomView ? $"Player{accumulationPlayer}" : $"Battle{i}";
-            playerInfoPack.Chips =  RoomType == GameRoomEnum.CashRoomView ?  ((SmallBlind * 2) * 40) + 1000 + (i * 400) : 10000;
+            playerInfoPack.Chips = RoomType == GameRoomEnum.CashRoomView ? ((SmallBlind * 2) * 40) + 1000 + (i * 400) : 10000;
 
-           /* if (i == 0)
-            {
-                playerInfoPack.Chips = 1200;
-            }
-            else if (i == 1)
-            {
-                playerInfoPack.Chips = 1000;
-            }
-            else
-            {
-                playerInfoPack.Chips = 500;
-            }*/
+            /* if (i == 0)
+             {
+                 playerInfoPack.Chips = 1200;
+             }
+             else if (i == 1)
+             {
+                 playerInfoPack.Chips = 1000;
+             }
+             else
+             {
+                 playerInfoPack.Chips = 500;
+             }*/
 
             PlayerInOutRoomPack playerInOutRoomPack = new PlayerInOutRoomPack();
             playerInOutRoomPack.IsInRoom = true;
@@ -149,12 +149,12 @@ public class GameServer : MonoBehaviour
 
                 exitPack.PlayerInOutRoomPack = playerInOutRoomPack;
                 Request_PlayerInOutRoom(exitPack);
-            }   
+            }
             return;
         }
 
         bool isJustAllIn = gameRoomData.CurrActingPlayer.RoomChips <= gameRoomData.CurrCallValue;
-        
+
         double betValue = 0;
         if (acting == ActingEnum.Raise)
         {
@@ -173,8 +173,8 @@ public class GameServer : MonoBehaviour
                 else
                 {
                     betValue = gameRoomData.CurrCallValue * 2;
-                }                
-            }            
+                }
+            }
         }
         else if (acting == ActingEnum.Call)
         {
@@ -288,7 +288,7 @@ public class GameServer : MonoBehaviour
     {
         pack.SendModeCode = SendModeCode.RoomBroadcast;
         bool isLocalUser = clientList.Where(x => x.UserId == Entry.TestInfoData.LocalUserId).Count() > 0;
-        if (isExcludeId == false && isLocalUser == true)
+        if (targetBaseRequest != null && isExcludeId == false && isLocalUser == true)
         {
             //RequestManager.Instance.HandleRequest(pack);
             targetBaseRequest.HandleRoomBroadcast(pack);
@@ -356,7 +356,7 @@ public class GameServer : MonoBehaviour
             StartCoroutine(IExitRoom(pack));
         }
     }
-    
+
     /// <summary>
     /// 離開房間
     /// </summary>
@@ -415,7 +415,7 @@ public class GameServer : MonoBehaviour
     public void AddNewPlayer(PlayerInfoPack playerInfoPack)
     {
         accumulationPlayer++;
- 
+
         Client client = new Client()
         {
             UserId = playerInfoPack.UserID,
@@ -522,7 +522,7 @@ public class GameServer : MonoBehaviour
                 PlayerInfoPack playerInfoPack = new PlayerInfoPack();
                 playerInfoPack.UserID = $"00000{Entry.TestInfoData.newPlayerId}";
                 playerInfoPack.NickName = $"Player{Entry.TestInfoData.newPlayerId}";
-                playerInfoPack.Chips = 100000;
+                playerInfoPack.Chips = 6000;
 
                 PlayerInOutRoomPack playerInOutRoomPack = new PlayerInOutRoomPack();
                 playerInOutRoomPack.IsInRoom = true;
@@ -561,7 +561,7 @@ public class GameServer : MonoBehaviour
         {
             pokerList.Add(i);
         }
-       
+
         string str = "";
         //牌面結果
         for (int i = 0; i < 5; i++)
@@ -589,7 +589,7 @@ public class GameServer : MonoBehaviour
             }
 
             client.HandPoker0 = handPoker[0];
-            client.HandPoker1 = handPoker[1];           
+            client.HandPoker1 = handPoker[1];
             client.State = PlayerStateEnum.Playing;
             client.CurrBetValue = 0;
             client.AllBetValue = 0;
@@ -600,7 +600,7 @@ public class GameServer : MonoBehaviour
         }
 
         playingList = (List<Client>)playingList.OrderBy(x => x.Seat).ToList();
-     
+
         /*
         //測試用
         gameRoomData.CommunityPoker = new List<int>() {0, 2, 3, 4, 5};
@@ -747,7 +747,7 @@ public class GameServer : MonoBehaviour
             {
                 sideValue += allIn.Value - min;
             }
-        }        
+        }
 
         return sideValue;
     }
@@ -758,18 +758,31 @@ public class GameServer : MonoBehaviour
     /// <returns></returns>
     private bool IsNextStage()
     {
-        List<Client> judgePlayerList = new List<Client>();
+        List<Client> judgePlayingPlayerList = new List<Client>();
         foreach (var player in playingList)
         {
             if (player.State == PlayerStateEnum.Playing)
+            {
+                judgePlayingPlayerList.Add(player);
+            }
+        }
+
+        // bool isAllPlayerActionTaken = judgePlayerList.All(x => x.IsActionTaken == true);
+        bool isBetSame = judgePlayingPlayerList.All(x => x.CurrBetValue == judgePlayingPlayerList[0].CurrBetValue);
+
+        List<Client> judgePlayerList = new List<Client>();
+        foreach (var player in playingList)
+        {
+            if (player.State == PlayerStateEnum.Playing || player.State == PlayerStateEnum.AllIn)
             {
                 judgePlayerList.Add(player);
             }
         }
 
         bool isAllPlayerActionTaken = judgePlayerList.All(x => x.IsActionTaken == true);
-        bool isBetSame = judgePlayerList.All(x => x.CurrBetValue == judgePlayerList[0].CurrBetValue);
-        return isAllPlayerActionTaken && isBetSame;
+        double minAllBetValue = judgePlayerList.Min(x => x.AllBetValue);
+        bool isAllBetValueSmae = judgePlayerList.All(x => x.AllBetValue >= minAllBetValue && (x.AllBetValue >= gameRoomData.CurrCallValue || x.RoomChips == 0));
+        return isAllPlayerActionTaken && isAllBetValueSmae && isBetSame;
     }
 
     /// <summary>
@@ -1285,6 +1298,30 @@ public class GameServer : MonoBehaviour
                 }
                 else
                 {
+                    int allInCount = playingList.Where(x => x.State == PlayerStateEnum.AllIn).Count();
+                    int playingCount = playingList.Where(x => x.State == PlayerStateEnum.Playing).Count();
+
+                    if (playingCount == 1 && allInCount > 0)
+                    {
+                        Client c = playingList.Where(x => x.State == PlayerStateEnum.Playing).FirstOrDefault();
+
+                        double allInMin = playingList.Where(x => x.State == PlayerStateEnum.AllIn)
+                                                     .Min(x => x.CurrBetValue);
+
+                        if (c.AllBetValue >= allInMin)
+                        {
+                            yield return SendRequest_ShowGameResult();
+                        }
+                        else
+                        {
+                            yield return SendRequest_NextPlayerActingRound();
+                        }
+                    }
+                    else
+                    {
+                        yield return SendRequest_NextPlayerActingRound();
+                    }
+                    /*
                     if (IsPlayingBetBiggerAllIn() == true)
                     {
                         yield return SendRequest_ShowGameResult();
@@ -1314,9 +1351,9 @@ public class GameServer : MonoBehaviour
                         {
                             yield return SendRequest_NextPlayerActingRound();
                         }                        
-                    }
-                }
-            }
+                    }*/
+    }
+}
         }
     }
 
@@ -1344,7 +1381,7 @@ public class GameServer : MonoBehaviour
         gameRoomData.CurrActingPlayer.State = PlayerStateEnum.AllIn;
         gameRoomData.CurrActingPlayer.IsActionTaken = true;
         gameRoomData.CurrActingPlayer.CurrBetValue = allInValue;
-        gameRoomData.CurrActingPlayer.AllBetValue += allInValue;
+        gameRoomData.CurrActingPlayer.AllBetValue = allInValue;
         gameRoomData.CurrActingPlayer.RoomChips = 0;      
 
         //更新底池
@@ -1371,14 +1408,34 @@ public class GameServer : MonoBehaviour
         }
         else
         {
-            if (IsPlayingBetBiggerAllIn())
+            if (IsNextStage())
+            {
+                Client c = playingList.Where(x => x.State == PlayerStateEnum.Playing).FirstOrDefault();
+                double allInMax = playingList.Where(x => x.State == PlayerStateEnum.AllIn)
+                                             .Max(x => x.CurrBetValue);
+                if (playingCount == 1 && c.AllBetValue >= allInMax)
+                {
+                    yield return SendRequest_ShowGameResult();
+                }
+                else
+                {
+                    yield return SendRequest_NextGameStage();
+                }
+                
+            }
+            else
+            {
+                yield return SendRequest_NextPlayerActingRound();
+            }
+            
+            /*if (IsPlayingBetBiggerAllIn())
             {
                 yield return SendRequest_ShowGameResult();
             }
             else
             {
                 yield return SendRequest_NextPlayerActingRound();
-            }            
+            }   */         
         }
     }
 
@@ -1426,7 +1483,19 @@ public class GameServer : MonoBehaviour
         List<Client> judgePlayers = GetPlayingUser(new List<PlayerStateEnum>() { PlayerStateEnum.Playing, PlayerStateEnum.AllIn});
         List<Client> winners = JudgeWinner(judgePlayers);
 
-        double winChips = gameRoomData.TotalPot - GetSideChipsValue();
+        List<Client> judgeSidePlayers = GetPlayingUser(new List<PlayerStateEnum>() { PlayerStateEnum.AllIn });
+        List<Client> sidewinnerList = JudgeWinner(judgeSidePlayers);
+        bool isHaveSide = true;    //是否有邊池
+        for (int i = 0; i < winners.Count; i++)
+        {
+            if (sidewinnerList.Contains(winners[i]))
+            {
+                isHaveSide = false;
+                break;
+            }
+        }
+
+        double winChips = isHaveSide ? gameRoomData.TotalPot - GetSideChipsValue() : gameRoomData.TotalPot;
         winChips = winChips / winners.Count();
         WinnerPack winnerPack = new WinnerPack();
         winnerPack.WinnerDic = new Dictionary<string, double>();
@@ -1463,7 +1532,10 @@ public class GameServer : MonoBehaviour
         }
         else
         {
-            yield return new WaitForSeconds(5 + winnerTime);
+            int allInCount = playingList.Where(x => x.State == PlayerStateEnum.AllIn).Count();
+            float allinTime = allInCount > 0 ? 2 : 0;
+
+            yield return new WaitForSeconds(6 + winnerTime + allinTime);
             yield return SendRequest_NextGameStage();
         }
     }
@@ -1502,7 +1574,7 @@ public class GameServer : MonoBehaviour
 
         SendRoomBroadCast(pack);
 
-        yield return new WaitForSeconds(7);
+        yield return new WaitForSeconds(6);
         yield return SendRequest_NextGameStage();
     }
 
@@ -1532,9 +1604,21 @@ public class GameServer : MonoBehaviour
         List<Client> judgePlayers = GetPlayingUser(new List<PlayerStateEnum>() { PlayerStateEnum.Playing, PlayerStateEnum.AllIn });
         List<Client> winners = JudgeWinner(judgePlayers);
 
+        List<Client> judgeSidePlayers = GetPlayingUser(new List<PlayerStateEnum>() { PlayerStateEnum.AllIn });
+        List<Client> sidewinnerList = JudgeWinner(judgeSidePlayers);
+        bool isHaveSide = true;    //是否有邊池
+        for (int i = 0; i < winners.Count; i++)
+        {
+            if (sidewinnerList.Contains(winners[i]))
+            {
+                isHaveSide = false;
+                break;
+            }
+        }
+
         int allInCount = playingList.Where(x => x.State == PlayerStateEnum.AllIn).Count();
 
-        double winChips = gameRoomData.TotalPot - GetSideChipsValue();
+        double winChips = isHaveSide ? gameRoomData.TotalPot - GetSideChipsValue() : gameRoomData.TotalPot;
         winChips = winChips / winners.Count();
         WinnerPack winnerPack = new WinnerPack();
         winnerPack.WinnerDic = new Dictionary<string, double>();
@@ -1569,7 +1653,7 @@ public class GameServer : MonoBehaviour
         {
             if (playingList.Count == 2)
             {
-                yield return new WaitForSeconds(5 + winnerTime);
+                yield return new WaitForSeconds(6 + winnerTime);
                 yield return SendRequest_NextGameStage();
             }
             else
@@ -1581,14 +1665,14 @@ public class GameServer : MonoBehaviour
                 }
                 else
                 {
-                    yield return new WaitForSeconds(5 + winnerTime);
+                    yield return new WaitForSeconds(6 + winnerTime);
                     yield return SendRequest_NextGameStage();
                 }
             }
         }
         else
         {
-            yield return new WaitForSeconds(5 + winnerTime);
+            yield return new WaitForSeconds(6 + winnerTime);
             yield return SendRequest_NextGameStage();
         }
     }
@@ -1603,17 +1687,45 @@ public class GameServer : MonoBehaviour
         List<Client> sidewinnerList = JudgeWinner(judgePlayers);
 
         //最小allIn
-        double min = allInDic.Min(x => x.Value);
+        //double min = allInDic.Min(x => x.Value);
+        double min = sidewinnerList.Min(x => x.AllBetValue);
 
-        //初始退回籌碼
+        double sideValue = GetSideChipsValue();
+
+        //退回籌碼
         Dictionary<string, double> backDic = new Dictionary<string, double>();
         foreach (var allInPlayer in allInDic)
         {
-            double backChips = allInPlayer.Value - min;
+            double backChips = Mathf.Max(0, (float)(allInPlayer.Value - min)); ;
             backDic.Add(allInPlayer.Key, backChips);
+
+            //非主池贏家
+            if (sidewinnerList.All(x => x.UserId != allInPlayer.Key))
+            {
+                Client c = playingList.Where(x => x.UserId == allInPlayer.Key).FirstOrDefault();
+                c.RoomChips += backChips;
+
+                sideValue -= backChips;
+            }
+            else
+            {
+                sideValue = 0;
+            }
         }
 
         //贏得籌碼
+        Dictionary<string, double> sideWinnerDic = new Dictionary<string, double>();
+        foreach (var winner in sidewinnerList)
+        {
+            double winValue = sideValue / sidewinnerList.Count;
+            sideWinnerDic.Add(winner.UserId, winValue);
+
+            Client c = playingList.Where(x => x.UserId == winner.UserId).FirstOrDefault();
+            c.RoomChips += winValue;
+        }
+       
+
+        /*//贏得籌碼
         Dictionary<string, double> sideWinnerDic = new Dictionary<string, double>();
         foreach (var allInPlayer in allInDic)
         {
@@ -1627,8 +1739,9 @@ public class GameServer : MonoBehaviour
                     sideWinnerDic.Add(player.UserId, 0);
                     foreach (var judgePlayer in allInDic)
                     {
-                        //不是自己且是贏家
-                        if (judgePlayer.Key != player.UserId )
+                        //不是自己且不是贏家
+                        if (judgePlayer.Key != player.UserId && 
+                            !sideWinnerDic.ContainsKey(judgePlayer.Key))
                         {
                             double getChips = judgePlayer.Value - min;
                             double diff = judgePlayer.Value - allInDic[player.UserId];
@@ -1648,14 +1761,7 @@ public class GameServer : MonoBehaviour
         {
             Client player = playingList.Where(x => x.UserId == win.Key).FirstOrDefault();
             player.RoomChips += win.Value;
-        }
-
-        //籌碼退回
-        foreach (var back in backDic)
-        {
-            Client c = playingList.Where(x => x.UserId == back.Key).FirstOrDefault();
-            c.RoomChips += back.Value;
-        }
+        }*/
 
         MainPack pack = new MainPack();
         pack.ActionCode = ActionCode.BroadCast_Request_SideReault;
@@ -1672,7 +1778,7 @@ public class GameServer : MonoBehaviour
 
         float winnerTime = sidewinnerList.Count() * 1.5f;
 
-        yield return new WaitForSeconds(5 + winnerTime);
+        yield return new WaitForSeconds(3 + winnerTime);
         yield return SendRequest_NextGameStage();
     }
 
@@ -1726,6 +1832,11 @@ public class GameServer : MonoBehaviour
     /// <returns></returns>
     private List<Client> JudgeWinner(List<Client> judgePlayerList)
     {
+        if(judgePlayerList.Count == 0)
+        {
+            return new List<Client>();
+        }
+
         //判斷結果(牌型結果,符合的牌)
         Dictionary<Client, (int, List<int>)> shapeDic = new Dictionary<Client, (int, List<int>)>();
         //玩家的牌(牌型結果,(公牌+手牌))

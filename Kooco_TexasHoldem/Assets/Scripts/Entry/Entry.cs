@@ -95,7 +95,7 @@ public class Entry : UnitySingleton<Entry>
                         PlayerInfoPack playerInfoPack = new PlayerInfoPack();
                         playerInfoPack.UserID = $"00000{TestInfoData.newPlayerId}";
                         playerInfoPack.NickName = $"Player{TestInfoData.newPlayerId}";
-                        playerInfoPack.Chips = 2000;
+                        playerInfoPack.Chips = 6600;
 
                         PlayerInOutRoomPack playerInOutRoomPack = new PlayerInOutRoomPack();
                         playerInOutRoomPack.IsInRoom = true;

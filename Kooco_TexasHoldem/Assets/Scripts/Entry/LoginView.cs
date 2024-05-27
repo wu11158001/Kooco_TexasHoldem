@@ -48,7 +48,6 @@ public class LoginView : MonoBehaviour
             else
             {
                 StartConnect("WalletConnect");
-                //ConnectWalletFromWindow(1);
             }
         });
 
@@ -62,7 +61,6 @@ public class LoginView : MonoBehaviour
             else
             {
                 StartConnect("WalletConnect");
-                //ConnectWalletFromWindow(2);
             }
         });
 
@@ -91,56 +89,6 @@ public class LoginView : MonoBehaviour
             LoadSceneManager.Instance.LoadScene(SceneEnum.Lobby);
         }   
     }
-
-#region 電腦網頁平台
-
-    /// <summary>
-    /// 電腦網頁連接錢包
-    /// </summary>
-    /// <param name="walletIndex"></param>
-    private void ConnectWalletFromWindow(int walletIndex)
-    {
-        ViewManager.Instance.OpenPartsView(PartsViewEnum.WaitingView);
-        JS_ConnectWalletFromWindow(walletIndex);
-    }
-
-    /// <summary>
-    /// 電腦網頁連接失敗
-    /// </summary>
-    public void WindowConnectFail()
-    {
-        ViewManager.Instance.ClosePartsView(PartsViewEnum.WaitingView);
-    }
-
-    /// <summary>
-    /// 電腦網頁連接成功
-    /// </summary>
-    public void WindowConnectSuccess()
-    {
-        LoadSceneManager.Instance.LoadScene(SceneEnum.Lobby);
-    }
-
-    /// <summary>
-    /// 網頁登入設置錢包地址
-    /// </summary>
-    /// <param name="address"></param>
-    public void SetAddress(string address)
-    {
-        Debug.Log($"Set Wallet Address:{address}");
-        GameDataManager.UserWalletAddress = address;
-    }
-
-    /// <summary>
-    /// 網頁登入設置ETH餘額
-    /// </summary>
-    /// <param name="eth"></param>
-    public void SetEthBlance(string eth)
-    {
-        Debug.Log($"Set Wallet EthBlance:{eth}");
-        GameDataManager.UserWalletBalance = eth;
-    }
-
-    #endregion
 
     #region ThirdWallet
 

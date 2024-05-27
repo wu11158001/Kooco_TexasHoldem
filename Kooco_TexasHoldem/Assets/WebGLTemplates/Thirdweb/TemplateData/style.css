@@ -32,8 +32,8 @@ body {
     height: 100%;
     display: flex;
     flex-direction: column;
-    justify-content: flex-end; /* Adjust to align items at the bottom */
-    align-items: center;
+    justify-content: center; /* Center items vertically */
+    align-items: center; /* Center items horizontally */
 }
 #unity-loading-bar {
     width: 100%; /* Ensure the loading bar takes the full width */
@@ -84,7 +84,7 @@ body {
 
 .spinner,
 .spinner:after {
-  border-radius: 5%;
+  border-radius: 50%;
   width: 5em;
   height: 5em;
 }

@@ -96,6 +96,7 @@ public class Request_GameView : BaseRequest
 
             //遊戲階段
             case ActionCode.BroadCastRequest_GameStage:
+                demoControl.IsShowDemoControl(false);
                 thisView.AutoActionState = GameView.AutoActingEnum.None;
                 StartCoroutine(thisView.IGameStage(pack));
                 break;

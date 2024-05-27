@@ -102,6 +102,7 @@ public class GameView : MonoBehaviour
         public bool isLocalPlayerTurn;                     //本地玩家回合
         public bool isFold;                                //是否已棄牌
         public List<int> CurrCommunityPoker;               //當前公共牌
+        public List<string> potWinnerList;                 //主池贏家
     }
 
 
@@ -1167,10 +1168,11 @@ public class GameView : MonoBehaviour
 
         //贏得類型顯示
         winType_Txt.text = "Pot";
-        totalPot_Txt.text = $"${pack.WinnerPack.WinChips}";
+        totalPot_Txt.text = $"{StringUtils.SetChipsUnit(pack.WinnerPack.WinChips)}";
 
         //贏家效果
-        int count = 0; ;
+        thisData.potWinnerList = pack.WinnerPack.WinnerDic.Select(x => x.Key).ToList();
+        int count = 0;
         foreach (var winner in pack.WinnerPack.WinnerDic)
         {
             count++;
@@ -1223,8 +1225,20 @@ public class GameView : MonoBehaviour
     public IEnumerator SideResult(MainPack pack)
     {
         //贏得類型顯示
-        winType_Txt.text = "Side";
-        totalPot_Txt.text = $"${pack.SidePack.TotalSideChips}";
+        bool isShow = true;
+        foreach (var item in pack.SidePack.SideWinnerDic)
+        {
+            if (thisData.potWinnerList.Contains(item.Key))
+            {
+                isShow = false;
+            }
+        }
+
+        if (isShow)
+        {
+            winType_Txt.text = "Side";
+            totalPot_Txt.text = $"{StringUtils.SetChipsUnit(pack.SidePack.TotalSideChips)}";
+        }
 
         //關閉所有撲克外框
         foreach (var player in gamePlayerInfoList)
@@ -1244,7 +1258,7 @@ public class GameView : MonoBehaviour
         {
             GamePlayerInfo player = GetPlayer(sideWinner.Key);
             player.SetWinnerEffect = true;
-            player.SetSideWinnerActive = true;
+            player.SetSideWinnerActive = isShow;
 
             Vector2 winnerSeatPos = player.gameObject.transform.position;
             JudgePokerShape(player, true, true);
@@ -1263,7 +1277,7 @@ public class GameView : MonoBehaviour
                 ObjMoveUtils.ObjMoveToTarget(rt, winnerSeatPos, 0.5f,
                                             () =>
                                             {
-                                                player.PlayerRoomChips = sideWinner.Value;
+                                                player.PlayerRoomChips += sideWinner.Value;
                                                 Destroy(rt.gameObject);
                                             });
             }

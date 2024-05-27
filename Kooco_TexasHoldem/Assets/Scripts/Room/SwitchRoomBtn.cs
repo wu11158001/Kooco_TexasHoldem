@@ -26,19 +26,17 @@ public class SwitchRoomBtn : MonoBehaviour
     /// <summary>
     /// 設置切換房間按鈕訊息
     /// </summary>
+    /// <param name="btnIndex">按鈕編號</param>
     /// <param name="controlTr"></param>
     /// <param name="roomName"></param>
-    public void SetSwitchBtnInfo(RectTransform controlTr, string roomName)
+    public void SetSwitchBtnInfo(int btnIndex, string roomName)
     {
         roomName_Txt.text = roomName;
         thisBtn.onClick.AddListener(() =>
         {
-            controlTr.SetSiblingIndex(GameRoomManager.Instance.GetRoomCount + 1);
-            GameRoomManager.Instance.CloseAllBtnFrame();
-            GameRoomManager.Instance.IsShowGameRoom = true;
+            GameRoomManager.Instance.CurrRoomIndex = btnIndex;
+            GameRoomManager.Instance.ChangeRoom(btnIndex);
             SetSelectFrameActive = true;
-
-            Entry.CurrGameServer = controlTr.GetComponent<GameServer>();
         });
     }
 }
