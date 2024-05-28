@@ -148,7 +148,7 @@ public class Entry : UnitySingleton<Entry>
     /// </summary>
     public void OnWindowFocus()
     {
-        
+
     }
 
     /// <summary>

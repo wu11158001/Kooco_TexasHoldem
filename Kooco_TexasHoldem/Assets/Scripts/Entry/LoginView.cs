@@ -8,13 +8,10 @@ using RotaryHeart.Lib.SerializableDictionary;
 using Thirdweb;
 using System;
 using System.Runtime.InteropServices;
-using MetaMask.Unity;
+using System.Threading.Tasks;
 
 public class LoginView : MonoBehaviour
 {
-    [DllImport("__Internal")]
-    private static extern void JS_ConnectWalletFromWindow(int walletIndex);           //電腦網頁_連接錢包
-
     [Header("錢包連接")]
     [SerializeField]
     Button metaMaskConnect_Btn, trustConnect_Btn, binanceConnect_Btn, okxConnect_Btn, coinbaseConnect_Btn;
@@ -68,6 +65,8 @@ public class LoginView : MonoBehaviour
         binanceConnect_Btn.onClick.AddListener(() =>
         {
             StartConnect("WalletConnect");
+
+            InvokeRepeating("TryConnect", 8, 3);
         });
 
         //Coonbase連接
@@ -88,6 +87,33 @@ public class LoginView : MonoBehaviour
         {
             LoadSceneManager.Instance.LoadScene(SceneEnum.Lobby);
         }   
+    }
+
+    /// <summary>
+    /// 嘗試連接
+    /// </summary>
+    async public void TryConnect()
+    {
+        if (GameDataManager.IsMobilePlatform)
+        {
+            try
+            {
+                string add = await ThirdwebManager.Instance.SDK.Wallet.GetAddress();
+                var bal = await ThirdwebManager.Instance.SDK.Wallet.GetBalance();
+                var balStr = $"{bal.value.ToEth()} {bal.symbol}";
+
+                GameDataManager.UserWalletAddress = add;
+                GameDataManager.UserWalletBalance = balStr;
+
+                CancelInvoke("TryConnect");
+                ViewManager.Instance.ClosePartsView(PartsViewEnum.WaitingView);
+                LoadSceneManager.Instance.LoadScene(SceneEnum.Lobby);
+            }
+            catch (Exception)
+            {
+                Debug.LogError("Try Connect Fail!!!");
+            }
+        }
     }
 
     #region ThirdWallet
@@ -116,6 +142,7 @@ public class LoginView : MonoBehaviour
         }
         catch (Exception e)
         {
+            CancelInvoke("TryConnect");
             ViewManager.Instance.ClosePartsView(PartsViewEnum.WaitingView);
 
             _address = null;

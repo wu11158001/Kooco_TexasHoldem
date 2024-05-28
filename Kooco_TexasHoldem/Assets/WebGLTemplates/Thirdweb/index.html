@@ -14,7 +14,7 @@
   </head>
   <body class="{{{ SPLASH_SCREEN_STYLE.toLowerCase() }}}">
     <div id="unity-container" class="unity-desktop">
-      <canvas id="unity-canvas"></canvas>
+      <canvas id="unity-canvas" style="width: 100%; height: 100%;"></canvas>
     </div>
     <div id="loading-cover" style="display: none">
       <div id="unity-loading-bar">
@@ -71,7 +71,7 @@
 
             if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
               container.className = "unity-mobile";
-              config.devicePixelRatio = 1;
+              config.devicePixelRatio = 3;
             }
       #if BACKGROUND_FILENAME
             canvas.style.background = "url('" + buildUrl + "/{{{ BACKGROUND_FILENAME.replace(/'/g, '%27') }}}') center / cover";
