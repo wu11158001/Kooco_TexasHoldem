@@ -84,7 +84,7 @@ body {
 
 .spinner,
 .spinner:after {
-  border-radius: 40%;
+  border-radius: 50%;
   width: 5em;
   height: 5em;
 }

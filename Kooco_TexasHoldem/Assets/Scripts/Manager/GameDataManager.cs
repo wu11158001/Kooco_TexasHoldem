@@ -8,6 +8,13 @@ using System;
 
 public static class GameDataManager
 {
+    [Header("Line")]
+    public static string LineChannelId = "2005465224";
+    public static string LineChannelSecret = "2ce90d03cf058e20c60f1c8a421889c6";
+    public static string LineRedirectUri = "https://wu11158001.github.io/asiapoker_self/demo.asiapoker/index.html";
+    public static string LineMail { get; set; }
+
+
     [Header("公用")]
     public static bool IsMobilePlatform { get; set; }       //是否為移動平台
 

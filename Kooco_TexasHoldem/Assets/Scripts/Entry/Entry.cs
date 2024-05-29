@@ -5,6 +5,7 @@ using System;
 using Thirdweb;
 
 using RequestBuf;
+using UnityEngine.Networking;
 
 public class Entry : UnitySingleton<Entry>
 {
@@ -166,6 +167,103 @@ public class Entry : UnitySingleton<Entry>
     /// <param name="str"></param>
     public void HtmlDebug(string str)
     {
-        Debug.Log($"Html Debug: {str}");
+        Debug.Log($"Browser Debug: {str}");
+    }
+
+    [System.Serializable]
+    public class TokenResponse
+    {
+        public string access_token;
+        public string token_type;
+        public string refresh_token;
+        public string expires_in;
+        public string scope;
+        public string id_token;
+    }
+
+    [System.Serializable]
+    public class UserProfile
+    {
+        public string iss;
+        public string sub;
+        public string aud;
+        public int exp;
+        public int iat;
+        public string nonce;
+        public string[] amr;
+        public string name;
+        public string picture;
+        public string email;
+    }
+    /// <summary>
+    /// Line登入回傳
+    /// </summary>
+    /// <param name="code"></param>
+    public void OnLineLoginCallback(string code)
+    {
+        Debug.Log("JunYuan~ OnLineLoginCallback:" + code);
+        StartCoroutine(GetAccessToken(code));
+    }
+    private IEnumerator GetAccessToken(string authorizationCode)
+    {
+        string tokenUrl = "https://api.line.me/oauth2/v2.1/token";
+        WWWForm form = new WWWForm();
+        form.AddField("grant_type", "authorization_code");
+        form.AddField("code", authorizationCode);
+        form.AddField("redirect_uri", GameDataManager.LineRedirectUri);
+        form.AddField("client_id", GameDataManager.LineChannelId);
+        form.AddField("client_secret", GameDataManager.LineChannelSecret);
+
+        using (UnityWebRequest www = UnityWebRequest.Post(tokenUrl, form))
+        {
+            yield return www.SendWebRequest();
+
+            if (www.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogError(www.error);
+            }
+            else
+            {
+                // 解析访问令牌响应
+                var tokenResponse = JsonUtility.FromJson<TokenResponse>(www.downloadHandler.text);
+                string idToken = tokenResponse.id_token;
+
+                // 验证 ID 令牌并获取用户信息
+                StartCoroutine(VerifyIdToken(idToken));
+            }
+        }
+    }
+    /// <summary>
+    /// 驗證ID令牌並獲取用戶訊息
+    /// </summary>
+    /// <param name="idToken"></param>
+    /// <returns></returns>
+    private IEnumerator VerifyIdToken(string idToken)
+    {
+        string verifyUrl = "https://api.line.me/oauth2/v2.1/verify";
+        WWWForm form = new WWWForm();
+        form.AddField("id_token", idToken);
+        form.AddField("client_id", GameDataManager.LineChannelId);
+
+        using (UnityWebRequest www = UnityWebRequest.Post(verifyUrl, form))
+        {
+            yield return www.SendWebRequest();
+
+            if (www.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogError(www.error);
+            }
+            else
+            {
+                // 解析用户信息响应
+                var userProfile = JsonUtility.FromJson<UserProfile>(www.downloadHandler.text);
+                Debug.Log("User ID: " + userProfile.sub);
+                Debug.Log("Name: " + userProfile.name);
+                Debug.Log("Picture: " + userProfile.picture);
+                Debug.Log("Email: " + userProfile.email);
+
+                GameDataManager.LineMail = userProfile.email;
+            }
+        }
     }
 }

@@ -9,12 +9,24 @@ using Thirdweb;
 using System;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using System.Linq;
+using UnityEngine.Networking;
+using Newtonsoft.Json.Linq;
 
 public class LoginView : MonoBehaviour
 {
+    [DllImport("__Internal")]
+    private static extern string JS_GetBrowserInfo();           //獲取瀏覽器訊息
+
     [Header("錢包連接")]
     [SerializeField]
     Button metaMaskConnect_Btn, trustConnect_Btn, binanceConnect_Btn, okxConnect_Btn, coinbaseConnect_Btn;
+
+    [Header("綁定")]
+    [SerializeField]
+    Button line_Btn;
+    [SerializeField]
+    Text lineMail_Txt;
 
     ChainData _currentChainData;
     string _address;
@@ -29,6 +41,11 @@ public class LoginView : MonoBehaviour
     /// </summary>
     private void ListenerEvent()
     {
+        line_Btn.onClick.AddListener(() =>
+        {
+            StartLineLogin();
+        });
+
         //MetaMask連接
         metaMaskConnect_Btn.onClick.AddListener(() =>
         {
@@ -38,35 +55,29 @@ public class LoginView : MonoBehaviour
         //Trust連接
         trustConnect_Btn.onClick.AddListener(() =>
         {
-            if (GameDataManager.IsMobilePlatform)
-            {
-                StartConnect("WalletConnect");
-            }
-            else
-            {
-                StartConnect("WalletConnect");
-            }
+            StartConnect("Metamask");
         });
 
         //OKX連接
         okxConnect_Btn.onClick.AddListener(() =>
         {
-            if (GameDataManager.IsMobilePlatform)
-            {
-                StartConnect("WalletConnect");
-            }
-            else
-            {
-                StartConnect("WalletConnect");
-            }
+            StartConnect("Metamask");
         });
 
         //Binance連接
         binanceConnect_Btn.onClick.AddListener(() =>
         {
-            StartConnect("WalletConnect");
+            if (GameDataManager.IsMobilePlatform)
+            {
+                Debug.Log("Binance~");
+                StartConnect("Metamask");
+            }
+            else
+            {
+                StartConnect("WalletConnect");
+            }                
 
-            InvokeRepeating("TryConnect", 8, 3);
+            InvokeRepeating(nameof(TryBinanceConnect), 8, 3);
         });
 
         //Coonbase連接
@@ -79,6 +90,18 @@ public class LoginView : MonoBehaviour
     private void Start()
     {
         _currentChainData = ThirdwebManager.Instance.supportedChains.Find(x => x.identifier == ThirdwebManager.Instance.activeChain);
+
+        if (GameDataManager.IsMobilePlatform)
+        {
+            JS_GetBrowserInfo();
+        }
+
+        //已有Line Mail
+        if (!string.IsNullOrEmpty(GameDataManager.LineMail))
+        {
+            line_Btn.interactable = false;
+            lineMail_Txt.text = GameDataManager.LineMail;
+        }
     }
 
     private void Update()
@@ -90,9 +113,56 @@ public class LoginView : MonoBehaviour
     }
 
     /// <summary>
-    /// 嘗試連接
+    /// 開始Line登入
     /// </summary>
-    async public void TryConnect()
+    public void StartLineLogin()
+    {
+        string state = GenerateRandomString();
+        string nonce = GenerateRandomString();
+        string authUrl = $"https://access.line.me/oauth2/v2.1/authorize?response_type=code&client_id=" +
+                         $"{GameDataManager.LineChannelId}&redirect_uri={GameDataManager.LineRedirectUri}&state={state}&scope=profile%20openid%20email&nonce={nonce}";
+        Application.OpenURL(authUrl);
+    }
+    private string GenerateRandomString(int length = 16)
+    {
+        const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        var random = new System.Random();
+        return new string(Enumerable.Repeat(chars, length).Select(s => s[random.Next(s.Length)]).ToArray());
+    }
+
+    /// <summary>
+    /// 嘗試連接Coinbase
+    /// </summary>
+    /// <param name="version"></param>
+    public void TryCoinbaseConnect(string version)
+    {
+        if (GameDataManager.IsMobilePlatform)
+        {
+            Debug.Log("TryCoinbaseConnect");
+            if (version == "124.0.6367.179")
+            {
+                Debug.Log("TryCoinbaseConnect...");
+                StartCoroutine(ITryCoinbaseConnect());
+            }
+        }
+    }
+
+    /// <summary>
+    /// 嘗試連接Coinbase
+    /// </summary>
+    /// <returns></returns>
+    private IEnumerator ITryCoinbaseConnect()
+    {
+        ViewManager.Instance.OpenPartsView(PartsViewEnum.WaitingView);
+        yield return new WaitForSeconds(1);
+        Debug.Log("Start Try Coinbase Connect");
+        StartConnect("Coinbase");
+    }
+
+    /// <summary>
+    /// 嘗試連接Binance
+    /// </summary>
+    async public void TryBinanceConnect()
     {
         if (GameDataManager.IsMobilePlatform)
         {
@@ -105,7 +175,7 @@ public class LoginView : MonoBehaviour
                 GameDataManager.UserWalletAddress = add;
                 GameDataManager.UserWalletBalance = balStr;
 
-                CancelInvoke("TryConnect");
+                CancelInvoke(nameof(TryBinanceConnect));
                 ViewManager.Instance.ClosePartsView(PartsViewEnum.WaitingView);
                 LoadSceneManager.Instance.LoadScene(SceneEnum.Lobby);
             }
@@ -142,7 +212,7 @@ public class LoginView : MonoBehaviour
         }
         catch (Exception e)
         {
-            CancelInvoke("TryConnect");
+            CancelInvoke(nameof(TryBinanceConnect));
             ViewManager.Instance.ClosePartsView(PartsViewEnum.WaitingView);
 
             _address = null;

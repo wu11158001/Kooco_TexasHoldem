@@ -980,7 +980,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   debugObj: {fileID: 1656577949}
-  isShowDebug: 0
+  isShowDebug: 1
 --- !u!4 &1282735215
 Transform:
   m_ObjectHideFlags: 0
