@@ -26,7 +26,10 @@
     </div>
     <div id="unity-fullscreen-button" style="display: none"></div>
     <script>
+        //重定向Url
+        window.callbackUrl = 'https://kooco.github.io/ACEdemo/demo.asiapoker/index.html';
         let unityInstance;
+        let IsMobilePlatform;
 
         window.onload = () => {
             const buildUrl = "Build";
@@ -89,8 +92,19 @@
                         window.unityInstance = instance;
 
                         // 檢測平台
-                        const IsMobilePlatform = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+                        IsMobilePlatform = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
                         instance.SendMessage('Entry', 'IsMobilePlatform', IsMobilePlatform.toString());
+
+                        //是否在預設瀏覽器內
+                        const isDefaultBrowser = (navigator.userAgent.includes("Samsung Browser") || navigator.userAgent.includes("SamsungBrowser")) ||
+                                                 (navigator.userAgent.includes("EMUI Browser") || navigator.userAgent.includes("EMUIBrowser")) ||
+                                                 (navigator.userAgent.includes("MIUI Browser") || navigator.userAgent.includes("MIUIBrowser")) ||
+                                                 (navigator.userAgent.includes("OPPO Browser") || navigator.userAgent.includes("OPPOBrowser")) ||
+                                                 (navigator.userAgent.includes("vivo Browser") || navigator.userAgent.includes("vivoBrowser")) ||
+                                                 (navigator.userAgent.includes("OnePlus Browser") || navigator.userAgent.includes("OnePlusBrowser")) ||
+                                                 (navigator.userAgent.includes("Sony Browser") || navigator.userAgent.includes("SonyBrowser")) ||
+                                                 (navigator.userAgent.includes("LG Browser") || navigator.userAgent.includes("LGBrowser"));
+                        instance.SendMessage('Entry', 'IsDefaultBrowser', isDefaultBrowser.toString());
 
                         // 網頁視窗焦點
                         window.addEventListener("blur", function() {
@@ -109,6 +123,26 @@
                         if (code) {
                             onLineLoginCallback(code, state);
                         }
+
+                        // 放置接收代碼的 JavaScript
+                        function getQueryParams() {
+                            const params = {};
+                            const queryString = window.location.search.substring(1);
+                            const regex = /([^&=]+)=([^&]*)/g;
+                            let match;
+                            while (match = regex.exec(queryString)) {
+                                params[decodeURIComponent(match[1])] = decodeURIComponent(match[2]);
+                            }
+                            return params;
+                        }
+                        //新開頁面解析URL
+                        const queryParams = getQueryParams();
+                        const lineMail = queryParams['linemail'];
+                        if (lineMail) {
+                            instance.SendMessage('Entry', 'GetLineMail', lineMail);
+                        }
+
+
                     }).catch((message) => {
                         alert(message);
                     });
@@ -120,12 +154,14 @@
         //Line登入傳遞授權碼
         function onLineLoginCallback(code, state) {
             if (window.unityInstance) {
-                console.log("Line登入 傳遞授權碼");
+                console.log("Line Login And Get Code");
                 window.unityInstance.SendMessage('Entry', 'OnLineLoginCallback', code);
+
             } else {
                 console.error("Unity instance not found.");
             }
         }
+
     </script>
 </body>
 </html>

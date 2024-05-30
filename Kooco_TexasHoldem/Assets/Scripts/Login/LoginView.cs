@@ -16,7 +16,13 @@ using Newtonsoft.Json.Linq;
 public class LoginView : MonoBehaviour
 {
     [DllImport("__Internal")]
-    private static extern string JS_GetBrowserInfo();           //獲取瀏覽器訊息
+    private static extern string JS_GetBrowserInfo();                   //獲取瀏覽器訊息
+    [DllImport("__Internal")]
+    private static extern void JS_LocationHref(string url);             //本地頁面跳轉
+    [DllImport("__Internal")]
+    private static extern void JS_WindowClose();                        //關閉頁面
+    [DllImport("__Internal")]
+    private static extern void JS_OpenNewBrowser(string mail);          //開啟新瀏覽器
 
     [Header("錢包連接")]
     [SerializeField]
@@ -36,11 +42,14 @@ public class LoginView : MonoBehaviour
         ListenerEvent();
     }
 
+    public Button tt;
+
     /// <summary>
     /// 事件聆聽
     /// </summary>
     private void ListenerEvent()
     {
+        //Line登入
         line_Btn.onClick.AddListener(() =>
         {
             StartLineLogin();
@@ -113,53 +122,6 @@ public class LoginView : MonoBehaviour
     }
 
     /// <summary>
-    /// 開始Line登入
-    /// </summary>
-    public void StartLineLogin()
-    {
-        string state = GenerateRandomString();
-        string nonce = GenerateRandomString();
-        string authUrl = $"https://access.line.me/oauth2/v2.1/authorize?response_type=code&client_id=" +
-                         $"{GameDataManager.LineChannelId}&redirect_uri={GameDataManager.LineRedirectUri}&state={state}&scope=profile%20openid%20email&nonce={nonce}";
-        Application.OpenURL(authUrl);
-    }
-    private string GenerateRandomString(int length = 16)
-    {
-        const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-        var random = new System.Random();
-        return new string(Enumerable.Repeat(chars, length).Select(s => s[random.Next(s.Length)]).ToArray());
-    }
-
-    /// <summary>
-    /// 嘗試連接Coinbase
-    /// </summary>
-    /// <param name="version"></param>
-    public void TryCoinbaseConnect(string version)
-    {
-        if (GameDataManager.IsMobilePlatform)
-        {
-            Debug.Log("TryCoinbaseConnect");
-            if (version == "124.0.6367.179")
-            {
-                Debug.Log("TryCoinbaseConnect...");
-                StartCoroutine(ITryCoinbaseConnect());
-            }
-        }
-    }
-
-    /// <summary>
-    /// 嘗試連接Coinbase
-    /// </summary>
-    /// <returns></returns>
-    private IEnumerator ITryCoinbaseConnect()
-    {
-        ViewManager.Instance.OpenPartsView(PartsViewEnum.WaitingView);
-        yield return new WaitForSeconds(1);
-        Debug.Log("Start Try Coinbase Connect");
-        StartConnect("Coinbase");
-    }
-
-    /// <summary>
     /// 嘗試連接Binance
     /// </summary>
     async public void TryBinanceConnect()
@@ -194,6 +156,15 @@ public class LoginView : MonoBehaviour
     /// <param name="walletProviderStr">連接形式</param>
     public void StartConnect(string walletProviderStr)
     {
+        if (GameDataManager.IsMobilePlatform && 
+            GameDataManager.IsDefaultBrowser &&
+            Application.platform != RuntimePlatform.IPhonePlayer)
+        {
+            //在預設瀏覽器內
+            JS_OpenNewBrowser(GameDataManager.LineMail);
+            return;
+        }
+
         ViewManager.Instance.OpenPartsView(PartsViewEnum.WaitingView);
 
         var wc = new WalletConnection(provider: Enum.Parse<WalletProvider>(walletProviderStr), chainId: BigInteger.Parse(_currentChainData.chainId));
@@ -243,5 +214,32 @@ public class LoginView : MonoBehaviour
         LoadSceneManager.Instance.LoadScene(SceneEnum.Lobby);
     }
 
-#endregion
+    #endregion
+
+    #region LINE
+
+    /// <summary>
+    /// 開始Line登入
+    /// </summary>
+    public void StartLineLogin()
+    {
+        string state = GenerateRandomString();
+        string nonce = GenerateRandomString();
+        string authUrl = $"https://access.line.me/oauth2/v2.1/authorize?response_type=code&" +
+                         $"client_id={GameDataManager.LineChannelId}&" +
+                         $"redirect_uri={GameDataManager.RedirectUri}&" +
+                         $"state={state}&" +
+                         $"scope=profile%20openid%20email&nonce={nonce}";
+
+
+        JS_LocationHref(authUrl);
+    }
+    private string GenerateRandomString(int length = 16)
+    {
+        const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        var random = new System.Random();
+        return new string(Enumerable.Repeat(chars, length).Select(s => s[random.Next(s.Length)]).ToArray());
+    }
+
+    #endregion
 }

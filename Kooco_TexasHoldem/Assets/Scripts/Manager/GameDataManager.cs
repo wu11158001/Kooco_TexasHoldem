@@ -9,17 +9,20 @@ using System;
 public static class GameDataManager
 {
     [Header("Line")]
-    public static string LineChannelId = "2005465224";
-    public static string LineChannelSecret = "2ce90d03cf058e20c60f1c8a421889c6";
-    public static string LineRedirectUri = "https://wu11158001.github.io/asiapoker_self/demo.asiapoker/index.html";
-    public static string LineMail { get; set; }
+    public static string LineChannelId = "2005465224";                                                                                  //Line頻道ID
+    public static string LineChannelSecret = "2ce90d03cf058e20c60f1c8a421889c6";                                                        //Line密鑰
+    public static string LineMail { get; set; }                                                                                         //Line信箱
 
 
     [Header("公用")]
-    public static bool IsMobilePlatform { get; set; }       //是否為移動平台
+    public static string RedirectUri = "https://kooco.github.io/ACEdemo/demo.asiapoker/index.html";                                  //重定向Url
+    public static bool IsMobilePlatform { get; set; }                                                                                //是否為移動平台
+    public static bool IsDefaultBrowser { get; set; }                                                                                //是否在預設瀏覽器內
+
 
     [Header("場景")]
     public static SceneEnum CurrScene { get; set; }         //當前場景
+
 
     [Header("用戶")]
     public static string UserWalletAddress { get; set; }     //用戶錢包地址

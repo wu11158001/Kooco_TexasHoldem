@@ -1,5 +1,15 @@
 mergeInto(LibraryManager.library, {
 
+    //本地頁面跳轉
+    JS_LocationHref: function(url){
+        window.location.href = UTF8ToString(url);
+    },
+
+    //關閉頁面
+    JS_WindowClose: function(){
+        window.open("","_self").close();
+    },
+
     //重新整理頁面
     JS_Reload: function() {
         window.location.reload();
@@ -42,7 +52,7 @@ mergeInto(LibraryManager.library, {
     //獲取瀏覽器訊息
     JS_GetBrowserInfo: function(){
         window.unityInstance.SendMessage('Entry', 'HtmlDebug', 'GetBrowserInfo');
-        /*const userAgent = navigator.userAgent;
+        const userAgent = navigator.userAgent;
         const appName = navigator.appName;
         const appVersion = navigator.appVersion;
         const platform = navigator.platform;
@@ -52,9 +62,9 @@ mergeInto(LibraryManager.library, {
         window.unityInstance.SendMessage('Entry', 'HtmlDebug', 'appName:'+appName);
         window.unityInstance.SendMessage('Entry', 'HtmlDebug', 'appVersion:'+appVersion);
         window.unityInstance.SendMessage('Entry', 'HtmlDebug', 'platform:'+platform);
-        window.unityInstance.SendMessage('Entry', 'HtmlDebug', 'language:'+language);*/
+        window.unityInstance.SendMessage('Entry', 'HtmlDebug', 'language:'+language);
         
-        const userAgent = navigator.userAgent;
+        //const userAgent = navigator.userAgent;
         let browserName, fullVersion;
 
         if (userAgent.indexOf("Chrome") > -1) {
@@ -75,9 +85,14 @@ mergeInto(LibraryManager.library, {
         } else {
             browserName = "Unknown";
             fullVersion = "Unknown";
-        }
-        window.unityInstance.SendMessage('Entry', 'HtmlDebug', 'browserName:'+browserName);
-        window.unityInstance.SendMessage('Entry', 'HtmlDebug', 'fullVersion:'+fullVersion);
-        window.unityInstance.SendMessage('LoginView', 'TryCoinbaseConnect', fullVersion);
+        }      
+    },
+
+    //離開預設瀏覽器開啟chrome瀏覽器
+    JS_OpenNewBrowser: function(mailStr){
+        const mail = UTF8ToString(mailStr);
+        const targetUrl = `${window.callbackUrl}?linemail=${encodeURIComponent(mail)}`;
+        const intentUrl = `intent://${targetUrl.replace(/^https?:\/\//, '')}#Intent;scheme=http;package=com.android.chrome;end;`;
+        window.location.href = intentUrl;
     },
 });

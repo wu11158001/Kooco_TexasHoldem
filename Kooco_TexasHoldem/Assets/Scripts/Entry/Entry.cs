@@ -136,38 +136,15 @@ public class Entry : UnitySingleton<Entry>
         
     }
 
-    /// <summary>
-    /// 網頁視窗失去焦點
-    /// </summary>
-    public void OnWindowBlur()
-    {
-        GameRoomManager.Instance.OnGamePause(true);
-    }
+    #region LINE
 
     /// <summary>
-    /// 網頁視窗獲得焦點
+    /// 獲取Line信箱
     /// </summary>
-    public void OnWindowFocus()
+    /// <param name="mail"></param>
+    public void GetLineMail(string mail)
     {
-
-    }
-
-    /// <summary>
-    /// 是否為移動平台
-    /// </summary>
-    public void IsMobilePlatform(string isMobile)
-    {
-        GameDataManager.IsMobilePlatform = isMobile == "true";
-        Debug.Log($"IsMobilePlatform:{isMobile}");
-    }
-
-    /// <summary>
-    /// 網頁debug
-    /// </summary>
-    /// <param name="str"></param>
-    public void HtmlDebug(string str)
-    {
-        Debug.Log($"Browser Debug: {str}");
+        GameDataManager.LineMail = mail;
     }
 
     [System.Serializable]
@@ -201,7 +178,7 @@ public class Entry : UnitySingleton<Entry>
     /// <param name="code"></param>
     public void OnLineLoginCallback(string code)
     {
-        Debug.Log("JunYuan~ OnLineLoginCallback:" + code);
+        Debug.Log("Recive Line Login Callback:" + code);
         StartCoroutine(GetAccessToken(code));
     }
     private IEnumerator GetAccessToken(string authorizationCode)
@@ -210,7 +187,7 @@ public class Entry : UnitySingleton<Entry>
         WWWForm form = new WWWForm();
         form.AddField("grant_type", "authorization_code");
         form.AddField("code", authorizationCode);
-        form.AddField("redirect_uri", GameDataManager.LineRedirectUri);
+        form.AddField("redirect_uri", GameDataManager.RedirectUri);
         form.AddField("client_id", GameDataManager.LineChannelId);
         form.AddField("client_secret", GameDataManager.LineChannelSecret);
 
@@ -266,4 +243,53 @@ public class Entry : UnitySingleton<Entry>
             }
         }
     }
+
+    #endregion
+
+    #region 工具類 
+
+    /// <summary>
+    /// 網頁視窗失去焦點
+    /// </summary>
+    public void OnWindowBlur()
+    {
+        GameRoomManager.Instance.OnGamePause(true);
+    }
+
+    /// <summary>
+    /// 網頁視窗獲得焦點
+    /// </summary>
+    public void OnWindowFocus()
+    {
+
+    }
+
+    /// <summary>
+    /// 是否為移動平台
+    /// </summary>
+    public void IsMobilePlatform(string isMobile)
+    {
+        GameDataManager.IsMobilePlatform = isMobile == "true";
+        Debug.Log($"IsMobilePlatform:{isMobile}");
+    }
+
+    /// <summary>
+    /// 是否在預設瀏覽器內
+    /// </summary>
+    public void IsDefaultBrowser(string isDefaultBrowser)
+    {
+        GameDataManager.IsDefaultBrowser = isDefaultBrowser == "true";
+        Debug.Log($"isDefaultBrowser:{isDefaultBrowser}");
+    }
+
+    /// <summary>
+    /// 網頁debug
+    /// </summary>
+    /// <param name="str"></param>
+    public void HtmlDebug(string str)
+    {
+        Debug.Log($"Browser Debug: {str}");
+    }
+
+    #endregion
 }

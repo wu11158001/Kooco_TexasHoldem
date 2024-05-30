@@ -64,6 +64,7 @@ MonoBehaviour:
   coinbaseConnect_Btn: {fileID: 6345712870618634515}
   line_Btn: {fileID: 2551734250539585437}
   lineMail_Txt: {fileID: 6793223316575516399}
+  tt: {fileID: 0}
 --- !u!222 &837559756044227817
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -691,7 +692,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 189.23932, y: -18}
+  m_AnchoredPosition: {x: 189.23932, y: -3}
   m_SizeDelta: {x: 292.4787, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7109421622170413695
@@ -729,13 +730,13 @@ MonoBehaviour:
     m_BestFit: 1
     m_MinSize: 8
     m_MaxSize: 15
-    m_Alignment: 6
+    m_Alignment: 3
     m_AlignByGeometry: 0
     m_RichText: 1
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Line Mail:'
+  m_Text: 
 --- !u!1 &6509987123520928293
 GameObject:
   m_ObjectHideFlags: 0
@@ -754,7 +755,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &4438596072355766673
 RectTransform:
   m_ObjectHideFlags: 0
@@ -772,7 +773,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -177, y: 397}
+  m_AnchoredPosition: {x: -138, y: 378}
   m_SizeDelta: {x: 60, y: 60}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7530440127634908546
