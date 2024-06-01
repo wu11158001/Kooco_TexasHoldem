@@ -45,7 +45,7 @@ public class LoadSceneManager : UnitySingleton<LoadSceneManager>
             if (asyncLoad.progress >= 0.9f)
             {
                 asyncLoad.allowSceneActivation = true;
-                GameDataManager.CurrScene = sceneEnum;
+                DataManager.CurrScene = sceneEnum;
 
                 yield return new WaitForSeconds(0.5f);
 

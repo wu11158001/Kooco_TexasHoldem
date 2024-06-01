@@ -22,7 +22,6 @@ public class WalletManager : UnitySingleton<WalletManager>
     /// </summary>
     async public void OnWalletDisconnect()
     {
-#if !UNITY_EDITOR
         Debug.Log("Disconnecting...");
         try
         {
@@ -33,10 +32,9 @@ public class WalletManager : UnitySingleton<WalletManager>
             Debug.LogError($"Failed to disconnect: {e}");
         }
 
-        if (!GameDataManager.IsMobilePlatform)
+        if (!DataManager.IsMobilePlatform)
         {
             JS_WindowDisconnect();
         }
-#endif
     }
 }

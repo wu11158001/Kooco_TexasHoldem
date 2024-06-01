@@ -30,7 +30,7 @@ public static class TexasHoldemUtil
     /// <param name="sli">Slider</param>
     public static void SetBuySlider(double smallBlind, Slider sli)
     {
-        sli.minValue = (float)smallBlind * GameDataManager.MinMagnification;
+        sli.minValue = (float)smallBlind * DataManager.MinMagnification;
         sli.maxValue = (float)Entry.TestInfoData.LocalUserChips;
         sli.value = sli.minValue;
     }

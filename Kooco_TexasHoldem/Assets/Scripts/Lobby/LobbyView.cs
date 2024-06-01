@@ -132,8 +132,8 @@ public class LobbyView : MonoBehaviour
         //現金桌        
         float cashRoomSpacing = cashRoomParent.GetComponent<HorizontalLayoutGroup>().spacing;
         Rect cashRoomRect = cashRoomBtnSample.GetComponent<RectTransform>().rect;
-        cashRoomParent.sizeDelta = new Vector2((cashRoomRect.width + cashRoomSpacing) * GameDataManager.CashRoomSmallBlindList.Count, cashRoomRect.height);
-        foreach (var smallBlind in GameDataManager.CashRoomSmallBlindList)
+        cashRoomParent.sizeDelta = new Vector2((cashRoomRect.width + cashRoomSpacing) * DataManager.CashRoomSmallBlindList.Count, cashRoomRect.height);
+        foreach (var smallBlind in DataManager.CashRoomSmallBlindList)
         {
             RectTransform rt = Instantiate(cashRoomBtnSample).GetComponent<RectTransform>();
             rt.gameObject.SetActive(true);
@@ -168,8 +168,8 @@ public class LobbyView : MonoBehaviour
     /// </summary>
     private void SetUserInfo()
     {
-        walletAddress_Txt.text = $"Wallet Address : {GameDataManager.UserWalletAddress}";
-        balanceETH_Txt.text = $"Balance : {GameDataManager.UserWalletBalance}";
+        walletAddress_Txt.text = $"Wallet Address : {DataManager.UserWalletAddress}";
+        balanceETH_Txt.text = $"Balance : {DataManager.UserWalletBalance}";
     }
 
     /// <summary>

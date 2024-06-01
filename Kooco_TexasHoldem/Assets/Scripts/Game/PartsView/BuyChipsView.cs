@@ -89,7 +89,7 @@ public class BuyChipsView : MonoBehaviour
 
         title_Txt.text = $"{thisData.SmallBlind} / {thisData.SmallBlind * 2} Texas Holdem";
         TexasHoldemUtil.SetBuySlider(thisData.SmallBlind, buyChips_Sli);
-        minBuyChips_Txt.text = $"{StringUtils.SetChipsUnit(thisData.SmallBlind * GameDataManager.MinMagnification)}";
+        minBuyChips_Txt.text = $"{StringUtils.SetChipsUnit(thisData.SmallBlind * DataManager.MinMagnification)}";
         maxBuyChips_Txt.text = $"{StringUtils.SetChipsUnit(Entry.TestInfoData.LocalUserChips)}";
     }
 }

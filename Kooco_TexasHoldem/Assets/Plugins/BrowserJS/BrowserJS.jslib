@@ -89,9 +89,12 @@ mergeInto(LibraryManager.library, {
     },
 
     //離開預設瀏覽器開啟chrome瀏覽器
-    JS_OpenNewBrowser: function(mailStr){
-        const mail = UTF8ToString(mailStr);
-        const targetUrl = `${window.callbackUrl}?linemail=${encodeURIComponent(mail)}`;
+    JS_OpenNewBrowser: function(mailStr, igIdAndNameStr){
+        const _linemail = UTF8ToString(mailStr);
+        const _igIdAndName = UTF8ToString(igIdAndNameStr);
+        const targetUrl = `${window.callbackUrl}?
+                           linemail=${encodeURIComponent(_linemail)}&
+                           igIdAndName=${encodeURIComponent(_igIdAndName)}`;
         const intentUrl = `intent://${targetUrl.replace(/^https?:\/\//, '')}#Intent;scheme=http;package=com.android.chrome;end;`;
         window.location.href = intentUrl;
     },

@@ -18,7 +18,7 @@ public class CashRoomBtn : MonoBehaviour
     public void SetCashRoomBtnInfo(double smallBlind, LobbyView lobbyView)
     {
         smallBlind_Txt.text = $"{StringUtils.SetChipsUnit(smallBlind)} / {StringUtils.SetChipsUnit(smallBlind * 2)}";
-        buyMinChips_Txt.text = $"{StringUtils.SetChipsUnit(smallBlind * GameDataManager.MinMagnification)}";
+        buyMinChips_Txt.text = $"{StringUtils.SetChipsUnit(smallBlind * DataManager.MinMagnification)}";
 
         ThisRoom_Btn.onClick.AddListener(() =>
         {

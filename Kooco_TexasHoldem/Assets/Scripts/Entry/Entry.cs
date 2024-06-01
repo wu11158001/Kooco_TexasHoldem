@@ -136,19 +136,107 @@ public class Entry : UnitySingleton<Entry>
         
     }
 
-    #region LINE
+    #region IG
 
     /// <summary>
-    /// 獲取Line信箱
+    /// 接收獲取IG用戶訊息
     /// </summary>
     /// <param name="mail"></param>
-    public void GetLineMail(string mail)
+    public void ReceiveIGInfo(string info)
     {
-        GameDataManager.LineMail = mail;
+        Debug.Log($"Get IG Info:{info}");
+        DataManager.IGIUserIdAndName = info;
     }
 
     [System.Serializable]
-    public class TokenResponse
+    public class IGUserInfo
+    {
+        public string id;
+        public string username;
+    }
+    /// <summary>
+    /// IG登入回傳
+    /// </summary>
+    /// <param name="code"></param>
+    public void OnIGLoginCallback(string code)
+    {
+        StartCoroutine(IGetIGAccessToken(code));
+    }
+    /// <summary>
+    /// 獲取IGToken
+    /// </summary>
+    /// <returns></returns>
+    private IEnumerator IGetIGAccessToken(string authorizationCode)
+    {
+        Debug.Log($"IG Code:{authorizationCode}");
+
+        WWWForm form = new WWWForm();
+        form.AddField("client_id", DataManager.IGClientId);
+        form.AddField("client_secret", DataManager.IGSecret);
+        form.AddField("grant_type", "authorization_code");
+        form.AddField("redirect_uri", DataManager.TestRedirectUri);
+        form.AddField("code", authorizationCode);
+
+        UnityWebRequest www = UnityWebRequest.Post("https://api.instagram.com/oauth/access_token", form);
+        yield return www.SendWebRequest();
+
+        if (www.result == UnityWebRequest.Result.ConnectionError || www.result == UnityWebRequest.Result.ProtocolError)
+        {
+            Debug.LogError(www.error);
+        }
+        else
+        {
+            string responseText = www.downloadHandler.text;
+            Debug.Log($"IG ResponseText:{responseText}");
+            string accessToken = responseText.Split('"')[3];
+            yield return IGetIGUserInfo(accessToken);
+        }
+    }
+    /// <summary>
+    /// 獲取IG用戶訊息
+    /// </summary>
+    /// <param name="accessToken"></param>
+    /// <returns></returns>
+    private IEnumerator IGetIGUserInfo(string accessToken)
+    {
+        UnityWebRequest www = UnityWebRequest.Get($"https://graph.instagram.com/me?fields=id,username&access_token={accessToken}");
+        yield return www.SendWebRequest();
+
+        if (www.result == UnityWebRequest.Result.ConnectionError || www.result == UnityWebRequest.Result.ProtocolError)
+        {
+            Debug.LogError(www.error);
+        }
+        else
+        {
+            string responseText = www.downloadHandler.text;
+            IGUserInfo userInfo = JsonUtility.FromJson<IGUserInfo>(responseText);
+            if (userInfo != null)
+            {
+                // Display user information
+                DataManager.IGIUserIdAndName = $"ID: {userInfo.id}\nUsername: {userInfo.username}";
+            }
+            else
+            {
+                Debug.LogError("Failed to parse user info.");
+            }
+        }
+    }
+
+    #endregion
+
+    #region LINE
+
+    /// <summary>
+    /// 接收獲取Line信箱
+    /// </summary>
+    /// <param name="mail"></param>
+    public void ReceiveLineMail(string mail)
+    {
+        DataManager.LineMail = mail;
+    }
+
+    [System.Serializable]
+    public class LineTokenResponse
     {
         public string access_token;
         public string token_type;
@@ -159,7 +247,7 @@ public class Entry : UnitySingleton<Entry>
     }
 
     [System.Serializable]
-    public class UserProfile
+    public class LineUserProfile
     {
         public string iss;
         public string sub;
@@ -179,17 +267,22 @@ public class Entry : UnitySingleton<Entry>
     public void OnLineLoginCallback(string code)
     {
         Debug.Log("Recive Line Login Callback:" + code);
-        StartCoroutine(GetAccessToken(code));
+        StartCoroutine(IGetLineAccessToken(code));
     }
-    private IEnumerator GetAccessToken(string authorizationCode)
+    /// <summary>
+    /// 獲取LineToken
+    /// </summary>
+    /// <param name="authorizationCode"></param>
+    /// <returns></returns>
+    private IEnumerator IGetLineAccessToken(string authorizationCode)
     {
         string tokenUrl = "https://api.line.me/oauth2/v2.1/token";
         WWWForm form = new WWWForm();
         form.AddField("grant_type", "authorization_code");
         form.AddField("code", authorizationCode);
-        form.AddField("redirect_uri", GameDataManager.RedirectUri);
-        form.AddField("client_id", GameDataManager.LineChannelId);
-        form.AddField("client_secret", GameDataManager.LineChannelSecret);
+        form.AddField("redirect_uri", DataManager.RedirectUri);
+        form.AddField("client_id", DataManager.LineChannelId);
+        form.AddField("client_secret", DataManager.LineChannelSecret);
 
         using (UnityWebRequest www = UnityWebRequest.Post(tokenUrl, form))
         {
@@ -202,25 +295,25 @@ public class Entry : UnitySingleton<Entry>
             else
             {
                 // 解析访问令牌响应
-                var tokenResponse = JsonUtility.FromJson<TokenResponse>(www.downloadHandler.text);
+                var tokenResponse = JsonUtility.FromJson<LineTokenResponse>(www.downloadHandler.text);
                 string idToken = tokenResponse.id_token;
 
                 // 验证 ID 令牌并获取用户信息
-                StartCoroutine(VerifyIdToken(idToken));
+                StartCoroutine(LineVerifyIdToken(idToken));
             }
         }
     }
     /// <summary>
-    /// 驗證ID令牌並獲取用戶訊息
+    /// Line驗證ID令牌並獲取用戶訊息
     /// </summary>
     /// <param name="idToken"></param>
     /// <returns></returns>
-    private IEnumerator VerifyIdToken(string idToken)
+    private IEnumerator LineVerifyIdToken(string idToken)
     {
         string verifyUrl = "https://api.line.me/oauth2/v2.1/verify";
         WWWForm form = new WWWForm();
         form.AddField("id_token", idToken);
-        form.AddField("client_id", GameDataManager.LineChannelId);
+        form.AddField("client_id", DataManager.LineChannelId);
 
         using (UnityWebRequest www = UnityWebRequest.Post(verifyUrl, form))
         {
@@ -233,13 +326,13 @@ public class Entry : UnitySingleton<Entry>
             else
             {
                 // 解析用户信息响应
-                var userProfile = JsonUtility.FromJson<UserProfile>(www.downloadHandler.text);
+                var userProfile = JsonUtility.FromJson<LineUserProfile>(www.downloadHandler.text);
                 Debug.Log("User ID: " + userProfile.sub);
                 Debug.Log("Name: " + userProfile.name);
                 Debug.Log("Picture: " + userProfile.picture);
                 Debug.Log("Email: " + userProfile.email);
 
-                GameDataManager.LineMail = userProfile.email;
+                DataManager.LineMail = userProfile.email;
             }
         }
     }
@@ -269,7 +362,7 @@ public class Entry : UnitySingleton<Entry>
     /// </summary>
     public void IsMobilePlatform(string isMobile)
     {
-        GameDataManager.IsMobilePlatform = isMobile == "true";
+        DataManager.IsMobilePlatform = isMobile == "true";
         Debug.Log($"IsMobilePlatform:{isMobile}");
     }
 
@@ -278,8 +371,18 @@ public class Entry : UnitySingleton<Entry>
     /// </summary>
     public void IsDefaultBrowser(string isDefaultBrowser)
     {
-        GameDataManager.IsDefaultBrowser = isDefaultBrowser == "true";
+        DataManager.IsDefaultBrowser = isDefaultBrowser == "true";
         Debug.Log($"isDefaultBrowser:{isDefaultBrowser}");
+    }
+
+
+    /// <summary>
+    /// 是否在Coinbase瀏覽器內
+    /// </summary>
+    public void IsInCoinbase(string isCoinbaseBrowser)
+    {
+        DataManager.IsInCoinbase = isCoinbaseBrowser == "true";
+        Debug.Log($"isDefaultBrowser:{isCoinbaseBrowser}");
     }
 
     /// <summary>

@@ -10,6 +10,8 @@
     <script src="https://cdn.jsdelivr.net/npm/web3@1.5.2/dist/web3.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/web3modal@1.9.5/dist/index.min.js"></script>
     <script src="https://c0f4f41c-2f55-4863-921b-sdk-docs.github.io/cdn/metamask-sdk-unity.js"></script>
+    <script src="https://connect.facebook.net/en_US/sdk.js"></script>
+    <script src="https://docs.cloud.coinbase.com/wallet-sdk/docs/injected-provider"></script>
 </head>
 <body class="{{{ SPLASH_SCREEN_STYLE.toLowerCase() }}}">
     <div id="unity-container" class="unity-desktop">
@@ -27,7 +29,10 @@
     <div id="unity-fullscreen-button" style="display: none"></div>
     <script>
         //重定向Url
-        window.callbackUrl = 'https://kooco.github.io/ACEdemo/demo.asiapoker/index.html';
+        //window.callbackUrl = 'https://kooco.github.io/ACEdemo/demo.asiapoker/index.html';
+        window.callbackUrl = 'https://wu11158001.github.io/asiapoker_self/demo.asiapoker/index.html';
+        //IG APP ID
+        window.igAppId = '1019674972416526';
         let unityInstance;
         let IsMobilePlatform;
 
@@ -106,6 +111,50 @@
                                                  (navigator.userAgent.includes("LG Browser") || navigator.userAgent.includes("LGBrowser"));
                         instance.SendMessage('Entry', 'IsDefaultBrowser', isDefaultBrowser.toString());
 
+                        //檢測Coinbase App是否開啟
+                        function isCoinbaseAppOpen() {
+                            // 定义Coinbase自定义协议的URL
+                            var coinbaseProtocolURL = "coinbase://"; // 这是一个示例URL，请确保是正确的Coinbase自定义协议URL
+
+                            // 创建一个临时的iframe元素
+                            var iframe = document.createElement("iframe");
+                            iframe.style.display = "none";
+
+                            // 尝试加载Coinbase自定义协议的URL
+                            iframe.src = coinbaseProtocolURL;
+
+                            // 将iframe添加到文档中
+                            document.body.appendChild(iframe);
+
+                            // 定时器用于检测iframe是否加载成功
+                            var timer = setTimeout(function() {
+                                // 当iframe加载超时时，认为Coinbase应用未打开
+                                isAppOpen(false);
+                            }, 2000); // 2秒钟作为超时时间，您可以根据需要调整
+
+                            // iframe加载完成后的处理函数
+                            iframe.onload = function() {
+                                clearTimeout(timer); // 清除超时定时器
+                                isAppOpen(true); // 说明Coinbase应用已经打开
+                            };
+
+                            // 检查是否有异常发生
+                            iframe.onerror = function() {
+                                clearTimeout(timer); // 清除超时定时器
+                                isAppOpen(false); // 说明Coinbase应用未打开或者不存在
+                            };
+
+                            // 用于实际检测Coinbase应用是否打开的函数
+                            function isAppOpen(isOpen) {
+                                instance.SendMessage('Entry', 'IsInCoinbase', isOpen.toString());
+
+                                // 从文档中移除iframe元素
+                                document.body.removeChild(iframe);
+                            }
+                        }
+                        // 调用函数检测Coinbase应用是否打开
+                        isCoinbaseAppOpen();
+
                         // 網頁視窗焦點
                         window.addEventListener("blur", function() {
                             instance.SendMessage('Entry', 'OnWindowBlur');
@@ -120,8 +169,13 @@
                         const urlParams = new URLSearchParams(window.location.search);
                         const code = urlParams.get('code');
                         const state = urlParams.get('state');
-                        if (code) {
+                        if (code && state) {
+                            //Line登入回傳
                             onLineLoginCallback(code, state);
+                        }
+                        if(code) {
+                            //IG登入回傳
+                            //onIGLoginCallback(code);
                         }
 
                         // 放置接收代碼的 JavaScript
@@ -138,10 +192,19 @@
                         //新開頁面解析URL
                         const queryParams = getQueryParams();
                         const lineMail = queryParams['linemail'];
-                        if (lineMail) {
-                            instance.SendMessage('Entry', 'GetLineMail', lineMail);
+                        const igIdAndName = queryParams['igIdAndName'];
+                        instance.SendMessage('Entry', 'HtmlDebug', 'lineMail:'+lineMail);
+                        instance.SendMessage('Entry', 'HtmlDebug', 'igIdAndName:'+igIdAndName);
+                        if(lineMail) {
+                            //Line
+                            instance.SendMessage('Entry', 'ReceiveLineMail', lineMail);
                         }
+                        if(igIdAndName) {
+                            //IG
+                            instance.SendMessage('Entry', 'ReceiveIGInfo', igIdAndName);
+                        }                      
 
+                        
 
                     }).catch((message) => {
                         alert(message);
@@ -156,6 +219,17 @@
             if (window.unityInstance) {
                 console.log("Line Login And Get Code");
                 window.unityInstance.SendMessage('Entry', 'OnLineLoginCallback', code);
+
+            } else {
+                console.error("Unity instance not found.");
+            }
+        }
+
+        //IG登入傳遞授權碼
+        function onIGLoginCallback(code) {
+            if (window.unityInstance) {
+                console.log("IG Login And Get Code:" + code);
+                window.unityInstance.SendMessage('Entry', 'OnIGLoginCallback', code);
 
             } else {
                 console.error("Unity instance not found.");

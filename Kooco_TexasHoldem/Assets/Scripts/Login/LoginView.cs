@@ -16,13 +16,13 @@ using Newtonsoft.Json.Linq;
 public class LoginView : MonoBehaviour
 {
     [DllImport("__Internal")]
-    private static extern string JS_GetBrowserInfo();                   //獲取瀏覽器訊息
+    private static extern string JS_GetBrowserInfo();                                            //獲取瀏覽器訊息
     [DllImport("__Internal")]
-    private static extern void JS_LocationHref(string url);             //本地頁面跳轉
+    private static extern void JS_LocationHref(string url);                                      //本地頁面跳轉
     [DllImport("__Internal")]
-    private static extern void JS_WindowClose();                        //關閉頁面
+    private static extern void JS_WindowClose();                                                 //關閉頁面
     [DllImport("__Internal")]
-    private static extern void JS_OpenNewBrowser(string mail);          //開啟新瀏覽器
+    private static extern void JS_OpenNewBrowser(string mail, string igidAndName);               //開啟新瀏覽器
 
     [Header("錢包連接")]
     [SerializeField]
@@ -30,9 +30,9 @@ public class LoginView : MonoBehaviour
 
     [Header("綁定")]
     [SerializeField]
-    Button line_Btn;
+    Button line_Btn, ig_Btn;
     [SerializeField]
-    Text lineMail_Txt;
+    Text lineMail_Txt, igIdAndName_Txt;
 
     ChainData _currentChainData;
     string _address;
@@ -42,13 +42,17 @@ public class LoginView : MonoBehaviour
         ListenerEvent();
     }
 
-    public Button tt;
-
     /// <summary>
     /// 事件聆聽
     /// </summary>
     private void ListenerEvent()
     {
+        //IG登入
+        ig_Btn.onClick.AddListener(() =>
+        {
+            StartIGLogin();
+        });
+
         //Line登入
         line_Btn.onClick.AddListener(() =>
         {
@@ -76,7 +80,7 @@ public class LoginView : MonoBehaviour
         //Binance連接
         binanceConnect_Btn.onClick.AddListener(() =>
         {
-            if (GameDataManager.IsMobilePlatform)
+            if (DataManager.IsMobilePlatform)
             {
                 Debug.Log("Binance~");
                 StartConnect("Metamask");
@@ -100,17 +104,34 @@ public class LoginView : MonoBehaviour
     {
         _currentChainData = ThirdwebManager.Instance.supportedChains.Find(x => x.identifier == ThirdwebManager.Instance.activeChain);
 
-        if (GameDataManager.IsMobilePlatform)
+        if (DataManager.IsMobilePlatform)
         {
             JS_GetBrowserInfo();
         }
 
         //已有Line Mail
-        if (!string.IsNullOrEmpty(GameDataManager.LineMail))
+        if (!string.IsNullOrEmpty(DataManager.LineMail))
         {
             line_Btn.interactable = false;
-            lineMail_Txt.text = GameDataManager.LineMail;
+            lineMail_Txt.text = DataManager.LineMail;
         }
+
+        //已有IG授權碼
+        if (!string.IsNullOrEmpty(DataManager.IGIUserIdAndName))
+        {
+            ig_Btn.interactable = false;
+            igIdAndName_Txt.text = DataManager.IGIUserIdAndName;
+        }
+
+        ///自動連接Coinbase
+        if (!DataManager.IsNotFirstInLogin && 
+            DataManager.IsInCoinbase)
+        {
+            Debug.Log("Aoto Connect Coinbase");
+            StartConnect("Coinbase");
+        }
+
+        DataManager.IsNotFirstInLogin = true;
     }
 
     private void Update()
@@ -126,7 +147,7 @@ public class LoginView : MonoBehaviour
     /// </summary>
     async public void TryBinanceConnect()
     {
-        if (GameDataManager.IsMobilePlatform)
+        if (DataManager.IsMobilePlatform)
         {
             try
             {
@@ -134,8 +155,8 @@ public class LoginView : MonoBehaviour
                 var bal = await ThirdwebManager.Instance.SDK.Wallet.GetBalance();
                 var balStr = $"{bal.value.ToEth()} {bal.symbol}";
 
-                GameDataManager.UserWalletAddress = add;
-                GameDataManager.UserWalletBalance = balStr;
+                DataManager.UserWalletAddress = add;
+                DataManager.UserWalletBalance = balStr;
 
                 CancelInvoke(nameof(TryBinanceConnect));
                 ViewManager.Instance.ClosePartsView(PartsViewEnum.WaitingView);
@@ -156,12 +177,12 @@ public class LoginView : MonoBehaviour
     /// <param name="walletProviderStr">連接形式</param>
     public void StartConnect(string walletProviderStr)
     {
-        if (GameDataManager.IsMobilePlatform && 
-            GameDataManager.IsDefaultBrowser &&
+        if (DataManager.IsMobilePlatform && 
+            DataManager.IsDefaultBrowser &&
             Application.platform != RuntimePlatform.IPhonePlayer)
         {
             //在預設瀏覽器內
-            JS_OpenNewBrowser(GameDataManager.LineMail);
+            JS_OpenNewBrowser(DataManager.LineMail, DataManager.IGIUserIdAndName);
             return;
         }
 
@@ -203,14 +224,14 @@ public class LoginView : MonoBehaviour
         Debug.Log($"Connected to {_address}");
 
         var addy = _address.ShortenAddress();
-        GameDataManager.UserWalletAddress = _address;
+        DataManager.UserWalletAddress = _address;
 
         var bal = await ThirdwebManager.Instance.SDK.Wallet.GetBalance();
         var balStr = $"{bal.value.ToEth()} {bal.symbol}";
-        GameDataManager.UserWalletBalance = balStr;
+        DataManager.UserWalletBalance = balStr;
 
-        Debug.Log($"Address:{GameDataManager.UserWalletAddress}");
-        Debug.Log($"Balance:{GameDataManager.UserWalletBalance}");
+        Debug.Log($"Address:{DataManager.UserWalletAddress}");
+        Debug.Log($"Balance:{DataManager.UserWalletBalance}");
         LoadSceneManager.Instance.LoadScene(SceneEnum.Lobby);
     }
 
@@ -226,8 +247,8 @@ public class LoginView : MonoBehaviour
         string state = GenerateRandomString();
         string nonce = GenerateRandomString();
         string authUrl = $"https://access.line.me/oauth2/v2.1/authorize?response_type=code&" +
-                         $"client_id={GameDataManager.LineChannelId}&" +
-                         $"redirect_uri={GameDataManager.RedirectUri}&" +
+                         $"client_id={DataManager.LineChannelId}&" +
+                         $"redirect_uri={DataManager.RedirectUri}&" +
                          $"state={state}&" +
                          $"scope=profile%20openid%20email&nonce={nonce}";
 
@@ -239,6 +260,24 @@ public class LoginView : MonoBehaviour
         const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
         var random = new System.Random();
         return new string(Enumerable.Repeat(chars, length).Select(s => s[random.Next(s.Length)]).ToArray());
+    }
+
+    #endregion
+
+    #region IG
+
+    /// <summary>
+    /// 開始IG登入
+    /// </summary>
+    public void StartIGLogin()
+    {
+        string authUrl = $"https://api.instagram.com/oauth/authorize?" +
+                         $"client_id={DataManager.IGClientId}&" +
+                         $"redirect_uri={DataManager.TestRedirectUri}&" +
+                         $"scope=user_profile,user_media&" +
+                         $"response_type=code";
+
+        JS_LocationHref(authUrl);
     }
 
     #endregion
