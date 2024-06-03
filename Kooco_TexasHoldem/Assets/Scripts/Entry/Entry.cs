@@ -174,7 +174,7 @@ public class Entry : UnitySingleton<Entry>
         form.AddField("client_id", DataManager.IGClientId);
         form.AddField("client_secret", DataManager.IGSecret);
         form.AddField("grant_type", "authorization_code");
-        form.AddField("redirect_uri", DataManager.TestRedirectUri);
+        form.AddField("redirect_uri", DataManager.RedirectUri);
         form.AddField("code", authorizationCode);
 
         UnityWebRequest www = UnityWebRequest.Post("https://api.instagram.com/oauth/access_token", form);

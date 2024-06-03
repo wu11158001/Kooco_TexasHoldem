@@ -20,7 +20,7 @@ public static class DataManager
 
 
     [Header("公用")]
-    public static string TestRedirectUri = "https://wu11158001.github.io/asiapoker_self/demo.asiapoker/index.html";                  //測試_重定向Url
+    //public static string RedirectUri = "https://wu11158001.github.io/asiapoker_self/demo.asiapoker/index.html";                      //測試_重定向Url
     public static string RedirectUri = "https://kooco.github.io/ACEdemo/demo.asiapoker/index.html";                                  //重定向Url
     public static bool IsNotFirstInLogin { get; set; }                                                                               //非首次進入登入
     public static bool IsMobilePlatform { get; set; }                                                                                //是否為移動平台

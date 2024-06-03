@@ -4,6 +4,7 @@ using UnityEngine;
 using System.Runtime.InteropServices;
 using Thirdweb;
 using System;
+using UnityEngine.SceneManagement;
 
 public class WalletManager : UnitySingleton<WalletManager>
 {
@@ -35,6 +36,35 @@ public class WalletManager : UnitySingleton<WalletManager>
         if (!DataManager.IsMobilePlatform)
         {
             JS_WindowDisconnect();
+        }
+    }
+
+    /// <summary>
+    /// 開始偵測連線
+    /// </summary>
+    public void StartCheckConnect()
+    {
+        InvokeRepeating(nameof(CheckConnect), 5, 3);
+    }
+
+    /// <summary>
+    /// 取消偵測連線
+    /// </summary>
+    public void CancelCheckConnect()
+    {
+        CancelInvoke(nameof(CheckConnect));
+    }
+
+    /// <summary>
+    /// 偵測連線
+    /// </summary>
+    async private void CheckConnect()
+    {
+        bool isConnect = await ThirdwebManager.Instance.SDK.Wallet.IsConnected();
+
+        if (!isConnect && SceneManager.GetActiveScene().name != "Login")
+        {
+            LoadSceneManager.Instance.LoadScene(SceneEnum.Login);
         }
     }
 }

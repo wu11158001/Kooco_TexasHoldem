@@ -40,13 +40,14 @@ public class GameRoomManager : UnitySingleton<GameRoomManager>
         /// </summary>
         public Dictionary<string, (RectTransform, SwitchRoomBtn)> RoomDic;
 
-        public int CurrRoomIndex { get; set; }      //當前顯示房間編號
-        public int RoomNameIndex;                   //當前房間編號(已開啟房間數量)
-        public float AddSwitchBtnParnetWidth;       //切換按鈕父物件每單位寬度
-        public bool IsRoomMoving;                   //是否房間正在移動
-        public Vector2 MouseStartPos;               //滑鼠按下起始位置
-        public List<int> SwitchBtnIndexList;        //切換按鈕房間編號
-        public List<SwitchRoomBtn> SwitchBtnList;   //切換房間按鈕
+        public LobbyView LobbyView_SC { get; set; }               //大廳
+        public int CurrRoomIndex { get; set; }                    //當前顯示房間編號
+        public int RoomNameIndex { get; set; }                    //當前房間編號(已開啟房間數量)
+        public float AddSwitchBtnParnetWidth { get; set; }        //切換按鈕父物件每單位寬度
+        public bool IsRoomMoving { get; set; }                    //是否房間正在移動
+        public Vector2 MouseStartPos { get; set; }                //滑鼠按下起始位置
+        public List<int> SwitchBtnIndexList;                      //切換按鈕房間編號
+        public List<SwitchRoomBtn> SwitchBtnList;                 //切換房間按鈕
     }
 
     public override void Awake()
@@ -141,12 +142,31 @@ public class GameRoomManager : UnitySingleton<GameRoomManager>
     }
 
     /// <summary>
+    /// 獲取大廳
+    /// </summary>
+    private LobbyView GetLobbyView
+    {
+        get
+        {
+            if (thisData.LobbyView_SC == null && GameObject.Find("LobbyView") != null)
+            {
+                if (GameObject.Find("LobbyView").TryGetComponent<LobbyView>(out LobbyView lobbyView))
+                {
+                    thisData.LobbyView_SC = lobbyView;
+                }
+            }
+            return thisData.LobbyView_SC;
+        }
+    }
+
+    /// <summary>
     /// 移動到大廳
     /// </summary>
     private void OnGoLobby()
     {
         IsShowGameRoom = false;
         CloseAllBtnFrame();
+        GetLobbyView.IsOpenMask = false;
     }
 
     /// <summary>
@@ -274,11 +294,11 @@ public class GameRoomManager : UnitySingleton<GameRoomManager>
         switchRoomBtn.SetSelectFrameActive = true;
         thisData.SwitchBtnList.Add(switchRoomBtn);
 
-
         thisData.SwitchBtnIndexList.Add(thisData.RoomNameIndex);
         thisData.CurrRoomIndex = GetRoomCount;
         thisData.RoomNameIndex++;
         thisData.RoomDic.Add(roomName, (room, switchRoomBtn));
+        GetLobbyView.IsOpenMask = true;
 
         addRoomBtn_Tr.SetSiblingIndex(GetRoomCount + 1);
 
@@ -322,6 +342,13 @@ public class GameRoomManager : UnitySingleton<GameRoomManager>
     private IEnumerator IJudgeShowSwitchBtn()
     {
         yield return null;
+
+        if (GetLobbyView != null)
+        {
+            GetLobbyView.IsOpenMask = GetRoomCount > 0 ?
+                                      true :
+                                      false;
+        }
 
         swtichBtnCanvas.sortingOrder = GetRoomCount > 0 ?
                                        50 :
