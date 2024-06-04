@@ -18,9 +18,13 @@ public static class DataManager
     public static string LineChannelSecret = "2ce90d03cf058e20c60f1c8a421889c6";                                                        //Line密鑰
     public static string LineMail { get; set; }                                                                                         //Line信箱
 
+    [Header("Instagram")]
+    public static string InstagramChannelID = "1380953359235919";
+    public static string InstagramChannelSecret = "b38352322a94cad7812394a311ad26a7";
+    public static string InstagramRedirectUri = "https://kooco.github.io/ACEdemo/demo.asiapoker/index.html";
+
 
     [Header("公用")]
-    //public static string RedirectUri = "https://wu11158001.github.io/asiapoker_self/demo.asiapoker/index.html";                      //測試_重定向Url
     public static string RedirectUri = "https://kooco.github.io/ACEdemo/demo.asiapoker/index.html";                                  //重定向Url
     public static bool IsNotFirstInLogin { get; set; }                                                                               //非首次進入登入
     public static bool IsMobilePlatform { get; set; }                                                                                //是否為移動平台

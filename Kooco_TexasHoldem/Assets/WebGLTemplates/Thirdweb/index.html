@@ -28,9 +28,9 @@
     </div>
     <div id="unity-fullscreen-button" style="display: none"></div>
     <script>
+
         //重定向Url
         window.callbackUrl = 'https://kooco.github.io/ACEdemo/demo.asiapoker/index.html';
-        //window.callbackUrl = 'https://wu11158001.github.io/asiapoker_self/demo.asiapoker/index.html';
         //IG APP ID
         window.igAppId = '1019674972416526';
         let unityInstance;
@@ -175,7 +175,7 @@
                         }
                         if(code) {
                             //IG登入回傳
-                            //onIGLoginCallback(code);
+                            onIGLoginCallback(code);
                         }
 
                         // 放置接收代碼的 JavaScript
@@ -217,7 +217,7 @@
         //Line登入傳遞授權碼
         function onLineLoginCallback(code, state) {
             if (window.unityInstance) {
-                console.log("Line Login And Get Code");
+                console.log("Line Login And Get Code:" + code + ' Line State:' + state);
                 window.unityInstance.SendMessage('Entry', 'OnLineLoginCallback', code);
 
             } else {

@@ -33,11 +33,9 @@ public class LobbyView : MonoBehaviour
     [SerializeField]
     Text battleBtn_Txt;
 
-    [Header("其他類")]
+    [Header("提示")]
     [SerializeField]
     Text tip_Txt;
-    [SerializeField]
-    Image mask_Img;
 
     Coroutine tipCorutine;
 
@@ -100,7 +98,6 @@ public class LobbyView : MonoBehaviour
         Color tipColor = tip_Txt.color;
         tipColor.a = 0;
         tip_Txt.color = tipColor;
-        IsOpenMask = false;
 
 #if !UNITY_EDITOR
         WalletManager.Instance.StartCheckConnect();
@@ -128,17 +125,6 @@ public class LobbyView : MonoBehaviour
                 baseRequest.SendRequest_InBattleRoom();
                 EndPair();
             }
-        }
-    }
-
-    /// <summary>
-    /// 大廳遮罩開啟
-    /// </summary>
-    public bool IsOpenMask
-    {
-        set
-        {
-            mask_Img.gameObject.SetActive(value);
         }
     }
 

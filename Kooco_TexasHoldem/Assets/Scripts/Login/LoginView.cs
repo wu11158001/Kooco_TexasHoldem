@@ -22,7 +22,7 @@ public class LoginView : MonoBehaviour
     [DllImport("__Internal")]
     private static extern void JS_WindowClose();                                                 //關閉頁面
     [DllImport("__Internal")]
-    private static extern void JS_OpenNewBrowser(string mail, string igIdAndName);               //開啟新瀏覽器
+    private static extern void JS_OpenNewBrowser(string mail, string igIdAndName);              //開啟新瀏覽器
 
     [Header("錢包連接")]
     [SerializeField]
@@ -50,7 +50,7 @@ public class LoginView : MonoBehaviour
         //IG登入
         ig_Btn.onClick.AddListener(() =>
         {
-            StartIGLogin();
+            StartInstagram();
         });
 
         //Line登入
@@ -82,7 +82,6 @@ public class LoginView : MonoBehaviour
         {
             if (DataManager.IsMobilePlatform)
             {
-                Debug.Log("Binance~");
                 StartConnect("Metamask");
             }
             else
@@ -104,6 +103,7 @@ public class LoginView : MonoBehaviour
     {
         _currentChainData = ThirdwebManager.Instance.supportedChains.Find(x => x.identifier == ThirdwebManager.Instance.activeChain);
 
+        //查詢瀏覽器訊息
         if (DataManager.IsMobilePlatform)
         {
             //JS_GetBrowserInfo();
@@ -169,6 +169,44 @@ public class LoginView : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 開始Instagram登入
+    /// </summary>
+    public void StartInstagram()
+    {
+        string authUrl = $"https://api.instagram.com/oauth/authorize?client_id=" +
+                         $"{DataManager.InstagramChannelID}&redirect_uri={DataManager.InstagramRedirectUri}" +
+                         $"&scope=user_profile,user_media&response_type=code";
+        Application.OpenURL(authUrl);
+    }
+
+    #region LINE
+
+    /// <summary>
+    /// 開始Line登入
+    /// </summary>
+    public void StartLineLogin()
+    {
+        string state = GenerateRandomString();
+        string nonce = GenerateRandomString();
+        string authUrl = $"https://access.line.me/oauth2/v2.1/authorize?response_type=code&" +
+                         $"client_id={DataManager.LineChannelId}&" +
+                         $"redirect_uri={DataManager.RedirectUri}&" +
+                         $"state={state}&" +
+                         $"scope=profile%20openid%20email&nonce={nonce}";
+
+
+        JS_LocationHref(authUrl);
+    }
+    private string GenerateRandomString(int length = 16)
+    {
+        const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        var random = new System.Random();
+        return new string(Enumerable.Repeat(chars, length).Select(s => s[random.Next(s.Length)]).ToArray());
+    }
+
+    #endregion
+
     #region ThirdWallet
 
     /// <summary>
@@ -233,51 +271,6 @@ public class LoginView : MonoBehaviour
         Debug.Log($"Address:{DataManager.UserWalletAddress}");
         Debug.Log($"Balance:{DataManager.UserWalletBalance}");
         LoadSceneManager.Instance.LoadScene(SceneEnum.Lobby);
-    }
-
-    #endregion
-
-    #region LINE
-
-    /// <summary>
-    /// 開始Line登入
-    /// </summary>
-    public void StartLineLogin()
-    {
-        string state = GenerateRandomString();
-        string nonce = GenerateRandomString();
-        string authUrl = $"https://access.line.me/oauth2/v2.1/authorize?response_type=code&" +
-                         $"client_id={DataManager.LineChannelId}&" +
-                         $"redirect_uri={DataManager.RedirectUri}&" +
-                         $"state={state}&" +
-                         $"scope=profile%20openid%20email&nonce={nonce}";
-
-
-        JS_LocationHref(authUrl);
-    }
-    private string GenerateRandomString(int length = 16)
-    {
-        const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-        var random = new System.Random();
-        return new string(Enumerable.Repeat(chars, length).Select(s => s[random.Next(s.Length)]).ToArray());
-    }
-
-    #endregion
-
-    #region IG
-
-    /// <summary>
-    /// 開始IG登入
-    /// </summary>
-    public void StartIGLogin()
-    {
-        string authUrl = $"https://api.instagram.com/oauth/authorize?" +
-                         $"client_id={DataManager.IGClientId}&" +
-                         $"redirect_uri={DataManager.RedirectUri}&" +
-                         $"scope=user_profile,user_media&" +
-                         $"response_type=code";
-
-        JS_LocationHref(authUrl);
     }
 
     #endregion
