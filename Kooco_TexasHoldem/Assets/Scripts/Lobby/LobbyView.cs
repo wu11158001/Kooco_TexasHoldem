@@ -14,6 +14,8 @@ public class LobbyView : MonoBehaviour
     [Header("斷開連結")]
     [SerializeField]
     Button disconnect_Btn;
+    [SerializeField]
+    Text disconnectBtn_Txt;
 
     [Header("用戶訊息")]
     [SerializeField]
@@ -46,6 +48,14 @@ public class LobbyView : MonoBehaviour
     {
         battleBtn_Txt.text = LanguageManager.Instance.GetText("BattleRoom");
         cashRoomTital_Txt.text = LanguageManager.Instance.GetText("CashRoom");
+        disconnectBtn_Txt.text = LanguageManager.Instance.GetText("WalletDisconnect");
+
+        #region 用戶訊息
+
+        walletAddress_Txt.text = $"{LanguageManager.Instance.GetText("WalletAddress")}:{DataManager.UserWalletAddress}";
+        balanceETH_Txt.text = $"{LanguageManager.Instance.GetText("WalletBalance")}:{DataManager.UserWalletBalance}";
+
+        #endregion
     }
 
     private void Awake()
@@ -107,8 +117,6 @@ public class LobbyView : MonoBehaviour
     private void Start()
     {
         cashRoomBtnSample.SetActive(false);
-
-        SetUserInfo();
         CreateRoom();
     }
 
@@ -168,15 +176,6 @@ public class LobbyView : MonoBehaviour
     }
 
     /// <summary>
-    /// 設置用戶訊息
-    /// </summary>
-    private void SetUserInfo()
-    {
-        walletAddress_Txt.text = $"Wallet Address : {DataManager.UserWalletAddress}";
-        balanceETH_Txt.text = $"Balance : {DataManager.UserWalletBalance}";
-    }
-
-    /// <summary>
     /// 顯示已達房間數量提示
     /// </summary>
     public void ShowMaxRoomTip()
@@ -233,6 +232,7 @@ public class LobbyView : MonoBehaviour
 
     private void OnDestroy()
     {
+        LanguageManager.Instance.RemoveLanguageFun(UpdateLanguage);
         WalletManager.Instance.CancelCheckConnect();
     }
 }

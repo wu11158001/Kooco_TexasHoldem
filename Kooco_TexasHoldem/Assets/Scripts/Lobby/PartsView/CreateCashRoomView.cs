@@ -12,7 +12,7 @@ public class CreateCashRoomView : MonoBehaviour
     Request_CreateCashRoom baseRequest;
 
     [SerializeField]
-    Text title_Txt, preBuyChips_Txt, minBuyChips_Txt, maxBuyChips_Txt;
+    Text title_Txt, preBuyChips_Txt, minBuyChips_Txt, maxBuyChips_Txt, createBtn_Txt;
     [SerializeField]
     Slider buyChips_Sli;
     [SerializeField]
@@ -84,7 +84,8 @@ public class CreateCashRoomView : MonoBehaviour
     {
         thisData.SmallBlind = smallBlind;
 
-        title_Txt.text = $"{thisData.SmallBlind} / {thisData.SmallBlind * 2} Texas Holdem";
+        createBtn_Txt.text = $"{LanguageManager.Instance.GetText("Create")}";
+        title_Txt.text = $"{thisData.SmallBlind} / {thisData.SmallBlind * 2} {LanguageManager.Instance.GetText("TexasHoldem")}";
         TexasHoldemUtil.SetBuySlider(thisData.SmallBlind, buyChips_Sli);
         minBuyChips_Txt.text = $"{StringUtils.SetChipsUnit(thisData.SmallBlind * DataManager.MinMagnification)}";
         maxBuyChips_Txt.text = $"{StringUtils.SetChipsUnit(Entry.TestInfoData.LocalUserChips)}";

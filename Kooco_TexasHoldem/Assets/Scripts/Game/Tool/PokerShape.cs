@@ -11,17 +11,17 @@ public static class PokerShape
     /// </summary>
     public static string[] shapeStr = new string[]
     {
-        "Royal Flush",          //皇家同花順
-        "Straight Flush",       //同花順
-        "Four of Kind",         //四條
-        "Full House",           //葫蘆
+        "RoyalFlush",           //皇家同花順
+        "StraightFlush",        //同花順
+        "FourOfKind",           //四條
+        "FullHouse",            //葫蘆
         "Flush",                //同花
         "Straight",             //皇家大順
         "Straight",             //順子
-        "Three of a Kind",      //三條
-        "Two Pairs",            //兩對
-        "One Pair",             //一對
-        "Hight Card",           //高牌
+        "ThreeOfAKind",         //三條
+        "TwoPairs",             //兩對
+        "OnePair",              //一對
+        "HightCard",            //高牌
     };
 
     /// <summary>

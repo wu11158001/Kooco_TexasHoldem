@@ -1334,7 +1334,7 @@ GameObject:
   - component: {fileID: 2039750715066036031}
   - component: {fileID: 6705459602503437295}
   m_Layer: 5
-  m_Name: RaiseAndAllInBtn_Txt
+  m_Name: RaiseOrAllInBtn_Txt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2819,8 +2819,8 @@ MonoBehaviour:
   raiseAndAllIn_Btn: {fileID: 1731130837798298710}
   callAndCheck_Btn: {fileID: 4507901033771419328}
   fold_Btn: {fileID: 415474277880085598}
-  raiseAndAllInBtn_Txt: {fileID: 6705459602503437295}
-  callAndCheckBt_Txt: {fileID: 1109672257362907545}
+  raiseOrAllInBtn_Txt: {fileID: 6705459602503437295}
+  callOrCheckBtn_Txt: {fileID: 1109672257362907545}
   foldBtn_Txt: {fileID: 9107266952524042100}
   autoActionFrame_Tr: {fileID: 3645123124189837803}
   showPokerBtnList:
@@ -2858,6 +2858,7 @@ MonoBehaviour:
   menu_Btn: {fileID: 4139764132997417176}
   menuMask_Btn: {fileID: 5384433124382939452}
   exitRoom_Btn: {fileID: 1326550848464399761}
+  exitRoomBtn_Txt: {fileID: 2946444183284473265}
   buyChipsView: {fileID: 1796086515776700134}
   battleResultView: {fileID: 4365519394436732982}
   gamePause_Obj: {fileID: 2292812178963915797}
@@ -3640,7 +3641,7 @@ GameObject:
   - component: {fileID: 1260018843350567793}
   - component: {fileID: 1109672257362907545}
   m_Layer: 5
-  m_Name: CallAndCheckBtn_Txt
+  m_Name: CallOrCheckBtn_Txt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4241,7 +4242,7 @@ GameObject:
   - component: {fileID: 6581056485814886931}
   - component: {fileID: 4507901033771419328}
   m_Layer: 5
-  m_Name: CallAndCheck_Btn
+  m_Name: CallOrCheck_Btn
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4841,7 +4842,7 @@ GameObject:
   - component: {fileID: 2494603293998708143}
   - component: {fileID: 2946444183284473265}
   m_Layer: 5
-  m_Name: Text (Legacy)
+  m_Name: ExitRoomBtn_Txt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5000,7 +5001,7 @@ GameObject:
   - component: {fileID: 5470820115397449549}
   - component: {fileID: 1731130837798298710}
   m_Layer: 5
-  m_Name: RaiseAndAllIn_Btn
+  m_Name: RaiseOrAllIn_Btn
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

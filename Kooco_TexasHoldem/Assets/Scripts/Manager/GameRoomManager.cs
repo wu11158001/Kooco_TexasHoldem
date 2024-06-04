@@ -202,12 +202,12 @@ public class GameRoomManager : UnitySingleton<GameRoomManager>
         {
             //積分房
             case GameRoomEnum.BattleRoomView:
-                str = "Battle";
+                str = "BattleRoom";
                 break;
 
             //現金房
             case GameRoomEnum.CashRoomView:
-                str = "Cash";
+                str = "CashRoom";
                 break;
             default:
                 break;

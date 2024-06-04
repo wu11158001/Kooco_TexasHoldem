@@ -11,7 +11,7 @@ public class GamePlayerInfo : MonoBehaviour
 {
     [Header("用戶訊息")]
     [SerializeField]
-    Text nickName_Txt, chips_Txt, tip_Txt, pokerShape_Txt;
+    Text nickName_Txt, chips_Txt, tip_Txt, pokerShape_Txt, potWinner_Txt, sideWinner_Txt;
     [SerializeField]
     GameObject actionFrame_Obj, potWinner_Obj, sideWinner_Obj;
     [SerializeField]
@@ -45,6 +45,7 @@ public class GamePlayerInfo : MonoBehaviour
 
     double currRoomChips;       //當前擁有籌碼
     RectTransform potPoint;     //底池位置
+    int pokerShapeIndex;        //牌型編號
 
     /// <summary>
     /// 座位編號
@@ -62,9 +63,50 @@ public class GamePlayerInfo : MonoBehaviour
     public double CurrBetValue { get; set; }
 
     /// <summary>
+    /// 更新文本翻譯
+    /// </summary>
+    private void UpdateLanguage()
+    {
+        potWinner_Txt.text = $"{LanguageManager.Instance.GetText("PotWinner")}";
+        sideWinner_Txt.text = $"{LanguageManager.Instance.GetText("SideWinner")}";
+        pokerShape_Txt.text = LanguageManager.Instance.GetText(PokerShape.shapeStr[pokerShapeIndex]);
+    }
+
+    private void Awake()
+    {
+        LanguageManager.Instance.AddUpdateLanguageFunc(UpdateLanguage);
+        chips_Txt.text = "0";
+    }
+
+    private void OnEnable()
+    {
+        StopCountDown();
+        OpenInfoMask = true;
+    }
+
+    /// <summary>
+    /// 初始化
+    /// </summary>
+    public void Init()
+    {
+        CurrBetValue = 0;
+        betChips_Txt.text = CurrBetValue.ToString();
+        action_Obj.SetActive(false);
+        betChips_Tr.gameObject.SetActive(false);
+        ActionFrame = false;
+        handPokers[0].gameObject.SetActive(false);
+        handPokers[1].gameObject.SetActive(false);
+        potWinner_Obj.SetActive(false);
+        sideWinner_Obj.SetActive(false);
+        SetTip = "";
+        pokerShape_Txt.text = "";
+        pokerShape_Ani.SetBool(isWinHash, false);
+    }
+
+    /// <summary>
     /// 玩家房間籌碼值
     /// </summary>
-    public double PlayerRoomChips 
+    public double PlayerRoomChips
     {
         get
         {
@@ -106,7 +148,7 @@ public class GamePlayerInfo : MonoBehaviour
     {
         set
         {
-            potWinner_Obj.SetActive(value);           
+            potWinner_Obj.SetActive(value);
         }
     }
 
@@ -177,36 +219,6 @@ public class GamePlayerInfo : MonoBehaviour
             avatar_Img.color = value == true ? new Color(1, 1, 1, 0.5f) : new Color(1, 1, 1, 1);
             cdMask_Img.fillAmount = value == true ? 1 : 0;
         }
-    }
-
-    private void Awake()
-    {
-        chips_Txt.text = "0";
-    }
-
-    private void OnEnable()
-    {
-        StopCountDown();
-        OpenInfoMask = true;
-    }
-
-    /// <summary>
-    /// 初始化
-    /// </summary>
-    public void Init()
-    {
-        CurrBetValue = 0;
-        betChips_Txt.text = CurrBetValue.ToString();
-        action_Obj.SetActive(false);
-        betChips_Tr.gameObject.SetActive(false);
-        ActionFrame = false;
-        handPokers[0].gameObject.SetActive(false);
-        handPokers[1].gameObject.SetActive(false);
-        potWinner_Obj.SetActive(false);
-        sideWinner_Obj.SetActive(false);
-        SetTip = "";
-        pokerShape_Txt.text = "";
-        pokerShape_Ani.SetBool(isWinHash, false);
     }
 
     /// <summary>
@@ -340,7 +352,7 @@ public class GamePlayerInfo : MonoBehaviour
     private IEnumerator ShowActionStr(string actionStr)
     {
         action_Obj.SetActive(true);
-        action_Txt.text = actionStr;
+        action_Txt.text = LanguageManager.Instance.GetText(actionStr);
 
         yield return new WaitForSeconds(1.0f);
 
@@ -420,7 +432,8 @@ public class GamePlayerInfo : MonoBehaviour
     /// <param name="shapeIndex"></param>
     public void SetPokerShapeStr(int shapeIndex)
     {
-        pokerShape_Txt.text = PokerShape.shapeStr[shapeIndex];
+        pokerShapeIndex = shapeIndex;
+        pokerShape_Txt.text = LanguageManager.Instance.GetText(PokerShape.shapeStr[pokerShapeIndex]);
     }
 
     private void OnDisable()
@@ -430,6 +443,7 @@ public class GamePlayerInfo : MonoBehaviour
 
     private void OnDestroy()
     {
+        LanguageManager.Instance.RemoveLanguageFun(UpdateLanguage);
         StopAllCoroutines();
     }
 }

@@ -1,5 +1,20 @@
 ﻿[
   {
+    "ID": "通用",
+    "English": null,
+    "zh_TW": null
+  },
+  {
+    "ID": "TexasHoldem",
+    "English": "Texas Holdem",
+    "zh_TW": "德州撲克"
+  },
+  {
+    "ID": "Create",
+    "English": "Create",
+    "zh_TW": "創建"
+  },
+  {
     "ID": "大廳",
     "English": null,
     "zh_TW": null
@@ -25,8 +40,153 @@
     "zh_TW": "已達最大房間數"
   },
   {
-    "ID": "通用",
+    "ID": "WalletDisconnect",
+    "English": "Wallet Disconnect",
+    "zh_TW": "斷開錢包"
+  },
+  {
+    "ID": "WalletAddress",
+    "English": "Wallet Address",
+    "zh_TW": "錢包地址"
+  },
+  {
+    "ID": "WalletBalance",
+    "English": "Wallet Balance",
+    "zh_TW": "錢包餘額"
+  },
+  {
+    "ID": "遊戲",
     "English": null,
     "zh_TW": null
+  },
+  {
+    "ID": "Waiting",
+    "English": "Waiting",
+    "zh_TW": "等待下一局"
+  },
+  {
+    "ID": "Check",
+    "English": "Check",
+    "zh_TW": "過牌"
+  },
+  {
+    "ID": "Fold",
+    "English": "Fold",
+    "zh_TW": "棄牌"
+  },
+  {
+    "ID": "CallAny",
+    "English": "Call Any",
+    "zh_TW": "任何跟注"
+  },
+  {
+    "ID": "Raise",
+    "English": "Raise",
+    "zh_TW": "加注"
+  },
+  {
+    "ID": "Call",
+    "English": "Call",
+    "zh_TW": "跟注"
+  },
+  {
+    "ID": "RaiseTo",
+    "English": "Raise To",
+    "zh_TW": "加注至"
+  },
+  {
+    "ID": "Pot",
+    "English": "Pot",
+    "zh_TW": "底池"
+  },
+  {
+    "ID": "Side",
+    "English": "Side",
+    "zh_TW": "邊池"
+  },
+  {
+    "ID": "Blind",
+    "English": "Blind",
+    "zh_TW": "盲注"
+  },
+  {
+    "ID": "AllIn",
+    "English": "All In",
+    "zh_TW": "All In"
+  },
+  {
+    "ID": "PotWinner",
+    "English": "Pot Winner",
+    "zh_TW": "底池贏家"
+  },
+  {
+    "ID": "SideWinner",
+    "English": "Side Winner",
+    "zh_TW": "邊池贏家"
+  },
+  {
+    "ID": "ExitRoom",
+    "English": "Exit Room",
+    "zh_TW": "退出牌局"
+  },
+  {
+    "ID": "CheckOrFold",
+    "English": "Check / Fold",
+    "zh_TW": "過牌 / 棄牌"
+  },
+  {
+    "ID": "牌型名稱",
+    "English": null,
+    "zh_TW": null
+  },
+  {
+    "ID": "RoyalFlush",
+    "English": "Royal Flush",
+    "zh_TW": "皇家同花順"
+  },
+  {
+    "ID": "StraightFlush",
+    "English": "Straight Flush",
+    "zh_TW": "同花順"
+  },
+  {
+    "ID": "FourOfKind",
+    "English": "Four of Kind",
+    "zh_TW": "四條"
+  },
+  {
+    "ID": "FullHouse",
+    "English": "Full House",
+    "zh_TW": "葫蘆"
+  },
+  {
+    "ID": "Flush",
+    "English": "Flush",
+    "zh_TW": "同花"
+  },
+  {
+    "ID": "Straight",
+    "English": "Straight",
+    "zh_TW": "順子"
+  },
+  {
+    "ID": "ThreeOfAKind",
+    "English": "Three of a Kind",
+    "zh_TW": "三條"
+  },
+  {
+    "ID": "TwoPairs",
+    "English": "Two Pairs",
+    "zh_TW": "兩對"
+  },
+  {
+    "ID": "OnePair",
+    "English": "One Pair",
+    "zh_TW": "一對"
+  },
+  {
+    "ID": "HightCard",
+    "English": "Hight Card",
+    "zh_TW": "高牌"
   }
 ]

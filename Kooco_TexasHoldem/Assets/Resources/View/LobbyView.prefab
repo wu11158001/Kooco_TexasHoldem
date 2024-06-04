@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 88887727583468897}
   - component: {fileID: 6003791102844775889}
   m_Layer: 5
-  m_Name: Text (Legacy)
+  m_Name: DisconnectBtn_Txt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1659,6 +1659,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   baseRequest: {fileID: 113325593723988352}
   disconnect_Btn: {fileID: 8568553282822423542}
+  disconnectBtn_Txt: {fileID: 6003791102844775889}
   walletAddress_Txt: {fileID: 1846148729627767321}
   balanceETH_Txt: {fileID: 5852851420713568221}
   cashRoomBtnSample: {fileID: 8100015234333358431}

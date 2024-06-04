@@ -12,7 +12,25 @@ public class SwitchRoomBtn : MonoBehaviour
     [SerializeField]
     RectTransform selectFrame_Tr;
 
+    private string btnStr;
+
     public int BtnIndex { get; set; }
+
+    /// <summary>
+    /// 更新文本翻譯
+    /// </summary>
+    private void UpdateLanguage()
+    {
+        if (!string.IsNullOrEmpty(btnStr))
+        {
+            roomName_Txt.text = LanguageManager.Instance.GetText(btnStr);
+        }
+    }
+
+    private void Awake()
+    {
+        LanguageManager.Instance.AddUpdateLanguageFunc(UpdateLanguage);
+    }
 
     /// <summary>
     /// 設置選擇按鈕激活狀態
@@ -33,10 +51,16 @@ public class SwitchRoomBtn : MonoBehaviour
     public void SetSwitchBtnInfo(string btnStr, string roomName, int btnIndex)
     {
         BtnIndex = btnIndex;
-        roomName_Txt.text = btnStr;
+        this.btnStr = btnStr;
+        roomName_Txt.text = LanguageManager.Instance.GetText(btnStr);
         thisBtn.onClick.AddListener(() =>
         {
             GameRoomManager.Instance.SwitchBtnClick(btnIndex);
         });
+    }
+
+    private void OnDestroy()
+    {
+        LanguageManager.Instance.RemoveLanguageFun(UpdateLanguage);
     }
 }

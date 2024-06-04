@@ -16,7 +16,7 @@ public class GameView : MonoBehaviour
     [SerializeField]
     Button raiseAndAllIn_Btn, callAndCheck_Btn, fold_Btn;
     [SerializeField]
-    Text raiseAndAllInBtn_Txt, callAndCheckBt_Txt, foldBtn_Txt;
+    Text raiseOrAllInBtn_Txt, callOrCheckBtn_Txt, foldBtn_Txt;
     [SerializeField]
     RectTransform autoActionFrame_Tr;
     [SerializeField]
@@ -53,6 +53,8 @@ public class GameView : MonoBehaviour
     [Header("選單")]
     [SerializeField]
     Button menu_Btn, menuMask_Btn, exitRoom_Btn;
+    [SerializeField]
+    Text exitRoomBtn_Txt;
 
     [Header("遊戲結果")]
     [SerializeField]
@@ -105,6 +107,31 @@ public class GameView : MonoBehaviour
         public List<string> potWinnerList;                 //主池贏家
     }
 
+    private StrData strData;
+    public class StrData
+    {
+        public string FoldStr { get; set; }
+        public string CallStr { get; set; }
+        public string CallValueStr { get; set; }
+        public string RaiseStr { get; set; }
+        public string RaiseValueStr { get; set; }
+    }
+
+    /// <summary>
+    /// 更新文本翻譯
+    /// </summary>
+    private void UpdateLanguage()
+    {
+        exitRoomBtn_Txt.text = $"{LanguageManager.Instance.GetText("ExitRoom")}";
+
+        #region 操作按鈕
+
+        foldBtn_Txt.text = LanguageManager.Instance.GetText(strData.FoldStr);
+        callOrCheckBtn_Txt.text = LanguageManager.Instance.GetText(strData.CallStr) + strData.CallValueStr;
+        raiseOrAllInBtn_Txt.text = LanguageManager.Instance.GetText(strData.RaiseStr) + strData.RaiseValueStr;
+
+        #endregion
+    }
 
     public void Awake()
     {
@@ -167,9 +194,14 @@ public class GameView : MonoBehaviour
                                                                     (float)thisData.LocalPlayerChips,
                                                                     sliderClickDetection);
 
-            raiseAndAllInBtn_Txt.text = newRaiseValue >= thisData.LocalPlayerChips ?
-                                        $"All In\n{StringUtils.SetChipsUnit(thisData.LocalPlayerChips)}" :
-                                        raiseAndAllInBtn_Txt.text = $"Raise to\n{StringUtils.SetChipsUnit(newRaiseValue)}";
+            strData.RaiseStr = newRaiseValue >= thisData.LocalPlayerChips ? 
+                               "AllIn" :
+                               "RaiseTo";
+            strData.RaiseValueStr = newRaiseValue >= thisData.LocalPlayerChips ?
+                                    $"\n{StringUtils.SetChipsUnit(thisData.LocalPlayerChips)}" :
+                                    $"\n{StringUtils.SetChipsUnit(newRaiseValue)}";
+            raiseOrAllInBtn_Txt.text = strData.RaiseStr + strData.RaiseValueStr;
+
             SetRaiseToText = newRaiseValue;
             thisData.CurrRaiseValue = (int)newRaiseValue;
         });
@@ -236,7 +268,9 @@ public class GameView : MonoBehaviour
                 else
                 {
                     raise_Tr.gameObject.SetActive(true);
-                    raiseAndAllInBtn_Txt.text = $"Raise To {thisData.CurrRaiseValue}";
+                    strData.RaiseStr = "RaiseTo";
+                    strData.RaiseValueStr = $" {thisData.CurrRaiseValue}";
+                    raiseOrAllInBtn_Txt.text = strData.RaiseStr + strData.RaiseValueStr;
                 }
             }
             else
@@ -253,6 +287,8 @@ public class GameView : MonoBehaviour
         thisData = new ThisData();
         thisData.IsPlaying = false;
 
+        strData = new StrData();
+
         if (gamePlayerInfoList != null)
         {
             foreach (var player in gamePlayerInfoList)
@@ -268,6 +304,11 @@ public class GameView : MonoBehaviour
 
         Init();
         GameInit();
+    }
+
+    private void Start()
+    {
+        LanguageManager.Instance.AddUpdateLanguageFunc(UpdateLanguage);
     }
 
     private void Update()
@@ -297,12 +338,12 @@ public class GameView : MonoBehaviour
             if (value >= thisData.LocalPlayerChips)
             {
                 //All In
-                raiseTo_Txt.text = $"<size=9><color=#000000>Raise To</color></size>\n<b><size=13><color=#2E1675>All In</color></size></b>";
+                raiseTo_Txt.text = $"<size=9><color=#000000>{LanguageManager.Instance.GetText("RaiseTo")}</color></size>\n<b><size=13><color=#2E1675>All In</color></size></b>";
                 raiseSliHandle_Txt.text = $"All In";
             }
             else
             {
-                raiseTo_Txt.text = $"<size=9><color=#000000>Raise To</color></size>\n<b><size=13><color=#2E1675>{StringUtils.SetChipsUnit(value)}</color></size></b>";
+                raiseTo_Txt.text = $"<size=9><color=#000000>{LanguageManager.Instance.GetText("RaiseTo")}</color></size>\n<b><size=13><color=#2E1675>{StringUtils.SetChipsUnit(value)}</color></size></b>";
                 raiseSliHandle_Txt.text = $"{StringUtils.SetChipsUnit(value)}";
             }            
         }
@@ -321,13 +362,19 @@ public class GameView : MonoBehaviour
                 if (value == false)
                 {
                     raise_Tr.gameObject.SetActive(false);
-                    foldBtn_Txt.text = "Check / Fold";
-                    callAndCheckBt_Txt.text = "Check";
-                    raiseAndAllInBtn_Txt.text = "Call Any";
+                    strData.FoldStr = "CheckOrFold";
+                    foldBtn_Txt.text = LanguageManager.Instance.GetText(strData.FoldStr);
+                    strData.CallStr = "Check";
+                    strData.CallValueStr = "";
+                    callOrCheckBtn_Txt.text = LanguageManager.Instance.GetText(strData.CallStr) + strData.CallValueStr;
+                    strData.RaiseStr = "CallAny";
+                    strData.RaiseValueStr = "";
+                    raiseOrAllInBtn_Txt.text = strData.RaiseStr + strData.RaiseValueStr;
                 }
                 else
                 {
-                    foldBtn_Txt.text = "Fold";
+                    strData.FoldStr = "Fold";
+                    foldBtn_Txt.text = LanguageManager.Instance.GetText(strData.FoldStr);
                 }
             }            
         }
@@ -437,10 +484,15 @@ public class GameView : MonoBehaviour
     /// </summary>
     public void Init()
     {
-        tip_Txt.text = "Waiting...";
-        foldBtn_Txt.text = "Check / Fold";
-        callAndCheckBt_Txt.text = "Check";
-        raiseAndAllInBtn_Txt.text = "Call Any";
+        tip_Txt.text = $"{LanguageManager.Instance.GetText("Waiting")}...";
+        strData.FoldStr = "CheckOrFold";
+        foldBtn_Txt.text = LanguageManager.Instance.GetText(strData.FoldStr);
+        strData.CallStr = "Check";
+        strData.CallValueStr = "";
+        callOrCheckBtn_Txt.text = LanguageManager.Instance.GetText(strData.CallStr) + strData.CallValueStr;
+        strData.RaiseStr = "CallAny";
+        strData.RaiseValueStr = "";
+        raiseOrAllInBtn_Txt.text = strData.RaiseStr + strData.RaiseValueStr;
         totalPot_Txt.text = "$0";
 
         menuMask_Btn.gameObject.SetActive(false);
@@ -707,9 +759,9 @@ public class GameView : MonoBehaviour
         fold_Btn.gameObject.SetActive(true);
 
         //加注&All In
-        raiseAndAllInBtn_Txt.text = isJustAllIn == true ?
+        raiseOrAllInBtn_Txt.text = isJustAllIn == true ?
                                     $"All In\n${thisData.LocalPlayerChips}" :
-                                    $"Raise";
+                                    $"{LanguageManager.Instance.GetText("Raise")}";
         if (IsUnableRaise == true && isJustAllIn == false)
         {
             raiseAndAllIn_Btn.gameObject.SetActive(false);
@@ -720,30 +772,35 @@ public class GameView : MonoBehaviour
         }
 
         //跟注&過牌
-        string callAndChcckStr = $"Call\n${thisData.CurrCallValue - thisData.CallDifference}";
+        strData.CallStr = "Call";
+        strData.CallValueStr = $"\n{StringUtils.SetChipsUnit(thisData.CurrCallValue - thisData.CallDifference)}";
         if (thisData.IsFirstRaisePlayer == true)
         {
             if (thisData.CurrCallValue == thisData.SmallBlindValue)
             {
-                callAndChcckStr = "Check";
+                strData.CallStr = "Check";
+                strData.CallValueStr = "";
             }
             else
             {
-                callAndChcckStr = $"Call\n${thisData.CallDifference}";
+                strData.CallStr = "Call";
+                strData.CallValueStr = $"\n{StringUtils.SetChipsUnit(thisData.CallDifference)}";
             }
         }
         else
         {
             if (thisData.LocalPlayerCurrBetValue == thisData.CurrCallValue)
             {
-                callAndChcckStr = "Check";
+                strData.CallStr = "Check";
+                strData.CallValueStr = "";
             }
             else
             {
-                callAndChcckStr = $"Call\n${thisData.CallDifference}";
+                strData.CallStr = "Call";
+                strData.CallValueStr = $"\n{StringUtils.SetChipsUnit(thisData.CallDifference)}";
             }
         }
-        callAndCheckBt_Txt.text = callAndChcckStr;
+        callOrCheckBtn_Txt.text = LanguageManager.Instance.GetText(strData.CallStr) + strData.CallValueStr;
         if (IsUnableRaise == true && isJustAllIn == false)
         {
             callAndCheck_Btn.gameObject.SetActive(true);
@@ -1167,7 +1224,7 @@ public class GameView : MonoBehaviour
         yield return new WaitForSeconds(1);
 
         //贏得類型顯示
-        winType_Txt.text = "Pot";
+        winType_Txt.text = $"{LanguageManager.Instance.GetText("Pot")}";
         totalPot_Txt.text = $"{StringUtils.SetChipsUnit(pack.WinnerPack.WinChips)}";
 
         //贏家效果
@@ -1236,7 +1293,7 @@ public class GameView : MonoBehaviour
 
         if (isShow)
         {
-            winType_Txt.text = "Side";
+            winType_Txt.text = $"{LanguageManager.Instance.GetText("Side")}";
             totalPot_Txt.text = $"{StringUtils.SetChipsUnit(pack.SidePack.TotalSideChips)}";
         }
 
@@ -1452,6 +1509,7 @@ public class GameView : MonoBehaviour
 
     private void OnDestroy()
     {
+        LanguageManager.Instance.RemoveLanguageFun(UpdateLanguage);
         OnRemoveData();
     }
 }

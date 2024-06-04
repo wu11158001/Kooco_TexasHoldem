@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 1176427082581028376}
   - component: {fileID: 6158381744857977334}
   m_Layer: 5
-  m_Name: Text (Legacy)
+  m_Name: SideWinner_Txt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -909,7 +909,7 @@ GameObject:
   - component: {fileID: 1955964916578521999}
   - component: {fileID: 2673955512800774233}
   m_Layer: 5
-  m_Name: Text (Legacy)
+  m_Name: PotWinner_Txt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1093,7 +1093,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Back:1,000
+  m_Text: +1,000
 --- !u!1 &8553322490178092134
 GameObject:
   m_ObjectHideFlags: 0
@@ -1303,6 +1303,8 @@ MonoBehaviour:
   chips_Txt: {fileID: 1720896150242509590}
   tip_Txt: {fileID: 5732587539032858144}
   pokerShape_Txt: {fileID: 77356872339181094}
+  potWinner_Txt: {fileID: 2673955512800774233}
+  sideWinner_Txt: {fileID: 6158381744857977334}
   actionFrame_Obj: {fileID: 1699749636347705677}
   potWinner_Obj: {fileID: 5280631364432530328}
   sideWinner_Obj: {fileID: 1870645856018821284}
