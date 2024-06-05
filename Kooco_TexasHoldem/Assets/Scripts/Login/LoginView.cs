@@ -139,7 +139,7 @@ public class LoginView : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.KeypadEnter))
         {
             LoadSceneManager.Instance.LoadScene(SceneEnum.Lobby);
-        }   
+        }
     }
 
     /// <summary>

@@ -67,6 +67,7 @@ MonoBehaviour:
   ig_Btn: {fileID: 3897939177738599051}
   lineMail_Txt: {fileID: 6793223316575516399}
   igIdAndName_Txt: {fileID: 2929499402570597462}
+  obj: {fileID: 4419930780328032823, guid: fbb28503d8bb94d4ca0722dee05cbd47, type: 3}
 --- !u!222 &837559756044227817
 CanvasRenderer:
   m_ObjectHideFlags: 0
