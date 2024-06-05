@@ -15,6 +15,31 @@
     "zh_TW": "創建"
   },
   {
+    "ID": "ReturnLobby",
+    "English": "Return Lobby",
+    "zh_TW": "返回大廳"
+  },
+  {
+    "ID": "Buy",
+    "English": "Buy",
+    "zh_TW": "購買"
+  },
+  {
+    "ID": "Confirm",
+    "English": "Confirm",
+    "zh_TW": "確認"
+  },
+  {
+    "ID": "Win",
+    "English": "Win",
+    "zh_TW": "獲勝"
+  },
+  {
+    "ID": "Fail",
+    "English": "Fail",
+    "zh_TW": "失敗"
+  },
+  {
     "ID": "大廳",
     "English": null,
     "zh_TW": null

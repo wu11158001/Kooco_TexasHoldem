@@ -44,7 +44,7 @@ public class WalletManager : UnitySingleton<WalletManager>
     /// </summary>
     public void StartCheckConnect()
     {
-        InvokeRepeating(nameof(CheckConnect), 5, 3);
+        InvokeRepeating(nameof(CheckConnect), 7, 4);
     }
 
     /// <summary>

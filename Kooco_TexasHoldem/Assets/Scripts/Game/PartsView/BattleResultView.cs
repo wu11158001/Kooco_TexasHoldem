@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class BattleResultView : MonoBehaviour
 {
     [SerializeField]
-    Text result_Txt;
+    Text result_Txt, confirmBtn_Txt;
     [SerializeField]
     Button confirm_Btn;
 
@@ -42,6 +42,8 @@ public class BattleResultView : MonoBehaviour
     public void OnSetBattleResult(bool isWin, string roomName)
     {
         thidData.RoomName = roomName;
-        result_Txt.text = isWin ? "Win" : "Fail";
+        string resultStr = isWin ? "Win" : "Fail";
+        result_Txt.text = LanguageManager.Instance.GetText(resultStr);
+        confirmBtn_Txt.text = LanguageManager.Instance.GetText("Confirm");
     }
 }

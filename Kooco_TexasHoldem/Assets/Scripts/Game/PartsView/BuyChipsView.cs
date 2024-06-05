@@ -9,7 +9,7 @@ using RequestBuf;
 public class BuyChipsView : MonoBehaviour
 {
     [SerializeField]
-    Text title_Txt, preBuyChips_Txt, minBuyChips_Txt, maxBuyChips_Txt;
+    Text title_Txt, preBuyChips_Txt, minBuyChips_Txt, maxBuyChips_Txt, returnBtn_Txt, buyBtn_Txt;
     [SerializeField]
     Slider buyChips_Sli;
     [SerializeField]
@@ -87,7 +87,9 @@ public class BuyChipsView : MonoBehaviour
         thisData.SmallBlind = smallBlind;
         thisData.SendBuyChipsCallback = sendBuyCallback;
 
-        title_Txt.text = $"{thisData.SmallBlind} / {thisData.SmallBlind * 2} Texas Holdem";
+        returnBtn_Txt.text = LanguageManager.Instance.GetText("ReturnLobby");
+        buyBtn_Txt.text = LanguageManager.Instance.GetText("Buy");
+        title_Txt.text = $"{thisData.SmallBlind} / {thisData.SmallBlind * 2} {LanguageManager.Instance.GetText("TexasHoldem")}";
         TexasHoldemUtil.SetBuySlider(thisData.SmallBlind, buyChips_Sli);
         minBuyChips_Txt.text = $"{StringUtils.SetChipsUnit(thisData.SmallBlind * DataManager.MinMagnification)}";
         maxBuyChips_Txt.text = $"{StringUtils.SetChipsUnit(Entry.TestInfoData.LocalUserChips)}";

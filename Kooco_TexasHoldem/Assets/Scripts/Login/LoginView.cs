@@ -169,6 +169,8 @@ public class LoginView : MonoBehaviour
         }
     }
 
+    #region Instafram
+
     /// <summary>
     /// 開始Instagram登入
     /// </summary>
@@ -179,6 +181,8 @@ public class LoginView : MonoBehaviour
                          $"&scope=user_profile,user_media&response_type=code";
         Application.OpenURL(authUrl);
     }
+
+    #endregion
 
     #region LINE
 

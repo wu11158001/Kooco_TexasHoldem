@@ -23,7 +23,6 @@ public static class DataManager
     public static string InstagramChannelSecret = "b38352322a94cad7812394a311ad26a7";
     public static string InstagramRedirectUri = "https://kooco.github.io/ACEdemo/demo.asiapoker/index.html";
 
-
     [Header("公用")]
     public static string RedirectUri = "https://kooco.github.io/ACEdemo/demo.asiapoker/index.html";                                  //重定向Url
     public static bool IsNotFirstInLogin { get; set; }                                                                               //非首次進入登入
@@ -34,11 +33,9 @@ public static class DataManager
     [Header("場景")]
     public static SceneEnum CurrScene { get; set; }         //當前場景
 
-
     [Header("用戶")]
     public static string UserWalletAddress { get; set; }     //用戶錢包地址
     public static string UserWalletBalance { get; set; }     //用戶錢包餘額
-
 
     [Header("大廳")]
     public static int MinMagnification = 40;                                    //購買籌碼最小倍率

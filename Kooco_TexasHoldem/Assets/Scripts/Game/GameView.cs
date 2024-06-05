@@ -200,7 +200,7 @@ public class GameView : MonoBehaviour
             strData.RaiseValueStr = newRaiseValue >= thisData.LocalPlayerChips ?
                                     $"\n{StringUtils.SetChipsUnit(thisData.LocalPlayerChips)}" :
                                     $"\n{StringUtils.SetChipsUnit(newRaiseValue)}";
-            raiseOrAllInBtn_Txt.text = strData.RaiseStr + strData.RaiseValueStr;
+            raiseOrAllInBtn_Txt.text = LanguageManager.Instance.GetText(strData.RaiseStr) + strData.RaiseValueStr;
 
             SetRaiseToText = newRaiseValue;
             thisData.CurrRaiseValue = (int)newRaiseValue;
@@ -269,8 +269,8 @@ public class GameView : MonoBehaviour
                 {
                     raise_Tr.gameObject.SetActive(true);
                     strData.RaiseStr = "RaiseTo";
-                    strData.RaiseValueStr = $" {thisData.CurrRaiseValue}";
-                    raiseOrAllInBtn_Txt.text = strData.RaiseStr + strData.RaiseValueStr;
+                    strData.RaiseValueStr = $"\n{StringUtils.SetChipsUnit(thisData.CurrRaiseValue)}";
+                    raiseOrAllInBtn_Txt.text = LanguageManager.Instance.GetText(strData.RaiseStr) + strData.RaiseValueStr;
                 }
             }
             else
@@ -338,12 +338,12 @@ public class GameView : MonoBehaviour
             if (value >= thisData.LocalPlayerChips)
             {
                 //All In
-                raiseTo_Txt.text = $"<size=9><color=#000000>{LanguageManager.Instance.GetText("RaiseTo")}</color></size>\n<b><size=13><color=#2E1675>All In</color></size></b>";
+                raiseTo_Txt.text = $"<b><size=12><color=#FF0000>{LanguageManager.Instance.GetText("AllIn")}</color></size></b>";
                 raiseSliHandle_Txt.text = $"All In";
             }
             else
             {
-                raiseTo_Txt.text = $"<size=9><color=#000000>{LanguageManager.Instance.GetText("RaiseTo")}</color></size>\n<b><size=13><color=#2E1675>{StringUtils.SetChipsUnit(value)}</color></size></b>";
+                raiseTo_Txt.text = $"<size=9><color=#000000>{LanguageManager.Instance.GetText("RaiseTo")}</color></size>\n<b><size=9><color=#2E1675>{StringUtils.SetChipsUnit(value)}</color></size></b>";
                 raiseSliHandle_Txt.text = $"{StringUtils.SetChipsUnit(value)}";
             }            
         }
@@ -369,7 +369,7 @@ public class GameView : MonoBehaviour
                     callOrCheckBtn_Txt.text = LanguageManager.Instance.GetText(strData.CallStr) + strData.CallValueStr;
                     strData.RaiseStr = "CallAny";
                     strData.RaiseValueStr = "";
-                    raiseOrAllInBtn_Txt.text = strData.RaiseStr + strData.RaiseValueStr;
+                    raiseOrAllInBtn_Txt.text = LanguageManager.Instance.GetText(strData.RaiseStr) + strData.RaiseValueStr;
                 }
                 else
                 {
@@ -492,7 +492,7 @@ public class GameView : MonoBehaviour
         callOrCheckBtn_Txt.text = LanguageManager.Instance.GetText(strData.CallStr) + strData.CallValueStr;
         strData.RaiseStr = "CallAny";
         strData.RaiseValueStr = "";
-        raiseOrAllInBtn_Txt.text = strData.RaiseStr + strData.RaiseValueStr;
+        raiseOrAllInBtn_Txt.text = LanguageManager.Instance.GetText(strData.RaiseStr) + strData.RaiseValueStr;
         totalPot_Txt.text = "$0";
 
         menuMask_Btn.gameObject.SetActive(false);
@@ -759,9 +759,14 @@ public class GameView : MonoBehaviour
         fold_Btn.gameObject.SetActive(true);
 
         //加注&All In
-        raiseOrAllInBtn_Txt.text = isJustAllIn == true ?
-                                    $"All In\n${thisData.LocalPlayerChips}" :
-                                    $"{LanguageManager.Instance.GetText("Raise")}";
+        strData.RaiseStr = isJustAllIn == true ?
+                           "AllIn" :
+                           "Raise";
+        strData.RaiseValueStr = isJustAllIn == true ?
+                                $"\n${StringUtils.SetChipsUnit(thisData.LocalPlayerChips)}" :
+                                "";
+        raiseOrAllInBtn_Txt.text = LanguageManager.Instance.GetText(strData.RaiseStr) + strData.RaiseValueStr;
+
         if (IsUnableRaise == true && isJustAllIn == false)
         {
             raiseAndAllIn_Btn.gameObject.SetActive(false);

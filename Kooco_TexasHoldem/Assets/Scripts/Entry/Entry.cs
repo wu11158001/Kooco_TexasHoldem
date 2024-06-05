@@ -49,7 +49,7 @@ public class Entry : UnitySingleton<Entry>
     private void Update()
     {
         //Debug工具開關
-        if (Input.GetKeyDown(KeyCode.F1))
+        if (Input.GetKeyDown(KeyCode.F12))
         {
             isShowDebug = !isShowDebug;
             debugObj.SetActive(isShowDebug);
