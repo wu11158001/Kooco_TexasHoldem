@@ -42,6 +42,7 @@ public class CreateCashRoomView : MonoBehaviour
         //取消
         cancel_Btn.onClick.AddListener(() =>
         {
+            AudioManager.Instance.PlayCancelClick();
             gameObject.SetActive(false);
         });
 
@@ -59,18 +60,21 @@ public class CreateCashRoomView : MonoBehaviour
         //創建按鈕
         create_Btn.onClick.AddListener(() =>
         {
+            AudioManager.Instance.PlayConfirmClick();
             baseRequest.SendRequest_CreateCashRoom(thisData.SmallBlind, buyChips_Sli.value, 1);
         });
 
         //購買+按鈕
         buyPlus_Btn.onClick.AddListener(() =>
         {
+            AudioManager.Instance.PlayConfirmClick();
             buyChips_Sli.value += (float)thisData.SmallBlind * 2;
         });
 
         //購買-按鈕
         buyMinus_Btn.onClick.AddListener(() =>
         {
+            AudioManager.Instance.PlayCancelClick();
             buyChips_Sli.value -= (float)thisData.SmallBlind * 2;
         });
     }

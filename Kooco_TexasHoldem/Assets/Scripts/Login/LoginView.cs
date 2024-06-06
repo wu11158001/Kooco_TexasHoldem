@@ -50,36 +50,42 @@ public class LoginView : MonoBehaviour
         //IG登入
         ig_Btn.onClick.AddListener(() =>
         {
+            AudioManager.Instance.PlayConfirmClick();
             StartInstagram();
         });
 
         //Line登入
         line_Btn.onClick.AddListener(() =>
         {
+            AudioManager.Instance.PlayConfirmClick();
             StartLineLogin();
         });
 
         //MetaMask連接
         metaMaskConnect_Btn.onClick.AddListener(() =>
         {
+            AudioManager.Instance.PlayConfirmClick();
             StartConnect("Metamask");
         });
 
         //Trust連接
         trustConnect_Btn.onClick.AddListener(() =>
         {
+            AudioManager.Instance.PlayConfirmClick();
             StartConnect("Metamask");
         });
 
         //OKX連接
         okxConnect_Btn.onClick.AddListener(() =>
         {
+            AudioManager.Instance.PlayConfirmClick();
             StartConnect("Metamask");
         });
 
         //Binance連接
         binanceConnect_Btn.onClick.AddListener(() =>
         {
+            AudioManager.Instance.PlayConfirmClick();
             if (DataManager.IsMobilePlatform)
             {
                 StartConnect("Metamask");
@@ -95,6 +101,7 @@ public class LoginView : MonoBehaviour
         //Coonbase連接
         coinbaseConnect_Btn.onClick.AddListener(() =>
         {
+            AudioManager.Instance.PlayConfirmClick();
             StartConnect("Coinbase");
         });
     }

@@ -9,10 +9,10 @@ public class ObjPool
     /// </summary>
     Dictionary<GameObject, (Transform, List<GameObject>)> poolDic;
 
-    Transform parent;       //物件池父物件
+    Transform parent;       //掛載父物件
     int cleanNum;           //達到數量清理未使用物件
 
-    public ObjPool(Transform parent, int cleanNum = 0)
+    public ObjPool(Transform parent, int cleanNum = 10)
     {
         this.parent = parent;
         this.cleanNum = cleanNum;
@@ -37,8 +37,7 @@ public class ObjPool
                     item.SetActive(true);
 
                     //清理物件池
-                    if (cleanNum > 0 && 
-                        poolDic[obj].Item2.Count >= cleanNum)
+                    if (poolDic[obj].Item2.Count >= cleanNum)
                     {
                         List<GameObject> cleanList = new List<GameObject>();
                         foreach (var usingObj in poolDic[obj].Item2)

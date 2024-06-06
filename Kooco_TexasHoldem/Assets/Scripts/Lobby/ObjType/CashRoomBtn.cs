@@ -22,6 +22,7 @@ public class CashRoomBtn : MonoBehaviour
 
         ThisRoom_Btn.onClick.AddListener(() =>
         {
+            AudioManager.Instance.PlayConfirmClick();
             if (GameRoomManager.Instance.JudgeIsCanBeCreateRoom())
             {
                 CreateCashRoomView createCashRoomView = ViewManager.Instance.OpenPartsView(PartsViewEnum.CreateCashRoomView).GetComponent<CreateCashRoomView>();

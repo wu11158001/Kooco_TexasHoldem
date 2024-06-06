@@ -42,6 +42,7 @@ public class Entry : UnitySingleton<Entry>
         LanguageManager.Instance.LoadLangageJson();
 
         yield return AssetsManager.Instance.ILoadAssets();
+        AudioManager.Instance.StartLoadAudioAssets();
 
         LoadSceneManager.Instance.LoadScene(SceneEnum.Login);
     }
