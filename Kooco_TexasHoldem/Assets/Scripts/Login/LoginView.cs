@@ -279,14 +279,14 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
             string phone = StringUtils.GetPhoneAddCode(SMSMobileNumber_Dd, SMSMobileNumber_If.text);
             Debug.Log($"Sign In = Phone Number : {phone} / Password: {code}");
 
-            if (phone == "886-987654321" && code == "123456")
+            if (phone == "886-987654321" && code == "12345678")
             {
                 LoadSceneManager.Instance.LoadScene(SceneEnum.Lobby);
             }
             else
             {
                 MobileSignInError_Txt.text = "Invalid Code, Please Try Again.";
-                Debug.LogError("Correct is Phone:886-987654321 / Code:123456");
+                Debug.LogError("Correct is Phone:886-987654321 / Code:12345678");
             }
         });
 
