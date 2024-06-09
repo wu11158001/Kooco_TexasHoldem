@@ -74,7 +74,6 @@ public class LobbyView : MonoBehaviour
         //斷開連接
         disconnect_Btn.onClick.AddListener(() =>
         {
-            AudioManager.Instance.PlayConfirmClick();
             WalletManager.Instance.OnWalletDisconnect();
             LoadSceneManager.Instance.LoadScene(SceneEnum.Login);
         });
@@ -85,13 +84,10 @@ public class LobbyView : MonoBehaviour
             if (battleData.isPairing)
             {
                 //正在配對取消配對
-                AudioManager.Instance.PlayCancelClick();
                 EndPair();
             }
             else
             {
-                AudioManager.Instance.PlayConfirmClick();
-
                 if (GameRoomManager.Instance.JudgeIsCanBeCreateRoom())
                 {
                     //開始配對

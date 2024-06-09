@@ -24,9 +24,13 @@ public class Entry : UnitySingleton<Entry>
     }
     #endregion
 
+    [Header("版本號")]
+    public string version;
+    [Header("解析度")]
+    public Vector2 resolution;
     [Header("Debug工具")]
     [SerializeField]
-    GameObject debugObj;
+    GameObject DebugObj;
     [SerializeField]
     bool isShowDebug;
 
@@ -34,7 +38,7 @@ public class Entry : UnitySingleton<Entry>
     {
         base.Awake();
 
-        debugObj.SetActive(isShowDebug);
+        DebugObj.SetActive(isShowDebug);
     }
 
     private IEnumerator Start()
@@ -53,17 +57,17 @@ public class Entry : UnitySingleton<Entry>
         if (Input.GetKeyDown(KeyCode.F12))
         {
             isShowDebug = !isShowDebug;
-            debugObj.SetActive(isShowDebug);
+            DebugObj.SetActive(isShowDebug);
         }
 
         if (Input.GetKeyDown(KeyCode.Keypad7))
         {
-            LanguageManager.Instance.ChangeLanguage(0);
+            //LanguageManager.Instance.ChangeLanguage(0);
         }
 
         if (Input.GetKeyDown(KeyCode.Keypad8))
         {
-            LanguageManager.Instance.ChangeLanguage(1);
+            //LanguageManager.Instance.ChangeLanguage(1);
         }
 
         if (CurrGameServer != null && CurrGameServer.gameObject.activeSelf)

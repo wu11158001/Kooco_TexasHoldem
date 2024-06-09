@@ -28,6 +28,10 @@ public class GameRoomManager : UnitySingleton<GameRoomManager>
     [SerializeField]
     RectTransform switchBtnParent, addRoomBtn_Tr;
 
+    [Header("背景遮罩")]
+    [SerializeField]
+    GameObject bgMask_Obj;
+
     public readonly int maxRoomCount = 2;
     public readonly float moveTargetDictance = 108;     //移動房間所需移動距離
 
@@ -113,6 +117,8 @@ public class GameRoomManager : UnitySingleton<GameRoomManager>
         thisData.SwitchBtnIndexList = new List<int>();
         thisData.SwitchBtnList = new List<SwitchRoomBtn>();
 
+        bgMask_Obj.SetActive(false);
+
         switchBtnSample.gameObject.SetActive(false);
         StartCoroutine(IJudgeShowSwitchBtn());
     }
@@ -145,6 +151,7 @@ public class GameRoomManager : UnitySingleton<GameRoomManager>
     /// </summary>
     private void OnGoLobby()
     {
+        bgMask_Obj.SetActive(false);
         IsShowGameRoom = false;
         CloseAllBtnFrame();
     }
@@ -242,12 +249,12 @@ public class GameRoomManager : UnitySingleton<GameRoomManager>
         room.anchorMin = new Vector2(0, 0);
         room.offsetMax = Vector2.zero;
         room.offsetMin = Vector2.zero;
-        room.sizeDelta = new Vector2(540, 0);
+        room.sizeDelta = new Vector2(Entry.Instance.resolution.x, 0);
         room.anchoredPosition = Vector2.zero;
         room.localScale = Vector3.one;
         room.eulerAngles = Vector3.zero;
         room.name = roomName;
-        room.anchoredPosition = new Vector2(540 * (GetRoomCount - 1), 0);
+        room.anchoredPosition = new Vector2(Entry.Instance.resolution.x * (GetRoomCount - 1), 0);
 
         //假Server
         GameServer gameServer = room.GetComponent<GameServer>();
@@ -272,15 +279,16 @@ public class GameRoomManager : UnitySingleton<GameRoomManager>
         SwitchRoomBtn switchRoomBtn = switchBtnObj.GetComponent<SwitchRoomBtn>();
         switchRoomBtn.SetSwitchBtnInfo(GetRoomName(roomType), roomName, thisData.RoomNameIndex);
         switchRoomBtn.SetSelectFrameActive = true;
+
         thisData.SwitchBtnList.Add(switchRoomBtn);
-
-
         thisData.SwitchBtnIndexList.Add(thisData.RoomNameIndex);
         thisData.CurrRoomIndex = GetRoomCount;
         thisData.RoomNameIndex++;
         thisData.RoomDic.Add(roomName, (room, switchRoomBtn));
 
         addRoomBtn_Tr.SetSiblingIndex(GetRoomCount + 1);
+
+        bgMask_Obj.SetActive(true);
 
         StartCoroutine(IJudgeShowSwitchBtn());
     }
@@ -305,11 +313,12 @@ public class GameRoomManager : UnitySingleton<GameRoomManager>
         else
         {
             Debug.LogError($"{roomName}:移除房間出錯");
+            return;
         }
 
         foreach (var room in thisData.RoomDic)
         {
-            room.Value.Item1.anchoredPosition = new Vector2(Mathf.Max(0, room.Value.Item1.anchoredPosition.x - 540),
+            room.Value.Item1.anchoredPosition = new Vector2(Mathf.Max(0, room.Value.Item1.anchoredPosition.x - Entry.Instance.resolution.x),
                                                             room.Value.Item1.anchoredPosition.y);
         }
 
@@ -327,12 +336,14 @@ public class GameRoomManager : UnitySingleton<GameRoomManager>
                                        50 :
                                        -1;
 
+        bgMask_Obj.SetActive(GetRoomCount > 0);
+
         //切換按鈕空間大小
         float sizeX = (GetRoomCount + 1) * thisData.AddSwitchBtnParnetWidth;
         switchBtnParent.sizeDelta = new Vector2(sizeX, switchBtnParent.sizeDelta.y);
 
         //房間列表
-        gameRoomList_Tr.sizeDelta = new Vector2(540 * GetRoomCount, 0);
+        gameRoomList_Tr.sizeDelta = new Vector2(Entry.Instance.resolution.x * GetRoomCount, 0);
         ChangeRoom(GetRoomCount - 1);
     }
 
@@ -392,12 +403,12 @@ public class GameRoomManager : UnitySingleton<GameRoomManager>
         while ((DateTime.Now - startTime).TotalSeconds < moveTime)
         {
             float progress = (float)(DateTime.Now - startTime).TotalSeconds / moveTime;
-            float x = Mathf.Lerp(gameRoomList_Tr.anchoredPosition.x, -540 * thisData.CurrRoomIndex, progress);
+            float x = Mathf.Lerp(gameRoomList_Tr.anchoredPosition.x, -Entry.Instance.resolution.x * thisData.CurrRoomIndex, progress);
             gameRoomList_Tr.anchoredPosition = new Vector2(x, gameRoomList_Tr.anchoredPosition.y);
             yield return null;
         }
 
-        gameRoomList_Tr.anchoredPosition = new Vector2(-540 * thisData.CurrRoomIndex, gameRoomList_Tr.anchoredPosition.y);
+        gameRoomList_Tr.anchoredPosition = new Vector2(-Entry.Instance.resolution.x * thisData.CurrRoomIndex, gameRoomList_Tr.anchoredPosition.y);
         thisData.SwitchBtnList[thisData.CurrRoomIndex].SetSelectFrameActive = true;
         thisData.IsRoomMoving = false;
     }

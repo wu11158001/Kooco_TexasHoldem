@@ -67,14 +67,12 @@ public class CreateCashRoomView : MonoBehaviour
         //購買+按鈕
         buyPlus_Btn.onClick.AddListener(() =>
         {
-            AudioManager.Instance.PlayConfirmClick();
             buyChips_Sli.value += (float)thisData.SmallBlind * 2;
         });
 
         //購買-按鈕
         buyMinus_Btn.onClick.AddListener(() =>
         {
-            AudioManager.Instance.PlayCancelClick();
             buyChips_Sli.value -= (float)thisData.SmallBlind * 2;
         });
     }

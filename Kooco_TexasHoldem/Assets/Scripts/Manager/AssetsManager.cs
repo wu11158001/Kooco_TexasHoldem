@@ -15,10 +15,13 @@ public class AssetsManager : UnitySingleton<AssetsManager>
 
     [Header("圖集資源")]
     Dictionary<AlbumEnum, SpriteAlbum> albumAssetsDic = new Dictionary<AlbumEnum, SpriteAlbum>();       //圖集資源(物件名稱, 物件資源)
-    readonly Dictionary<AlbumEnum, string> albumAssetsPath = new Dictionary<AlbumEnum, string>()                                        //圖集資源路徑
+    readonly Dictionary<AlbumEnum, string> albumAssetsPath = new Dictionary<AlbumEnum, string>()        //圖集資源路徑
     {
-        {AlbumEnum.PokerNum, "SpriteAlbum/PokerNumAlbum"},               //撲克牌數字圖集
-        {AlbumEnum.PokerBack, "SpriteAlbum/pokerBackAlbum"},             //撲克牌背面圖集
+        {AlbumEnum.PokerNum, "SpriteAlbum/PokerNumAlbum"},                    //撲克牌數字圖集
+        {AlbumEnum.PokerBack, "SpriteAlbum/pokerBackAlbum"},                  //撲克牌背面圖集
+        {AlbumEnum.WalletLogo, "SpriteAlbum/WalletLogoAlbum"},                //錢包Logo圖集
+        {AlbumEnum.PasswordEye, "SpriteAlbum/PasswordEyeAlbum" },             //密碼顯示眼睛圖集
+        {AlbumEnum.PasswordCheck, "SpriteAlbum/CheckPasswordAlbum" },         //檢查密碼正確性圖集
     };
 
     public override void Awake()
@@ -52,7 +55,7 @@ public class AssetsManager : UnitySingleton<AssetsManager>
     }
 
     /// <summary>
-    /// 獲取ObjType物件
+    /// 獲取物件類遊戲物件
     /// </summary>
     /// <param name="objTypeEnum"></param>
     /// <returns></returns>

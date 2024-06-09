@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 public class AudioManager : UnitySingleton<AudioManager>
 {
-    Dictionary<string, AudioClip> soundDic = new Dictionary<string, AudioClip>();
-    Dictionary<string, AudioClip> musicDic = new Dictionary<string, AudioClip>();
+    readonly Dictionary<string, AudioClip> soundDic = new();
+    readonly Dictionary<string, AudioClip> musicDic = new();
 
     AudioPool audioPool;
 

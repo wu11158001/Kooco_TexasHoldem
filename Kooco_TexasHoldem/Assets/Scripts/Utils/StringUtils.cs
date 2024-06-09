@@ -212,4 +212,54 @@ public static class StringUtils
 
         return sb.ToString();
     }
+
+    /// <summary>
+    /// 獲取手機號加國碼
+    /// </summary>
+    /// <param name="dropdown"></param>
+    /// <param name="phoneNumber"></param>
+    /// <returns></returns>
+    public static string GetPhoneAddCode(Dropdown dropdown, string phoneNumber)
+    {
+        string countryCode = dropdown.options[dropdown.value].text;
+        countryCode = countryCode.Replace("+", "");
+        if (phoneNumber[0] == '0')
+        {
+            phoneNumber = phoneNumber.Substring(1);
+        }
+        
+        return $"{countryCode}-{phoneNumber}";
+    }
+
+    /// <summary>
+    /// 重製密碼輸入內容
+    /// </summary>
+    /// <param name="img"></param>
+    /// <param name="inputField"></param>
+    /// <returns></returns>
+    public static bool InitPasswordContent(Image img, InputField inputField)
+    {
+        //眼睛圖案紐
+        img.sprite = AssetsManager.Instance.GetAlbumAsset(AlbumEnum.PasswordEye).album[0];
+        //輸入框
+        inputField.contentType = InputField.ContentType.Password;
+        inputField.text = "";
+
+        return false;
+    }
+
+    /// <summary>
+    /// 檢查手機格式正確性
+    /// </summary>
+    /// <param name="number"></param>
+    /// <returns></returns>
+    public static bool CheckPhoneNumber(string number)
+    {
+        if (number.Length < 9)
+        {
+            return false;
+        }
+
+        return true;
+    }
 }

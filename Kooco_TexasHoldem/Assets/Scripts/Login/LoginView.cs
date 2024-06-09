@@ -12,8 +12,10 @@ using System.Threading.Tasks;
 using System.Linq;
 using UnityEngine.Networking;
 using Newtonsoft.Json.Linq;
+using TMPro;
+using UnityEngine.EventSystems;
 
-public class LoginView : MonoBehaviour
+public class LoginView : MonoBehaviour, IPointerClickHandler
 {
     [DllImport("__Internal")]
     private static extern string JS_GetBrowserInfo();                                            //獲取瀏覽器訊息
@@ -22,23 +24,148 @@ public class LoginView : MonoBehaviour
     [DllImport("__Internal")]
     private static extern void JS_WindowClose();                                                 //關閉頁面
     [DllImport("__Internal")]
-    private static extern void JS_OpenNewBrowser(string mail, string igIdAndName);              //開啟新瀏覽器
+    private static extern void JS_OpenNewBrowser(string mail, string igIdAndName);               //開啟新瀏覽器
 
-    [Header("錢包連接")]
+    [Header("切換/版本")]
     [SerializeField]
-    Button metaMaskConnect_Btn, trustConnect_Btn, binanceConnect_Btn, okxConnect_Btn, coinbaseConnect_Btn;
+    Text Vrsion_Txt;
+    [SerializeField]
+    Toggle Wallet_Tog, Mobile_Tog;
+    [SerializeField]
+    GameObject Wallet_Obj, Mobile_Obj;
+
+    [Header("錢包連接頁面")]
+    [SerializeField]
+    GameObject SelectWalletPage_Obj;
+    [SerializeField]
+    Button Metamask_Btn, Trust_Btn, Binance_Btn, OKX_Btn, Coinbase_Btn;
+    [SerializeField]
+    TMP_Text SignUp_TmpTxt;
+
+    [Header("錢包連接_連接中頁面")]
+    [SerializeField]
+    GameObject WalletLoadingPage_Obj, ConnectingWallet_Obj, Connecting_Obj, RetryConnectWallet_Obj;
+    [SerializeField]
+    Button BackToSelectWallet_Btn, RetryConnectWallet_Btn;
+    [SerializeField]
+    Text ConnectionTitle_Txt, Connecting_Txt, ErrorConnect_Txt;
+    [SerializeField]
+    Image ConnectingLogo_Img;
+    [SerializeField]
+    List<Image> EffectPointList;
+
+    [Header("錢包連接_簡訊認證頁面")]
+    [SerializeField]
+    GameObject SMSVerificationPage_Obj;
+    [SerializeField]
+    Button SMSOTPSend_Btn, SMSOTPSubmit_Btn;
+    [SerializeField]
+    InputField SMSMobileNumber_If, SMSOTP_If;
+    [SerializeField]
+    Dropdown SMSMobileNumber_Dd;
+    [SerializeField]
+    Text SMSMobileNumberError_Txt, SMSCodeError_Txt;
 
     [Header("綁定")]
     [SerializeField]
-    Button line_Btn, ig_Btn;
+    Button Line_Btn, IG_Btn;
     [SerializeField]
-    Text lineMail_Txt, igIdAndName_Txt;
+    Text LineMail_Txt, IGIdAndName_Txt;
 
-    ChainData _currentChainData;
-    string _address;
+    [Header("手機登入")]
+    [SerializeField]
+    GameObject MobileSignIn_Obj, MobileSiginPage_Obj;
+    [SerializeField]
+    Button SignIn_Btn, Register_Btn, SignInPasswordEye_Btn;
+    [SerializeField]
+    Dropdown SignInNumber_Dd;
+    [SerializeField]
+    InputField SignInNumber_If, SignInPassword_If;
+    [SerializeField]
+    Text MobileTitle_Txt, MobileTip_Txt, MobileSignInError_Txt, SignInNumberError_Txt;
+    [SerializeField]
+    TMP_Text ForgotPassword_TmpTxt;
+    [SerializeField]
+    Toggle RememberMe_Tog;
+
+    [Header("手機註冊")]
+    [SerializeField]
+    GameObject RegisterPage_Obj;
+    [SerializeField]
+    TMP_Text Privacy_TmpTxt;
+    [SerializeField]
+    Text RegisterNumberError_Txt, RegisterCodeError_Txt, RegisterPasswordError_Txt, RegisterPrivacyError_Txt;
+    [SerializeField]
+    Button RegisterOTPSend_Btn, RegisterPasswordEye_Btn, RegisterSubmit_Btn;
+    [SerializeField]
+    InputField RegisterNumber_If, RegisterOTP_If, RegisterPassword_If;
+    [SerializeField]
+    Dropdown RegisterNumber_Dd;
+    [SerializeField]
+    Toggle Privacy_Tog;
+
+    [Header("手機注冊密碼檢查")]
+    [SerializeField]
+    GameObject RegisterCheckPassword_Obj;
+    [SerializeField]
+    Image RegisterCheckPassword1_Img, RegisterCheckPassword2_Img, RegisterCheckPassword3_Img;
+    [SerializeField]
+    Text RegisterCheckPassword1_Txt, RegisterCheckPassword2_Txt, RegisterCheckPassword3_Txt;
+
+    [Header("註冊成功")]
+    [SerializeField]
+    GameObject RegisterSucce_Obj;
+    [SerializeField]
+    Text RegisterSuccTip_Txt;
+
+    [Header("忘記密碼")]
+    [SerializeField]
+    GameObject LostPassword_Obj;
+    [SerializeField]
+    InputField LostPswNumber_If, LostPswOTP_If, LosrPswPassword_If;
+    [SerializeField]
+    Button BackToMobileSignIn_Btn, LostPswPasswordEye_Btn, LostPswOTPSend_Btn, LostPswSubmit_Btn;
+    [SerializeField]
+    Text LostPswNumberError_Txt, LostPswCodeError_Txt, LostPswPasswordError_Txt;
+    [SerializeField]
+    Dropdown LostPswNumber_Dd;
+
+    [Header("忘記密碼密碼檢查")]
+    [SerializeField]
+    GameObject LostPswCheckPassword_Obj;
+    [SerializeField]
+    Image LostPswCheckPassword1_Img, LostPswCheckPassword2_Img, LostPswCheckPassword3_Img;
+    [SerializeField]
+    Text LostPswCheckPassword1_Txt, LostPswCheckPassword2_Txt, LostPswCheckPassword3_Txt;
+    [SerializeField]
+
+    const string LocalPhoneNumber = "AsiaPoker_PhoneNumber";        //本地紀錄_手機號
+    const string LocalPaswword = "AsiaPoker_Password";              //本地紀錄_密碼
+
+    ChainData _currentChainData;                        //當前連接練
+    string _address;                                    //錢包地址
+
+    Coroutine connectionEffectCoroutine;                //連接錢包效果
+    DateTime startConnectTime;                          //開始連接錢包時間
+    bool isShowPassword;                                //是否顯示密碼
+    bool isRegisterPasswordCorrect;                     //是否手機注冊密碼正確
+    bool isLostPswPasswordCorrect;                      //是否忘記密碼密碼正確
+    string recodePhoneNumber;                           //紀錄的手機號
+    string recodePassword;                              //紀錄的密碼
+
+    /// <summary>
+    /// 紀錄當前連接錢包資料
+    /// </summary>
+    private RecordConnect recordConnect;
+    public class RecordConnect
+    {
+        public string WalletProviderStr;
+        public WalletEnum TheWalletEnum;
+    }
 
     private void Awake()
     {
+        recordConnect = new RecordConnect();
         ListenerEvent();
     }
 
@@ -47,87 +174,380 @@ public class LoginView : MonoBehaviour
     /// </summary>
     private void ListenerEvent()
     {
-        //IG登入
-        ig_Btn.onClick.AddListener(() =>
-        {
-            AudioManager.Instance.PlayConfirmClick();
-            StartInstagram();
-        });
+        #region 頁面切換
 
-        //Line登入
-        line_Btn.onClick.AddListener(() =>
+        //錢包Toggle
+        Wallet_Tog.onValueChanged.AddListener((isOn) =>
         {
-            AudioManager.Instance.PlayConfirmClick();
-            StartLineLogin();
-        });
+            Wallet_Obj.SetActive(isOn);
+            Mobile_Obj.SetActive(!isOn);
 
-        //MetaMask連接
-        metaMaskConnect_Btn.onClick.AddListener(() =>
-        {
-            AudioManager.Instance.PlayConfirmClick();
-            StartConnect("Metamask");
-        });
+            isShowPassword = false;
+            StringUtils.InitPasswordContent(SignInPasswordEye_Btn.image,
+                                            SignInPassword_If);
+            StringUtils.InitPasswordContent(RegisterPasswordEye_Btn.image,
+                                            RegisterPassword_If);
+            StringUtils.InitPasswordContent(LostPswPasswordEye_Btn.image,
+                                            LosrPswPassword_If);
 
-        //Trust連接
-        trustConnect_Btn.onClick.AddListener(() =>
-        {
-            AudioManager.Instance.PlayConfirmClick();
-            StartConnect("Metamask");
-        });
-
-        //OKX連接
-        okxConnect_Btn.onClick.AddListener(() =>
-        {
-            AudioManager.Instance.PlayConfirmClick();
-            StartConnect("Metamask");
-        });
-
-        //Binance連接
-        binanceConnect_Btn.onClick.AddListener(() =>
-        {
-            AudioManager.Instance.PlayConfirmClick();
-            if (DataManager.IsMobilePlatform)
+            if (isOn)
             {
-                StartConnect("Metamask");
+                //選擇登入錢包
+                OnSwlwctWalletInit();
             }
             else
             {
-                StartConnect("WalletConnect");
+                OnMobileSignInInit();
+            }            
+        });
+
+        //返回選擇錢包
+        BackToSelectWallet_Btn.onClick.AddListener(() =>
+        {
+            StopCoroutine(connectionEffectCoroutine);
+            OnSwlwctWalletInit();
+        });
+
+        #endregion
+
+        #region 錢包連接
+
+        //MetaMask連接
+        Metamask_Btn.onClick.AddListener(() =>
+        {
+            StartConnect("Metamask", WalletEnum.Metamask);
+        });
+
+        //Trust連接
+        Trust_Btn.onClick.AddListener(() =>
+        {
+            StartConnect("Metamask", WalletEnum.TrustWallet);
+        });
+
+        //OKX連接
+        OKX_Btn.onClick.AddListener(() =>
+        {
+            StartConnect("Metamask", WalletEnum.OKX);
+        });
+
+        //Binance連接
+        Binance_Btn.onClick.AddListener(() =>
+        {
+            if (DataManager.IsMobilePlatform)
+            {
+                StartConnect("Metamask", WalletEnum.Binance);
+            }
+            else
+            {
+                StartConnect("WalletConnect", WalletEnum.Binance);
             }                
 
             InvokeRepeating(nameof(TryBinanceConnect), 8, 3);
         });
 
         //Coonbase連接
-        coinbaseConnect_Btn.onClick.AddListener(() =>
+        Coinbase_Btn.onClick.AddListener(() =>
+        {
+            StartConnect("Coinbase", WalletEnum.Coinbase);
+        });
+
+        //重新嘗試連接
+        RetryConnectWallet_Btn.onClick.AddListener(() =>
+        {
+            StartConnect(recordConnect.WalletProviderStr, recordConnect.TheWalletEnum);            
+        });
+
+        #endregion
+
+        #region 簡訊認證
+
+        //發送獲取驗證碼
+        SMSOTPSend_Btn.onClick.AddListener(() =>
+        {
+            string phone = StringUtils.GetPhoneAddCode(SMSMobileNumber_Dd, SMSMobileNumber_If.text);
+            Debug.Log($"Send Code:{phone}");
+
+            SMSMobileNumberError_Txt.text = "";
+            SMSCodeError_Txt.text = "";
+            SMSOTP_If.text = "";
+        });
+
+        //OTP確認
+        SMSOTPSubmit_Btn.onClick.AddListener(() =>
+        {
+            string code = SMSOTP_If.text;
+            string phone = StringUtils.GetPhoneAddCode(SMSMobileNumber_Dd, SMSMobileNumber_If.text);
+            Debug.Log($"Sign In = Phone Number : {phone} / Password: {code}");
+
+            if (phone == "886-987654321" && code == "123456")
+            {
+                LoadSceneManager.Instance.LoadScene(SceneEnum.Lobby);
+            }
+            else
+            {
+                MobileSignInError_Txt.text = "Invalid Code, Please Try Again.";
+                Debug.LogError("Correct is Phone:886-987654321 / Code:123456");
+            }
+        });
+
+        #endregion
+
+        #region 第三方連接
+
+        //IG登入
+        IG_Btn.onClick.AddListener(() =>
         {
             AudioManager.Instance.PlayConfirmClick();
-            StartConnect("Coinbase");
+            StartInstagram();
         });
+
+        //Line登入
+        Line_Btn.onClick.AddListener(() =>
+        {
+            AudioManager.Instance.PlayConfirmClick();
+            StartLineLogin();
+        });
+
+        #endregion
+
+        #region 手機登入
+
+        //手機登入
+        SignIn_Btn.onClick.AddListener(() =>
+        {
+            if (!StringUtils.CheckPhoneNumber(SignInNumber_If.text))
+            {
+                SignInNumberError_Txt.text = "User Name Entered Incorrectly, Please Try Again.";             
+            }
+            else
+            {
+                SignInNumberError_Txt.text = "";
+                string phone = StringUtils.GetPhoneAddCode(SignInNumber_Dd, SignInNumber_If.text);
+                string password = SignInPassword_If.text;
+                Debug.Log($"Mobile Sign In = Phone:{phone} / Password = {password}");
+
+                if (phone == "886-987654321" && password == "A12345678")
+                {
+                    if (RememberMe_Tog.isOn)
+                    {
+                        PlayerPrefs.SetString(LocalPhoneNumber, SignInNumber_If.text);
+                        PlayerPrefs.SetString(LocalPaswword, SignInPassword_If.text);
+                    }
+
+                    LoadSceneManager.Instance.LoadScene(SceneEnum.Lobby);
+                }
+                else
+                {
+                    MobileSignInError_Txt.text = "Invalid Code, Please Try Again.";
+                    Debug.LogError("Correct is Phone:886-987654321 / Password:A12345678");
+                }
+            }
+        });
+
+        //手機登入密碼顯示
+        SignInPasswordEye_Btn.onClick.AddListener(() =>
+        {
+            PasswordShowBtnClick(SignInPasswordEye_Btn.image,
+                                 SignInPassword_If);
+        });
+
+        #endregion
+
+        #region 手機注冊
+
+        //手機註冊
+        Register_Btn.onClick.AddListener(() =>
+        {
+            MobileTitle_Txt.text = "REGISTER";
+            MobileTip_Txt.text = "You Will Receive A New Account.";
+
+            RegisterNumberError_Txt.text = "";
+            RegisterCodeError_Txt.text = "";
+            RegisterPasswordError_Txt.text = "";
+            RegisterPrivacyError_Txt.text = "";
+
+            Privacy_TmpTxt.text = $"Agree To The <color=#79E84B><link=Terms><u>Terms</u></link></color> & <color=#79E84B><link=Privacy Policy><u>Privacy Policy</u></link></color>";
+            MobileSiginPage_Obj.SetActive(false);
+            RegisterPage_Obj.SetActive(true);
+            RegisterCheckPassword_Obj.SetActive(false);
+        });
+
+        //手機注冊發送獲取OTPCode
+        RegisterOTPSend_Btn.onClick.AddListener(() =>
+        {
+            if (!StringUtils.CheckPhoneNumber(RegisterNumber_If.text))
+            {
+                RegisterNumberError_Txt.text = "User Name Entered Incorrectly, Please Try Again.";
+            }
+            else
+            {
+                RegisterNumberError_Txt.text = "";
+                string phone = StringUtils.GetPhoneAddCode(RegisterNumber_Dd, RegisterNumber_If.text);
+                Debug.Log($"Register Send Code:{phone}");
+            }
+        });
+
+        //手機注冊密碼輸入
+        RegisterPassword_If.onValueChanged.AddListener((value) =>
+        {
+            RegisterCheckPassword_Obj.SetActive(value.Length > 0);
+
+            RegisterPasswordError_Txt.text = "";
+
+            RegisterCheckPassword1_Txt.text = "Enter New Password.";
+            RegisterCheckPassword2_Txt.text = "Allowed Characters: Alphanumeric A-Z, 0-9";
+            RegisterCheckPassword3_Txt.text = "At Least 8 Chars.";
+
+            bool check1 = CnahgeCheckPasswordIcon(true, RegisterCheckPassword1_Img);
+            bool check2 = CnahgeCheckPasswordIcon(StringUtils.IsAlphaNumeric(RegisterPassword_If.text), RegisterCheckPassword2_Img);
+            bool check3 = CnahgeCheckPasswordIcon(RegisterPassword_If.text.Length >= 8, RegisterCheckPassword3_Img);
+            isRegisterPasswordCorrect = check1 && check2 && check3;
+        });
+
+        //手機注冊密碼顯示
+        RegisterPasswordEye_Btn.onClick.AddListener(() =>
+        {
+            PasswordShowBtnClick(RegisterPasswordEye_Btn.image,
+                                 RegisterPassword_If);
+        });
+
+        //手機注冊確認送出
+        RegisterSubmit_Btn.onClick.AddListener(() =>
+        {
+            bool isCorrect = true;
+            if (!StringUtils.CheckPhoneNumber(RegisterNumber_If.text))
+            {
+                //手機號格式錯誤
+                isCorrect = false;
+                RegisterNumberError_Txt.text = "User Name Entered Incorrectly, Please Try Again.";
+            }
+
+            if (!isRegisterPasswordCorrect)
+            {
+                //密碼錯誤
+                isCorrect = false;
+                RegisterPasswordError_Txt.text = "Invalid Code, Please Try Again.";
+            }
+
+            if (!Privacy_Tog.isOn)
+            {
+                //隱私條款未同意
+                isCorrect = false;
+                RegisterPrivacyError_Txt.text = "Please Agree To The Privacy Policy.";
+            }
+
+            if (isCorrect)
+            {
+                //註冊成功
+                string phone = StringUtils.GetPhoneAddCode(RegisterNumber_Dd, RegisterNumber_If.text);
+                string code = RegisterOTP_If.text;
+                string psw = RegisterPassword_If.text;
+                Debug.Log($"Register Submit = Phone:{phone} / Code:{code} / Password:{psw}");
+
+                MobileSignIn_Obj.SetActive(false);
+                RegisterSucce_Obj.SetActive(true);
+
+                RegisterSuccTip_Txt.text = $"<size=14><color=#FFFFF>Registration Successful</color></size>\n" +
+                                           $"<size=12><color=#C6C2C2>Account Successfully Created</color></size>";
+            }
+        });
+
+        #endregion
+
+        #region 忘記密碼
+
+        //返回手機登入
+        BackToMobileSignIn_Btn.onClick.AddListener(() =>
+        {
+            OnMobileSignInInit();
+        });
+
+        //忘記密碼密碼顯示
+        LostPswPasswordEye_Btn.onClick.AddListener(() =>
+        {
+            PasswordShowBtnClick(LostPswPasswordEye_Btn.image,
+                                 LosrPswPassword_If);
+        });
+
+        //忘記密碼發送獲取OTPCode
+        LostPswOTPSend_Btn.onClick.AddListener(() =>
+        {
+            if (!StringUtils.CheckPhoneNumber(LostPswNumber_If.text))
+            {
+                LostPswNumberError_Txt.text = "User Name Entered Incorrectly, Please Try Again.";
+            }
+            else
+            {
+                LostPswNumberError_Txt.text = "";
+                string phone = StringUtils.GetPhoneAddCode(LostPswNumber_Dd, LostPswNumber_If.text);
+                Debug.Log($"Lost Password Send Code:{phone}");
+            }
+        });
+
+        //忘記密碼密碼輸入
+        LosrPswPassword_If.onValueChanged.AddListener((value) =>
+        {
+            LostPswCheckPassword_Obj.SetActive(value.Length > 0);
+
+            LostPswPasswordError_Txt.text = "";
+
+            LostPswCheckPassword1_Txt.text = "Enter New Password.";
+            LostPswCheckPassword2_Txt.text = "Allowed Characters: Alphanumeric A-Z, 0-9";
+            LostPswCheckPassword3_Txt.text = "At Least 8 Chars.";
+
+            bool check1 = CnahgeCheckPasswordIcon(true, LostPswCheckPassword1_Img);
+            bool check2 = CnahgeCheckPasswordIcon(StringUtils.IsAlphaNumeric(LosrPswPassword_If.text), LostPswCheckPassword2_Img);
+            bool check3 = CnahgeCheckPasswordIcon(LosrPswPassword_If.text.Length >= 8, LostPswCheckPassword3_Img);
+            isLostPswPasswordCorrect = check1 && check2 && check3;
+        });
+
+        //忘記密碼確認送出
+        LostPswSubmit_Btn.onClick.AddListener(() =>
+        {
+            bool isCorrect = true;
+            if (!StringUtils.CheckPhoneNumber(LostPswNumber_If.text))
+            {
+                //手機號格式錯誤
+                isCorrect = false;
+                LostPswNumberError_Txt.text = "User Name Entered Incorrectly, Please Try Again.";
+            }
+
+            if (!isLostPswPasswordCorrect)
+            {
+                //密碼錯誤
+                isCorrect = false;
+                LostPswPasswordError_Txt.text = "Invalid Code, Please Try Again.";
+            }
+
+            if (isCorrect)
+            {
+                //註冊成功
+                string phone = StringUtils.GetPhoneAddCode(LostPswNumber_Dd, LostPswNumber_If.text);
+                string code = LostPswOTP_If.text;
+                string psw = LosrPswPassword_If.text;
+                Debug.Log($"Lost Password Submit = Phone:{phone} / Code:{code} / Password:{psw}");
+            }
+        });
+
+        #endregion
     }
 
     private void Start()
     {
         _currentChainData = ThirdwebManager.Instance.supportedChains.Find(x => x.identifier == ThirdwebManager.Instance.activeChain);
 
-        //查詢瀏覽器訊息
-        if (DataManager.IsMobilePlatform)
-        {
-            //JS_GetBrowserInfo();
-        }
-
         //已有Line Mail
         if (!string.IsNullOrEmpty(DataManager.LineMail))
         {
-            line_Btn.interactable = false;
-            lineMail_Txt.text = DataManager.LineMail;
+            Line_Btn.interactable = false;
+            LineMail_Txt.text = DataManager.LineMail;
         }
 
         //已有IG授權碼
         if (!string.IsNullOrEmpty(DataManager.IGIUserIdAndName))
         {
-            ig_Btn.interactable = false;
-            igIdAndName_Txt.text = DataManager.IGIUserIdAndName;
+            IG_Btn.interactable = false;
+            IGIdAndName_Txt.text = DataManager.IGIUserIdAndName;
         }
 
         ///自動連接Coinbase
@@ -135,18 +555,200 @@ public class LoginView : MonoBehaviour
             DataManager.IsInCoinbase)
         {
             Debug.Log("Aoto Connect Coinbase");
-            StartConnect("Coinbase");
+            StartConnect("Coinbase", WalletEnum.Coinbase);
         }
 
+        SignUp_TmpTxt.text = $"Don't Have An Account? <color=#79E84B><link=Sign Up Here!><u>Sign Up Here!</u></link></color>";
+        ForgotPassword_TmpTxt.text = $"<color=#79E84B><link=Forgot Password?><u>Forgot Password?</u></link></color>";
+        SMSMobileNumberError_Txt.text = "";
+        SMSCodeError_Txt.text = "";
+        Vrsion_Txt.text = Entry.Instance.version;
+        Wallet_Tog.isOn = true;
+        OnSwlwctWalletInit();
         DataManager.IsNotFirstInLogin = true;
+
+        recodePhoneNumber = PlayerPrefs.GetString(LocalPhoneNumber);
+        recodePassword = PlayerPrefs.GetString(LocalPaswword);
     }
 
     private void Update()
     {
+        //連接錢包過久判定失敗
+        if (Connecting_Obj.activeSelf &&
+            (DateTime.Now - startConnectTime).TotalSeconds >= 8)
+        {
+            ErrorWalletConnect();
+        }
+
+
+
         if (Input.GetKeyDown(KeyCode.KeypadEnter))
         {
             LoadSceneManager.Instance.LoadScene(SceneEnum.Lobby);
         }
+
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            PlayerPrefs.SetString(LocalPhoneNumber, "");
+            PlayerPrefs.SetString(LocalPaswword, "");
+        }
+    }
+
+    /// <summary>
+    /// TIM_Text Link 點擊事件
+    /// </summary>
+    /// <param name="eventData"></param>
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        //註冊
+        int SignUpLinkIndex = TMP_TextUtilities.FindIntersectingLink(SignUp_TmpTxt, Input.mousePosition, null);
+        if (SignUpLinkIndex != -1)
+        {
+            TMP_LinkInfo linkInfo = SignUp_TmpTxt.textInfo.linkInfo[SignUpLinkIndex];
+            string linkID = linkInfo.GetLinkID();
+
+            switch (linkID)
+            {
+                //註冊
+                case "Sign Up Here!":
+                    Mobile_Tog.isOn = true;
+                    break;
+            }
+        }
+
+        //忘記密碼
+        int forgotPasswordLinkIndex = TMP_TextUtilities.FindIntersectingLink(ForgotPassword_TmpTxt, Input.mousePosition, null);
+        if (forgotPasswordLinkIndex != -1)
+        {
+            TMP_LinkInfo linkInfo = ForgotPassword_TmpTxt.textInfo.linkInfo[forgotPasswordLinkIndex];
+            string linkID = linkInfo.GetLinkID();
+
+            switch (linkID)
+            {
+                //忘記密碼
+                case "Forgot Password?":
+                    MobileSignIn_Obj.SetActive(false);
+                    LostPassword_Obj.SetActive(true);
+                    LostPswCheckPassword_Obj.SetActive(false);
+
+                    LostPswNumberError_Txt.text = "";
+                    LostPswCodeError_Txt.text = "";
+                    LostPswPasswordError_Txt.text = "";
+                    break;
+            }
+        }
+
+        //隱私條款
+        int privacyLinkIndex = TMP_TextUtilities.FindIntersectingLink(Privacy_TmpTxt, Input.mousePosition, null);
+        if (privacyLinkIndex != -1)
+        {
+            TMP_LinkInfo linkInfo = Privacy_TmpTxt.textInfo.linkInfo[privacyLinkIndex];
+            string linkID = linkInfo.GetLinkID();
+
+            switch (linkID)
+            {
+                //忘記密碼
+                case "Forgot Password?":
+                    Debug.Log("Clicked on Forgot Password?");
+                    break;
+
+                //條款
+                case "Terms":
+                    Debug.Log("Clicked on Terms");
+                    break;
+
+                //隱私權政策
+                case "Privacy Policy":
+                    Debug.Log("Clicked on Priacy Policy");
+                    break;
+            }
+        }
+    }
+
+    /// <summary>
+    /// 顯示密碼點擊事件
+    /// </summary>
+    /// <param name="img"></param>
+    /// <param name="inputField"></param>
+    private void PasswordShowBtnClick(Image img, InputField inputField)
+    {
+        isShowPassword = !isShowPassword;
+        Sprite eye = isShowPassword ?
+                     AssetsManager.Instance.GetAlbumAsset(AlbumEnum.PasswordEye).album[1] :
+                     AssetsManager.Instance.GetAlbumAsset(AlbumEnum.PasswordEye).album[0];
+        img.sprite = eye;
+
+        inputField.contentType = isShowPassword ?
+                                 InputField.ContentType.Standard :
+                                 InputField.ContentType.Password;
+
+        string currPsw = inputField.text;
+        inputField.text = "";
+        inputField.text = currPsw;
+    }
+
+    /// <summary>
+    /// 更換檢查密碼圖樣
+    /// </summary>
+    /// <param name="isTrue"></param>
+    /// <param name="img"></param>
+    /// <returns></returns>
+    private bool CnahgeCheckPasswordIcon(bool isTrue, Image img)
+    {
+        string mistakeColor = "#CF5A5A";
+        string correctColor = "#87CF5A";
+
+        img.sprite = isTrue ?
+                     AssetsManager.Instance.GetAlbumAsset(AlbumEnum.PasswordCheck).album[1] :
+                     AssetsManager.Instance.GetAlbumAsset(AlbumEnum.PasswordCheck).album[0];
+        string colorStr = isTrue ?
+                          correctColor :
+                          mistakeColor;
+        if (ColorUtility.TryParseHtmlString(colorStr, out Color color))
+        {
+            img.color = color;
+        }
+
+        return isTrue;
+    }
+
+    /// <summary>
+    /// 選擇錢包畫面初始
+    /// </summary>
+    private void OnSwlwctWalletInit()
+    {
+        Wallet_Obj.SetActive(true);
+        Mobile_Obj.SetActive(false);
+        SelectWalletPage_Obj.SetActive(true);
+        ConnectingWallet_Obj.SetActive(false);
+        WalletLoadingPage_Obj.SetActive(false);
+        SMSVerificationPage_Obj.SetActive(false);
+    }
+
+    /// <summary>
+    /// 手機登入初始
+    /// </summary>
+    private void OnMobileSignInInit()
+    {
+        //手機登入
+        SignInNumberError_Txt.text = "";
+        MobileSignInError_Txt.text = "";
+
+        //紀錄的手機/密碼
+        SignInNumber_If.text = !string.IsNullOrEmpty(recodePhoneNumber) ?
+                               recodePhoneNumber :
+                               "";
+        SignInPassword_If.text = !string.IsNullOrEmpty(recodePassword) ?
+                                 recodePassword :
+                                 "";
+
+        MobileTitle_Txt.text = "SIGN In";
+        MobileTip_Txt.text = "Please, Sign In With Your Walet.";
+        MobileSignIn_Obj.SetActive(true);
+        MobileSiginPage_Obj.SetActive(true);
+        RegisterPage_Obj.SetActive(false);
+        RegisterSucce_Obj.SetActive(false);
+        LostPassword_Obj.SetActive(false);
     }
 
     /// <summary>
@@ -166,7 +768,6 @@ public class LoginView : MonoBehaviour
                 DataManager.UserWalletBalance = balStr;
 
                 CancelInvoke(nameof(TryBinanceConnect));
-                ViewManager.Instance.ClosePartsView(PartsViewEnum.WaitingView);
                 LoadSceneManager.Instance.LoadScene(SceneEnum.Lobby);
             }
             catch (Exception)
@@ -221,11 +822,59 @@ public class LoginView : MonoBehaviour
     #region ThirdWallet
 
     /// <summary>
+    /// 連接錢包效果
+    /// </summary>
+    /// <returns></returns>
+    private IEnumerator IConnectionEffect()
+    {
+        int curr = 0;
+        while (true)
+        {
+            foreach (var point in EffectPointList)
+            {
+                point.color = new Color(155 / 255, 155 / 255, 155 / 255, 255);
+            }
+
+            EffectPointList[curr].color = new Color(1, 1, 1, 1);
+            yield return new WaitForSeconds(0.5f);
+
+            curr++;
+            if (curr >= EffectPointList.Count)
+            {
+                curr = 0;
+            }
+        }
+    }
+
+    /// <summary>
     /// 開始連接
     /// </summary>
     /// <param name="walletProviderStr">連接形式</param>
-    public void StartConnect(string walletProviderStr)
+    /// <param name="walletEnum">連接的錢包</param>
+    public void StartConnect(string walletProviderStr, WalletEnum walletEnum)
     {
+        #region 開啟連接畫面
+
+        startConnectTime = DateTime.Now;
+        recordConnect.WalletProviderStr = walletProviderStr;
+        recordConnect.TheWalletEnum = walletEnum;
+
+        WalletLoadingPage_Obj.SetActive(true);
+        SMSVerificationPage_Obj.SetActive(false);
+        ConnectingWallet_Obj.SetActive(true);
+        SelectWalletPage_Obj.SetActive(false);
+        Connecting_Obj.SetActive(true);
+        RetryConnectWallet_Obj.SetActive(false);
+
+        ConnectionTitle_Txt.text = $"Log In Using {walletEnum}";
+        Connecting_Txt.text = $"Load Into {walletEnum}";
+        ConnectingLogo_Img.sprite = AssetsManager.Instance.GetAlbumAsset(AlbumEnum.WalletLogo).album[(int)walletEnum];
+        connectionEffectCoroutine = StartCoroutine(IConnectionEffect());
+
+        #endregion
+
+        #region 錢包連接
+
         if (DataManager.IsMobilePlatform && 
             DataManager.IsDefaultBrowser &&
             Application.platform != RuntimePlatform.IPhonePlayer)
@@ -235,26 +884,33 @@ public class LoginView : MonoBehaviour
             return;
         }
 
-        ViewManager.Instance.OpenPartsView(PartsViewEnum.WaitingView);
-
         var wc = new WalletConnection(provider: Enum.Parse<WalletProvider>(walletProviderStr), chainId: BigInteger.Parse(_currentChainData.chainId));
         Connect(wc);
+
+        #endregion
     }
 
     /// <summary>
     /// 連接錢包
     /// </summary>
     /// <param name="wc"></param>
-    private async void Connect(WalletConnection wc)
+    async private void Connect(WalletConnection wc)
     {
+        await Task.Delay(500);
+
+#if UNITY_EDITOR
+
+        SMSVerification();
+
+#else
+
         try
         {
             _address = await ThirdwebManager.Instance.SDK.Wallet.Connect(wc);
         }
         catch (Exception e)
         {
-            CancelInvoke(nameof(TryBinanceConnect));
-            ViewManager.Instance.ClosePartsView(PartsViewEnum.WaitingView);
+            ErrorWalletConnect();
 
             _address = null;
             Debug.LogError($"Failed to connect: {e}");
@@ -262,6 +918,26 @@ public class LoginView : MonoBehaviour
         }
 
         PostConnect(wc);
+
+#endif
+
+
+    }
+
+    /// <summary>
+    /// 連接錢包失敗
+    /// </summary>
+    private void ErrorWalletConnect()
+    {
+        Connecting_Obj.SetActive(false);
+        RetryConnectWallet_Obj.SetActive(true);
+        ErrorConnect_Txt.text = $"Error Logging Into {recordConnect.TheWalletEnum}";
+
+        CancelInvoke(nameof(TryBinanceConnect));
+        if (connectionEffectCoroutine != null)
+        {
+            StopCoroutine(connectionEffectCoroutine);
+        }
     }
 
     /// <summary>
@@ -281,7 +957,18 @@ public class LoginView : MonoBehaviour
 
         Debug.Log($"Address:{DataManager.UserWalletAddress}");
         Debug.Log($"Balance:{DataManager.UserWalletBalance}");
-        LoadSceneManager.Instance.LoadScene(SceneEnum.Lobby);
+
+        SMSVerification();
+    }
+
+    /// <summary>
+    /// 簡訊確認
+    /// </summary>
+    private void SMSVerification()
+    {
+        ConnectionTitle_Txt.text = "SMS Verification";
+        WalletLoadingPage_Obj.SetActive(false);
+        SMSVerificationPage_Obj.SetActive(true);
     }
 
     #endregion

@@ -40,7 +40,7 @@ public class ViewManager : UnitySingleton<ViewManager>
         view.anchorMin = new Vector2(0.5f, 0);
         view.offsetMax = Vector2.zero;
         view.offsetMin = Vector2.zero;
-        view.sizeDelta = new Vector2(540, 0);
+        view.sizeDelta = new Vector2(Entry.Instance.resolution.x, 0);
         view.anchoredPosition = Vector2.zero;
         view.localScale = Vector3.one;
         view.eulerAngles = Vector3.zero;
