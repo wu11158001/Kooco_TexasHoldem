@@ -47,7 +47,7 @@ public class Request_LobbyView : BaseRequest
 
         pack.PlayerInOutRoomPack = playerInOutRoomPack;
 
-        GameRoomManager.Instance.CerateGameRoom(pack, GameRoomEnum.BattleRoomView, 500);
+        GameRoomManager.Instance.CerateGameRoom(pack, GameRoomTypeEnum.BattleRoomType, 500);
         //LoadSceneManager.Instance.LoadScene(SceneEnum.Game);
     }
 

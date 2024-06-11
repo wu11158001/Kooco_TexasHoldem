@@ -35,7 +35,7 @@ public class GameServer : MonoBehaviour
     /// 小盲注
     /// </summary>
     public double SmallBlind { get; set; }
-    public GameRoomEnum RoomType { get; set; }
+    public GameRoomTypeEnum RoomType { get; set; }
 
     private void Awake()
     {
@@ -55,17 +55,17 @@ public class GameServer : MonoBehaviour
     /// Server開始
     /// </summary>
     /// <param name="roomType">房間類型</param>
-    public void ServerStart(GameRoomEnum roomType)
+    public void ServerStart(GameRoomTypeEnum roomType)
     {
         StartCoroutine(ITest(roomType));
     }
 
-    private IEnumerator ITest(GameRoomEnum roomType)
+    private IEnumerator ITest(GameRoomTypeEnum roomType)
     {
-        maxRoomPeople = RoomType == GameRoomEnum.CashRoomView ? 6 : 2;
+        maxRoomPeople = RoomType == GameRoomTypeEnum.CashRoomType ? 6 : 2;
 
         //測試用
-        int initPlayerCount = RoomType == GameRoomEnum.CashRoomView ? UnityEngine.Random.Range(2, 6) : 1;
+        int initPlayerCount = RoomType == GameRoomTypeEnum.CashRoomType ? UnityEngine.Random.Range(2, 6) : 1;
         gameRoomData.ButtonSeat = UnityEngine.Random.Range(0, initPlayerCount);
         for (int i = 0; i < initPlayerCount; i++)
         {
@@ -74,8 +74,8 @@ public class GameServer : MonoBehaviour
 
             PlayerInfoPack playerInfoPack = new PlayerInfoPack();
             playerInfoPack.UserID = $"Player{accumulationPlayer}";
-            playerInfoPack.NickName = RoomType == GameRoomEnum.CashRoomView ? $"Player{accumulationPlayer}" : $"Battle{i}";
-            playerInfoPack.Chips = RoomType == GameRoomEnum.CashRoomView ? ((SmallBlind * 2) * 40) + 1000 + (i * 400) : 10000;
+            playerInfoPack.NickName = RoomType == GameRoomTypeEnum.CashRoomType ? $"Player{accumulationPlayer}" : $"Battle{i}";
+            playerInfoPack.Chips = RoomType == GameRoomTypeEnum.CashRoomType ? ((SmallBlind * 2) * 40) + 1000 + (i * 400) : 10000;
 
             /* if (i == 0)
              {
@@ -98,15 +98,15 @@ public class GameServer : MonoBehaviour
             Request_PlayerInOutRoom(pack);
         }
 
-        if (roomType == GameRoomEnum.CashRoomView)
+        if (roomType == GameRoomTypeEnum.CashRoomType)
         {
             SetPoker();
-            gameRoomData.CurrFlow = FlowEnum.River;
+            gameRoomData.CurrFlow = FlowEnum.PotResult;
             gameRoomData.CurrCommunityPoker = (List<int>)gameRoomData.CommunityPoker.Take(5).ToList();
-            gameRoomData.TotalPot = 100;
+            gameRoomData.TotalPot = 0;
             gameRoomData.CurrCallValue = SmallBlind;
         }
-        else if (roomType == GameRoomEnum.BattleRoomView)
+        else if (roomType == GameRoomTypeEnum.BattleRoomType)
         {
             gameRoomData.CurrFlow = FlowEnum.PotResult;
             gameRoomData.TotalPot = 0;
@@ -425,6 +425,8 @@ public class GameServer : MonoBehaviour
         };
         clientList.Add(client);
 
+
+
         //座位
         int seat = 0;
         int currMaxSeat = clientList.OrderByDescending(x => x.Seat).FirstOrDefault().Seat;
@@ -488,7 +490,7 @@ public class GameServer : MonoBehaviour
         }
 
         //發送籌碼不足玩家
-        if (RoomType != GameRoomEnum.BattleRoomView)
+        if (RoomType != GameRoomTypeEnum.BattleRoomType)
         {
             foreach (var client in NotEnoughChipsPlayerList)
             {

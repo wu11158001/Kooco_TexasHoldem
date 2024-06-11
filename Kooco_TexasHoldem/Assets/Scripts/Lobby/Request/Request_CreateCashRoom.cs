@@ -65,7 +65,7 @@ public class Request_CreateCashRoom : BaseRequest
 
             pack.PlayerInOutRoomPack = playerInOutRoomPack;
 
-            GameRoomManager.Instance.CerateGameRoom(pack, GameRoomEnum.CashRoomView, smallBlind);
+            GameRoomManager.Instance.CerateGameRoom(pack, GameRoomTypeEnum.CashRoomType, smallBlind);
 
             yield return new WaitForSeconds(0.1f);
         }

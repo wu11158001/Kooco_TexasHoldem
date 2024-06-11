@@ -201,19 +201,19 @@ public class GameRoomManager : UnitySingleton<GameRoomManager>
     /// </summary>
     /// <param name="roomType"></param>
     /// <returns></returns>
-    private string GetRoomName(GameRoomEnum roomType)
+    private string GetRoomName(GameRoomTypeEnum roomType)
     {
         string str = "";
 
         switch (roomType)
         {
             //積分房
-            case GameRoomEnum.BattleRoomView:
+            case GameRoomTypeEnum.BattleRoomType:
                 str = "BattleRoom";
                 break;
 
             //現金房
-            case GameRoomEnum.CashRoomView:
+            case GameRoomTypeEnum.CashRoomType:
                 str = "CashRoom";
                 break;
             default:
@@ -228,7 +228,7 @@ public class GameRoomManager : UnitySingleton<GameRoomManager>
     /// </summary>
     /// <param name="pack"></param>
     /// <param name="roomType">房間類型</param>
-    public void CerateGameRoom(MainPack pack, GameRoomEnum roomType, double smallBlind)
+    public void CerateGameRoom(MainPack pack, GameRoomTypeEnum roomType, double smallBlind)
     {
         IsShowGameRoom = true;
         thisData.RoomNameIndex++;
@@ -240,7 +240,7 @@ public class GameRoomManager : UnitySingleton<GameRoomManager>
         }
 
         //創建房間介面
-        GameObject roomObj = Resources.Load<GameObject>($"GameRoom/{roomType}");
+        GameObject roomObj = Resources.Load<GameObject>($"GameRoom/GameView");
         RectTransform room = Instantiate(roomObj).GetComponent<RectTransform>();
         room.gameObject.SetActive(true);
         room.SetParent(gameRoomList_Tr);
@@ -265,8 +265,8 @@ public class GameRoomManager : UnitySingleton<GameRoomManager>
         Entry.CurrGameServer = gameServer;
 
         GameView gameView = room.GetComponent<GameView>();
-        gameView.SendRequest_UpdateRoomInfo();
         gameView.RoomType = roomType;
+        gameView.SendRequest_UpdateRoomInfo();
 
         //關閉其他切換房間按鈕框
         CloseAllBtnFrame();

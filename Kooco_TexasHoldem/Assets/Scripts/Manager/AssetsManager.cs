@@ -8,7 +8,6 @@ public class AssetsManager : UnitySingleton<AssetsManager>
     Dictionary<ObjTypeEnum, GameObject> objTypeAssetsDic = new Dictionary<ObjTypeEnum, GameObject>();             //物件類型資源(物件名稱, 物件資源)
     readonly Dictionary<ObjTypeEnum, string> objTypeAssetsPath = new Dictionary<ObjTypeEnum, string>()            //物件類型資源路徑
     {
-        {ObjTypeEnum.GamePlayerInfo, "ObjType/Game/GamePlayerInfo"},            //遊戲_玩家訊息
         {ObjTypeEnum.Poker, "ObjType/Game/Poker"},                              //撲克牌物件
         {ObjTypeEnum.WinChips, "ObjType/Game/WinChips"},                        //獲勝籌碼物件
     };

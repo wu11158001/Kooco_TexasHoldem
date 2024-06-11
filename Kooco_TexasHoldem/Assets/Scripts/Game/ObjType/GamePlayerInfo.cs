@@ -11,33 +11,35 @@ public class GamePlayerInfo : MonoBehaviour
 {
     [Header("用戶訊息")]
     [SerializeField]
-    Text nickName_Txt, chips_Txt, tip_Txt, pokerShape_Txt, potWinner_Txt, sideWinner_Txt;
+    Text NickName_Txt, Chips_Txt, Tip_Txt, PokerShape_Txt, PotWinner_Txt, SideWinner_Txt, BlindCharacter_Txt;
     [SerializeField]
-    GameObject actionFrame_Obj, potWinner_Obj, sideWinner_Obj;
+    GameObject ActionFrame_Obj, PotWinner_Obj, SideWinner_Obj;
     [SerializeField]
-    Image cdMask_Img, avatar_Img;
+    Image CDMask_Img, Avatar_Img, ButtonCharacter_Img;
 
     [Header("手牌")]
     [SerializeField]
-    RectTransform handPoker_Tr;
+    RectTransform HandPoker_Tr;
     [SerializeField]
-    Poker[] handPokers;
+    Poker[] HandPokers;
 
     [Header("下注籌碼")]
     [SerializeField]
-    RectTransform betChips_Tr;
+    GameObject CurrBetChips_Obj;
     [SerializeField]
-    Text betChips_Txt;
+    RectTransform BetChips_Tr;
+    [SerializeField]
+    Text CurrBrtChips_Txt, BetChips_Txt;
 
     [Header("行動")]
     [SerializeField]
-    GameObject action_Obj;
+    GameObject Action_Obj;
     [SerializeField]
-    Text action_Txt;
+    Text Action_Txt;
 
     [Header("動畫")]
     [SerializeField]
-    Animator pokerShape_Ani;
+    Animator PokerShape_Ani;
 
     readonly int isWinHash = Animator.StringToHash("IsWin");
 
@@ -67,15 +69,15 @@ public class GamePlayerInfo : MonoBehaviour
     /// </summary>
     private void UpdateLanguage()
     {
-        potWinner_Txt.text = $"{LanguageManager.Instance.GetText("PotWinner")}";
-        sideWinner_Txt.text = $"{LanguageManager.Instance.GetText("SideWinner")}";
-        pokerShape_Txt.text = LanguageManager.Instance.GetText(PokerShape.shapeStr[pokerShapeIndex]);
+        PotWinner_Txt.text = $"{LanguageManager.Instance.GetText("PotWinner")}";
+        SideWinner_Txt.text = $"{LanguageManager.Instance.GetText("SideWinner")}";
+        PokerShape_Txt.text = LanguageManager.Instance.GetText(PokerShape.shapeStr[pokerShapeIndex]);
     }
 
     private void Awake()
     {
         LanguageManager.Instance.AddUpdateLanguageFunc(UpdateLanguage);
-        chips_Txt.text = "0";
+        Chips_Txt.text = "0";
     }
 
     private void OnEnable()
@@ -90,17 +92,20 @@ public class GamePlayerInfo : MonoBehaviour
     public void Init()
     {
         CurrBetValue = 0;
-        betChips_Txt.text = CurrBetValue.ToString();
-        action_Obj.SetActive(false);
-        betChips_Tr.gameObject.SetActive(false);
+        CurrBrtChips_Txt.text = StringUtils.SetChipsUnit(0);
+        ButtonCharacter_Img.gameObject.SetActive(false);
+        BlindCharacter_Txt.text = "";
+        BetChips_Txt.text = CurrBetValue.ToString();
+        Action_Obj.SetActive(false);
+        BetChips_Tr.gameObject.SetActive(false);
         ActionFrame = false;
-        handPokers[0].gameObject.SetActive(false);
-        handPokers[1].gameObject.SetActive(false);
-        potWinner_Obj.SetActive(false);
-        sideWinner_Obj.SetActive(false);
+        HandPokers[0].gameObject.SetActive(false);
+        HandPokers[1].gameObject.SetActive(false);
+        PotWinner_Obj.SetActive(false);
+        SideWinner_Obj.SetActive(false);
         SetTip = "";
-        pokerShape_Txt.text = "";
-        pokerShape_Ani.SetBool(isWinHash, false);
+        PokerShape_Txt.text = "";
+        PokerShape_Ani.SetBool(isWinHash, false);
     }
 
     /// <summary>
@@ -115,7 +120,7 @@ public class GamePlayerInfo : MonoBehaviour
         set
         {
             currRoomChips = value;
-            StringUtils.ChipsChangeEffect(chips_Txt, currRoomChips);
+            StringUtils.ChipsChangeEffect(Chips_Txt, currRoomChips);
         }
     }
 
@@ -126,7 +131,7 @@ public class GamePlayerInfo : MonoBehaviour
     {
         set
         {
-            tip_Txt.text = value;
+            Tip_Txt.text = value;
         }
     }
 
@@ -137,7 +142,7 @@ public class GamePlayerInfo : MonoBehaviour
     {
         set
         {
-            actionFrame_Obj.SetActive(value);
+            ActionFrame_Obj.SetActive(value);
         }
     }
 
@@ -148,7 +153,7 @@ public class GamePlayerInfo : MonoBehaviour
     {
         set
         {
-            potWinner_Obj.SetActive(value);
+            PotWinner_Obj.SetActive(value);
         }
     }
 
@@ -159,7 +164,7 @@ public class GamePlayerInfo : MonoBehaviour
     {
         set
         {
-            sideWinner_Obj.SetActive(value);
+            SideWinner_Obj.SetActive(value);
         }
     }
 
@@ -170,7 +175,7 @@ public class GamePlayerInfo : MonoBehaviour
     {
         set
         {
-            pokerShape_Ani.SetBool(isWinHash, value);
+            PokerShape_Ani.SetBool(isWinHash, value);
         }
     }
 
@@ -181,9 +186,9 @@ public class GamePlayerInfo : MonoBehaviour
     {
         set
         {
-            handPoker_Tr.SetParent(value);
-            handPoker_Tr.anchoredPosition = Vector2.zero;
-            handPoker_Tr.localScale = new Vector3(1.5f, 1.5f, 1.5f);
+            HandPoker_Tr.SetParent(value);
+            HandPoker_Tr.anchoredPosition = Vector2.zero;
+            HandPoker_Tr.localScale = new Vector3(1.5f, 1.5f, 1.5f);
         }
     }
 
@@ -194,7 +199,7 @@ public class GamePlayerInfo : MonoBehaviour
     {
         get
         {
-            return handPokers;
+            return HandPokers;
         }
     }
 
@@ -205,7 +210,7 @@ public class GamePlayerInfo : MonoBehaviour
     {
         get
         {
-            return betChips_Tr.gameObject.activeSelf;
+            return BetChips_Tr.gameObject.activeSelf;
         }
     }
 
@@ -216,8 +221,8 @@ public class GamePlayerInfo : MonoBehaviour
     {
         set
         {
-            avatar_Img.color = value == true ? new Color(1, 1, 1, 0.5f) : new Color(1, 1, 1, 1);
-            cdMask_Img.fillAmount = value == true ? 1 : 0;
+            Avatar_Img.color = value == true ? new Color(1, 1, 1, 0.5f) : new Color(1, 1, 1, 1);
+            CDMask_Img.fillAmount = value == true ? 1 : 0;
         }
     }
 
@@ -237,9 +242,9 @@ public class GamePlayerInfo : MonoBehaviour
         SeatIndex = seatIndex;
         currRoomChips = initChips;
         UserId = userId;
-        avatar_Img.sprite = avatar;
-        nickName_Txt.text = nickName;
-        chips_Txt.text = $"{StringUtils.SetChipsUnit(initChips)}";
+        Avatar_Img.sprite = avatar;
+        NickName_Txt.text = nickName;
+        Chips_Txt.text = $"{StringUtils.SetChipsUnit(initChips)}";
         this.potPoint = potPoint;
     }
 
@@ -253,15 +258,39 @@ public class GamePlayerInfo : MonoBehaviour
         Init();
         StopCountDown();
 
-        foreach (var poker in handPokers)
+        foreach (var poker in HandPokers)
         {
             poker.gameObject.SetActive(true);
             poker.SetColor = 1;
         }
 
-        handPokers[0].PokerNum = hand0;
-        handPokers[1].PokerNum = hand1;
+        HandPokers[0].PokerNum = hand0;
+        HandPokers[1].PokerNum = hand1;
         OpenInfoMask = false;
+    }
+
+    /// <summary>
+    /// 設置座位的腳色
+    /// </summary>
+    /// <param name="seatCharacter"></param>
+    public void SetSeatCharacter(SeatCharacterEnum seatCharacter)
+    {
+        switch (seatCharacter)
+        {
+            case SeatCharacterEnum.Button:
+                ButtonCharacter_Img.gameObject.SetActive(true);
+                break;
+            case SeatCharacterEnum.SB:
+                BlindCharacter_Txt.text = "SB";
+                break;
+            case SeatCharacterEnum.BB:
+                BlindCharacter_Txt.text = "BB";
+                break;
+            default:
+                ButtonCharacter_Img.gameObject.SetActive(false);
+                BlindCharacter_Txt.text = "";
+                break;
+        }
     }
 
     /// <summary>
@@ -270,7 +299,7 @@ public class GamePlayerInfo : MonoBehaviour
     public void StopCountDown()
     {
         if(cdCoroutine != null) StopCoroutine(cdCoroutine);
-        cdMask_Img.fillAmount = 0;
+        CDMask_Img.fillAmount = 0;
     }
 
     /// <summary>
@@ -290,7 +319,7 @@ public class GamePlayerInfo : MonoBehaviour
     /// <param name="cd">倒數</param>
     private IEnumerator ICountDown(int cdTime, int cd)
     {
-        float currFillAmount = cdMask_Img.fillAmount;
+        float currFillAmount = CDMask_Img.fillAmount;
         float target = ((float)cdTime - (cd - 1)) / (float)cdTime;
 
         DateTime startTime = DateTime.Now;
@@ -299,7 +328,7 @@ public class GamePlayerInfo : MonoBehaviour
             float process = Mathf.Clamp01((float)(DateTime.Now - startTime).TotalSeconds / 1);
             float value = Mathf.Lerp(currFillAmount, target, process);
 
-            cdMask_Img.fillAmount = value;
+            CDMask_Img.fillAmount = value;
             yield return null;
         }
     }
@@ -311,6 +340,7 @@ public class GamePlayerInfo : MonoBehaviour
     /// <param name="chips">玩家籌碼</param>
     public void PlayerBet(double betValue, double chips)
     {
+        /*
         //下注籌碼移動效果
         if (!betChips_Tr.gameObject.activeSelf)
         {
@@ -322,7 +352,9 @@ public class GamePlayerInfo : MonoBehaviour
 
         //下注籌碼文字效果
         StringUtils.ChipsChangeEffect(betChips_Txt, betValue);
+        */
 
+        StringUtils.ChipsChangeEffect(CurrBrtChips_Txt, betValue);
         PlayerRoomChips = chips;
     }
 
@@ -334,12 +366,12 @@ public class GamePlayerInfo : MonoBehaviour
     {
         float during = 0.5f;//效果時間
 
-        ObjMoveUtils.ObjMoveToTarget(betChips_Tr, potPointPos, during,
+        ObjMoveUtils.ObjMoveToTarget(BetChips_Tr, potPointPos, during,
                                     () =>
                                     {
-                                        if(betChips_Tr != null)
+                                        if(BetChips_Tr != null)
                                         {
-                                            betChips_Tr.gameObject.SetActive(false);
+                                            BetChips_Tr.gameObject.SetActive(false);
                                         }                                        
                                     });
     }
@@ -351,12 +383,12 @@ public class GamePlayerInfo : MonoBehaviour
     /// <returns></returns>
     private IEnumerator ShowActionStr(string actionStr)
     {
-        action_Obj.SetActive(true);
-        action_Txt.text = LanguageManager.Instance.GetText(actionStr);
+        Action_Obj.SetActive(true);
+        Action_Txt.text = LanguageManager.Instance.GetText(actionStr);
 
         yield return new WaitForSeconds(1.0f);
 
-        action_Obj.SetActive(false);
+        Action_Obj.SetActive(false);
     }
 
     /// <summary>
@@ -389,17 +421,17 @@ public class GamePlayerInfo : MonoBehaviour
                 if (isLocalPlayer)
                 {
                     //本地玩家
-                    foreach (var poker in handPokers)
+                    foreach (var poker in HandPokers)
                     {
                         poker.SetColor = 0.5f;
                     }
-                    pokerShape_Txt.text = "";
+                    PokerShape_Txt.text = "";
                 }
                 else
                 {
                     //其他玩家
-                    handPokers[0].gameObject.SetActive(false);
-                    handPokers[1].gameObject.SetActive(false);
+                    HandPokers[0].gameObject.SetActive(false);
+                    HandPokers[1].gameObject.SetActive(false);
                 }
 
                 OpenInfoMask = true;
@@ -433,7 +465,7 @@ public class GamePlayerInfo : MonoBehaviour
     public void SetPokerShapeStr(int shapeIndex)
     {
         pokerShapeIndex = shapeIndex;
-        pokerShape_Txt.text = LanguageManager.Instance.GetText(PokerShape.shapeStr[pokerShapeIndex]);
+        PokerShape_Txt.text = LanguageManager.Instance.GetText(PokerShape.shapeStr[pokerShapeIndex]);
     }
 
     private void OnDisable()
