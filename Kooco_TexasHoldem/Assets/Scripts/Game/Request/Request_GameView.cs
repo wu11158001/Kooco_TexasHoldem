@@ -56,7 +56,6 @@ public class Request_GameView : BaseRequest
                 thisView.UpdateGameRoomInfo(pack);
                 break;
 
-
             //本地玩家行動回合
             case ActionCode.BroadCastRequest_PlayerActingRound:
                 thisView.ILocalPlayerRound(pack.PlayerActingRoundPack);

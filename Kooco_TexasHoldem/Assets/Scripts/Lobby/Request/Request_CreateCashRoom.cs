@@ -58,6 +58,7 @@ public class Request_CreateCashRoom : BaseRequest
             playerInfoPack.UserID = Entry.TestInfoData.LocalUserId;
             playerInfoPack.NickName = Entry.TestInfoData.NickName;
             playerInfoPack.Chips = carryChips;
+            playerInfoPack.Avatar = DataManager.UserAvatar;
 
             PlayerInOutRoomPack playerInOutRoomPack = new PlayerInOutRoomPack();
             playerInOutRoomPack.IsInRoom = true;

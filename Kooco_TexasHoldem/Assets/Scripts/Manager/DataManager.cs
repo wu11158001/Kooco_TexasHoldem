@@ -36,6 +36,8 @@ public static class DataManager
     [Header("用戶")]
     public static string UserWalletAddress { get; set; }     //用戶錢包地址
     public static string UserWalletBalance { get; set; }     //用戶錢包餘額
+    public static string UserNickName { get; set; }          //用戶暱稱
+    public static int UserAvatar { get; set; }               //用戶頭像
 
     [Header("大廳")]
     public static int MinMagnification = 40;                                    //購買籌碼最小倍率

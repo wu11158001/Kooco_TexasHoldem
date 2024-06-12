@@ -76,6 +76,7 @@ public class GameServer : MonoBehaviour
             playerInfoPack.UserID = $"Player{accumulationPlayer}";
             playerInfoPack.NickName = RoomType == GameRoomTypeEnum.CashRoomType ? $"Player{accumulationPlayer}" : $"Battle{i}";
             playerInfoPack.Chips = RoomType == GameRoomTypeEnum.CashRoomType ? ((SmallBlind * 2) * 40) + 1000 + (i * 400) : 10000;
+            playerInfoPack.Avatar = UnityEngine.Random.Range(1, 3);
 
             /* if (i == 0)
              {
@@ -235,6 +236,7 @@ public class GameServer : MonoBehaviour
         public int Seat;            //座位
         public string UserId;       //ID
         public string NickName;     //暱稱
+        public int Avatar;          //頭像
         public double RoomChips;    //房間內持有籌碼
         public int HandPoker0;      //手牌0
         public int HandPoker1;      //手牌1
@@ -421,7 +423,8 @@ public class GameServer : MonoBehaviour
             UserId = playerInfoPack.UserID,
             NickName = playerInfoPack.NickName,
             RoomChips = playerInfoPack.Chips,
-            State = PlayerStateEnum.Waiting
+            State = PlayerStateEnum.Waiting,
+            Avatar = playerInfoPack.Avatar,
         };
         clientList.Add(client);
 
@@ -839,6 +842,7 @@ public class GameServer : MonoBehaviour
             playerInfoPack.UserID = player.UserId;
             playerInfoPack.NickName = player.NickName;
             playerInfoPack.Chips = player.RoomChips;
+            playerInfoPack.Avatar = player.Avatar;
             playerInfoPack.CurrBetValue = player.CurrBetValue;
             
             playerInfoPacks.Add(playerInfoPack);

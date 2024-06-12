@@ -49,6 +49,8 @@ public class Entry : UnitySingleton<Entry>
         AudioManager.Instance.StartLoadAudioAssets();
 
         LoadSceneManager.Instance.LoadScene(SceneEnum.Login);
+
+        DataManager.UserAvatar = 1;
     }
 
     private void Update()
@@ -109,6 +111,7 @@ public class Entry : UnitySingleton<Entry>
                         PlayerInfoPack playerInfoPack = new PlayerInfoPack();
                         playerInfoPack.UserID = $"00000{TestInfoData.newPlayerId}";
                         playerInfoPack.NickName = $"Player{TestInfoData.newPlayerId}";
+                        playerInfoPack.Avatar = UnityEngine.Random.Range(0, 3);
                         playerInfoPack.Chips = 6600;
 
                         PlayerInOutRoomPack playerInOutRoomPack = new PlayerInOutRoomPack();

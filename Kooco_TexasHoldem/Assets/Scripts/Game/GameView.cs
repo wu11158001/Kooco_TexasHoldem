@@ -385,6 +385,8 @@ public class GameView : MonoBehaviour
                                           "" :
                                           DataManager.UserWalletAddress.ShortenAddress();
             }
+
+            GameRoomManager.Instance.IsCanMoveSwitch = !value;
         }
     }
 
@@ -959,7 +961,7 @@ public class GameView : MonoBehaviour
                                          playerInfoPack.UserID,
                                          playerInfoPack.NickName,
                                          playerInfoPack.Chips,
-                                         null,
+                                         AssetsManager.Instance.GetAlbumAsset(AlbumEnum.AvatarAlbum).album[playerInfoPack.Avatar],
                                          Pot_Img.rectTransform);
 
         gamePlayerInfoList.Add(gamePlayerInfo);

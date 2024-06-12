@@ -87,6 +87,7 @@ namespace RequestBuf
         public int Seat;                //座位
         public string UserID;           //ID
         public string NickName;         //暱稱
+        public int Avatar;              //頭像
         public double Chips;            //籌碼
         public double CurrBetValue;     //當前下注籌碼
     }

@@ -33,6 +33,7 @@ public class DemoControl : MonoBehaviour
                 PlayerInfoPack playerInfoPack = new PlayerInfoPack();
                 playerInfoPack.UserID = $"00000{Entry.TestInfoData.newPlayerId}";
                 playerInfoPack.NickName = $"Player{Entry.TestInfoData.newPlayerId}";
+                playerInfoPack.Avatar = UnityEngine.Random.Range(0, 3);
                 playerInfoPack.Chips = 2000;
 
                 PlayerInOutRoomPack playerInOutRoomPack = new PlayerInOutRoomPack();

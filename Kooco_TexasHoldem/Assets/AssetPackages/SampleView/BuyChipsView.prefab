@@ -1427,13 +1427,13 @@ MonoBehaviour:
   preBuyChips_Txt: {fileID: 810273531942006667}
   minBuyChips_Txt: {fileID: 8623542864206923080}
   maxBuyChips_Txt: {fileID: 451266840981237489}
+  returnBtn_Txt: {fileID: 1126217339444139491}
+  buyBtn_Txt: {fileID: 709600449648077882}
   buyChips_Sli: {fileID: 1156752187251427586}
   return_Btn: {fileID: 1983510312018501105}
   buy_Btn: {fileID: 6066299126894212644}
   plus_Btn: {fileID: 8510103836058171503}
   minus_Btn: {fileID: 1568527260600982240}
-  returnBtn_Txt: {fileID: 1126217339444139491}
-  buyBtn_Txt: {fileID: 709600449648077882}
 --- !u!222 &265656182725162527
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1710,7 +1710,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 400, y: 300}
+  m_SizeDelta: {x: 380, y: 300}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7225143634006259628
 CanvasRenderer:

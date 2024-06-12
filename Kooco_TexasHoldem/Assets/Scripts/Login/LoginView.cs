@@ -141,6 +141,7 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
 
     const string LocalPhoneNumber = "AsiaPoker_PhoneNumber";        //本地紀錄_手機號
     const string LocalPaswword = "AsiaPoker_Password";              //本地紀錄_密碼
+    const int ErrorWalletConnectTime = 30;                          //判定連接失敗等待時間
 
     ChainData _currentChainData;                        //當前連接練
     string _address;                                    //錢包地址
@@ -575,7 +576,7 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
     {
         //連接錢包過久判定失敗
         if (Connecting_Obj.activeSelf &&
-            (DateTime.Now - startConnectTime).TotalSeconds >= 8)
+            (DateTime.Now - startConnectTime).TotalSeconds >= ErrorWalletConnectTime)
         {
             ErrorWalletConnect();
         }
@@ -896,14 +897,13 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
     /// <param name="wc"></param>
     async private void Connect(WalletConnection wc)
     {
-        await Task.Delay(500);
-
 #if UNITY_EDITOR
 
         SMSVerification();
 
 #else
 
+        Debug.Log("Start Connecting....");
         try
         {
             _address = await ThirdwebManager.Instance.SDK.Wallet.Connect(wc);
@@ -920,8 +920,6 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
         PostConnect(wc);
 
 #endif
-
-
     }
 
     /// <summary>
@@ -948,6 +946,8 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
     {
         Debug.Log($"Connected to {_address}");
 
+        StopCoroutine(connectionEffectCoroutine);
+
         var addy = _address.ShortenAddress();
         DataManager.UserWalletAddress = _address;
 
@@ -971,5 +971,5 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
         SMSVerificationPage_Obj.SetActive(true);
     }
 
-    #endregion
+#endregion
 }

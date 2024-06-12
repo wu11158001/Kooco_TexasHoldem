@@ -5,4 +5,5 @@ public enum AlbumEnum
     WalletLogo,             //錢包Logo圖集
     PasswordEye,            //密碼顯示眼睛圖集
     PasswordCheck,          //檢查密碼正確性圖集
+    AvatarAlbum,            //頭像圖集
 }
