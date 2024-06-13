@@ -71,7 +71,10 @@ public class GameRoomManager : UnitySingleton<GameRoomManager>
             {
                 thisData.MouseStartPos = Input.mousePosition;
             }
-            if (Input.GetMouseButtonUp(0) && !thisData.IsRoomMoving && GameRoomList_Sr.enabled == true)
+            if (Input.GetMouseButtonUp(0) && 
+                !thisData.IsRoomMoving && 
+                GameRoomList_Sr.enabled == true &&
+                BgMask_Obj.activeSelf)
             {
                 //房間右移
                 if (Input.mousePosition.x < thisData.MouseStartPos.x)
@@ -217,22 +220,25 @@ public class GameRoomManager : UnitySingleton<GameRoomManager>
     /// </summary>
     /// <param name="roomType"></param>
     /// <returns></returns>
-    private string GetRoomName(GameRoomTypeEnum roomType)
+    private string GetRoomName(TableTypeEnum roomType)
     {
         string str = "";
 
         switch (roomType)
         {
             //積分房
-            case GameRoomTypeEnum.BattleRoomType:
-                str = "BattleRoom";
+            case TableTypeEnum.IntegralTable:
+                str = "INTEGRAL";
                 break;
 
-            //現金房
-            case GameRoomTypeEnum.CashRoomType:
-                str = "CashRoom";
+            //加密貨幣桌
+            case TableTypeEnum.CryptoTable:
+                str = "CRYPTO";
                 break;
-            default:
+
+            //虛擬貨幣桌
+            case TableTypeEnum.VCTable:
+                str = "VC";
                 break;
         }
 
@@ -244,7 +250,7 @@ public class GameRoomManager : UnitySingleton<GameRoomManager>
     /// </summary>
     /// <param name="pack"></param>
     /// <param name="roomType">房間類型</param>
-    public void CerateGameRoom(MainPack pack, GameRoomTypeEnum roomType, double smallBlind)
+    public void CerateGameRoom(MainPack pack, TableTypeEnum roomType, double smallBlind)
     {
         IsShowGameRoom = true;
         thisData.RoomNameIndex++;
@@ -404,6 +410,7 @@ public class GameRoomManager : UnitySingleton<GameRoomManager>
         thisData.CurrRoomIndex = roomIndex;
         CloseAllBtnFrame();
         IsShowGameRoom = true;
+        BgMask_Obj.SetActive(true);
 
         StartCoroutine(IRoomMove());
     }

@@ -581,7 +581,7 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
             ErrorWalletConnect();
         }
 
-
+#if UNITY_EDITOR
 
         if (Input.GetKeyDown(KeyCode.KeypadEnter))
         {
@@ -593,6 +593,8 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
             PlayerPrefs.SetString(LocalPhoneNumber, "");
             PlayerPrefs.SetString(LocalPaswword, "");
         }
+
+#endif
     }
 
     /// <summary>

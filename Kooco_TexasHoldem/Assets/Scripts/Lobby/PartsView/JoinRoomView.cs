@@ -6,8 +6,11 @@ using UnityEngine.Events;
 
 using RequestBuf;
 
-public class BuyChipsView : MonoBehaviour
+public class JoinRoomView : MonoBehaviour
 {
+    [SerializeField]
+    Request_CreateCashRoom baseRequest;
+
     [SerializeField]
     Text Title_Txt, SB_Txt, BB_Txt, PreBuyChips_Txt, MinBuyChips_Txt, MaxBuyChips_Txt;
     [SerializeField]
@@ -15,22 +18,12 @@ public class BuyChipsView : MonoBehaviour
     [SerializeField]
     Button Cancel_Btn, Buy_Btn, BuyPlus_Btn, BuyMinus_Btn;
 
-    private ThisData thisData;
-    public class ThisData
-    {
-        public string RoomName;                               //掛載的房間名
-        public double SmallBlind;                             //小盲值
-        public UnityAction<double> SendBuyChipsCallback;      //發送購買籌碼回傳
-    }
+    double smallBlind;                  //小盲值
+    TableTypeEnum tableType;            //房間類型
 
     public void Awake()
     {
         ListenerEvent();
-    }
-
-    private void OnEnable()
-    {
-        thisData = new ThisData();
     }
 
     /// <summary>
@@ -38,10 +31,21 @@ public class BuyChipsView : MonoBehaviour
     /// </summary>
     private void ListenerEvent()
     {
-        //返回大廳
+        //取消
         Cancel_Btn.onClick.AddListener(() =>
         {
-            GameRoomManager.Instance.RemoveGameRoom(thisData.RoomName);
+            AudioManager.Instance.PlayCancelClick();
+            gameObject.SetActive(false);
+        });
+
+        //購買
+        Buy_Btn.onClick.AddListener(() =>
+        {
+            AudioManager.Instance.PlayConfirmClick();
+            baseRequest.SendRequest_JoinRoom(tableType,
+                                             smallBlind, 
+                                             BuyChips_Sli.value, 
+                                             1);
         });
 
         //購買Slider單位設定
@@ -49,48 +53,38 @@ public class BuyChipsView : MonoBehaviour
         {
             float newRaiseValue = TexasHoldemUtil.SliderValueChange(BuyChips_Sli,
                                                                     value,
-                                                                    (float)thisData.SmallBlind * 2,
+                                                                    (float)smallBlind * 2,
                                                                     BuyChips_Sli.minValue,
                                                                     BuyChips_Sli.maxValue);
             PreBuyChips_Txt.text = StringUtils.SetChipsUnit(newRaiseValue);
         });
 
-        //購買按鈕
-        Buy_Btn.onClick.AddListener(() =>
-        {
-            double buyChipsValue = BuyChips_Sli.value;
-            thisData.SendBuyChipsCallback(buyChipsValue);
-        });
-
-        //+按鈕
+        //購買+按鈕
         BuyPlus_Btn.onClick.AddListener(() =>
         {
-            BuyChips_Sli.value += (float)thisData.SmallBlind * 2;
+            BuyChips_Sli.value += (float)smallBlind * 2;
         });
 
-        //-按鈕
+        //購買-按鈕
         BuyMinus_Btn.onClick.AddListener(() =>
         {
-            BuyChips_Sli.value -= (float)thisData.SmallBlind * 2;
+            BuyChips_Sli.value -= (float)smallBlind * 2;
         });
     }
 
     /// <summary>
-    /// 設定購買介面
+    /// 設定創建房間介面
     /// </summary>
-    /// <param name="smallBlind"></param>
-    /// <param name="roomName"></param>
-    /// <param name="tableTypeEnum"></param>
-    /// <param name="sendBuyCallback"></param>
-    public void SetBuyChipsViewInfo(double smallBlind, string roomName, TableTypeEnum tableTypeEnum, UnityAction<double> sendBuyCallback)
+    /// <param name="tableType">遊戲桌類型</param>
+    /// <param name="smallBlind">小盲值</param>
+    public void SetCreatRoomViewInfo(TableTypeEnum tableType, double smallBlind)
     {
-        thisData.RoomName = roomName;
-        thisData.SmallBlind = smallBlind;
-        thisData.SendBuyChipsCallback = sendBuyCallback;
+        this.smallBlind = smallBlind;
+        this.tableType = tableType;
 
         string titleStr = "";
         string maxBuyChipsStr = "";
-        switch (tableTypeEnum)
+        switch (tableType)
         {
             //加密貨幣桌
             case TableTypeEnum.CryptoTable:
@@ -109,10 +103,8 @@ public class BuyChipsView : MonoBehaviour
         SB_Txt.text = $"{smallBlind} /";
         BB_Txt.text = $"{smallBlind * 2}";
 
-        thisData.SmallBlind = smallBlind;
-
-        TexasHoldemUtil.SetBuySlider(thisData.SmallBlind, BuyChips_Sli, tableTypeEnum);
-        MinBuyChips_Txt.text = $"{StringUtils.SetChipsUnit(thisData.SmallBlind * DataManager.MinMagnification)}";
+        TexasHoldemUtil.SetBuySlider(this.smallBlind, BuyChips_Sli, tableType);
+        MinBuyChips_Txt.text = $"{StringUtils.SetChipsUnit(this.smallBlind * DataManager.MinMagnification)}";
         MaxBuyChips_Txt.text = maxBuyChipsStr;
     }
 }

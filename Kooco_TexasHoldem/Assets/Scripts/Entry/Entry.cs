@@ -18,7 +18,8 @@ public class Entry : UnitySingleton<Entry>
         public static string NickName = "LocalUserName";
 
         public static int newPlayerId = 10;
-        public static double LocalUserChips = 153000; 
+        public static double LocalUserCrypto = 11000;
+        public static double LocalUserVirtual = 230200;
 
         public static DateTime foldTimd = DateTime.Now;
     }
@@ -38,6 +39,13 @@ public class Entry : UnitySingleton<Entry>
     {
         base.Awake();
 
+        #region 測試用
+
+        DataManager.UserCryptoChips = 11000;
+        DataManager.UserVCChips = 230200;
+
+        #endregion
+
         DebugObj.SetActive(isShowDebug);
     }
 
@@ -49,8 +57,6 @@ public class Entry : UnitySingleton<Entry>
         AudioManager.Instance.StartLoadAudioAssets();
 
         LoadSceneManager.Instance.LoadScene(SceneEnum.Login);
-
-        DataManager.UserAvatar = 1;
     }
 
     private void Update()

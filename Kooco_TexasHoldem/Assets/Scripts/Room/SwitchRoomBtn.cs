@@ -52,7 +52,7 @@ public class SwitchRoomBtn : MonoBehaviour
     {
         BtnIndex = btnIndex;
         this.btnStr = btnStr;
-        roomName_Txt.text = LanguageManager.Instance.GetText(btnStr);
+        roomName_Txt.text = btnStr;
         thisBtn.onClick.AddListener(() =>
         {
             GameRoomManager.Instance.SwitchBtnClick(btnIndex);

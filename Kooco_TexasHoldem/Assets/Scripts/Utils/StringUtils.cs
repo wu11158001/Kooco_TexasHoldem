@@ -168,7 +168,7 @@ public static class StringUtils
     {
         if (chips / 10000 < 1)
         {
-            return $"${chips:f0}";
+            return $"${SetChipsComma(chips.ToString("F0"))}";
         }
         else if (chips / 10000 < 1000)
         {

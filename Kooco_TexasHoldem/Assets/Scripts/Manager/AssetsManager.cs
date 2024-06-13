@@ -22,6 +22,7 @@ public class AssetsManager : UnitySingleton<AssetsManager>
         {AlbumEnum.PasswordEye, "SpriteAlbum/PasswordEyeAlbum" },             //密碼顯示眼睛圖集
         {AlbumEnum.PasswordCheck, "SpriteAlbum/CheckPasswordAlbum" },         //檢查密碼正確性圖集
         {AlbumEnum.AvatarAlbum, "SpriteAlbum/AvatarAlbum" },                  //頭像圖集
+        {AlbumEnum.ArrowAlbum, "SpriteAlbum/ArrowAlbum" },                    //箭頭圖集
     };
 
     public override void Awake()

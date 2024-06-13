@@ -11,51 +11,52 @@ public class LobbyView : MonoBehaviour
     [SerializeField]
     Request_LobbyView baseRequest;
 
-    [Header("斷開連結")]
-    [SerializeField]
-    Button disconnect_Btn;
-    [SerializeField]
-    Text disconnectBtn_Txt;
-
     [Header("用戶訊息")]
     [SerializeField]
-    Text walletAddress_Txt, balanceETH_Txt;
+    Button Avatar_Btn;
+    [SerializeField]
+    Text Stamina_Txt, CryptoChips_Txt;
 
-    [Header("現金房")]
+    [Header("用戶資源列表")]
     [SerializeField]
-    GameObject cashRoomBtnSample;
+    Button ShowAssets_Btn;
     [SerializeField]
-    RectTransform cashRoomParent;
+    GameObject AssetList_Obj;
     [SerializeField]
-    Text cashRoomTital_Txt;
+    Image ShowAssetsBtn_Img;
+
+    [Header("加密貨幣桌")]
+    [SerializeField]
+    GameObject CryptoTableBtnSample;
+    [SerializeField]
+    RectTransform CryptoTableParent;
+
+    [Header("虛擬貨幣桌")]
+    [SerializeField]
+    GameObject VCTableBtnSample;
+    [SerializeField]
+    RectTransform VCTableParent;
+
 
     [Header("積分房")]
     [SerializeField]
-    Button battle_Btn;
+    Button Integral_Btn;
     [SerializeField]
-    Text battleBtn_Txt;
+    Text IntegralBtn_Txt;
 
     [Header("提示")]
     [SerializeField]
-    Text tip_Txt;
+    Text Tip_Txt;
 
     Coroutine tipCorutine;
+    bool isShowAssetList;               //是否顯示用戶資源列表
 
     /// <summary>
     /// 更新文本翻譯
     /// </summary>
     private void UpdateLanguage()
     {
-        battleBtn_Txt.text = LanguageManager.Instance.GetText("BattleRoom");
-        cashRoomTital_Txt.text = LanguageManager.Instance.GetText("CashRoom");
-        disconnectBtn_Txt.text = LanguageManager.Instance.GetText("WalletDisconnect");
-
-        #region 用戶訊息
-
-        walletAddress_Txt.text = $"{LanguageManager.Instance.GetText("WalletAddress")}:{DataManager.UserWalletAddress}";
-        balanceETH_Txt.text = $"{LanguageManager.Instance.GetText("WalletBalance")}:{DataManager.UserWalletBalance}";
-
-        #endregion
+       
     }
 
     private void Awake()
@@ -71,15 +72,15 @@ public class LobbyView : MonoBehaviour
     /// </summary>
     private void ListenerEvent()
     {
-        //斷開連接
-        disconnect_Btn.onClick.AddListener(() =>
+        //顯示用戶資源列表
+        ShowAssets_Btn.onClick.AddListener(() =>
         {
-            WalletManager.Instance.OnWalletDisconnect();
-            LoadSceneManager.Instance.LoadScene(SceneEnum.Login);
+            isShowAssetList = !isShowAssetList;
+            SetIsShowAssetList = isShowAssetList;
         });
 
         //積分房
-        battle_Btn.onClick.AddListener(() =>
+        Integral_Btn.onClick.AddListener(() =>
         {  
             if (battleData.isPairing)
             {
@@ -105,10 +106,14 @@ public class LobbyView : MonoBehaviour
 
     private void OnEnable()
     {
-        Color tipColor = tip_Txt.color;
+        Color tipColor = Tip_Txt.color;
         tipColor.a = 0;
-        tip_Txt.color = tipColor;
+        Tip_Txt.color = tipColor;
 
+        isShowAssetList = false;
+        SetIsShowAssetList = isShowAssetList;
+
+        UpdateUserInfo();
 #if !UNITY_EDITOR
         WalletManager.Instance.StartCheckConnect();
 #endif
@@ -116,8 +121,7 @@ public class LobbyView : MonoBehaviour
 
     private void Start()
     {
-        cashRoomBtnSample.SetActive(false);
-        CreateRoom();
+        CreateRoomBtn();
     }
 
     private void Update()
@@ -126,7 +130,7 @@ public class LobbyView : MonoBehaviour
         if (battleData.isPairing)
         {
             TimeSpan waitingTime = DateTime.Now - battleData.startPairTime;
-            battleBtn_Txt.text = $"{LanguageManager.Instance.GetText("Pairing")}:{(int)waitingTime.TotalMinutes} : {waitingTime.Seconds:00}";
+            IntegralBtn_Txt.text = $"Pairing:{(int)waitingTime.TotalMinutes} : {waitingTime.Seconds:00}";
 
             if (waitingTime.Seconds >= 3)
             {
@@ -134,26 +138,76 @@ public class LobbyView : MonoBehaviour
                 EndPair();
             }
         }
+
+#if UNITY_EDITOR
+
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            WalletManager.Instance.OnWalletDisconnect();
+            LoadSceneManager.Instance.LoadScene(SceneEnum.Login);
+        }
+
+#endif
     }
 
     /// <summary>
-    /// 創建房間
+    /// 是否顯示用戶資源列表
     /// </summary>
-    private void CreateRoom()
+    private bool SetIsShowAssetList
     {
-        //現金桌        
-        float cashRoomSpacing = cashRoomParent.GetComponent<HorizontalLayoutGroup>().spacing;
-        Rect cashRoomRect = cashRoomBtnSample.GetComponent<RectTransform>().rect;
-        cashRoomParent.sizeDelta = new Vector2((cashRoomRect.width + cashRoomSpacing) * DataManager.CashRoomSmallBlindList.Count, cashRoomRect.height);
-        foreach (var smallBlind in DataManager.CashRoomSmallBlindList)
+        set
         {
-            RectTransform rt = Instantiate(cashRoomBtnSample).GetComponent<RectTransform>();
+            AssetList_Obj.SetActive(value);
+            ShowAssetsBtn_Img.sprite = value == false ?
+                           AssetsManager.Instance.GetAlbumAsset(AlbumEnum.ArrowAlbum).album[1] :
+                           AssetsManager.Instance.GetAlbumAsset(AlbumEnum.ArrowAlbum).album[0];
+        }
+    }
+
+    /// <summary>
+    /// 更新用戶訊息
+    /// </summary>
+    private void UpdateUserInfo()
+    {
+        Avatar_Btn.image.sprite = AssetsManager.Instance.GetAlbumAsset(AlbumEnum.AvatarAlbum).album[DataManager.UserAvatar];
+        Stamina_Txt.text = $"{DataManager.UserEnergy}/50";
+        CryptoChips_Txt.text = string.IsNullOrEmpty(DataManager.UserWalletBalance) ? "0" : DataManager.UserWalletBalance;
+    }
+
+    /// <summary>
+    /// 創建房間按鈕
+    /// </summary>
+    private void CreateRoomBtn()
+    {
+        //加密貨幣桌        
+        CryptoTableBtnSample.SetActive(false);
+        float cryptoSpacing = CryptoTableParent.GetComponent<HorizontalLayoutGroup>().spacing;
+        Rect cryptoRect = CryptoTableBtnSample.GetComponent<RectTransform>().rect;
+        CryptoTableParent.sizeDelta = new Vector2((cryptoRect.width + cryptoSpacing) * DataManager.CryptoSmallBlindList.Count, cryptoRect.height);
+        foreach (var smallBlind in DataManager.CryptoSmallBlindList)
+        {
+            RectTransform rt = Instantiate(CryptoTableBtnSample).GetComponent<RectTransform>();
             rt.gameObject.SetActive(true);
-            rt.SetParent(cashRoomParent);
-            rt.GetComponent<CashRoomBtn>().SetCashRoomBtnInfo(smallBlind, this);
+            rt.SetParent(CryptoTableParent);
+            rt.GetComponent<CryptoTableBtn>().SetCryptoTableBtnInfo(smallBlind, this);
             rt.localScale = Vector3.one;
         }
-        cashRoomParent.anchoredPosition = Vector2.zero;
+        CryptoTableParent.anchoredPosition = Vector2.zero;
+
+        //虛擬貨幣桌
+        VCTableBtnSample.SetActive(false);
+        float vcSpacing = VCTableParent.GetComponent<HorizontalLayoutGroup>().spacing;
+        Rect vcRect = VCTableBtnSample.GetComponent<RectTransform>().rect;
+        VCTableParent.sizeDelta = new Vector2((vcRect.width + vcSpacing) * DataManager.VCSmallBlindList.Count, vcRect.height);
+        foreach (var smallBlind in DataManager.VCSmallBlindList)
+        {
+            RectTransform rt = Instantiate(VCTableBtnSample).GetComponent<RectTransform>();
+            rt.gameObject.SetActive(true);
+            rt.SetParent(VCTableParent);
+            rt.GetComponent<VCTableBtn>().SetVCTableBtnInfo(smallBlind, this);
+            rt.localScale = Vector3.one;
+        }
+        VCTableParent.anchoredPosition = Vector2.zero;
     }
 
     /// <summary>
@@ -171,7 +225,7 @@ public class LobbyView : MonoBehaviour
     /// </summary>
     private void EndPair()
     {
-        battleBtn_Txt.text = LanguageManager.Instance.GetText("BattleRoom");
+        IntegralBtn_Txt.text = "INTEGRAL";
         battleData.isPairing = false;
     }
 
@@ -193,8 +247,8 @@ public class LobbyView : MonoBehaviour
     {
         float showTime = 0.5f;
 
-        tip_Txt.text = tipContent;
-        Color tipColor = tip_Txt.color;
+        Tip_Txt.text = tipContent;
+        Color tipColor = Tip_Txt.color;
         tipColor.a = 0;
 
         DateTime startTime = DateTime.Now;
@@ -204,13 +258,13 @@ public class LobbyView : MonoBehaviour
             float progress = (float)(DateTime.Now - startTime).TotalSeconds / showTime;
             float alpha = Mathf.Lerp(0, 1, progress);
             tipColor.a = alpha;
-            tip_Txt.color = tipColor;
+            Tip_Txt.color = tipColor;
 
             yield return null;
         }
 
         tipColor.a = 1;
-        tip_Txt.color = tipColor;
+        Tip_Txt.color = tipColor;
 
         yield return new WaitForSeconds(2.5f);
 
@@ -221,13 +275,13 @@ public class LobbyView : MonoBehaviour
             float progress = (float)(DateTime.Now - startTime).TotalSeconds / showTime;
             float alpha = Mathf.Lerp(1, 0, progress);
             tipColor.a = alpha;
-            tip_Txt.color = tipColor;
+            Tip_Txt.color = tipColor;
 
             yield return null;
         }
 
         tipColor.a = 0;
-        tip_Txt.color = tipColor;
+        Tip_Txt.color = tipColor;
     }
 
     private void OnDestroy()

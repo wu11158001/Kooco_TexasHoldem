@@ -28,10 +28,24 @@ public static class TexasHoldemUtil
     /// </summary>
     /// <param name="smallBlind">小盲值</param>
     /// <param name="sli">Slider</param>
-    public static void SetBuySlider(double smallBlind, Slider sli)
+    public static void SetBuySlider(double smallBlind, Slider sli, TableTypeEnum tableTypeEnum)
     {
+        float maxValue = 0;
+        switch (tableTypeEnum)
+        {
+            //加密貨幣桌
+            case TableTypeEnum.CryptoTable:
+                maxValue = (float)DataManager.UserCryptoChips;
+                break;
+
+            //虛擬貨幣桌
+            case TableTypeEnum.VCTable:
+                maxValue = (float)DataManager.UserVCChips;
+                break;
+        }
+
         sli.minValue = (float)smallBlind * DataManager.MinMagnification;
-        sli.maxValue = (float)Entry.TestInfoData.LocalUserChips;
+        sli.maxValue = maxValue;
         sli.value = sli.minValue;
     }
 

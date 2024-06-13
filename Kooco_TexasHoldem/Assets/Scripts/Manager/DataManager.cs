@@ -31,20 +31,26 @@ public static class DataManager
     public static bool IsInCoinbase { get; set; }                                                                                    //是否在Coinbase瀏覽器
 
     [Header("場景")]
-    public static SceneEnum CurrScene { get; set; }         //當前場景
+    public static SceneEnum CurrScene { get; set; }                 //當前場景
 
-    [Header("用戶")]
-    public static string UserWalletAddress { get; set; }     //用戶錢包地址
-    public static string UserWalletBalance { get; set; }     //用戶錢包餘額
-    public static string UserNickName { get; set; }          //用戶暱稱
-    public static int UserAvatar { get; set; }               //用戶頭像
+    [Header("用戶訊息")]
+    public static string UserWalletAddress { get; set; }            //用戶錢包地址
+    public static string UserWalletBalance { get; set; }            //用戶錢包餘額
+    public static string UserNickName { get; set; }                 //用戶暱稱
+    public static int UserAvatar { get; set; }                      //用戶頭像
+    public static int UserEnergy { get; set; }                      //用戶能量
+    public static double UserCryptoChips { get; set; }              //用戶加密貨幣籌碼
+    public static double UserVCChips { get; set; }                  //用戶虛擬貨幣籌碼
 
     [Header("大廳")]
     public static int MinMagnification = 40;                                    //購買籌碼最小倍率
     public static int MaxMagnification = 200;                                   //購買籌碼最大倍率
-    public static List<double> CashRoomSmallBlindList = new List<double>        //現金房小盲值
+    public static List<double> CryptoSmallBlindList = new List<double>          //加密貨幣桌小盲值
     {
         50, 100, 200, 400,
     };
-    public static int MaxRoomCount = 8;                                         //最大房間數量
+    public static List<double> VCSmallBlindList = new List<double>              //虛擬貨幣桌小盲值
+    {
+        200, 400, 800, 1000,
+    };
 }

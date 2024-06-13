@@ -7,7 +7,7 @@ using RequestBuf;
 public class Request_CreateCashRoom : BaseRequest
 {
     [SerializeField]
-    CreateCashRoomView thisView;
+    JoinRoomView thisView;
 
     public override void Awake()
     {
@@ -30,24 +30,26 @@ public class Request_CreateCashRoom : BaseRequest
     }
 
     /// <summary>
-    /// 發送創建現金房
+    /// 發送加入房間
     /// </summary>
+    /// <param name="tableType">房間類型</param>
     /// <param name="smallBlind">小盲值</param>
     /// <param name="carryChips">攜帶籌碼</param>
     /// <param name="createCount">創建數量</param>
-    public void SendRequest_CreateCashRoom(double smallBlind, double carryChips, int createCount)
+    public void SendRequest_JoinRoom(TableTypeEnum tableType, double smallBlind, double carryChips, int createCount)
     {
-        StartCoroutine(ICreateRoom(smallBlind, carryChips, createCount));
+        StartCoroutine(ICreateRoom(tableType, smallBlind, carryChips, createCount));
     }
 
     /// <summary>
     /// 創建現金房
     /// </summary>
+    /// <param name="tableType">小盲值</param>
     /// <param name="smallBlind">小盲值</param>
     /// <param name="carryChips">攜帶籌碼</param>
     /// <param name="createCount">創建數量</param>
     /// <returns></returns>
-    private IEnumerator ICreateRoom(double smallBlind, double carryChips, int createCount)
+    private IEnumerator ICreateRoom(TableTypeEnum tableType, double smallBlind, double carryChips, int createCount)
     {
         for (int i = 0; i < createCount; i++)
         {
@@ -66,7 +68,7 @@ public class Request_CreateCashRoom : BaseRequest
 
             pack.PlayerInOutRoomPack = playerInOutRoomPack;
 
-            GameRoomManager.Instance.CerateGameRoom(pack, GameRoomTypeEnum.CashRoomType, smallBlind);
+            GameRoomManager.Instance.CerateGameRoom(pack, tableType, smallBlind);
 
             yield return new WaitForSeconds(0.1f);
         }

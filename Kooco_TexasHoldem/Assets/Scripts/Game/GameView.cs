@@ -57,7 +57,7 @@ public class GameView : MonoBehaviour
 
     [Header("選單")]
     [SerializeField]
-    Transform MenuBg_Tr;
+    RectTransform MenuBg_Tr;
     [SerializeField]
     Button Menu_Btn, MenuMask_Btn, BackGame_Btn, LogOut_Btn;
     [SerializeField]
@@ -89,11 +89,11 @@ public class GameView : MonoBehaviour
 
     Vector2 InitPotPointPos;    //初始底池位置
 
-    private GameRoomTypeEnum roomType;
+    private TableTypeEnum roomType;
     /// <summary>
     /// 房間類型
     /// </summary>
-    public GameRoomTypeEnum RoomType
+    public TableTypeEnum RoomType
     {
         get
         {
@@ -102,7 +102,9 @@ public class GameView : MonoBehaviour
         set
         {
             roomType = value;
-            if (roomType == GameRoomTypeEnum.BattleRoomType)
+
+            //積分房
+            if (roomType == TableTypeEnum.IntegralTable)
             {
                 for (int i = 0; i < SeatButtonList.Count; i++)
                 {
@@ -185,13 +187,13 @@ public class GameView : MonoBehaviour
         //選單
         Menu_Btn.onClick.AddListener(() =>
         {
-            IsShowMenu = true;
+            StartCoroutine(IIsShowMenu(true));
         });
 
         //選單遮罩按鈕
         MenuMask_Btn.onClick.AddListener(() =>
         {
-            IsShowMenu = false;
+            StartCoroutine(IIsShowMenu(false));
         });
 
         //離開房間
@@ -203,7 +205,7 @@ public class GameView : MonoBehaviour
         //返回遊戲
         BackGame_Btn.onClick.AddListener(() =>
         {
-            IsShowMenu = false;
+            StartCoroutine(IIsShowMenu(false));
         });
 
         #endregion
@@ -370,27 +372,6 @@ public class GameView : MonoBehaviour
     }
 
     /// <summary>
-    /// 選單顯示開關
-    /// </summary>
-    private bool IsShowMenu
-    {
-        set
-        {
-            MenuMask_Btn.gameObject.SetActive(value);
-            MenuBg_Tr.gameObject.SetActive(value);
-
-            if (value == true)
-            {
-                MenuWalletAddr_Txt.text = string.IsNullOrEmpty(DataManager.UserWalletAddress) ?
-                                          "" :
-                                          DataManager.UserWalletAddress.ShortenAddress();
-            }
-
-            GameRoomManager.Instance.IsCanMoveSwitch = !value;
-        }
-    }
-
-    /// <summary>
     /// 設定加註至文字
     /// </summary>
     public double SetRaiseToText
@@ -542,6 +523,45 @@ public class GameView : MonoBehaviour
     }
 
     /// <summary>
+    /// 顯示選單
+    /// </summary>
+    /// <param name="isShow"></param>
+    /// <returns></returns>
+    private IEnumerator IIsShowMenu(bool isShow)
+    {
+        MenuMask_Btn.gameObject.SetActive(isShow);
+        MenuBg_Tr.gameObject.SetActive(true);
+
+        if (isShow == true)
+        {
+            MenuBg_Tr.anchoredPosition = new Vector2(-MenuBg_Tr.rect.width, 0);
+            MenuWalletAddr_Txt.text = string.IsNullOrEmpty(DataManager.UserWalletAddress) ?
+                                      "" :
+                                      DataManager.UserWalletAddress.ShortenAddress();
+        }
+
+        GameRoomManager.Instance.IsCanMoveSwitch = !isShow;
+
+        //選單移動
+        float moveTime = 0.25f;
+        float currX = MenuBg_Tr.anchoredPosition.x;
+        float targetX = isShow ?
+                        0 :
+                        -MenuBg_Tr.rect.width;
+
+        DateTime startTime = DateTime.Now;
+        while ((DateTime.Now - startTime).TotalSeconds < moveTime)
+        {
+            float progress = (float)(DateTime.Now - startTime).TotalSeconds / moveTime;
+            float x = Mathf.Lerp(currX, targetX, progress);
+            MenuBg_Tr.anchoredPosition = new Vector2(x, 0);
+            yield return null;
+        }
+
+        MenuBg_Tr.gameObject.SetActive(isShow);
+    }
+
+    /// <summary>
     /// 初始化
     /// </summary>
     public void Init()
@@ -559,7 +579,7 @@ public class GameView : MonoBehaviour
 
         MenuMask_Btn.gameObject.SetActive(false);
         Raise_Tr.gameObject.SetActive(false);
-        IsShowMenu = false;
+        StartCoroutine(IIsShowMenu(false));
     }
 
     /// <summary>
@@ -934,7 +954,7 @@ public class GameView : MonoBehaviour
         int seatIndex = 0;//座位(本地玩家 = 0)
         if (playerInfoPack.UserID != Entry.TestInfoData.LocalUserId)
         {
-            if (RoomType == GameRoomTypeEnum.BattleRoomType)
+            if (RoomType == TableTypeEnum.IntegralTable)
             {
                 seatIndex = 3;
             }
@@ -980,7 +1000,7 @@ public class GameView : MonoBehaviour
         gamePlayerInfoList.Remove(exitPlayer);
         Destroy(exitPlayer.gameObject);
 
-        if (RoomType == GameRoomTypeEnum.BattleRoomType)
+        if (RoomType == TableTypeEnum.IntegralTable)
         {
             SetBattleResult(true);
         }
@@ -1534,16 +1554,18 @@ public class GameView : MonoBehaviour
     {
         thisData.IsPlaying = false;
 
-        if (RoomType == GameRoomTypeEnum.CashRoomType)
+        if (RoomType == TableTypeEnum.CryptoTable ||
+            RoomType == TableTypeEnum.VCTable)
         {
             BuyChipsView.gameObject.SetActive(true);
             BuyChipsView buyChipsV = BuyChipsView.GetComponent<BuyChipsView>();
             buyChipsV.SetBuyChipsViewInfo(pack.InsufficientChipsPack.SmallBlind, 
                                           transform.name,
+                                          RoomType,
                                           SendRequest_BuyChips);
             thisData.LocalGamePlayerInfo.Init();
         }
-        else if (RoomType == GameRoomTypeEnum.BattleRoomType)
+        else if (RoomType == TableTypeEnum.IntegralTable)
         {
             SetBattleResult(false);
         }
