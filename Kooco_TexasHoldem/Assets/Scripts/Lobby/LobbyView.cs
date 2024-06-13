@@ -25,19 +25,6 @@ public class LobbyView : MonoBehaviour
     [SerializeField]
     Image ShowAssetsBtn_Img;
 
-    [Header("加密貨幣桌")]
-    [SerializeField]
-    GameObject CryptoTableBtnSample;
-    [SerializeField]
-    RectTransform CryptoTableParent;
-
-    [Header("虛擬貨幣桌")]
-    [SerializeField]
-    GameObject VCTableBtnSample;
-    [SerializeField]
-    RectTransform VCTableParent;
-
-
     [Header("積分房")]
     [SerializeField]
     Button Integral_Btn;
@@ -47,6 +34,26 @@ public class LobbyView : MonoBehaviour
     [Header("提示")]
     [SerializeField]
     Text Tip_Txt;
+
+    [Header("項目按鈕")]
+    [SerializeField]
+    RectTransform Floor3;
+    [SerializeField]
+    Button Mine_Btn, Shop_Btn, Main_Btn, Activity_Btn, Ranking_Btn;
+    [SerializeField]
+    GameObject LobbyMainPageView, LobbyMinePageView;
+
+    /// <summary>
+    /// 項目按鈕類型
+    /// </summary>
+    enum ItemType
+    {
+        Mine,
+        Shop,
+        Main,
+        Activity,
+        Ranking,
+    }
 
     Coroutine tipCorutine;
     bool isShowAssetList;               //是否顯示用戶資源列表
@@ -102,6 +109,22 @@ public class LobbyView : MonoBehaviour
                 }                
             }
         });
+
+        #region 項目按鈕
+
+        //主頁
+        Main_Btn.onClick.AddListener(() =>
+        {
+            OpenItemPage(ItemType.Main);
+        });
+
+        //用戶訊息
+        Mine_Btn.onClick.AddListener(() =>
+        {
+            OpenItemPage(ItemType.Mine);
+        });
+
+        #endregion
     }
 
     private void OnEnable()
@@ -114,14 +137,11 @@ public class LobbyView : MonoBehaviour
         SetIsShowAssetList = isShowAssetList;
 
         UpdateUserInfo();
+        OpenItemPage(ItemType.Main);
+
 #if !UNITY_EDITOR
         WalletManager.Instance.StartCheckConnect();
 #endif
-    }
-
-    private void Start()
-    {
-        CreateRoomBtn();
     }
 
     private void Update()
@@ -165,6 +185,38 @@ public class LobbyView : MonoBehaviour
     }
 
     /// <summary>
+    /// 開啟項目頁面
+    /// </summary>
+    /// <param name="itemType"></param>
+    private void OpenItemPage(ItemType itemType)
+    {
+        for (int i = 0; i < Floor3.childCount; i++)
+        {
+            Destroy(Floor3.GetChild(i).gameObject);
+        }
+
+        GameObject itemObj = null;
+        switch (itemType)
+        {
+            //主頁
+            case ItemType.Main:
+                itemObj = LobbyMainPageView;
+                break;
+
+            //用戶訊息
+            case ItemType.Mine:
+                itemObj = LobbyMinePageView;
+                break;
+        }
+
+        if (itemObj != null)
+        {
+            RectTransform itemPageView = Instantiate(itemObj, Floor3).GetComponent<RectTransform>();
+            ViewManager.Instance.InitViewTr(itemPageView, itemType.ToString());
+        }
+    }
+
+    /// <summary>
     /// 更新用戶訊息
     /// </summary>
     private void UpdateUserInfo()
@@ -172,42 +224,6 @@ public class LobbyView : MonoBehaviour
         Avatar_Btn.image.sprite = AssetsManager.Instance.GetAlbumAsset(AlbumEnum.AvatarAlbum).album[DataManager.UserAvatar];
         Stamina_Txt.text = $"{DataManager.UserEnergy}/50";
         CryptoChips_Txt.text = string.IsNullOrEmpty(DataManager.UserWalletBalance) ? "0" : DataManager.UserWalletBalance;
-    }
-
-    /// <summary>
-    /// 創建房間按鈕
-    /// </summary>
-    private void CreateRoomBtn()
-    {
-        //加密貨幣桌        
-        CryptoTableBtnSample.SetActive(false);
-        float cryptoSpacing = CryptoTableParent.GetComponent<HorizontalLayoutGroup>().spacing;
-        Rect cryptoRect = CryptoTableBtnSample.GetComponent<RectTransform>().rect;
-        CryptoTableParent.sizeDelta = new Vector2((cryptoRect.width + cryptoSpacing) * DataManager.CryptoSmallBlindList.Count, cryptoRect.height);
-        foreach (var smallBlind in DataManager.CryptoSmallBlindList)
-        {
-            RectTransform rt = Instantiate(CryptoTableBtnSample).GetComponent<RectTransform>();
-            rt.gameObject.SetActive(true);
-            rt.SetParent(CryptoTableParent);
-            rt.GetComponent<CryptoTableBtn>().SetCryptoTableBtnInfo(smallBlind, this);
-            rt.localScale = Vector3.one;
-        }
-        CryptoTableParent.anchoredPosition = Vector2.zero;
-
-        //虛擬貨幣桌
-        VCTableBtnSample.SetActive(false);
-        float vcSpacing = VCTableParent.GetComponent<HorizontalLayoutGroup>().spacing;
-        Rect vcRect = VCTableBtnSample.GetComponent<RectTransform>().rect;
-        VCTableParent.sizeDelta = new Vector2((vcRect.width + vcSpacing) * DataManager.VCSmallBlindList.Count, vcRect.height);
-        foreach (var smallBlind in DataManager.VCSmallBlindList)
-        {
-            RectTransform rt = Instantiate(VCTableBtnSample).GetComponent<RectTransform>();
-            rt.gameObject.SetActive(true);
-            rt.SetParent(VCTableParent);
-            rt.GetComponent<VCTableBtn>().SetVCTableBtnInfo(smallBlind, this);
-            rt.localScale = Vector3.one;
-        }
-        VCTableParent.anchoredPosition = Vector2.zero;
     }
 
     /// <summary>

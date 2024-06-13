@@ -10,6 +10,22 @@ using UnityEngine.UI;
 public static class StringUtils
 {
     /// <summary>
+    /// 複製文字
+    /// </summary>
+    /// <param name="str"></param>
+    public static void CopyText(string str)
+    {
+        TextEditor textEditor = new TextEditor()
+        {
+            text = str
+        };
+        textEditor.SelectAll();
+        textEditor.Copy();
+
+        Debug.Log($"Copy Text:{str}");
+    }
+
+    /// <summary>
     /// 判斷是否為數字或英文字母
     /// </summary>
     /// <param name="str"></param>
