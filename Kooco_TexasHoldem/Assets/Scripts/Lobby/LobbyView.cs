@@ -235,9 +235,9 @@ public class LobbyView : MonoBehaviour
     /// </summary>
     public void UpdateUserInfo()
     {
-        Nickname_Txt.text = DataManager.UserNickname;
+        Nickname_Txt.text = $"@{DataManager.UserNickname}";
         Avatar_Btn.image.sprite = AssetsManager.Instance.GetAlbumAsset(AlbumEnum.AvatarAlbum).album[DataManager.UserAvatar];
-        Stamina_Txt.text = $"{DataManager.UserEnergy}/50";
+        Stamina_Txt.text = $"{DataManager.UserStamina}/{DataManager.MaxStaminaValue}";
         CryptoChips_Txt.text = string.IsNullOrEmpty(DataManager.UserWalletBalance) ? "0" : DataManager.UserWalletBalance;
     }
 

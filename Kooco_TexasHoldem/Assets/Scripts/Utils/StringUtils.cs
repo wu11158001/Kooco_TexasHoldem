@@ -265,6 +265,12 @@ public static class StringUtils
     /// <returns></returns>
     public static string GetPhoneAddCode(Dropdown dropdown, string phoneNumber)
     {
+        if (string.IsNullOrEmpty(phoneNumber))
+        {
+            Debug.LogError("Phone Number Empty!!!");
+            return "";
+        }
+
         string countryCode = dropdown.options[dropdown.value].text;
         countryCode = countryCode.Replace("+", "");
         if (phoneNumber[0] == '0')
@@ -299,7 +305,7 @@ public static class StringUtils
     /// <returns></returns>
     public static bool CheckPhoneNumber(string number)
     {
-        if (number.Length < 9)
+        if (string.IsNullOrEmpty(number) || number.Length < 9)
         {
             return false;
         }

@@ -536,7 +536,7 @@ public class GameView : MonoBehaviour
         {
             MenuBg_Tr.anchoredPosition = new Vector2(-MenuBg_Tr.rect.width, 0);
             StringUtils.StrExceedSize(DataManager.UserWalletAddress, MenuWalletAddr_Txt);
-            MenuNickname_Txt.text = DataManager.UserNickname;
+            MenuNickname_Txt.text = $"@{DataManager.UserNickname}";
         }
 
         GameRoomManager.Instance.IsCanMoveSwitch = !isShow;

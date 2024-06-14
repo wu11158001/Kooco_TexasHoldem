@@ -38,11 +38,12 @@ public static class DataManager
     public static string UserWalletBalance { get; set; }            //用戶錢包餘額
     public static string UserNickname { get; set; }                 //用戶暱稱
     public static int UserAvatar { get; set; }                      //用戶頭像
-    public static int UserEnergy { get; set; }                      //用戶能量
+    public static int UserStamina { get; set; }                     //用戶耐力
     public static double UserCryptoChips { get; set; }              //用戶加密貨幣籌碼
     public static double UserVCChips { get; set; }                  //用戶虛擬貨幣籌碼
 
     [Header("大廳")]
+    public static int MaxStaminaValue = 50;                                     //最大耐力值
     public static int MinMagnification = 40;                                    //購買籌碼最小倍率
     public static int MaxMagnification = 200;                                   //購買籌碼最大倍率
     public static List<double> CryptoSmallBlindList = new List<double>          //加密貨幣桌小盲值

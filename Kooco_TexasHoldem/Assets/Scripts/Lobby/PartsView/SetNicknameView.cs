@@ -14,7 +14,7 @@ public class SetNicknameView : MonoBehaviour
 
     private void Awake()
     {
-        Error_Txt.text = "";  
+        Error_Txt.text = "";
 
         ListenerEvent();
     }
@@ -35,16 +35,37 @@ public class SetNicknameView : MonoBehaviour
         //提交
         Subimt_Btn.onClick.AddListener(() =>
         {
-            if (SetNickname_If.text.Length <= 0)
-            {
-                SetNickname_If.text = "User Name Entered Incorrectly, Please Try Again.";
-            }
-            else
-            {
-                DataManager.UserNickname = SetNickname_If.text;
-                GameObject.FindAnyObjectByType<LobbyView>().UpdateUserInfo();
-                Destroy(gameObject);
-            }
+            OnSubmit();
         });
+    }
+
+    private void Start()
+    {
+        SetNickname_If.Select();
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.KeypadEnter) || Input.GetKeyDown(KeyCode.Return))
+        {
+            OnSubmit();
+        }
+    }
+
+    /// <summary>
+    /// 提交
+    /// </summary>
+    private void OnSubmit()
+    {
+        if (SetNickname_If.text.Length <= 0)
+        {
+            SetNickname_If.text = "User Name Entered Incorrectly, Please Try Again.";
+        }
+        else
+        {
+            DataManager.UserNickname = SetNickname_If.text;
+            GameObject.FindAnyObjectByType<LobbyView>().UpdateUserInfo();
+            Destroy(gameObject);
+        }
     }
 }

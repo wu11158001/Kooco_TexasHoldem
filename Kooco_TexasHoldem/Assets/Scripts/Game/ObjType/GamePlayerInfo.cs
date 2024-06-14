@@ -243,7 +243,7 @@ public class GamePlayerInfo : MonoBehaviour
         currRoomChips = initChips;
         UserId = userId;
         Avatar_Img.sprite = avatar;
-        Nickname_Txt.text = nickName;
+        Nickname_Txt.text = $"@{nickName}";
         Chips_Txt.text = $"{StringUtils.SetChipsUnit(initChips)}";
         this.potPoint = potPoint;
     }

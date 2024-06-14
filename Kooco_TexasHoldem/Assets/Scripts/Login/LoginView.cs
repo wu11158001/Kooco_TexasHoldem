@@ -14,6 +14,7 @@ using UnityEngine.Networking;
 using Newtonsoft.Json.Linq;
 using TMPro;
 using UnityEngine.EventSystems;
+using UnityEngine.Events;
 
 public class LoginView : MonoBehaviour, IPointerClickHandler
 {
@@ -96,7 +97,7 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
     [SerializeField]
     Text RegisterNumberError_Txt, RegisterCodeError_Txt, RegisterPasswordError_Txt, RegisterPrivacyError_Txt;
     [SerializeField]
-    Button RegisterOTPSend_Btn, RegisterPasswordEye_Btn, RegisterSubmit_Btn;
+    Button RegisterOTPSend_Btn, RegisterPasswordEye_Btn, RegisterSubmit_Btn, RegisterSuccSignin_Btn, RegisterSuccessfulCancel_Btn;
     [SerializeField]
     InputField RegisterNumber_If, RegisterOTP_If, RegisterPassword_If;
     [SerializeField]
@@ -143,16 +144,19 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
     const string LocalPaswword = "AsiaPoker_Password";              //本地紀錄_密碼
     const int ErrorWalletConnectTime = 30;                          //判定連接失敗等待時間
 
-    ChainData _currentChainData;                        //當前連接練
-    string _address;                                    //錢包地址
+    ChainData _currentChainData;                                    //當前連接練
+    string _address;                                                //錢包地址
 
-    Coroutine connectionEffectCoroutine;                //連接錢包效果
-    DateTime startConnectTime;                          //開始連接錢包時間
-    bool isShowPassword;                                //是否顯示密碼
-    bool isRegisterPasswordCorrect;                     //是否手機注冊密碼正確
-    bool isLostPswPasswordCorrect;                      //是否忘記密碼密碼正確
-    string recodePhoneNumber;                           //紀錄的手機號
-    string recodePassword;                              //紀錄的密碼
+    Coroutine connectionEffectCoroutine;                            //連接錢包效果
+    DateTime startConnectTime;                                      //開始連接錢包時間
+    bool isShowPassword;                                            //是否顯示密碼
+    bool isRegisterPasswordCorrect;                                 //是否手機注冊密碼正確
+    bool isLostPswPasswordCorrect;                                  //是否忘記密碼密碼正確
+    string recodePhoneNumber;                                       //紀錄的手機號
+    string recodePassword;                                          //紀錄的密碼
+
+    List<InputField> currIfList = new List<InputField>();           //當前可切換InputFild
+    UnityAction KybordEnterAction;                                  //Enter鍵執行方法
 
     /// <summary>
     /// 紀錄當前連接錢包資料
@@ -193,11 +197,12 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
 
             if (isOn)
             {
-                //選擇登入錢包
+                //錢包登入
                 OnSwlwctWalletInit();
             }
             else
             {
+                //手機登入
                 OnMobileSignInInit();
             }            
         });
@@ -273,22 +278,10 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
             SMSOTP_If.text = "";
         });
 
-        //OTP確認
+        //簡訊OTP提交
         SMSOTPSubmit_Btn.onClick.AddListener(() =>
         {
-            string code = SMSOTP_If.text;
-            string phone = StringUtils.GetPhoneAddCode(SMSMobileNumber_Dd, SMSMobileNumber_If.text);
-            Debug.Log($"Sign In = Phone Number : {phone} / Password: {code}");
-
-            if (phone == "886-987654321" && code == "12345678")
-            {
-                LoadSceneManager.Instance.LoadScene(SceneEnum.Lobby);
-            }
-            else
-            {
-                MobileSignInError_Txt.text = "Invalid Code, Please Try Again.";
-                Debug.LogError("Correct is Phone:886-987654321 / Code:12345678");
-            }
+            SMSOTPSubmitAction();
         });
 
         #endregion
@@ -313,36 +306,10 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
 
         #region 手機登入
 
-        //手機登入
+        //手機登入提交
         SignIn_Btn.onClick.AddListener(() =>
         {
-            if (!StringUtils.CheckPhoneNumber(SignInNumber_If.text))
-            {
-                SignInNumberError_Txt.text = "User Name Entered Incorrectly, Please Try Again.";             
-            }
-            else
-            {
-                SignInNumberError_Txt.text = "";
-                string phone = StringUtils.GetPhoneAddCode(SignInNumber_Dd, SignInNumber_If.text);
-                string password = SignInPassword_If.text;
-                Debug.Log($"Mobile Sign In = Phone:{phone} / Password = {password}");
-
-                if (phone == "886-987654321" && password == "A12345678")
-                {
-                    if (RememberMe_Tog.isOn)
-                    {
-                        PlayerPrefs.SetString(LocalPhoneNumber, SignInNumber_If.text);
-                        PlayerPrefs.SetString(LocalPaswword, SignInPassword_If.text);
-                    }
-
-                    LoadSceneManager.Instance.LoadScene(SceneEnum.Lobby);
-                }
-                else
-                {
-                    MobileSignInError_Txt.text = "Invalid Code, Please Try Again.";
-                    Debug.LogError("Correct is Phone:886-987654321 / Password:A12345678");
-                }
-            }
+            MobileSignInSubmit();
         });
 
         //手機登入密碼顯示
@@ -371,6 +338,16 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
             MobileSiginPage_Obj.SetActive(false);
             RegisterPage_Obj.SetActive(true);
             RegisterCheckPassword_Obj.SetActive(false);
+
+            //設定TAB切換與Enter提交方法
+            RegisterNumber_If.Select();
+            currIfList = new List<InputField>()
+            {
+                RegisterNumber_If,
+                RegisterOTP_If,
+                RegisterPassword_If,
+            };
+            KybordEnterAction = MobileRegisterSubmit;
         });
 
         //手機注冊發送獲取OTPCode
@@ -412,45 +389,22 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
                                  RegisterPassword_If);
         });
 
-        //手機注冊確認送出
+        //手機注冊提交
         RegisterSubmit_Btn.onClick.AddListener(() =>
         {
-            bool isCorrect = true;
-            if (!StringUtils.CheckPhoneNumber(RegisterNumber_If.text))
-            {
-                //手機號格式錯誤
-                isCorrect = false;
-                RegisterNumberError_Txt.text = "User Name Entered Incorrectly, Please Try Again.";
-            }
+            MobileRegisterSubmit();
+        });
 
-            if (!isRegisterPasswordCorrect)
-            {
-                //密碼錯誤
-                isCorrect = false;
-                RegisterPasswordError_Txt.text = "Invalid Code, Please Try Again.";
-            }
+        //註冊成功登入
+        RegisterSuccSignin_Btn.onClick.AddListener(() =>
+        {
+            RegisterSuccessSignIn();
+        });
 
-            if (!Privacy_Tog.isOn)
-            {
-                //隱私條款未同意
-                isCorrect = false;
-                RegisterPrivacyError_Txt.text = "Please Agree To The Privacy Policy.";
-            }
-
-            if (isCorrect)
-            {
-                //註冊成功
-                string phone = StringUtils.GetPhoneAddCode(RegisterNumber_Dd, RegisterNumber_If.text);
-                string code = RegisterOTP_If.text;
-                string psw = RegisterPassword_If.text;
-                Debug.Log($"Register Submit = Phone:{phone} / Code:{code} / Password:{psw}");
-
-                MobileSignIn_Obj.SetActive(false);
-                RegisterSucce_Obj.SetActive(true);
-
-                RegisterSuccTip_Txt.text = $"<size=14><color=#FFFFF>Registration Successful</color></size>\n" +
-                                           $"<size=12><color=#C6C2C2>Account Successfully Created</color></size>";
-            }
+        //註冊成功登入取消按鈕
+        RegisterSuccessfulCancel_Btn.onClick.AddListener(() =>
+        {
+            OnMobileSignInInit();
         });
 
         #endregion
@@ -502,32 +456,10 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
             isLostPswPasswordCorrect = check1 && check2 && check3;
         });
 
-        //忘記密碼確認送出
+        //忘記密碼提交
         LostPswSubmit_Btn.onClick.AddListener(() =>
         {
-            bool isCorrect = true;
-            if (!StringUtils.CheckPhoneNumber(LostPswNumber_If.text))
-            {
-                //手機號格式錯誤
-                isCorrect = false;
-                LostPswNumberError_Txt.text = "User Name Entered Incorrectly, Please Try Again.";
-            }
-
-            if (!isLostPswPasswordCorrect)
-            {
-                //密碼錯誤
-                isCorrect = false;
-                LostPswPasswordError_Txt.text = "Invalid Code, Please Try Again.";
-            }
-
-            if (isCorrect)
-            {
-                //註冊成功
-                string phone = StringUtils.GetPhoneAddCode(LostPswNumber_Dd, LostPswNumber_If.text);
-                string code = LostPswOTP_If.text;
-                string psw = LosrPswPassword_If.text;
-                Debug.Log($"Lost Password Submit = Phone:{phone} / Code:{code} / Password:{psw}");
-            }
+            LostPswSubmit();            
         });
 
         #endregion
@@ -580,10 +512,31 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
         {
             ErrorWalletConnect();
         }
+        
+        //當前輸入框切換
+        if (Input.GetKeyDown(KeyCode.Tab))
+        {
+            for (int i = 0; i < currIfList.Count; i++)
+            {
+                if (currIfList[i].isFocused)
+                {
+                    int next = i + 1 >= currIfList.Count ?
+                               0 :
+                               i + 1;
+                    currIfList[next].Select();
+                }
+            }            
+        }
+
+        //執行Enter提交方法
+        if (Input.GetKeyDown(KeyCode.KeypadEnter) || Input.GetKeyDown(KeyCode.Return))
+        {
+            KybordEnterAction?.Invoke();
+        }
 
 #if UNITY_EDITOR
 
-        if (Input.GetKeyDown(KeyCode.KeypadEnter))
+        if (Input.GetKeyDown(KeyCode.RightAlt))
         {
             LoadSceneManager.Instance.LoadScene(SceneEnum.Lobby);
         }
@@ -637,6 +590,16 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
                     LostPswNumberError_Txt.text = "";
                     LostPswCodeError_Txt.text = "";
                     LostPswPasswordError_Txt.text = "";
+
+                    //設定TAB切換與Enter提交方法
+                    LostPswNumber_If.Select();
+                    currIfList = new List<InputField>()
+                    {
+                        LostPswNumber_If,
+                        LostPswOTP_If,
+                        LosrPswPassword_If,
+                    };
+                    KybordEnterAction = LostPswSubmit;
                     break;
             }
         }
@@ -728,6 +691,8 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
         SMSVerificationPage_Obj.SetActive(false);
     }
 
+    #region 手機登入
+
     /// <summary>
     /// 手機登入初始
     /// </summary>
@@ -745,40 +710,165 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
                                  recodePassword :
                                  "";
 
-        MobileTitle_Txt.text = "SIGN In";
+        MobileTitle_Txt.text = "SIGN IN";
         MobileTip_Txt.text = "Please, Sign In With Your Walet.";
         MobileSignIn_Obj.SetActive(true);
         MobileSiginPage_Obj.SetActive(true);
         RegisterPage_Obj.SetActive(false);
         RegisterSucce_Obj.SetActive(false);
         LostPassword_Obj.SetActive(false);
+
+        //設定TAB切換與Enter提交方法
+        SignInNumber_If.Select();
+        currIfList = new List<InputField>()
+        {
+            SignInNumber_If,
+            SignInPassword_If,
+        };
+        KybordEnterAction = MobileSignInSubmit;
     }
 
     /// <summary>
-    /// 嘗試連接Binance
+    /// 手機登入提交
     /// </summary>
-    async public void TryBinanceConnect()
+    private void MobileSignInSubmit()
     {
-        if (DataManager.IsMobilePlatform)
+        if (!StringUtils.CheckPhoneNumber(SignInNumber_If.text))
         {
-            try
+            SignInNumberError_Txt.text = "User Name Entered Incorrectly, Please Try Again.";
+        }
+        else
+        {
+            SignInNumberError_Txt.text = "";
+            string phone = StringUtils.GetPhoneAddCode(SignInNumber_Dd, SignInNumber_If.text);
+            string password = SignInPassword_If.text;
+            Debug.Log($"Mobile Sign In = Phone:{phone} / Password = {password}");
+
+            if (phone == "886-987654321" && password == "A12345678")
             {
-                string add = await ThirdwebManager.Instance.SDK.Wallet.GetAddress();
-                var bal = await ThirdwebManager.Instance.SDK.Wallet.GetBalance();
-                var balStr = $"{bal.value.ToEth()} {bal.symbol}";
+                if (RememberMe_Tog.isOn)
+                {
+                    PlayerPrefs.SetString(LocalPhoneNumber, SignInNumber_If.text);
+                    PlayerPrefs.SetString(LocalPaswword, SignInPassword_If.text);
+                }
 
-                DataManager.UserWalletAddress = add;
-                DataManager.UserWalletBalance = balStr;
-
-                CancelInvoke(nameof(TryBinanceConnect));
                 LoadSceneManager.Instance.LoadScene(SceneEnum.Lobby);
             }
-            catch (Exception)
+            else
             {
-                Debug.LogError("Try Connect Fail!!!");
+                MobileSignInError_Txt.text = "Invalid Code, Please Try Again.";
+                Debug.LogError("Correct is Phone:886-987654321 / Password:A12345678");
             }
         }
     }
+
+    /// <summary>
+    /// 手機註冊提交
+    /// </summary>
+    private void MobileRegisterSubmit()
+    {
+        RegisterNumberError_Txt.text = "";
+        RegisterCodeError_Txt.text = "";
+        RegisterPasswordError_Txt.text = "";
+
+        bool isCorrect = true;
+        if (!StringUtils.CheckPhoneNumber(RegisterNumber_If.text))
+        {
+            //手機號格式錯誤
+            isCorrect = false;
+            RegisterNumberError_Txt.text = "User Name Entered Incorrectly, Please Try Again.";
+        }
+
+        if (string.IsNullOrEmpty(RegisterOTP_If.text))
+        {
+            //OTP為空
+            RegisterCodeError_Txt.text = "Invalid Code, Please Try Again.";
+            isCorrect = false;
+        }
+
+        if (!isRegisterPasswordCorrect)
+        {
+            //密碼錯誤
+            isCorrect = false;
+            RegisterPasswordError_Txt.text = "Invalid Code, Please Try Again.";
+        }
+
+        if (!Privacy_Tog.isOn)
+        {
+            //隱私條款未同意
+            isCorrect = false;
+            RegisterPrivacyError_Txt.text = "Please Agree To The Privacy Policy.";
+        }
+
+        if (isCorrect)
+        {
+            //註冊成功
+            string phone = StringUtils.GetPhoneAddCode(RegisterNumber_Dd, RegisterNumber_If.text);
+            string code = RegisterOTP_If.text;
+            string psw = RegisterPassword_If.text;
+            Debug.Log($"Register Submit = Phone:{phone} / Code:{code} / Password:{psw}");
+
+            MobileSignIn_Obj.SetActive(false);
+            RegisterSucce_Obj.SetActive(true);
+
+            RegisterSuccTip_Txt.text = $"<size=14><color=#FFFFF>Registration Successful</color></size>\n" +
+                                       $"<size=12><color=#C6C2C2>Account Successfully Created</color></size>";
+
+            //設定TAB切換與Enter提交方法
+            KybordEnterAction = RegisterSuccessSignIn;
+        }
+    }
+
+    /// <summary>
+    /// 註冊成功登入
+    /// </summary>
+    private void RegisterSuccessSignIn()
+    {
+        LoadSceneManager.Instance.LoadScene(SceneEnum.Lobby);
+    }
+
+    /// <summary>
+    /// 忘記密碼提交
+    /// </summary>
+    private void LostPswSubmit()
+    {
+        LostPswNumberError_Txt.text = "";
+        LostPswCodeError_Txt.text = "";
+        LostPswPasswordError_Txt.text = "";
+
+        bool isCorrect = true;
+        if (!StringUtils.CheckPhoneNumber(LostPswNumber_If.text))
+        {
+            //手機號格式錯誤
+            isCorrect = false;
+            LostPswNumberError_Txt.text = "User Name Entered Incorrectly, Please Try Again.";
+        }
+
+        if (string.IsNullOrEmpty(LostPswOTP_If.text))
+        {
+            //OTP為空
+            LostPswCodeError_Txt.text = "Invalid Code, Please Try Again.";
+            isCorrect = false;
+        }
+
+        if (!isLostPswPasswordCorrect)
+        {
+            //密碼錯誤
+            isCorrect = false;
+            LostPswPasswordError_Txt.text = "Invalid Code, Please Try Again.";
+        }
+
+        if (isCorrect)
+        {
+            //註冊成功
+            string phone = StringUtils.GetPhoneAddCode(LostPswNumber_Dd, LostPswNumber_If.text);
+            string code = LostPswOTP_If.text;
+            string psw = LosrPswPassword_If.text;
+            Debug.Log($"Lost Password Submit = Phone:{phone} / Code:{code} / Password:{psw}");
+        }
+    }
+
+    #endregion
 
     #region Instafram
 
@@ -822,7 +912,33 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
 
     #endregion
 
-    #region ThirdWallet
+    #region 錢包連接
+
+    /// <summary>
+    /// 嘗試連接Binance
+    /// </summary>
+    async public void TryBinanceConnect()
+    {
+        if (DataManager.IsMobilePlatform)
+        {
+            try
+            {
+                string add = await ThirdwebManager.Instance.SDK.Wallet.GetAddress();
+                var bal = await ThirdwebManager.Instance.SDK.Wallet.GetBalance();
+                var balStr = $"{bal.value.ToEth()} {bal.symbol}";
+
+                DataManager.UserWalletAddress = add;
+                DataManager.UserWalletBalance = balStr;
+
+                CancelInvoke(nameof(TryBinanceConnect));
+                LoadSceneManager.Instance.LoadScene(SceneEnum.Lobby);
+            }
+            catch (Exception)
+            {
+                Debug.LogError("Try Connect Fail!!!");
+            }
+        }
+    }
 
     /// <summary>
     /// 連接錢包效果
@@ -967,11 +1083,61 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
     /// 簡訊確認
     /// </summary>
     private void SMSVerification()
-    {
+    {   
         ConnectionTitle_Txt.text = "SMS Verification";
         WalletLoadingPage_Obj.SetActive(false);
         SMSVerificationPage_Obj.SetActive(true);
+
+        //設定TAB切換與Enter提交方法
+        SMSMobileNumber_If.Select();
+        currIfList = new List<InputField>()
+        {
+            SMSMobileNumber_If,
+            SMSOTP_If,
+        };
+        KybordEnterAction = SMSOTPSubmitAction;
     }
 
-#endregion
+    /// <summary>
+    /// 簡訊OTP提交
+    /// </summary>
+    private void SMSOTPSubmitAction()
+    {
+        SMSMobileNumberError_Txt.text = "";
+        SMSCodeError_Txt.text = "";
+
+        bool isCorrect = true;
+        if (!StringUtils.CheckPhoneNumber(SMSMobileNumber_If.text))
+        {
+            //手機號格式錯誤
+            isCorrect = false;
+            SMSMobileNumberError_Txt.text = "User Name Entered Incorrectly, Please Try Again.";
+        }
+
+        if (string.IsNullOrEmpty(SMSOTP_If.text))
+        {
+            //OTP為空
+            SMSCodeError_Txt.text = "Invalid Code, Please Try Again.";
+            isCorrect = false;
+        }
+
+        if (isCorrect)
+        {
+            string code = SMSOTP_If.text;
+            string phone = StringUtils.GetPhoneAddCode(SMSMobileNumber_Dd, SMSMobileNumber_If.text);
+            Debug.Log($"Sign In = Phone Number : {phone} / Password: {code}");
+
+            if (phone == "886-987654321" && code == "12345678")
+            {
+                LoadSceneManager.Instance.LoadScene(SceneEnum.Lobby);
+            }
+            else
+            {
+                SMSCodeError_Txt.text = "Invalid Code, Please Try Again.";
+                Debug.LogError("Correct is Phone:886-987654321 / Code:12345678");
+            }
+        }        
+    }
+
+    #endregion
 }

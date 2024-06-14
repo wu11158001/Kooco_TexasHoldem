@@ -23,28 +23,56 @@ public class LobbyMinePageView : MonoBehaviour
     [SerializeField]
     Button CloseChangeAvatar_Btn, ChangeAvatarSubmit_Btn;
 
-    const float expandTIme = 0.1f;      //內容展開時間
+    [Header("帳戶餘額")]
+    [SerializeField]
+    RectTransform AccountBalance_Obj;
+    [SerializeField]
+    Button AccountBalanceExpand_Btn, AccountBalanceReflash_Btn;
+    [SerializeField]
+    Image AccountBalanceExpand_Img;
+    [SerializeField]
+    Text CryptoTableValue_Txt, VCTableValue_Txt, GoldValue_Txt, StaminaValue_Txt, OTPropsValue_Txt;
 
-    /// <summary>
-    /// (展開物件, 初始高度)
-    /// </summary>
-    Dictionary<RectTransform, float> expandObjDic = new();
+    [Header("分數紀錄")]
+    [SerializeField]
+    RectTransform ScoreRecord_Obj;
+    [SerializeField]
+    Button ScoreRecordExpand_Btn, ScoreRecordReflash_Btn;
+    [SerializeField]
+    Image ScoreRecordExpand_Img;
+    [SerializeField]
+    Slider VPIP_Sli, PFR_Sli, ATS_Sli, ThreeBET_Sli;
+    [SerializeField]
+    Text VPIPpercent_Txt, PFRpercent_Txt, ATSpercent_Txt, ThreeBETpercent_Txt;
+
+    const string expandContentName = "Content";                                 //展開內容物件名稱
+    const string expandTopBgName = "TopBg";                                     //收起上方物件名稱
+    const float expandTIme = 0.1f;                                              //內容展開時間
+
     List<Button> avatarBtnList;                                                 //頭像按鈕
-
     int tempAvatarIndex;                                                        //零時頭像index
+    bool isAccountBalanceExpand;                                                //是否展開帳戶餘額
+    bool isScoreRecordExpand;                                                   //是否展開分數紀錄
 
     private void Awake()
     {
-        //紀錄展開物件
+        ChangeAvatar_Tr.gameObject.SetActive(false);
+
+        //紀錄展開物件初始化
         List<RectTransform> expandObjList = new()
         {
-            ChangeAvatar_Tr,        //更換頭像
+            AccountBalance_Obj,     //帳戶餘額
+            ScoreRecord_Obj,        //分數紀錄
         };
         foreach (var expandObj in expandObjList)
         {
-            expandObjDic.Add(expandObj, expandObj.rect.height);
-            expandObj.gameObject.SetActive(false);
+            RectTransform contentObj = expandObj.Find(expandContentName).GetComponent<RectTransform>();
+            RectTransform TopBgObj = expandObj.Find(expandTopBgName).GetComponent<RectTransform>();
+            contentObj.gameObject.SetActive(false);
+            expandObj.sizeDelta = new Vector2(expandObj.rect.width, TopBgObj.rect.height);
         }
+        AccountBalanceExpand_Img.sprite = AssetsManager.Instance.GetAlbumAsset(AlbumEnum.ArrowAlbum).album[1];
+        ScoreRecordExpand_Img.sprite = AssetsManager.Instance.GetAlbumAsset(AlbumEnum.ArrowAlbum).album[1];
 
         ListenerEvent();
     }
@@ -56,31 +84,24 @@ public class LobbyMinePageView : MonoBehaviour
     {
         #region 用戶訊息
 
-        //開啟更換頭像
-        EditorAvatar_Btn.onClick.AddListener(() =>
-        {
-            UserPorfile_Obj.SetActive(false);
-            StartCoroutine(ISwitchContent(true, ChangeAvatar_Tr, () =>
-            {
-                int avatar = DataManager.UserAvatar;
-                SelectAvatarIcon_Tr.SetParent(avatarBtnList[avatar].transform);
-                SelectAvatarIcon_Tr.anchoredPosition = Vector2.zero;
-            }));
-        });
-
         //複製錢包地址
         CopyWalletAddress_Btn.onClick.AddListener(() =>
         {
             StringUtils.CopyText(DataManager.UserWalletAddress);
         });
 
+        //開啟更換頭像
+        EditorAvatar_Btn.onClick.AddListener(() =>
+        {
+            UserPorfile_Obj.SetActive(false);
+            ChangeAvatar_Tr.gameObject.SetActive(true);
+        });
+
         //關閉選擇頭像
         CloseChangeAvatar_Btn.onClick.AddListener(() =>
         {
-            StartCoroutine(ISwitchContent(false, ChangeAvatar_Tr, () =>
-            {
-                UserPorfile_Obj.SetActive(true);
-            }));
+            UserPorfile_Obj.SetActive(true);
+            ChangeAvatar_Tr.gameObject.SetActive(false);
         });
 
         //提交更換頭像
@@ -90,10 +111,46 @@ public class LobbyMinePageView : MonoBehaviour
             EditorAvatar_Btn.image.sprite = AssetsManager.Instance.GetAlbumAsset(AlbumEnum.AvatarAlbum).album[DataManager.UserAvatar];
             GameObject.FindAnyObjectByType<LobbyView>().UpdateUserInfo();
 
-            StartCoroutine(ISwitchContent(false, ChangeAvatar_Tr, () =>
-            {
-                UserPorfile_Obj.SetActive(true);
-            }));
+            UserPorfile_Obj.SetActive(true);
+            ChangeAvatar_Tr.gameObject.SetActive(false);
+        });
+
+        #endregion
+
+        #region 帳戶餘額
+
+        //帳戶餘額展開
+        AccountBalanceExpand_Btn.onClick.AddListener(() =>
+        {
+            isAccountBalanceExpand = !isAccountBalanceExpand;
+            StartCoroutine(ISwitchContent(isAccountBalanceExpand,
+                                          AccountBalance_Obj,
+                                          AccountBalanceExpand_Img));
+        });
+
+        //帳戶餘額刷新
+        AccountBalanceReflash_Btn.onClick.AddListener(() =>
+        {
+            UpdatetAccountBalance(20000, 40000, 3000, 5, 30);
+        });
+
+        #endregion
+
+        #region 分數紀錄
+
+        //分數紀錄展開
+        ScoreRecordExpand_Btn.onClick.AddListener(() =>
+        {
+            isScoreRecordExpand = !isScoreRecordExpand;
+            StartCoroutine(ISwitchContent(isScoreRecordExpand,
+                                          ScoreRecord_Obj,
+                                          ScoreRecordExpand_Img));
+        });
+
+        //紀錄分數刷新
+        ScoreRecordReflash_Btn.onClick.AddListener(() =>
+        {
+            UpdateScoreRecord(70, 33, 25, 60);
         });
 
         #endregion
@@ -104,20 +161,8 @@ public class LobbyMinePageView : MonoBehaviour
         SetUserInfo();
     }
 
-    /// <summary>
-    /// 設置用戶訊息
-    /// </summary>
-    private void SetUserInfo()
+    private void Start()
     {
-        //頭像
-        EditorAvatar_Btn.image.sprite = AssetsManager.Instance.GetAlbumAsset(AlbumEnum.AvatarAlbum).album[DataManager.UserAvatar];
-
-        //暱稱
-        Nickname_Txt.text = DataManager.UserNickname;
-
-        //錢包地址
-        StringUtils.StrExceedSize(DataManager.UserWalletAddress, WalletAddress_Txt);
-
         //產生選擇的頭像
         avatarBtnList = new List<Button>();
         AvatarSapmle.gameObject.SetActive(false);
@@ -138,43 +183,119 @@ public class LobbyMinePageView : MonoBehaviour
 
             avatarBtnList.Add(avatarBtn);
         }
+        SelectAvatarIcon_Tr.SetParent(avatarBtnList[DataManager.UserAvatar].transform);
+        SelectAvatarIcon_Tr.anchoredPosition = Vector2.zero;
+
+        UpdatetAccountBalance(10000, 20000, 1000, 25, 3);
+        UpdateScoreRecord(50, 60, 70, 80);
     }
 
     /// <summary>
-    /// 內容顯示開關
+    /// 設置用戶訊息
+    /// </summary>
+    private void SetUserInfo()
+    {
+        //頭像
+        EditorAvatar_Btn.image.sprite = AssetsManager.Instance.GetAlbumAsset(AlbumEnum.AvatarAlbum).album[DataManager.UserAvatar];
+
+        //暱稱
+        Nickname_Txt.text = $"@{DataManager.UserNickname}";
+
+        //錢包地址
+        StringUtils.StrExceedSize(DataManager.UserWalletAddress, WalletAddress_Txt);
+    }
+
+    /// <summary>
+    /// 更新帳號餘額
+    /// </summary>
+    /// <param name="crypto"></param>
+    /// <param name="vc"></param>
+    /// <param name="gold"></param>
+    /// <param name="Stamina"></param>
+    /// <param name="ot"></param>
+    private void UpdatetAccountBalance(double crypto, double vc, double gold, int Stamina, int ot)
+    {
+        DataManager.UserWalletBalance = crypto.ToString();
+        DataManager.UserStamina = Stamina;
+
+        CryptoTableValue_Txt.text = crypto.ToString();
+        VCTableValue_Txt.text = StringUtils.SetChipsUnit(vc);
+        GoldValue_Txt.text = StringUtils.SetChipsUnit(gold);
+        StaminaValue_Txt.text = $"{DataManager.UserStamina}/{DataManager.MaxStaminaValue}";
+        OTPropsValue_Txt.text = $"{ot}";
+
+        GameObject.FindAnyObjectByType<LobbyView>().UpdateUserInfo();
+    }
+
+    /// <summary>
+    /// 更新分數紀錄
+    /// </summary>
+    /// <param name="vpip"></param>
+    /// <param name="pfr"></param>
+    /// <param name="ats"></param>
+    /// <param name="threeBet"></param>
+    private void UpdateScoreRecord(float vpip, float pfr, float ats, float threeBet)
+    {
+        VPIP_Sli.value = vpip / 100;
+        VPIPpercent_Txt.text = $"{vpip}%";
+
+        PFR_Sli.value = pfr / 100;
+        PFRpercent_Txt.text = $"{pfr}%";
+
+        ATS_Sli.value = ats / 100;
+        ATSpercent_Txt.text = $"{ats}%";
+
+        ThreeBET_Sli.value = threeBet / 100;
+        ThreeBETpercent_Txt.text = $"{threeBet}%";
+    }
+
+    /// <summary>
+    /// 內容展開縮放
     /// </summary>
     /// <param name="isExpand">是否展開</param>
     /// <param name="rt">展開內容物件</param>
+    /// <param name="img">展開按鈕圖</param>
     /// <param name="completeCallback">完成回傳</param>
     /// <returns></returns>
-    private IEnumerator ISwitchContent(bool isExpand, RectTransform rt, UnityAction completeCallback = null)
+    private IEnumerator ISwitchContent(bool isExpand, RectTransform rt, Image img, UnityAction completeCallback = null)
     {
-        if (expandObjDic.ContainsKey(rt))
+        //展開內容物件
+        RectTransform contentObj = rt.Find(expandContentName).GetComponent<RectTransform>();
+        //收回高度
+        float pullbackHeight = rt.Find(expandTopBgName).GetComponent<RectTransform>().rect.height;
+        //目標高度
+        float targetHeight = isExpand == true ?
+                             contentObj.rect.height :
+                             pullbackHeight;
+        //初始高度
+        float initHeight = isExpand == true ?
+                           pullbackHeight :
+                           rt.rect.height;
+
+        contentObj.gameObject.SetActive(!isExpand);
+        rt.sizeDelta = new Vector2(rt.rect.width, initHeight);
+
+        DateTime startTime = DateTime.Now;
+        while ((DateTime.Now - startTime).TotalSeconds < expandTIme)
         {
-            float initHeight = isExpand == true ?
-                               0 :
-                               rt.rect.height ;
-            float targetHeight = isExpand == true ?
-                                 expandObjDic[rt] :
-                                 0;
+            float progress = (float)(DateTime.Now - startTime).TotalSeconds / expandTIme;
+            float height = Mathf.Lerp(initHeight, targetHeight, progress);
+            rt.sizeDelta = new Vector2(rt.rect.width, height);
 
-            rt.gameObject.SetActive(true);
-            rt.sizeDelta = new Vector2(rt.rect.width, initHeight);
-
-            DateTime startTime = DateTime.Now;
-            while ((DateTime.Now - startTime).TotalSeconds < expandTIme) 
+            if (progress >= 0.5f)
             {
-                float progress = (float)(DateTime.Now - startTime).TotalSeconds / expandTIme;
-                float height = Mathf.Lerp(initHeight, targetHeight, progress);
-                rt.sizeDelta = new Vector2(rt.rect.width, height);
+                //顯示內容
+                contentObj.gameObject.SetActive(isExpand);
+            }            
 
-                yield return null;
-            }
-
-            rt.sizeDelta = new Vector2(rt.rect.width, targetHeight);
-            rt.gameObject.SetActive(isExpand);
-
-            completeCallback?.Invoke();
+            yield return null;
         }
+
+        rt.sizeDelta = new Vector2(rt.rect.width, targetHeight);
+        img.sprite = isExpand == true ?
+                     AssetsManager.Instance.GetAlbumAsset(AlbumEnum.ArrowAlbum).album[0] :
+                     AssetsManager.Instance.GetAlbumAsset(AlbumEnum.ArrowAlbum).album[1];
+
+        completeCallback?.Invoke();
     }
 }
