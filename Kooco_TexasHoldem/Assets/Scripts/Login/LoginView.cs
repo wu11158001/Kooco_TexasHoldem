@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using Thirdweb.Redcode.Awaiting;
 using System.Numerics;
-using RotaryHeart.Lib.SerializableDictionary;
 using Thirdweb;
 using System;
 using System.Runtime.InteropServices;
@@ -12,21 +11,13 @@ using System.Threading.Tasks;
 using System.Linq;
 using UnityEngine.Networking;
 using Newtonsoft.Json.Linq;
+using RotaryHeart.Lib.SerializableDictionary;
 using TMPro;
 using UnityEngine.EventSystems;
 using UnityEngine.Events;
 
 public class LoginView : MonoBehaviour, IPointerClickHandler
 {
-    [DllImport("__Internal")]
-    private static extern string JS_GetBrowserInfo();                                            //獲取瀏覽器訊息
-    [DllImport("__Internal")]
-    private static extern void JS_LocationHref(string url);                                      //本地頁面跳轉
-    [DllImport("__Internal")]
-    private static extern void JS_WindowClose();                                                 //關閉頁面
-    [DllImport("__Internal")]
-    private static extern void JS_OpenNewBrowser(string mail, string igIdAndName);               //開啟新瀏覽器
-
     [Header("切換/版本")]
     [SerializeField]
     Text Vrsion_Txt;
@@ -66,12 +57,6 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
     Dropdown SMSMobileNumber_Dd;
     [SerializeField]
     Text SMSMobileNumberError_Txt, SMSCodeError_Txt;
-
-    [Header("綁定")]
-    [SerializeField]
-    Button Line_Btn, IG_Btn;
-    [SerializeField]
-    Text LineMail_Txt, IGIdAndName_Txt;
 
     [Header("手機登入")]
     [SerializeField]
@@ -286,24 +271,6 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
 
         #endregion
 
-        #region 第三方連接
-
-        //IG登入
-        IG_Btn.onClick.AddListener(() =>
-        {
-            AudioManager.Instance.PlayConfirmClick();
-            StartInstagram();
-        });
-
-        //Line登入
-        Line_Btn.onClick.AddListener(() =>
-        {
-            AudioManager.Instance.PlayConfirmClick();
-            StartLineLogin();
-        });
-
-        #endregion
-
         #region 手機登入
 
         //手機登入提交
@@ -468,20 +435,6 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
     private void Start()
     {
         _currentChainData = ThirdwebManager.Instance.supportedChains.Find(x => x.identifier == ThirdwebManager.Instance.activeChain);
-
-        //已有Line Mail
-        if (!string.IsNullOrEmpty(DataManager.LineMail))
-        {
-            Line_Btn.interactable = false;
-            LineMail_Txt.text = DataManager.LineMail;
-        }
-
-        //已有IG授權碼
-        if (!string.IsNullOrEmpty(DataManager.IGIUserIdAndName))
-        {
-            IG_Btn.interactable = false;
-            IGIdAndName_Txt.text = DataManager.IGIUserIdAndName;
-        }
 
         ///自動連接Coinbase
         if (!DataManager.IsNotFirstInLogin && 
@@ -870,48 +823,6 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
 
     #endregion
 
-    #region Instafram
-
-    /// <summary>
-    /// 開始Instagram登入
-    /// </summary>
-    public void StartInstagram()
-    {
-        string authUrl = $"https://api.instagram.com/oauth/authorize?client_id=" +
-                         $"{DataManager.InstagramChannelID}&redirect_uri={DataManager.InstagramRedirectUri}" +
-                         $"&scope=user_profile,user_media&response_type=code";
-        Application.OpenURL(authUrl);
-    }
-
-    #endregion
-
-    #region LINE
-
-    /// <summary>
-    /// 開始Line登入
-    /// </summary>
-    public void StartLineLogin()
-    {
-        string state = GenerateRandomString();
-        string nonce = GenerateRandomString();
-        string authUrl = $"https://access.line.me/oauth2/v2.1/authorize?response_type=code&" +
-                         $"client_id={DataManager.LineChannelId}&" +
-                         $"redirect_uri={DataManager.RedirectUri}&" +
-                         $"state={state}&" +
-                         $"scope=profile%20openid%20email&nonce={nonce}";
-
-
-        JS_LocationHref(authUrl);
-    }
-    private string GenerateRandomString(int length = 16)
-    {
-        const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-        var random = new System.Random();
-        return new string(Enumerable.Repeat(chars, length).Select(s => s[random.Next(s.Length)]).ToArray());
-    }
-
-    #endregion
-
     #region 錢包連接
 
     /// <summary>
@@ -999,7 +910,7 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
             Application.platform != RuntimePlatform.IPhonePlayer)
         {
             //在預設瀏覽器內
-            JS_OpenNewBrowser(DataManager.LineMail, DataManager.IGIUserIdAndName);
+            JSBridgeManager.Instance.OpenNewBrowser(DataManager.LineMail, DataManager.IGIUserIdAndName);
             return;
         }
 

@@ -7,4 +7,5 @@ public enum AlbumEnum
     PasswordCheck,          //檢查密碼正確性圖集
     AvatarAlbum,            //頭像圖集
     ArrowAlbum,             //箭頭圖集
+    LinkAlbum,              //連接圖集
 }

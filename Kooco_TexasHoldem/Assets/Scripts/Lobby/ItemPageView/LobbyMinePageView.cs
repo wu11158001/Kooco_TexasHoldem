@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System;
 using UnityEngine.Events;
+using System.Linq;
 
 public class LobbyMinePageView : MonoBehaviour
 {
@@ -45,6 +46,15 @@ public class LobbyMinePageView : MonoBehaviour
     [SerializeField]
     Text VPIPpercent_Txt, PFRpercent_Txt, ATSpercent_Txt, ThreeBETpercent_Txt;
 
+    [Header("第三方連接")]
+    [SerializeField]
+    Button IGLink_Btn, LineLink_Btn;
+    [SerializeField]
+    Text IGLinked_Txt, LineLinked_Txt;
+    [SerializeField]
+    GameObject IGNotYetLinked_Obj, LineNotYetLinked_Obj;
+    [SerializeField]
+    Image IGLinked_Img, LineLinked_Img;
     const string expandContentName = "Content";                                 //展開內容物件名稱
     const string expandTopBgName = "TopBg";                                     //收起上方物件名稱
     const float expandTIme = 0.1f;                                              //內容展開時間
@@ -154,6 +164,22 @@ public class LobbyMinePageView : MonoBehaviour
         });
 
         #endregion
+
+        #region 第三方連接
+
+        //IG連接
+        IGLink_Btn.onClick.AddListener(() =>
+        {
+            StartInstagram();
+        });
+
+        //Line連接
+        LineLink_Btn.onClick.AddListener(() =>
+        {
+            StartLineLogin();
+        });
+
+        #endregion
     }
 
     private void OnEnable()
@@ -203,6 +229,26 @@ public class LobbyMinePageView : MonoBehaviour
 
         //錢包地址
         StringUtils.StrExceedSize(DataManager.UserWalletAddress, WalletAddress_Txt);
+
+        //IG連接
+        IGNotYetLinked_Obj.SetActive(string.IsNullOrEmpty(DataManager.IGIUserIdAndName));
+        IGLink_Btn.interactable = string.IsNullOrEmpty(DataManager.IGIUserIdAndName);                                  
+        IGLinked_Txt.text = string.IsNullOrEmpty(DataManager.IGIUserIdAndName) ?
+                            "LINK NOW" :
+                            "LINKED";
+        IGLinked_Img.sprite = string.IsNullOrEmpty(DataManager.LineMail) ?
+                        AssetsManager.Instance.GetAlbumAsset(AlbumEnum.LinkAlbum).album[0] :
+                        AssetsManager.Instance.GetAlbumAsset(AlbumEnum.LinkAlbum).album[1];
+
+        //Line連接
+        LineNotYetLinked_Obj.SetActive(string.IsNullOrEmpty(DataManager.LineMail));
+        LineLink_Btn.interactable = string.IsNullOrEmpty(DataManager.IGIUserIdAndName);
+        LineLinked_Txt.text = string.IsNullOrEmpty(DataManager.LineMail) ?
+                            "LINK NOW" :
+                            "LINKED";
+        LineLinked_Img.sprite = string.IsNullOrEmpty(DataManager.LineMail) ?
+                                AssetsManager.Instance.GetAlbumAsset(AlbumEnum.LinkAlbum).album[0] :
+                                AssetsManager.Instance.GetAlbumAsset(AlbumEnum.LinkAlbum).album[1];
     }
 
     /// <summary>
@@ -298,4 +344,42 @@ public class LobbyMinePageView : MonoBehaviour
 
         completeCallback?.Invoke();
     }
+
+    #region 第三方連接
+
+    /// <summary>
+    /// 開始Instagram登入
+    /// </summary>
+    public void StartInstagram()
+    {
+        string authUrl = $"https://api.instagram.com/oauth/authorize?client_id=" +
+                         $"{DataManager.InstagramChannelID}&redirect_uri={DataManager.InstagramRedirectUri}" +
+                         $"&scope=user_profile,user_media&response_type=code";
+        Application.OpenURL(authUrl);
+    }
+
+    /// <summary>
+    /// 開始Line登入
+    /// </summary>
+    public void StartLineLogin()
+    {
+        string state = GenerateRandomString();
+        string nonce = GenerateRandomString();
+        string authUrl = $"https://access.line.me/oauth2/v2.1/authorize?response_type=code&" +
+                         $"client_id={DataManager.LineChannelId}&" +
+                         $"redirect_uri={DataManager.RedirectUri}&" +
+                         $"state={state}&" +
+                         $"scope=profile%20openid%20email&nonce={nonce}";
+
+
+        JSBridgeManager.Instance.LocationHref(authUrl);
+    }
+    private string GenerateRandomString(int length = 16)
+    {
+        const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        var random = new System.Random();
+        return new string(Enumerable.Repeat(chars, length).Select(s => s[random.Next(s.Length)]).ToArray());
+    }
+
+    #endregion
 }
