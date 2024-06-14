@@ -113,7 +113,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 13.4, y: -16.3}
+  m_AnchoredPosition: {x: 13.4, y: -21.8}
   m_SizeDelta: {x: 84.0629, y: 12}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8538895072828949284
@@ -674,7 +674,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 13.4, y: -28.799982}
+  m_AnchoredPosition: {x: 13.4, y: -34.29998}
   m_SizeDelta: {x: 84.063, y: 12}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7924635767359500709
@@ -1069,7 +1069,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab1446eed2a9dd04998b7c8123f37634, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  NickName_Txt: {fileID: 2688635066396157148}
+  Nickname_Txt: {fileID: 2688635066396157148}
   Chips_Txt: {fileID: 4732806382283096268}
   Tip_Txt: {fileID: 1855951733034262010}
   PokerShape_Txt: {fileID: 6295262691599781372}

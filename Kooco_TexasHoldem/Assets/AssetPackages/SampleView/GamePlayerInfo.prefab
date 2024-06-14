@@ -1140,7 +1140,7 @@ GameObject:
   - component: {fileID: 2364293502384783614}
   - component: {fileID: 8286734240936552198}
   m_Layer: 5
-  m_Name: NickName_Txt
+  m_Name: Nickname_Txt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1690,7 +1690,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab1446eed2a9dd04998b7c8123f37634, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  NickName_Txt: {fileID: 8286734240936552198}
+  Nickname_Txt: {fileID: 8286734240936552198}
   Chips_Txt: {fileID: 1720896150242509590}
   Tip_Txt: {fileID: 5732587539032858144}
   PokerShape_Txt: {fileID: 77356872339181094}

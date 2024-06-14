@@ -15,7 +15,7 @@ public class LobbyView : MonoBehaviour
     [SerializeField]
     Button Avatar_Btn;
     [SerializeField]
-    Text Stamina_Txt, CryptoChips_Txt;
+    Text Nickname_Txt, Stamina_Txt, CryptoChips_Txt;
 
     [Header("用戶資源列表")]
     [SerializeField]
@@ -79,6 +79,12 @@ public class LobbyView : MonoBehaviour
     /// </summary>
     private void ListenerEvent()
     {
+        //頭像按鈕
+        Avatar_Btn.onClick.AddListener(() =>
+        {
+            OpenItemPage(ItemType.Mine);
+        });
+
         //顯示用戶資源列表
         ShowAssets_Btn.onClick.AddListener(() =>
         {
@@ -140,8 +146,16 @@ public class LobbyView : MonoBehaviour
         OpenItemPage(ItemType.Main);
 
 #if !UNITY_EDITOR
+
         WalletManager.Instance.StartCheckConnect();
+
 #endif
+    }
+
+    private void Start()
+    {
+        //設置暱稱
+        ViewManager.Instance.OpenPartsView(PartsViewEnum.SetNicknameView, transform);
     }
 
     private void Update()
@@ -219,8 +233,9 @@ public class LobbyView : MonoBehaviour
     /// <summary>
     /// 更新用戶訊息
     /// </summary>
-    private void UpdateUserInfo()
+    public void UpdateUserInfo()
     {
+        Nickname_Txt.text = DataManager.UserNickname;
         Avatar_Btn.image.sprite = AssetsManager.Instance.GetAlbumAsset(AlbumEnum.AvatarAlbum).album[DataManager.UserAvatar];
         Stamina_Txt.text = $"{DataManager.UserEnergy}/50";
         CryptoChips_Txt.text = string.IsNullOrEmpty(DataManager.UserWalletBalance) ? "0" : DataManager.UserWalletBalance;

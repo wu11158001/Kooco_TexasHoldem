@@ -10,6 +10,34 @@ using UnityEngine.UI;
 public static class StringUtils
 {
     /// <summary>
+    /// 文字內容超過Text元件添加...
+    /// </summary>
+    /// <param name="content">顯示內容</param>
+    /// <param name="textComponent">Text元件</param>
+    public static void StrExceedSize(string content, Text textComponent)
+    {
+        if (string.IsNullOrEmpty(content))
+        {
+            textComponent.text = "";
+            return;
+        }
+
+        string currStr = "";
+        for (int i = 0; i < content.Length; i++)
+        {
+            currStr += content[i];
+            textComponent.text = currStr;
+            if (textComponent.preferredWidth > textComponent.rectTransform.rect.width)
+            {
+                //文字長度超過了Text元件的寬度
+                string str = currStr.Substring(0, currStr.Length - 4) + "...";
+                textComponent.text = str;
+                break;
+            }
+        }
+    }
+
+    /// <summary>
     /// 複製文字
     /// </summary>
     /// <param name="str"></param>

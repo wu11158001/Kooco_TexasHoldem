@@ -1314,7 +1314,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &741554554073004267
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1355,7 +1355,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.5882353}
+  m_Color: {r: 0.7132075, g: 0.6930224, b: 0.6930224, a: 0.5882353}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -4068,6 +4068,7 @@ MonoBehaviour:
   MenuMask_Btn: {fileID: 5384433124382939452}
   BackGame_Btn: {fileID: 9121892890228547593}
   LogOut_Btn: {fileID: 2345417321227503460}
+  MenuNickname_Txt: {fileID: 1088145078849172916}
   MenuWalletAddr_Txt: {fileID: 782933292724906895}
   BuyChipsView: {fileID: 1796086515776700134}
   BattleResultView: {fileID: 4365519394436732982}
@@ -6521,7 +6522,7 @@ GameObject:
   - component: {fileID: 8483492421359171092}
   - component: {fileID: 1088145078849172916}
   m_Layer: 5
-  m_Name: MenuNickName_Txt
+  m_Name: MenuNickname_Txt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6543,7 +6544,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 47, y: 20}
+  m_AnchoredPosition: {x: 4, y: 20}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8483492421359171092
@@ -6975,7 +6976,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 47, y: -17}
+  m_AnchoredPosition: {x: 4, y: -17}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4318528958234397070
@@ -7792,7 +7793,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: 65122a63e5d56594fb894ca162adaa81, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1

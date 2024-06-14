@@ -11,7 +11,7 @@ public class GamePlayerInfo : MonoBehaviour
 {
     [Header("用戶訊息")]
     [SerializeField]
-    Text NickName_Txt, Chips_Txt, Tip_Txt, PokerShape_Txt, PotWinner_Txt, SideWinner_Txt, BlindCharacter_Txt;
+    Text Nickname_Txt, Chips_Txt, Tip_Txt, PokerShape_Txt, PotWinner_Txt, SideWinner_Txt, BlindCharacter_Txt;
     [SerializeField]
     GameObject ActionFrame_Obj, PotWinner_Obj, SideWinner_Obj;
     [SerializeField]
@@ -243,7 +243,7 @@ public class GamePlayerInfo : MonoBehaviour
         currRoomChips = initChips;
         UserId = userId;
         Avatar_Img.sprite = avatar;
-        NickName_Txt.text = nickName;
+        Nickname_Txt.text = nickName;
         Chips_Txt.text = $"{StringUtils.SetChipsUnit(initChips)}";
         this.potPoint = potPoint;
     }

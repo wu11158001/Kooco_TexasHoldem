@@ -36,7 +36,7 @@ public static class DataManager
     [Header("用戶訊息")]
     public static string UserWalletAddress { get; set; }            //用戶錢包地址
     public static string UserWalletBalance { get; set; }            //用戶錢包餘額
-    public static string UserNickName { get; set; }                 //用戶暱稱
+    public static string UserNickname { get; set; }                 //用戶暱稱
     public static int UserAvatar { get; set; }                      //用戶頭像
     public static int UserEnergy { get; set; }                      //用戶能量
     public static double UserCryptoChips { get; set; }              //用戶加密貨幣籌碼

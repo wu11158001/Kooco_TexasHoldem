@@ -61,7 +61,7 @@ public class GameView : MonoBehaviour
     [SerializeField]
     Button Menu_Btn, MenuMask_Btn, BackGame_Btn, LogOut_Btn;
     [SerializeField]
-    Text MenuWalletAddr_Txt;
+    Text MenuNickname_Txt, MenuWalletAddr_Txt;
 
     [Header("遊戲結果")]
     [SerializeField]
@@ -535,9 +535,8 @@ public class GameView : MonoBehaviour
         if (isShow == true)
         {
             MenuBg_Tr.anchoredPosition = new Vector2(-MenuBg_Tr.rect.width, 0);
-            MenuWalletAddr_Txt.text = string.IsNullOrEmpty(DataManager.UserWalletAddress) ?
-                                      "" :
-                                      DataManager.UserWalletAddress.ShortenAddress();
+            StringUtils.StrExceedSize(DataManager.UserWalletAddress, MenuWalletAddr_Txt);
+            MenuNickname_Txt.text = DataManager.UserNickname;
         }
 
         GameRoomManager.Instance.IsCanMoveSwitch = !isShow;
@@ -972,6 +971,8 @@ public class GameView : MonoBehaviour
             //本地玩家
             gamePlayerInfo = SeatGamePlayerInfoList[0];
             thisData.LocalGamePlayerInfo = gamePlayerInfo;
+
+            playerInfoPack.NickName = DataManager.UserNickname;
         }
 
         SeatButtonList[seatIndex].image.enabled = false;
