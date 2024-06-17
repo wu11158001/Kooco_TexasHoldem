@@ -4,6 +4,7 @@ using UnityEngine;
 using System.Threading.Tasks;
 using System;
 using UnityEngine.Events;
+using UnityEngine.UI;
 
 public static class ObjMoveUtils
 {

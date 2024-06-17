@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class VCTableBtn : MonoBehaviour
+public class CryptoTableBtnSample : MonoBehaviour
 {
     [SerializeField]
     Button Launch_Btn;
@@ -11,11 +11,11 @@ public class VCTableBtn : MonoBehaviour
     Text Blinds_Txt, MinBuy_Txt;
 
     /// <summary>
-    /// 設定虛擬貨幣桌按鈕訊息
+    /// 設定加密貨幣桌按鈕訊息
     /// </summary>
     /// <param name="smallBlind">小盲</param>
     /// <param name="lobbyView">大廳</param>
-    public void SetVCTableBtnInfo(double smallBlind, LobbyView lobbyView)
+    public void SetCryptoTableBtnInfo(double smallBlind, LobbyView lobbyView)
     {
         Blinds_Txt.text = $"{StringUtils.SetChipsUnit(smallBlind)} / {StringUtils.SetChipsUnit(smallBlind * 2)}";
         MinBuy_Txt.text = $"{StringUtils.SetChipsUnit(smallBlind * DataManager.MinMagnification)}";
@@ -26,12 +26,12 @@ public class VCTableBtn : MonoBehaviour
             if (GameRoomManager.Instance.JudgeIsCanBeCreateRoom())
             {
                 JoinRoomView joinRoomView = ViewManager.Instance.OpenPartsView(PartsViewEnum.JoinRoomView).GetComponent<JoinRoomView>();
-                joinRoomView.SetCreatRoomViewInfo(TableTypeEnum.VCTable, smallBlind);
+                joinRoomView.SetCreatRoomViewInfo(TableTypeEnum.CryptoTable, smallBlind);
             }
             else
             {
                 lobbyView.ShowMaxRoomTip();
-            }
+            }            
         });
     }
 }

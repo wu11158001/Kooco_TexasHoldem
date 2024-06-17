@@ -1393,10 +1393,6 @@ MonoBehaviour:
   SMSMobileNumber_Dd: {fileID: 1029597178986420522}
   SMSMobileNumberError_Txt: {fileID: 1561734168412824076}
   SMSCodeError_Txt: {fileID: 3030670793490252125}
-  Line_Btn: {fileID: 0}
-  IG_Btn: {fileID: 0}
-  LineMail_Txt: {fileID: 0}
-  IGIdAndName_Txt: {fileID: 0}
   MobileSignIn_Obj: {fileID: 2338227885061680249}
   MobileSiginPage_Obj: {fileID: 7090290602706842150}
   SignIn_Btn: {fileID: 2515489785118592204}
@@ -9144,7 +9140,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &8219718242652126899
 RectTransform:
   m_ObjectHideFlags: 0
@@ -15418,7 +15414,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &5409636272710858271
 RectTransform:
   m_ObjectHideFlags: 0
@@ -20114,7 +20110,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &5082438075781550055
 RectTransform:
   m_ObjectHideFlags: 0

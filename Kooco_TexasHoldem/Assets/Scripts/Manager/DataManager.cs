@@ -39,8 +39,10 @@ public static class DataManager
     public static string UserNickname { get; set; }                 //用戶暱稱
     public static int UserAvatar { get; set; }                      //用戶頭像
     public static int UserStamina { get; set; }                     //用戶耐力
+    public static int UserOTProps { get; set; }                     //用戶加時道具數量
     public static double UserCryptoChips { get; set; }              //用戶加密貨幣籌碼
     public static double UserVCChips { get; set; }                  //用戶虛擬貨幣籌碼
+    public static double UserGoldChips{ get; set; }                 //用戶Gold籌碼
 
     [Header("大廳")]
     public static int MaxStaminaValue = 50;                                     //最大耐力值

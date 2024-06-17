@@ -59,7 +59,7 @@ public class SetNicknameView : MonoBehaviour
     {
         if (SetNickname_If.text.Length <= 0)
         {
-            SetNickname_If.text = "User Name Entered Incorrectly, Please Try Again.";
+            Error_Txt.text = "User Name Entered Incorrectly, Please Try Again.";
         }
         else
         {

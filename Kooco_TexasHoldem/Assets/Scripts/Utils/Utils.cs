@@ -1,7 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.UI;
 using ZXing;
 using ZXing.QrCode;
 
@@ -30,5 +31,52 @@ public static class Utils
         qrCodeTexture.Apply();
 
         return qrCodeTexture;
+    }
+
+    /// <summary>
+    /// 設置Dropdown項目
+    /// </summary>
+    /// <param name="dropdown"></param>
+    /// <param name="options"></param>
+    public static void SetOptionsToDropdown(Dropdown dropdown, List<string> options)
+    {
+        //清空當前選項
+        dropdown.ClearOptions();
+
+        //添加新的選項
+        dropdown.AddOptions(options);
+    }
+
+    /// <summary>
+    /// 日期轉時間戳
+    /// </summary>
+    /// <param name="dateTime"></param>
+    /// <returns></returns>
+    public static long ConvertDateTimeToTimestamp(DateTime dateTime)
+    {
+        // 確保DateTime對象是基於UTC
+        DateTime utcDateTime = DateTime.SpecifyKind(dateTime, DateTimeKind.Utc);
+
+        // 使用DateTimeOffset將其轉換為Unix時間戳
+        long timestamp = new DateTimeOffset(utcDateTime).ToUnixTimeSeconds();
+
+        return timestamp;
+    }
+
+    /// <summary>
+    /// 時間戳轉日期
+    /// </summary>
+    /// <param name="timestamp"></param>
+    /// <returns></returns>
+    public static DateTime ConvertTimestampToDate(long timestamp)
+    {
+        // 使用DateTimeOffset將Unix時間戳轉換為DateTime
+        DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeSeconds(timestamp);
+        DateTime dateTime = dateTimeOffset.DateTime;
+
+        // 如果需要UTC時間，可以使用:
+        // DateTime dateTime = dateTimeOffset.UtcDateTime;
+
+        return dateTime;
     }
 }

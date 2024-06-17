@@ -8,6 +8,10 @@ using System.Linq;
 
 public class LobbyMinePageView : MonoBehaviour
 {
+    [Header("Mask")]
+    [SerializeField]
+    Mask Viewport;
+
     [Header("用戶訊息")]
     [SerializeField]
     GameObject UserPorfile_Obj;
@@ -58,6 +62,12 @@ public class LobbyMinePageView : MonoBehaviour
     const string expandContentName = "Content";                                 //展開內容物件名稱
     const string expandTopBgName = "TopBg";                                     //收起上方物件名稱
     const float expandTIme = 0.1f;                                              //內容展開時間
+
+    [Header("交易紀錄")]
+    [SerializeField]
+    Button TransactionHistory_Btn;
+    [SerializeField]
+    GameObject TransactionHistoryViewObj;
 
     List<Button> avatarBtnList;                                                 //頭像按鈕
     int tempAvatarIndex;                                                        //零時頭像index
@@ -141,7 +151,7 @@ public class LobbyMinePageView : MonoBehaviour
         //帳戶餘額刷新
         AccountBalanceReflash_Btn.onClick.AddListener(() =>
         {
-            UpdatetAccountBalance(20000, 40000, 3000, 5, 30);
+            UpdatetAccountBalance("2,000 ETH", 40000, 3000, 5, 30);
         });
 
         #endregion
@@ -180,6 +190,18 @@ public class LobbyMinePageView : MonoBehaviour
         });
 
         #endregion
+
+        #region 交易紀錄
+
+        //交易紀錄按鈕
+        TransactionHistory_Btn.onClick.AddListener(() =>
+        {
+            Transform lobbyView = GameObject.Find("LobbyView").transform;
+            RectTransform transactionHistoryView = Instantiate(TransactionHistoryViewObj, lobbyView).GetComponent<RectTransform>();
+            ViewManager.Instance.InitViewTr(transactionHistoryView, "TransactionHistoryView");
+        });
+
+        #endregion
     }
 
     private void OnEnable()
@@ -212,7 +234,15 @@ public class LobbyMinePageView : MonoBehaviour
         SelectAvatarIcon_Tr.SetParent(avatarBtnList[DataManager.UserAvatar].transform);
         SelectAvatarIcon_Tr.anchoredPosition = Vector2.zero;
 
-        UpdatetAccountBalance(10000, 20000, 1000, 25, 3);
+
+        Viewport.enabled = true;
+
+        UpdatetAccountBalance(string.IsNullOrEmpty(DataManager.UserWalletBalance) ? "0" : DataManager.UserWalletBalance,
+                              DataManager.UserVCChips,
+                              DataManager.UserGoldChips,
+                              DataManager.UserStamina,
+                              DataManager.UserOTProps);
+
         UpdateScoreRecord(50, 60, 70, 80);
     }
 
@@ -259,7 +289,7 @@ public class LobbyMinePageView : MonoBehaviour
     /// <param name="gold"></param>
     /// <param name="Stamina"></param>
     /// <param name="ot"></param>
-    private void UpdatetAccountBalance(double crypto, double vc, double gold, int Stamina, int ot)
+    private void UpdatetAccountBalance(string crypto, double vc, double gold, int Stamina, int ot)
     {
         DataManager.UserWalletBalance = crypto.ToString();
         DataManager.UserStamina = Stamina;
@@ -296,7 +326,7 @@ public class LobbyMinePageView : MonoBehaviour
     }
 
     /// <summary>
-    /// 內容展開縮放
+    /// 介面內容展開縮放
     /// </summary>
     /// <param name="isExpand">是否展開</param>
     /// <param name="rt">展開內容物件</param>
@@ -318,7 +348,7 @@ public class LobbyMinePageView : MonoBehaviour
                            pullbackHeight :
                            rt.rect.height;
 
-        contentObj.gameObject.SetActive(!isExpand);
+        contentObj.gameObject.SetActive(false);
         rt.sizeDelta = new Vector2(rt.rect.width, initHeight);
 
         DateTime startTime = DateTime.Now;
@@ -326,17 +356,12 @@ public class LobbyMinePageView : MonoBehaviour
         {
             float progress = (float)(DateTime.Now - startTime).TotalSeconds / expandTIme;
             float height = Mathf.Lerp(initHeight, targetHeight, progress);
-            rt.sizeDelta = new Vector2(rt.rect.width, height);
-
-            if (progress >= 0.5f)
-            {
-                //顯示內容
-                contentObj.gameObject.SetActive(isExpand);
-            }            
+            rt.sizeDelta = new Vector2(rt.rect.width, height);     
 
             yield return null;
         }
 
+        contentObj.gameObject.SetActive(isExpand);
         rt.sizeDelta = new Vector2(rt.rect.width, targetHeight);
         img.sprite = isExpand == true ?
                      AssetsManager.Instance.GetAlbumAsset(AlbumEnum.ArrowAlbum).album[0] :

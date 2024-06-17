@@ -43,6 +43,7 @@ public class Entry : UnitySingleton<Entry>
 
         DataManager.UserCryptoChips = 11000;
         DataManager.UserVCChips = 230200;
+        DataManager.UserStamina = 45;
 
         #endregion
 

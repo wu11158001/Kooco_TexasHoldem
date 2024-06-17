@@ -16,14 +16,15 @@ public class AssetsManager : UnitySingleton<AssetsManager>
     Dictionary<AlbumEnum, SpriteAlbum> albumAssetsDic = new Dictionary<AlbumEnum, SpriteAlbum>();       //圖集資源(物件名稱, 物件資源)
     readonly Dictionary<AlbumEnum, string> albumAssetsPath = new Dictionary<AlbumEnum, string>()        //圖集資源路徑
     {
-        {AlbumEnum.PokerNum, "SpriteAlbum/PokerNumAlbum"},                    //撲克牌數字圖集
-        {AlbumEnum.PokerBack, "SpriteAlbum/pokerBackAlbum"},                  //撲克牌背面圖集
-        {AlbumEnum.WalletLogo, "SpriteAlbum/WalletLogoAlbum"},                //錢包Logo圖集
-        {AlbumEnum.PasswordEye, "SpriteAlbum/PasswordEyeAlbum" },             //密碼顯示眼睛圖集
-        {AlbumEnum.PasswordCheck, "SpriteAlbum/CheckPasswordAlbum" },         //檢查密碼正確性圖集
-        {AlbumEnum.AvatarAlbum, "SpriteAlbum/AvatarAlbum" },                  //頭像圖集
-        {AlbumEnum.ArrowAlbum, "SpriteAlbum/ArrowAlbum" },                    //箭頭圖集
-        {AlbumEnum.LinkAlbum, "SpriteAlbum/LinkAlbum" },                      //連接圖集
+        {AlbumEnum.PokerNum, "SpriteAlbum/PokerNumAlbum"},                                              //撲克牌數字圖集
+        {AlbumEnum.PokerBack, "SpriteAlbum/pokerBackAlbum"},                                            //撲克牌背面圖集
+        {AlbumEnum.WalletLogo, "SpriteAlbum/WalletLogoAlbum"},                                          //錢包Logo圖集
+        {AlbumEnum.PasswordEye, "SpriteAlbum/PasswordEyeAlbum" },                                       //密碼顯示眼睛圖集
+        {AlbumEnum.PasswordCheck, "SpriteAlbum/CheckPasswordAlbum" },                                   //檢查密碼正確性圖集
+        {AlbumEnum.AvatarAlbum, "SpriteAlbum/AvatarAlbum" },                                            //頭像圖集
+        {AlbumEnum.ArrowAlbum, "SpriteAlbum/ArrowAlbum" },                                              //箭頭圖集
+        {AlbumEnum.LinkAlbum, "SpriteAlbum/LinkAlbum" },                                                //連接圖集
+        {AlbumEnum.TransactionStatusAlbum, "SpriteAlbum/TransactionStatusAlbum" },                      //交易狀態圖集
     };
 
     public override void Awake()

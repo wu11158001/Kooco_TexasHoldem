@@ -41,7 +41,7 @@ public class LobbyMainPageView : MonoBehaviour
             RectTransform rt = Instantiate(CryptoTableBtnSample).GetComponent<RectTransform>();
             rt.gameObject.SetActive(true);
             rt.SetParent(CryptoTableParent);
-            rt.GetComponent<CryptoTableBtn>().SetCryptoTableBtnInfo(smallBlind, lobbyView);
+            rt.GetComponent<CryptoTableBtnSample>().SetCryptoTableBtnInfo(smallBlind, lobbyView);
             rt.localScale = Vector3.one;
         }
         CryptoTableParent.anchoredPosition = Vector2.zero;
@@ -56,7 +56,7 @@ public class LobbyMainPageView : MonoBehaviour
             RectTransform rt = Instantiate(VCTableBtnSample).GetComponent<RectTransform>();
             rt.gameObject.SetActive(true);
             rt.SetParent(VCTableParent);
-            rt.GetComponent<VCTableBtn>().SetVCTableBtnInfo(smallBlind, lobbyView);
+            rt.GetComponent<VCTableBtnSample>().SetVCTableBtnInfo(smallBlind, lobbyView);
             rt.localScale = Vector3.one;
         }
         VCTableParent.anchoredPosition = Vector2.zero;

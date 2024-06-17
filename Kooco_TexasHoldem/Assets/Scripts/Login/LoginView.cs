@@ -194,7 +194,7 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
 
         //返回選擇錢包
         BackToSelectWallet_Btn.onClick.AddListener(() =>
-        {
+        {            
             StopCoroutine(connectionEffectCoroutine);
             OnSwlwctWalletInit();
         });
@@ -634,8 +634,10 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
     /// <summary>
     /// 選擇錢包畫面初始
     /// </summary>
-    private void OnSwlwctWalletInit()
+    async private void OnSwlwctWalletInit()
     {
+        await ThirdwebManager.Instance.SDK.Wallet.Disconnect(true);
+
         Wallet_Obj.SetActive(true);
         Mobile_Obj.SetActive(false);
         SelectWalletPage_Obj.SetActive(true);
@@ -649,8 +651,10 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
     /// <summary>
     /// 手機登入初始
     /// </summary>
-    private void OnMobileSignInInit()
+    async private void OnMobileSignInInit()
     {
+        await ThirdwebManager.Instance.SDK.Wallet.Disconnect(true);
+
         //手機登入
         SignInNumberError_Txt.text = "";
         MobileSignInError_Txt.text = "";
