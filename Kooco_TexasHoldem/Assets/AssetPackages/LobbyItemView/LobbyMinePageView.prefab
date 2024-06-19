@@ -7274,7 +7274,9 @@ MonoBehaviour:
   IGLinked_Img: {fileID: 4351448962306811374}
   LineLinked_Img: {fileID: 7734710633031918401}
   TransactionHistory_Btn: {fileID: 7112698518765981088}
-  TransactionHistoryViewObj: {fileID: 3537822008069001750, guid: 32233d08b897b234cbc58b3d13de7da6, type: 3}
+  TransactionHistoryViewObj: {fileID: 3537822008069001750, guid: 7846f6c4a33fa0948bc3115d1d669fa1, type: 3}
+  MyNFT_Btn: {fileID: 9141139043753423783}
+  MyNFTViewObj: {fileID: 3537822008069001750, guid: 32233d08b897b234cbc58b3d13de7da6, type: 3}
 --- !u!1 &6806961639976115128
 GameObject:
   m_ObjectHideFlags: 0

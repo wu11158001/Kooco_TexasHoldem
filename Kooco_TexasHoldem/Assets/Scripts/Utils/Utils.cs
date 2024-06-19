@@ -1,13 +1,46 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.Networking;
 using UnityEngine.UI;
+using UnityEngine.Events;
 using ZXing;
 using ZXing.QrCode;
 
 public static class Utils
 {
+    /// <summary>
+    /// 載入url圖片
+    /// </summary>
+    /// <param name="url"></param>
+    /// <param name="callback"></param>
+    /// <returns></returns>
+    public static IEnumerator ImageUrlToSprite(string url, UnityAction<Sprite> callback)
+    {
+        if (!string.IsNullOrEmpty(url))
+        {
+            Debug.Log($"Loading Texture:{url}");
+            Sprite sprite = null;
+            UnityWebRequest www = UnityWebRequestTexture.GetTexture(url);
+            yield return www.SendWebRequest();
+
+            if (www.result == UnityWebRequest.Result.Success)
+            {
+                // 載入成功，將下載的紋理轉換為Sprite
+                Texture2D texture = ((DownloadHandlerTexture)www.downloadHandler).texture;
+                sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), Vector2.zero);
+
+                callback?.Invoke(sprite);
+            }
+            else
+            {
+                Debug.LogError($"載入url圖片失敗:{www.error}");
+            }
+        }
+    }
+
     /// <summary>
     /// 產生QRCode
     /// </summary>

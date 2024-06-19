@@ -64,6 +64,7 @@ public class WalletManager : UnitySingleton<WalletManager>
 
         if (!isConnect && SceneManager.GetActiveScene().name != "Login")
         {
+            DataManager.UserWalletAddress = "";
             LoadSceneManager.Instance.LoadScene(SceneEnum.Login);
         }
     }

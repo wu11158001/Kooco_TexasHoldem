@@ -129,6 +129,7 @@ public class LoadSceneManager : UnitySingleton<LoadSceneManager>
         switch (sceneEnum)
         {
             case SceneEnum.Login:
+                NFTManager.Instance.CancelUpdate();
                 ViewManager.Instance.OpenView(ViewEnum.LoginView);
                 break;
 

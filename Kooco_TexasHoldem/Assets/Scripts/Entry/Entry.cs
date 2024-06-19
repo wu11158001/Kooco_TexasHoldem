@@ -69,6 +69,12 @@ public class Entry : UnitySingleton<Entry>
             DebugObj.SetActive(isShowDebug);
         }
 
+        if (Input.GetKeyDown(KeyCode.S))
+        {
+            DataManager.UserWalletAddress = "0xef279977cBC232C667082E06cfC252529513B738";
+            NFTManager.Instance.UpdateNFT();
+        }
+
         if (Input.GetKeyDown(KeyCode.Keypad7))
         {
             //LanguageManager.Instance.ChangeLanguage(0);

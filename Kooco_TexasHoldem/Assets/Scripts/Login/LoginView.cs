@@ -988,6 +988,9 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
         var balStr = $"{bal.value.ToEth()} {bal.symbol}";
         DataManager.UserWalletBalance = balStr;
 
+        var chain = await ThirdwebManager.Instance.SDK.Wallet.GetChainId();
+
+        Debug.Log($"Current Connect ChainID: {chain}");
         Debug.Log($"Address:{DataManager.UserWalletAddress}");
         Debug.Log($"Balance:{DataManager.UserWalletBalance}");
 
@@ -1016,7 +1019,7 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
     /// <summary>
     /// 簡訊OTP提交
     /// </summary>
-    private void SMSOTPSubmitAction()
+    async private void SMSOTPSubmitAction()
     {
         SMSMobileNumberError_Txt.text = "";
         SMSCodeError_Txt.text = "";
@@ -1036,7 +1039,9 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
             isCorrect = false;
         }
 
-        if (isCorrect)
+        bool isConnect = await ThirdwebManager.Instance.SDK.Wallet.IsConnected();
+
+        if (isCorrect && isConnect)
         {
             string code = SMSOTP_If.text;
             string phone = StringUtils.GetPhoneAddCode(SMSMobileNumber_Dd, SMSMobileNumber_If.text);
@@ -1044,6 +1049,8 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
 
             if (phone == "886-987654321" && code == "12345678")
             {
+                NFTManager.Instance.StartHandleUpdate();
+                WalletManager.Instance.StartCheckConnect();
                 LoadSceneManager.Instance.LoadScene(SceneEnum.Lobby);
             }
             else
