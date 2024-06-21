@@ -9,4 +9,5 @@ public enum AlbumEnum
     ArrowAlbum,                     //箭頭圖集
     LinkAlbum,                      //連接圖集
     TransactionStatusAlbum,         //交易狀態圖集
+    BillboardAlbum,                 //廣告刊版圖集
 }

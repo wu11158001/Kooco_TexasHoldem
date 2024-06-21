@@ -16,7 +16,7 @@ public class NFTSample : MonoBehaviour
     /// </summary>
     /// <param name="data"></param>
     /// <param name="index"></param>
-    async public void SetNFT(NFTData data, int index)
+    public void SetNFT(NFTData data, int index)
     {
         //時間
         DateTime dateTime = DateTime.ParseExact(data.updated_at, "yyyy-MM-ddTHH:mm:ss.ffffff", null);

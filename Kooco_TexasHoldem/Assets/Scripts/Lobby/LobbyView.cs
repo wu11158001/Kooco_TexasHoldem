@@ -41,15 +41,13 @@ public class LobbyView : MonoBehaviour
     [SerializeField]
     Button Mine_Btn, Shop_Btn, Main_Btn, Activity_Btn, Ranking_Btn;
     [SerializeField]
-    GameObject LobbyMainPageView, LobbyMinePageView;
-
+    GameObject LobbyMainPageView, LobbyMinePageView, LobbyRankingView;
 
     [Header("任務介面")]
     [SerializeField]
     RectTransform Floor4;
     [SerializeField]
-    GameObject QuestView;
-    
+    GameObject QuestView;    
 
     /// <summary>
     /// 項目按鈕類型
@@ -136,6 +134,12 @@ public class LobbyView : MonoBehaviour
         Mine_Btn.onClick.AddListener(() =>
         {
             OpenItemPage(ItemType.Mine);
+        });
+
+        //排名
+        Ranking_Btn.onClick.AddListener(() =>
+        {
+            OpenItemPage(ItemType.Ranking);
         });
 
         #endregion
@@ -229,6 +233,11 @@ public class LobbyView : MonoBehaviour
             //用戶訊息
             case ItemType.Mine:
                 itemObj = LobbyMinePageView;
+                break;
+
+            //排名
+            case ItemType.Ranking:
+                itemObj = LobbyRankingView;
                 break;
         }
 

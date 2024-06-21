@@ -6,11 +6,11 @@ using UnityEngine.UI;
 
 public class QuestView : MonoBehaviour
 {
-    [Header("Ãö³¬Floo4")]
+    [Header("é—œé–‰Floo4")]
     [SerializeField]
     Button CloseQuest;
 
-    [Header("¨C¤é¥ô°È")]
+    [Header("æ¯æ—¥ä»»å‹™")]
     [SerializeField]
     GameObject DailyQuestView;
     [SerializeField]
@@ -18,7 +18,7 @@ public class QuestView : MonoBehaviour
     [SerializeField]
     Button DailyBtn;
 
-    [Header("¨C©P¥ô°È")]
+    [Header("æ¯å‘¨ä»»å‹™")]
     [SerializeField]
     GameObject WeeklyQuestView;
     [SerializeField]

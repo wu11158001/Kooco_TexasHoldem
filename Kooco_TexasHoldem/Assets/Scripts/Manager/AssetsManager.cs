@@ -25,6 +25,7 @@ public class AssetsManager : UnitySingleton<AssetsManager>
         {AlbumEnum.ArrowAlbum, "SpriteAlbum/ArrowAlbum" },                                              //箭頭圖集
         {AlbumEnum.LinkAlbum, "SpriteAlbum/LinkAlbum" },                                                //連接圖集
         {AlbumEnum.TransactionStatusAlbum, "SpriteAlbum/TransactionStatusAlbum" },                      //交易狀態圖集
+        {AlbumEnum.BillboardAlbum, "SpriteAlbum/BillboardAlbum" },                                      //廣告刊版圖集
     };
 
     public override void Awake()

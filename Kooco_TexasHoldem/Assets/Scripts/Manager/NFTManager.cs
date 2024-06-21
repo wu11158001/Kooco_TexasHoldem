@@ -6,8 +6,6 @@ using Thirdweb;
 
 public class NFTManager : UnitySingleton<NFTManager>
 {
-    const string apiKey = "3ba7e50212234586a43a5d9ac50b7cd0";
-
     public List<NFTData> NFTDataList;
     public List<Sprite> NFTImageList;
 
@@ -82,7 +80,7 @@ public class NFTManager : UnitySingleton<NFTManager>
             using (UnityWebRequest request = UnityWebRequest.Get(apiUrl))
             {
                 request.SetRequestHeader("accept", "application/json");
-                request.SetRequestHeader("x-api-key", apiKey);
+                request.SetRequestHeader("x-api-key", DataManager.NFTApiKey);
 
                 yield return request.SendWebRequest();
 

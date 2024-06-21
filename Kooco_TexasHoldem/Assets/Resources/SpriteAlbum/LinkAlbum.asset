@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: LinkAlbum
   m_EditorClassIdentifier: 
   album:
-  - {fileID: 21300000, guid: 2835edfbaa1a84341974068ce97952c5, type: 3}
-  - {fileID: 21300000, guid: aa594d32530d2e84fbddfe4be182a215, type: 3}
+  - {fileID: 21300000, guid: b289e260ececeb64aaeffd91e8dd380e, type: 3}
+  - {fileID: 21300000, guid: 5c757a4e9126ea446a5e9dfe2889c8da, type: 3}

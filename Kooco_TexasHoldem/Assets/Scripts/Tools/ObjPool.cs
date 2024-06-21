@@ -9,12 +9,12 @@ public class ObjPool
     /// </summary>
     Dictionary<GameObject, (Transform, List<GameObject>)> poolDic;
 
-    Transform parent;       //掛載父物件
+    Transform mainParent;       //掛載父物件
     int cleanNum;           //達到數量清理未使用物件
 
     public ObjPool(Transform parent, int cleanNum = 10)
     {
-        this.parent = parent;
+        this.mainParent = parent;
         this.cleanNum = cleanNum;
         poolDic = new Dictionary<GameObject, (Transform, List<GameObject>)>();
     }
@@ -22,9 +22,10 @@ public class ObjPool
     /// <summary>
     /// 物件池創建物件
     /// </summary>
-    /// <param name="obj"></param>
+    /// <param name="obj">創建的物件</param>
+    /// <param name="parentObj">父物件</param>
     /// <returns></returns>
-    public GameObject CreateObj(GameObject obj)
+    public T CreateObj<T>(GameObject obj, Transform parentObj = null) where T :Component
     {
         if (poolDic.ContainsKey(obj))
         {
@@ -55,22 +56,32 @@ public class ObjPool
                         }
                     }
 
-                    return item;
+                    return item.GetComponent<T>();
                 }
             }
 
-            //增加新物件
             GameObject addObj = GameObject.Instantiate(obj, poolDic[obj].Item1);
+            addObj.SetActive(true);
             poolDic[obj].Item2.Add(addObj);
-            return addObj;
+            return addObj.GetComponent<T>();
         }
 
         //創建新物件池
-        GameObject parentObj = new GameObject();
-        parentObj.name = $"{obj.name}Pool";
-        parentObj.transform.SetParent(parent);
-        GameObject newObj = GameObject.Instantiate(obj, parentObj.transform);
-        poolDic.Add(obj, (parentObj.transform, new List<GameObject>() { newObj}));
-        return newObj;
+        GameObject parent = null;
+        if (parentObj == null)
+        {
+            parent = new GameObject();
+            parent.name = $"{obj.name}Pool";
+            parent.transform.SetParent(this.mainParent.transform);
+        }
+        else
+        {
+            parent = parentObj.gameObject;
+        }
+
+        GameObject newObj = GameObject.Instantiate(obj, parent.transform);
+        newObj.SetActive(true);
+        poolDic.Add(obj, (parent.transform, new List<GameObject>() { newObj}));
+        return newObj.GetComponent<T>();
     }
 }

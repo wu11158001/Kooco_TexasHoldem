@@ -5,8 +5,7 @@ AssetOrigin:
   productId: 202525
   packageName: 'UX Flat Icons [Free]'
   packageVersion: 2019.1.1
-  assetPath: Assets/_Heathen Engineering/Assets/UX/Icons/Flat Icons [Free]/Free Flat
-    Edit Icon.png
+  assetPath: Assets/AssetPackages/Sprite/Others/Free Flat Edit Icon.png
   uploadId: 451587
 TextureImporter:
   internalIDToNameTable: []
@@ -92,7 +91,7 @@ TextureImporter:
     buildTarget: Standalone
     maxTextureSize: 2048
     resizeAlgorithm: 0
-    textureFormat: -1
+    textureFormat: 12
     textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0

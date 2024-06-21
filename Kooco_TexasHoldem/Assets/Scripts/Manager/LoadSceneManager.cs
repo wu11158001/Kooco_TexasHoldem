@@ -134,6 +134,7 @@ public class LoadSceneManager : UnitySingleton<LoadSceneManager>
                 break;
 
             case SceneEnum.Lobby:
+                DataManager.ReciveRankData();
                 ViewManager.Instance.OpenView(ViewEnum.LobbyView);
                 break;
 

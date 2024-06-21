@@ -8,9 +8,77 @@ using UnityEngine.UI;
 using UnityEngine.Events;
 using ZXing;
 using ZXing.QrCode;
+using UnityEngine.EventSystems;
 
 public static class Utils
 {
+    // 觸碰的UI
+    private static GraphicRaycaster graphicRaycaster;
+    private static EventSystem eventSystem;
+    /// <summary>
+    /// 初始化GraphicRaycaster和EventSystem
+    /// </summary>
+    private static void Initialize()
+    {
+        if (graphicRaycaster == null)
+        {
+            GameObject canvas = GameObject.Find("Canvas");
+            if (canvas != null)
+            {
+                graphicRaycaster = canvas.GetComponent<GraphicRaycaster>();
+                if (graphicRaycaster == null)
+                {
+                    Debug.LogError("Canvas物件中未找到GraphicRaycaster");
+                }
+            }
+            else
+            {
+                Debug.LogError("未找到Canvas物件");
+            }
+        }
+
+        if (eventSystem == null)
+        {
+            eventSystem = EventSystem.current;
+            if (eventSystem == null)
+            {
+                Debug.LogError("未找到EventSystem");
+            }
+        }
+    }
+    /// <summary>
+    /// 獲取觸碰的UI物件
+    /// </summary>
+    /// <returns></returns>
+    public static GameObject GetTouchUIObj()
+    {
+        Initialize();
+
+        if (graphicRaycaster == null || eventSystem == null)
+        {
+            return null;
+        }
+
+        PointerEventData eventData = new PointerEventData(eventSystem)
+        {
+            pressPosition = Input.mousePosition,
+            position = Input.mousePosition
+        };
+
+        List<RaycastResult> results = new List<RaycastResult>();
+        graphicRaycaster.Raycast(eventData, results);
+
+        foreach (var result in results)
+        {
+            if (result.gameObject.layer == LayerMask.NameToLayer("UI"))
+            {
+                return result.gameObject;
+            }
+        }
+
+        return null;
+    }
+
     /// <summary>
     /// 載入url圖片
     /// </summary>

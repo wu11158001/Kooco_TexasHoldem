@@ -14,7 +14,7 @@ public class MyNFTView : MonoBehaviour
     [SerializeField]
     Transform HorixontalContent, VerticalContent;
     [SerializeField]
-    GameObject Horizontal_Sv, Vertical_Sv, NFTHorizontalSample, NFTVerticalSample;
+    GameObject Horizontal_Sv, Vertical_Sv, NFTHorizontalSample, NFTVerticalSample, NoNFT_Obj;
 
     /// <summary>
     /// 顯示方向
@@ -67,6 +67,7 @@ public class MyNFTView : MonoBehaviour
 
     private void Start()
     {
+        NoNFT_Obj.SetActive(false);
         NFTHorizontalSample.SetActive(false);
         NFTVerticalSample.SetActive(false);
 
@@ -103,6 +104,8 @@ public class MyNFTView : MonoBehaviour
         {
             Destroy(parent.GetChild(i).gameObject);
         }
+
+        NoNFT_Obj.SetActive(NFTManager.Instance.NFTDataList == null || NFTManager.Instance.NFTDataList.Count == 0);
 
         if (NFTManager.Instance.NFTDataList != null)
         {

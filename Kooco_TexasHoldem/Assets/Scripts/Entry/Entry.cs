@@ -4,9 +4,10 @@ using UnityEngine;
 using System;
 using Thirdweb;
 
-using RequestBuf;
 using UnityEngine.Networking;
 using UnityEngine.SocialPlatforms.Impl;
+
+using RequestBuf;
 
 public class Entry : UnitySingleton<Entry>
 {
@@ -52,6 +53,7 @@ public class Entry : UnitySingleton<Entry>
 
     private IEnumerator Start()
     {
+        //gameObject.AddComponent<UnitySignalRManager>();
         LanguageManager.Instance.LoadLangageJson();
 
         yield return AssetsManager.Instance.ILoadAssets();
@@ -69,7 +71,7 @@ public class Entry : UnitySingleton<Entry>
             DebugObj.SetActive(isShowDebug);
         }
 
-        if (Input.GetKeyDown(KeyCode.S))
+        if (Input.GetKeyDown(KeyCode.RightControl))
         {
             DataManager.UserWalletAddress = "0xef279977cBC232C667082E06cfC252529513B738";
             NFTManager.Instance.UpdateNFT();

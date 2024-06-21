@@ -882,6 +882,7 @@ PlayerSettings:
   scriptingDefineSymbols:
     Standalone: RH_SerializedDictionary
     WebGL: RH_SerializedDictionary
+    Windows Store Apps: RH_SerializedDictionary
   additionalCompilerArguments: {}
   platformArchitecture: {}
   scriptingBackend:
