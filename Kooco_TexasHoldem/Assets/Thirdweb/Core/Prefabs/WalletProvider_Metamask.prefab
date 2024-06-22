@@ -34,8 +34,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 229}
-  m_SizeDelta: {x: 70, y: 70}
+  m_AnchoredPosition: {x: 0, y: 400}
+  m_SizeDelta: {x: 200, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6895418472428859142
 CanvasRenderer:
@@ -110,7 +110,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 300, y: 300}
+  m_SizeDelta: {x: 500, y: 500}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6672582117653208259
 CanvasRenderer:
@@ -239,9 +239,9 @@ GameObject:
   - component: {fileID: 228276015862408994}
   - component: {fileID: 3873553887018070327}
   - component: {fileID: 2275499870215901365}
-  - component: {fileID: 399087149046820997}
   - component: {fileID: 4671479922431115845}
   - component: {fileID: 1828125881911289438}
+  - component: {fileID: 2341054509153392456}
   m_Layer: 0
   m_Name: WalletProvider_Metamask
   m_TagString: Untagged
@@ -307,24 +307,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 197bc6540b6a47328860a65dc2f1b894, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &399087149046820997
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3503421935870801903}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 523533b4558dd4b4094acf159d13a23d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  config: {fileID: 11400000, guid: 6cbb8289bcfbdba43817188b3b4f15e0, type: 2}
-  initializeOnAwake: 0
-  _transport: {fileID: 11400000, guid: 2794b8de755b55048bc6f0544321e072, type: 2}
-  _infuraProjectId: 
-  _rpcUrl: []
-  clearSessionData: 0
 --- !u!114 &4671479922431115845
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -351,6 +333,54 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 340bb01ce83382c49bd159bf86491fcd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &2341054509153392456
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3503421935870801903}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd09eefdc5da93b409d3619cb0cb34c4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dappName: thirdweb
+  dappUrl: https://thirdweb.com
+  dappIconUrl: https://thirdweb.com/favicon.ico
+  dappIcon: {fileID: 0}
+  spawnCanvas: 0
+  connectionCanvas: {fileID: 6439922646294248678, guid: 9e03dfd5b166cc246ae7bbe9c62d6baf, type: 3}
+  useLegacyUITransport: 0
+  uiTransport: {fileID: 11400000, guid: 2794b8de755b55048bc6f0544321e072, type: 2}
+  useConnectAndSign: 0
+  connectAndSignMessage: 
+  onConnectAndSignCompleted:
+    m_PersistentCalls:
+      m_Calls: []
+  useInfura: 0
+  infuraProjectId: 
+  rpcUrl: []
+  useDefaultChain: 0
+  defaultChain: -1
+  _otherDefaultChainData:
+    ChainId: 0x1
+    ChainName: Ethereum
+    BlockExplorerUrls: []
+    IconUrls: []
+    RpcUrls: []
+    NativeCurrency:
+      Decimals: 0
+      Name: 
+      Symbol: 
+  saveSessionState: 1
+  encrypt: 1
+  encryptionPassword: UnityUGUITransport/1.0.0
+  dontDestroyOnLoad: 0
+  debugLogging: 0
+  socketUrl: https://metamask-sdk.api.cx.metamask.io
+  userAgent: UnityUGUITransport/1.0.0
+  useUniversalLinks: 0
 --- !u!1 &3688373047027065788
 GameObject:
   m_ObjectHideFlags: 0
@@ -459,17 +489,15 @@ MonoBehaviour:
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0
-  m_TextWrappingMode: 1
+  m_enableWordWrapping: 1
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 1
-  m_ActiveFontFeatures: 6e72656b
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
   m_isRichText: 1
-  m_EmojiFallbackSupport: 1
   m_parseCtrlCharacters: 1
   m_isOrthographic: 1
   m_isCullingEnabled: 0
@@ -596,17 +624,15 @@ MonoBehaviour:
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0
-  m_TextWrappingMode: 1
+  m_enableWordWrapping: 1
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 1
-  m_ActiveFontFeatures: 00000000
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
   m_isRichText: 1
-  m_EmojiFallbackSupport: 1
   m_parseCtrlCharacters: 1
   m_isOrthographic: 1
   m_isCullingEnabled: 0
@@ -789,10 +815,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 2438333664808875362}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0}
-  m_AnchorMax: {x: 0.5, y: 1}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 540, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6979748163110199624
 CanvasRenderer:
@@ -914,7 +940,7 @@ MonoBehaviour:
   m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 540, y: 960}
+  m_ReferenceResolution: {x: 1920, y: 1080}
   m_ScreenMatchMode: 0
   m_MatchWidthOrHeight: 1
   m_PhysicalUnit: 3
@@ -1047,17 +1073,15 @@ MonoBehaviour:
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0
-  m_TextWrappingMode: 1
+  m_enableWordWrapping: 1
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 1
-  m_ActiveFontFeatures: 6e72656b
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
   m_isRichText: 1
-  m_EmojiFallbackSupport: 1
   m_parseCtrlCharacters: 1
   m_isOrthographic: 1
   m_isCullingEnabled: 0
@@ -1183,17 +1207,15 @@ MonoBehaviour:
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0
-  m_TextWrappingMode: 1
+  m_enableWordWrapping: 1
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 1
-  m_ActiveFontFeatures: 00000000
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
   m_isRichText: 1
-  m_EmojiFallbackSupport: 1
   m_parseCtrlCharacters: 1
   m_isOrthographic: 1
   m_isCullingEnabled: 0

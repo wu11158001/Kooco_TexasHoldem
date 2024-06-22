@@ -39,6 +39,7 @@ namespace Thirdweb.Wallets
         protected string _callbackUrl;
         protected string _customScheme;
         protected CancellationTokenSource _cancellationTokenSource;
+        protected string _clientId;
 
         #endregion
 
@@ -64,7 +65,7 @@ namespace Thirdweb.Wallets
 
         #region Connection Flow
 
-        public virtual async Task<User> Connect(EmbeddedWallet embeddedWallet, string email, string phoneNumber, AuthOptions authOptions)
+        public virtual async Task<User> Connect(EmbeddedWallet embeddedWallet, string email, string phoneNumber, AuthOptions authOptions, string clientId)
         {
             var config = Resources.Load<ThirdwebConfig>("ThirdwebConfig");
             _customScheme = config != null ? config.customScheme : null;
@@ -73,6 +74,7 @@ namespace Thirdweb.Wallets
             _embeddedWallet = embeddedWallet;
             _email = email;
             _phone = phoneNumber;
+            _clientId = clientId;
             _user = null;
             _exception = null;
             OTPInput.text = "";
@@ -366,7 +368,7 @@ namespace Thirdweb.Wallets
             string loginUrl = await _embeddedWallet.FetchHeadlessOauthLoginLinkAsync(authProvider);
             string platform = "unity";
             string redirectUrl = UnityWebRequest.EscapeURL(Application.isMobilePlatform ? _customScheme : "http://localhost:8789/");
-            string developerClientId = UnityWebRequest.EscapeURL(Utils.GetClientId());
+            string developerClientId = UnityWebRequest.EscapeURL(_clientId);
             return $"{loginUrl}?platform={platform}&redirectUrl={redirectUrl}&developerClientId={developerClientId}&authOption={authProvider}";
         }
 

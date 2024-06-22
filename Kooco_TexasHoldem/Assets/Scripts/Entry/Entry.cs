@@ -30,11 +30,6 @@ public class Entry : UnitySingleton<Entry>
     public string version;
     [Header("解析度")]
     public Vector2 resolution;
-    [Header("Debug工具")]
-    [SerializeField]
-    GameObject DebugObj;
-    [SerializeField]
-    bool isShowDebug;
 
     public override void Awake()
     {
@@ -47,8 +42,6 @@ public class Entry : UnitySingleton<Entry>
         DataManager.UserStamina = 45;
 
         #endregion
-
-        DebugObj.SetActive(isShowDebug);
     }
 
     private IEnumerator Start()
@@ -67,8 +60,7 @@ public class Entry : UnitySingleton<Entry>
         //Debug工具開關
         if (Input.GetKeyDown(KeyCode.F12))
         {
-            isShowDebug = !isShowDebug;
-            DebugObj.SetActive(isShowDebug);
+           
         }
 
         if (Input.GetKeyDown(KeyCode.RightControl))
