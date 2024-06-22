@@ -30,6 +30,9 @@ public class Entry : UnitySingleton<Entry>
     public string version;
     [Header("解析度")]
     public Vector2 resolution;
+    [Header("Debug工具")]
+    public bool isUsingDebug;
+    public GameObject ReporterObj;
 
     public override void Awake()
     {
@@ -46,7 +49,13 @@ public class Entry : UnitySingleton<Entry>
 
     private IEnumerator Start()
     {
-        //gameObject.AddComponent<UnitySignalRManager>();
+        if (isUsingDebug)
+        {
+            //Debug工具初始化
+            Reporter.I.Initialize();
+        }
+        ReporterObj.SetActive(false);
+
         LanguageManager.Instance.LoadLangageJson();
 
         yield return AssetsManager.Instance.ILoadAssets();
@@ -58,105 +67,17 @@ public class Entry : UnitySingleton<Entry>
     private void Update()
     {
         //Debug工具開關
-        if (Input.GetKeyDown(KeyCode.F12))
+        if (Input.GetKeyDown(KeyCode.F9))
         {
-           
+            ReporterObj.SetActive(!ReporterObj.activeSelf);
         }
 
+        //NFT測試
         if (Input.GetKeyDown(KeyCode.RightControl))
         {
             DataManager.UserWalletAddress = "0xef279977cBC232C667082E06cfC252529513B738";
             NFTManager.Instance.UpdateNFT();
-        }
-
-        if (Input.GetKeyDown(KeyCode.Keypad7))
-        {
-            //LanguageManager.Instance.ChangeLanguage(0);
-        }
-
-        if (Input.GetKeyDown(KeyCode.Keypad8))
-        {
-            //LanguageManager.Instance.ChangeLanguage(1);
-        }
-
-        if (CurrGameServer != null && CurrGameServer.gameObject.activeSelf)
-        {
-            if ((DateTime.Now - TestInfoData.foldTimd).TotalSeconds > 0.2f)
-            {
-                if (Input.GetKeyDown(KeyCode.F))
-                {
-                    TestInfoData.foldTimd = DateTime.Now;
-                    CurrGameServer.TextPlayerAction(RequestBuf.ActingEnum.Fold);
-                }
-
-                if (Input.GetKeyDown(KeyCode.R))
-                {
-                    TestInfoData.foldTimd = DateTime.Now;
-                    CurrGameServer.TextPlayerAction(RequestBuf.ActingEnum.Raise);
-                }
-
-                if (Input.GetKeyDown(KeyCode.C))
-                {
-                    TestInfoData.foldTimd = DateTime.Now;
-                    CurrGameServer.TextPlayerAction(RequestBuf.ActingEnum.Call);
-                }
-
-                if (Input.GetKeyDown(KeyCode.I))
-                {
-                    TestInfoData.foldTimd = DateTime.Now;
-                    CurrGameServer.TextPlayerAction(RequestBuf.ActingEnum.AllIn);
-                }
-
-                if (Input.GetKeyDown(KeyCode.A))
-                {
-                    TestInfoData.foldTimd = DateTime.Now;
-                    if (CurrGameServer.clientList.Count < CurrGameServer.maxRoomPeople)
-                    {
-                        MainPack pack = new MainPack();
-                        pack.ActionCode = ActionCode.Request_PlayerInOutRoom;
-
-                        PlayerInfoPack playerInfoPack = new PlayerInfoPack();
-                        playerInfoPack.UserID = $"00000{TestInfoData.newPlayerId}";
-                        playerInfoPack.NickName = $"Player{TestInfoData.newPlayerId}";
-                        playerInfoPack.Avatar = UnityEngine.Random.Range(0, 3);
-                        playerInfoPack.Chips = 6600;
-
-                        PlayerInOutRoomPack playerInOutRoomPack = new PlayerInOutRoomPack();
-                        playerInOutRoomPack.IsInRoom = true;
-                        playerInOutRoomPack.PlayerInfoPack = playerInfoPack;
-
-                        pack.PlayerInOutRoomPack = playerInOutRoomPack;
-                        CurrGameServer.Request_PlayerInOutRoom(pack);
-
-                        TestInfoData.newPlayerId++;
-                    }
-                }
-
-                if (Input.GetKeyDown(KeyCode.E))
-                {
-                    TestInfoData.foldTimd = DateTime.Now;
-                    CurrGameServer.TextPlayerAction(RequestBuf.ActingEnum.Fold, true);
-                }                
-
-                if (Input.GetKeyDown(KeyCode.Keypad1))
-                {
-                    CurrGameServer.TestShowFoldPoker(0, 0);
-                }
-                if (Input.GetKeyDown(KeyCode.Keypad2))
-                {
-                    CurrGameServer.TestShowFoldPoker(1, 0);
-                }
-                if (Input.GetKeyDown(KeyCode.Keypad4))
-                {
-                    CurrGameServer.TestShowFoldPoker(0, 1);
-                }
-                if (Input.GetKeyDown(KeyCode.Keypad5))
-                {
-                    CurrGameServer.TestShowFoldPoker(1, 1);
-                }
-            }
-        }
-        
+        }    
     }
 
     #region Instagram登入
