@@ -334,6 +334,14 @@ public class GamePlayerInfo : MonoBehaviour
     }
 
     /// <summary>
+    /// 每輪回合開始初始
+    /// </summary>
+    public void RountInit()
+    {
+        CurrBrtChips_Txt.text = "0";
+    }
+
+    /// <summary>
     /// 玩家下注
     /// </summary>
     /// <param name="betValue">下注值</param>

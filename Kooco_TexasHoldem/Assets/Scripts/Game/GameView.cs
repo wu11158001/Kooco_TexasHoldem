@@ -1228,6 +1228,17 @@ public class GameView : MonoBehaviour
     }
 
     /// <summary>
+    /// 每輪回合開始初始
+    /// </summary>
+    private void RountInit()
+    {
+        foreach (var player in gamePlayerInfoList)
+        {
+            player.RountInit();
+        }
+    }
+
+    /// <summary>
     /// 翻開公共牌
     /// </summary>
     /// <param name="currCommunityPoker"></param>
@@ -1516,18 +1527,21 @@ public class GameView : MonoBehaviour
                 break;
 
             //翻牌
-            case FlowEnum.Flop:
+            case FlowEnum.Flop:                
                 yield return IFlopCommunityPoker(pack.CommunityPokerPack.CurrCommunityPoker);
+                RountInit();
                 break;
 
             //轉牌
-            case FlowEnum.Turn:
+            case FlowEnum.Turn:                
                 yield return IFlopCommunityPoker(pack.CommunityPokerPack.CurrCommunityPoker);
+                RountInit();
                 break;
 
             //河牌
             case FlowEnum.River:
                 yield return IFlopCommunityPoker(pack.CommunityPokerPack.CurrCommunityPoker);
+                RountInit();
                 break;
 
             //主池結果

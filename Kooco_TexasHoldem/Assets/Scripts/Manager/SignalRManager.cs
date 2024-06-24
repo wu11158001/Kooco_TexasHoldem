@@ -8,6 +8,10 @@ using System.Threading.Tasks;
 // https://docs.microsoft.com/zh-cn/dotnet/api/microsoft.aspnetcore.signalr.client?view=aspnetcore-5.0
 public class SignalRManager : UnitySingleton<SignalRManager>
 {
+    HubConnection connection;
+
+    private bool isConnected => connection.State == HubConnectionState.Connected;
+
     public override void Awake()
     {
         base.Awake();
@@ -25,20 +29,21 @@ public class SignalRManager : UnitySingleton<SignalRManager>
             return TimeSpan.FromSeconds(secondDelay);
         }
     }
-    HubConnection connection;
+    
     void Start()
     {
         connection = new HubConnectionBuilder()
             .WithUrl("http://localhost:5000/TaskHub")
-            .WithAutomaticReconnect(new ConnectRetryPolicy(10)) // 10S重连
+            .WithAutomaticReconnect(new ConnectRetryPolicy(10)) //10S重连
             .Build();
-        // 增加连接关闭后的处理
+
+        //斷線重連處理
         connection.Closed += async (error) =>
         {
-            // 其实这里不用，因为上面的自动重连会处理
             await Task.Delay(TimeSpan.FromSeconds(5));
             await connection.StartAsync();
         };
+
         connection.Reconnecting += async (error) =>
         {
             Debug.Log("Reconnecting");
@@ -48,11 +53,13 @@ public class SignalRManager : UnitySingleton<SignalRManager>
         {
             Debug.Log("Reconnected");
         };
-        // 关联要处理的SignalR消息
+
+        //要處理的SignalR消息
         connection.On<int>("Add", (newTaskId) =>
         {
             Debug.Log("Add:" + newTaskId);
         });
+
         connection.On<string[]>("BatchDelete", (canceledTaskIds) =>
         {
             foreach (string id in canceledTaskIds)
@@ -60,11 +67,13 @@ public class SignalRManager : UnitySingleton<SignalRManager>
                 Debug.Log("BatchDelete:" + id);
             }
         });
+
         connection.On<int>("Edit", (changedTaskId) =>
         {
             Debug.Log("Edit:" + changedTaskId);
         });
-        // 开始连接
+
+        //開始連接
         try
         {
             connection.StartAsync();
@@ -75,11 +84,14 @@ public class SignalRManager : UnitySingleton<SignalRManager>
         }
     }
 
-    private bool isConnected => connection.State == HubConnectionState.Connected;
-
     private void Update()
     {
         Debug.Log(isConnected);
+    }
+
+    public void SendMassage()
+    {
+        //connection.InvokeAsync("FuncName", "value");
     }
 
     private void OnDisable()
