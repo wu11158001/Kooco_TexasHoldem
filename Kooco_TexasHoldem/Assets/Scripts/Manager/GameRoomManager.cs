@@ -327,6 +327,7 @@ public class GameRoomManager : UnitySingleton<GameRoomManager>
             thisData.SwitchBtnIndexList.Remove(thisData.RoomDic[roomName].Item2.BtnIndex);
             thisData.SwitchBtnList.Remove(thisData.RoomDic[roomName].Item2);
 
+            Debug.Log($"Room Destroy:{roomName}");
             Destroy(thisData.RoomDic[roomName].Item1.gameObject);
             Destroy(thisData.RoomDic[roomName].Item2.gameObject);
 

@@ -31,8 +31,11 @@ public class Entry : UnitySingleton<Entry>
     [Header("解析度")]
     public Vector2 resolution;
     [Header("Debug工具")]
-    public bool isUsingDebug;
-    public GameObject ReporterObj;
+    [SerializeField] 
+    bool isUsingDebug, isShowDebugInStart;
+    [SerializeField] 
+    GameObject ReporterObj;
+
 
     public override void Awake()
     {
@@ -54,7 +57,7 @@ public class Entry : UnitySingleton<Entry>
             //Debug工具初始化
             Reporter.I.Initialize();
         }
-        ReporterObj.SetActive(false);
+        ReporterObj.SetActive(isShowDebugInStart);
 
         LanguageManager.Instance.LoadLangageJson();
 

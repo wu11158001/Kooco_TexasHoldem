@@ -55,7 +55,7 @@ public class LoadSceneManager : UnitySingleton<LoadSceneManager>
             if (asyncLoad.progress >= 0.9f)
             {
                 asyncLoad.allowSceneActivation = true;
-                yield return null;
+                yield return new WaitForSeconds(0.1f);
 
                 DataManager.CurrScene = sceneEnum;
                 ViewManager.Instance.Init();
@@ -98,6 +98,7 @@ public class LoadSceneManager : UnitySingleton<LoadSceneManager>
             if (asyncLoad.progress >= 0.9f && Progress_Img.fillAmount >= 0.9f)
             {
                 asyncLoad.allowSceneActivation = true;
+
                 DataManager.CurrScene = sceneEnum;
 
                 startYieldTime = DateTime.Now;

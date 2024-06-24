@@ -45,6 +45,7 @@ public class ViewManager : UnitySingleton<ViewManager>
         view.localScale = Vector3.one;
         view.eulerAngles = Vector3.zero;
         view.name = viewName;
+        view.SetSiblingIndex(100);
     }
 
     /// <summary>

@@ -184,6 +184,7 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
             {
                 //錢包登入
                 OnSwlwctWalletInit();
+                OnWalletDisconnect();
             }
             else
             {
@@ -197,6 +198,7 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
         {            
             StopCoroutine(connectionEffectCoroutine);
             OnSwlwctWalletInit();
+            OnWalletDisconnect();
         });
 
         #endregion
@@ -434,16 +436,6 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
 
     private void Start()
     {
-        _currentChainData = ThirdwebManager.Instance.supportedChains.Find(x => x.identifier == ThirdwebManager.Instance.activeChain);
-
-        ///自動連接Coinbase
-        if (!DataManager.IsNotFirstInLogin && 
-            DataManager.IsInCoinbase)
-        {
-            Debug.Log("Aoto Connect Coinbase");
-            StartConnect("Coinbase", WalletEnum.Coinbase);
-        }
-
         SignUp_TmpTxt.text = $"Don't Have An Account? <color=#79E84B><link=Sign Up Here!><u>Sign Up Here!</u></link></color>";
         ForgotPassword_TmpTxt.text = $"<color=#79E84B><link=Forgot Password?><u>Forgot Password?</u></link></color>";
         SMSMobileNumberError_Txt.text = "";
@@ -451,10 +443,20 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
         Vrsion_Txt.text = Entry.Instance.version;
         Wallet_Tog.isOn = true;
         OnSwlwctWalletInit();
-        DataManager.IsNotFirstInLogin = true;
 
+        //獲取本地紀錄
         recodePhoneNumber = PlayerPrefs.GetString(LocalPhoneNumber);
         recodePassword = PlayerPrefs.GetString(LocalPaswword);
+
+        ///自動連接Coinbase
+        if (!DataManager.IsNotFirstInLogin &&
+            DataManager.IsInCoinbase)
+        {
+            Debug.Log("Aoto Connect Coinbase");
+            StartConnect("Coinbase", WalletEnum.Coinbase);
+        }
+
+        DataManager.IsNotFirstInLogin = true;
     }
 
     private void Update()
@@ -501,6 +503,32 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
         }
 
 #endif
+    }
+
+    /// <summary>
+    /// 選擇錢包畫面初始
+    /// </summary>
+    private void OnSwlwctWalletInit()
+    {
+        Wallet_Obj.SetActive(true);
+        Mobile_Obj.SetActive(false);
+        SelectWalletPage_Obj.SetActive(true);
+        ConnectingWallet_Obj.SetActive(false);
+        WalletLoadingPage_Obj.SetActive(false);
+        SMSVerificationPage_Obj.SetActive(false);
+    }
+
+    /// <summary>
+    /// 斷開錢包連接
+    /// </summary>
+    async private void OnWalletDisconnect()
+    {
+        bool isConnected = await ThirdwebManager.Instance.SDK.Wallet.IsConnected();
+        if (isConnected)
+        {
+            await ThirdwebManager.Instance.SDK.Wallet.Disconnect(true);
+            Debug.Log("Wallet Is Disconnected!");
+        }
     }
 
     /// <summary>
@@ -629,21 +657,6 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
         }
 
         return isTrue;
-    }
-
-    /// <summary>
-    /// 選擇錢包畫面初始
-    /// </summary>
-    async private void OnSwlwctWalletInit()
-    {
-        await ThirdwebManager.Instance.SDK.Wallet.Disconnect(true);
-
-        Wallet_Obj.SetActive(true);
-        Mobile_Obj.SetActive(false);
-        SelectWalletPage_Obj.SetActive(true);
-        ConnectingWallet_Obj.SetActive(false);
-        WalletLoadingPage_Obj.SetActive(false);
-        SMSVerificationPage_Obj.SetActive(false);
     }
 
     #region 手機登入
@@ -885,7 +898,7 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
     /// </summary>
     /// <param name="walletProviderStr">連接形式</param>
     /// <param name="walletEnum">連接的錢包</param>
-    public void StartConnect(string walletProviderStr, WalletEnum walletEnum)
+    private void StartConnect(string walletProviderStr, WalletEnum walletEnum)
     {
         #region 開啟連接畫面
 
@@ -918,6 +931,7 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
             return;
         }
 
+        _currentChainData = ThirdwebManager.Instance.supportedChains.Find(x => x.identifier == ThirdwebManager.Instance.activeChain);
         var wc = new WalletConnection(provider: Enum.Parse<WalletProvider>(walletProviderStr), chainId: BigInteger.Parse(_currentChainData.chainId));
         Connect(wc);
 
@@ -932,6 +946,7 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
     {
 #if UNITY_EDITOR
 
+        await Task.Delay(500);
         SMSVerification();
 
 #else
