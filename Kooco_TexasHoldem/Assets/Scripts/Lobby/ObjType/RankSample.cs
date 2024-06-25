@@ -19,7 +19,9 @@ public class RankSample : MonoBehaviour
     public void SetRankData(RankData rankData, int rank, string pointStr)
     {
         Avatar_Img.sprite = AssetsManager.Instance.GetAlbumAsset(AlbumEnum.AvatarAlbum).album[rankData.avatar];
-        Nickname_Txt.text = rankData.nickname;
+        Nickname_Txt.text = rankData.nickname == DataManager.UserNickname ?
+                            $"<color=#E6C94E>{rankData.nickname}</color>" :
+                            $"<color=#FFFFFF>{rankData.nickname}</color>";
         Point_Txt.text = $"{rankData.point.ToString()} {pointStr}";
         Award_Txt.text = rankData.award.ToString();
         Rank_Txt.text = rank.ToString();
