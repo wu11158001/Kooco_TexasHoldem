@@ -1079,7 +1079,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f9d01340c73fefd4892652924188eeae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  version: V1.0.2
+  version: V1.0.0
   resolution: {x: 390, y: 844}
   isUsingDebug: 1
   isShowDebugInStart: 0
@@ -1093,7 +1093,7 @@ Transform:
   m_GameObject: {fileID: 1282735213}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1209.5339, y: 1369.9845, z: 12.169328}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1796,7 +1796,7 @@ MonoBehaviour:
     rpcOverride: 
   clientId: 128c9c7044e8fef5217100fc18ccc7f5
   initializeOnAwake: 1
-  showDebugLogs: 1
+  showDebugLogs: 0
   bundleIdOverride: 
   thirdwebConfig: {fileID: 0}
   appName: 'Asia Poker '

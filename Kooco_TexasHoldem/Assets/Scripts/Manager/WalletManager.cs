@@ -44,7 +44,7 @@ public class WalletManager : UnitySingleton<WalletManager>
     /// </summary>
     public void StartCheckConnect()
     {
-        InvokeRepeating(nameof(CheckConnect), 7, 4);
+        InvokeRepeating(nameof(CheckConnect), 4, 4);
     }
 
     /// <summary>
@@ -62,10 +62,14 @@ public class WalletManager : UnitySingleton<WalletManager>
     {
         bool isConnect = await ThirdwebManager.Instance.SDK.Wallet.IsConnected();
 
-        if (!isConnect && SceneManager.GetActiveScene().name != "Login")
+        //已斷開連線
+        if (!isConnect)
         {
             DataManager.UserWalletAddress = "";
-            LoadSceneManager.Instance.LoadScene(SceneEnum.Login);
+            DataManager.UserWalletBalance = "";
+            CancelCheckConnect();
+            NFTManager.Instance.CancelUpdate();
+            LoadSceneManager.Instance.LoadScene(SceneEnum.Login);            
         }
     }
 }

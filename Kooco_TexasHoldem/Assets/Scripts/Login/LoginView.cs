@@ -436,6 +436,8 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
 
     private void Start()
     {
+        _currentChainData = ThirdwebManager.Instance.supportedChains.Find(x => x.identifier == ThirdwebManager.Instance.activeChain);
+
         SignUp_TmpTxt.text = $"Don't Have An Account? <color=#79E84B><link=Sign Up Here!><u>Sign Up Here!</u></link></color>";
         ForgotPassword_TmpTxt.text = $"<color=#79E84B><link=Forgot Password?><u>Forgot Password?</u></link></color>";
         SMSMobileNumberError_Txt.text = "";
@@ -527,6 +529,8 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
         if (isConnected)
         {
             await ThirdwebManager.Instance.SDK.Wallet.Disconnect(true);
+            NFTManager.Instance.CancelUpdate();
+            WalletManager.Instance.CancelCheckConnect();
             Debug.Log("Wallet Is Disconnected!");
         }
     }
@@ -930,8 +934,7 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
             JSBridgeManager.Instance.OpenNewBrowser(DataManager.LineMail, DataManager.IGIUserIdAndName);
             return;
         }
-
-        _currentChainData = ThirdwebManager.Instance.supportedChains.Find(x => x.identifier == ThirdwebManager.Instance.activeChain);
+        
         var wc = new WalletConnection(provider: Enum.Parse<WalletProvider>(walletProviderStr), chainId: BigInteger.Parse(_currentChainData.chainId));
         Connect(wc);
 
@@ -1009,6 +1012,9 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
         Debug.Log($"Address:{DataManager.UserWalletAddress}");
         Debug.Log($"Balance:{DataManager.UserWalletBalance}");
 
+        NFTManager.Instance.StartHandleUpdate();
+        WalletManager.Instance.StartCheckConnect();
+
         SMSVerification();
     }
 
@@ -1064,8 +1070,6 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
 
             if (phone == "886-987654321" && code == "12345678")
             {
-                NFTManager.Instance.StartHandleUpdate();
-                WalletManager.Instance.StartCheckConnect();
                 LoadSceneManager.Instance.LoadScene(SceneEnum.Lobby);
             }
             else

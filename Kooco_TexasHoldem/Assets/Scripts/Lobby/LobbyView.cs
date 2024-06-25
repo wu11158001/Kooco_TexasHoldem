@@ -166,7 +166,7 @@ public class LobbyView : MonoBehaviour
 
     private void Update()
     {
-        //等待計時器
+        //積分配對計時器
         if (battleData.isPairing)
         {
             TimeSpan waitingTime = DateTime.Now - battleData.startPairTime;

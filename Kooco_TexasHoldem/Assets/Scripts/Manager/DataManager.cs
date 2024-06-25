@@ -94,7 +94,7 @@ public static class DataManager
     public static List<RankData> PreSeasonGoldenRankList;                   //前季Golden排名
     public static DateTime RandEndDate;                                     //賽季結束日期
     public static int CurrRankSeason;                                       //當前賽季
-    public static RankData LocalUserRankData;                               //本地玩家排名資料
+    public static List<RankData> LocalUserRankData;                         //本地玩家排名資料
 
     /// <summary>
     /// 接收排名資料
@@ -108,7 +108,16 @@ public static class DataManager
         RandEndDate = DateTime.Now.AddMinutes(timeLest);
 
         //本地玩家排名
-        LocalUserRankData = new RankData() { rank = 1001, point = 5, award = 5};
+        LocalUserRankData = new List<RankData>()
+        {
+            new RankData() { rank = 1001, point = 5, award = 5},        //當季積分
+            new RankData() { rank = 5, point = 800, award = 60},        //當季Cash
+            new RankData() { rank = 1, point = 2000, award = 100},      //當季Golend
+
+            new RankData() { rank = 6, point = 750, award = 60},        //前季積分
+            new RankData() { rank = 3, point = 900, award = 80},        //前季Cash
+            new RankData() { rank = 88, point = 5, award = 5},          //前季Golend
+        };
 
         //當季積分排名
         CurrSeasonIntegralRankList = new List<RankData>()
@@ -125,6 +134,7 @@ public static class DataManager
             new RankData() { avatar = 5, nickname = "JJ", point = 550, award = 60 },
             new RankData() { avatar = 4, nickname = "KK", point = 450, award = 40 },
         };
+        //前季積分排名
         PreSeasonIntegralRankList = new List<RankData>()
         {
             new RankData() { avatar = 0, nickname = "OO", point = 1230, award = 100 },
@@ -132,7 +142,7 @@ public static class DataManager
             new RankData() { avatar = 2, nickname = "PP", point = 900, award = 80 },
             new RankData() { avatar = 3, nickname = "DD", point = 850, award = 70 },
             new RankData() { avatar = 4, nickname = "YY", point = 800, award = 60 },
-            new RankData() { avatar = 5, nickname = "FF", point = 750, award = 60 },
+            new RankData() { avatar = UserAvatar, nickname = UserNickname, point = 750, award = 60 },
             new RankData() { avatar = 6, nickname = "LL", point = 700, award = 60 },
             new RankData() { avatar = 7, nickname = "HH", point = 650, award = 60 },
             new RankData() { avatar = 6, nickname = "II", point = 600, award = 60 },
@@ -147,7 +157,7 @@ public static class DataManager
             new RankData() { avatar = 1, nickname = "BB", point = 1000, award = 90 },
             new RankData() { avatar = 2, nickname = "AA", point = 900, award = 80 },
             new RankData() { avatar = 3, nickname = "DD", point = 880, award = 70 },
-            new RankData() { avatar = 4, nickname = "EE", point = 800, award = 60 },
+            new RankData() { avatar = UserAvatar, nickname = UserNickname, point = 800, award = 60 },
             new RankData() { avatar = 5, nickname = "FF", point = 780, award = 60 },
             new RankData() { avatar = 6, nickname = "UU", point = 710, award = 60 },
             new RankData() { avatar = 7, nickname = "HH", point = 650, award = 60 },
@@ -160,7 +170,7 @@ public static class DataManager
         {
             new RankData() { avatar = 0, nickname = "AA", point = 1005, award = 100 },
             new RankData() { avatar = 1, nickname = "BB", point = 1000, award = 90 },
-            new RankData() { avatar = 2, nickname = "AA", point = 900, award = 80 },
+            new RankData() { avatar = UserAvatar, nickname = UserNickname, point = 900, award = 80 },
             new RankData() { avatar = 3, nickname = "TT", point = 880, award = 70 },
             new RankData() { avatar = 4, nickname = "EE", point = 800, award = 60 },
             new RankData() { avatar = 5, nickname = "FF", point = 780, award = 60 },
@@ -174,7 +184,7 @@ public static class DataManager
         //當季Golden排名
         CurrSeasonGoldenRankList = new List<RankData>()
         {
-            new RankData() { avatar = 0, nickname = "XX", point = 2000, award = 100 },
+            new RankData() { avatar = UserAvatar, nickname = UserNickname, point = 2000, award = 100 },
             new RankData() { avatar = 1, nickname = "AA", point = 1500, award = 90 },
             new RankData() { avatar = 2, nickname = "BB", point = 900, award = 80 },
             new RankData() { avatar = 3, nickname = "DD", point = 870, award = 70 },

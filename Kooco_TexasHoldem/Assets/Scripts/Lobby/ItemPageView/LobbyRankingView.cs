@@ -173,16 +173,6 @@ public class LobbyRankingView : MonoBehaviour
         currSeasonType = SeasonType.Current;
         currRankType = RankType.Integral;
 
-        #region 本地玩家排名資料
-
-        LocalUserRank_Txt.text = DataManager.LocalUserRankData.rank > 999 ?
-                                 $"My Rank   #999+" :
-                                 $"My Rank   #{DataManager.LocalUserRankData.rank}";
-        LocalUserPoint_Txt.text = $"{DataManager.LocalUserRankData.point} Points";
-        LocalUserAward_Txt.text = $"{DataManager.LocalUserRankData.award}";
-
-        #endregion
-
         SetRank();
     }
 
@@ -203,27 +193,39 @@ public class LobbyRankingView : MonoBehaviour
     {
         List<RankData> rankDatas = null;
         string pointStr = "";
+
+        RankData localUserData = new RankData();
+
         switch (currRankType)
         {
             case RankType.Integral:
                 pointStr = "Points";
                 rankDatas = currSeasonType == SeasonType.Current ?
-                       DataManager.CurrSeasonIntegralRankList :
-                       DataManager.PreSeasonIntegralRankList;
+                            DataManager.CurrSeasonIntegralRankList :
+                            DataManager.PreSeasonIntegralRankList;
+                localUserData = currSeasonType == SeasonType.Current ?
+                                DataManager.LocalUserRankData[0] :
+                                DataManager.LocalUserRankData[3];
                 break;
 
             case RankType.Cash:
                 pointStr = "Cash";
                 rankDatas = currSeasonType == SeasonType.Current ?
-                       DataManager.CurrSeasonCashRankList :
-                       DataManager.PreSeasonCashRankList;
+                            DataManager.CurrSeasonCashRankList :
+                            DataManager.PreSeasonCashRankList;
+                localUserData = currSeasonType == SeasonType.Current ?
+                                DataManager.LocalUserRankData[1] :
+                                DataManager.LocalUserRankData[4];
                 break;
 
             case RankType.Golden:
                 pointStr = "Golden";
                 rankDatas = currSeasonType == SeasonType.Current ?
-                       DataManager.CurrSeasonGoldenRankList :
-                       DataManager.PreSeasonGoldenRankList;
+                            DataManager.CurrSeasonGoldenRankList :
+                            DataManager.PreSeasonGoldenRankList;
+                localUserData = currSeasonType == SeasonType.Current ?
+                                DataManager.LocalUserRankData[2] :
+                                DataManager.LocalUserRankData[5];
                 break;
         }
 
@@ -244,10 +246,21 @@ public class LobbyRankingView : MonoBehaviour
             TopThreeData[i].SetRankData(rankDatas[i], i + 1, pointStr);
         }
 
+        //排名4名以後設置
         for (int i = TopThreeData.Length; i < rankDatas.Count; i++)
         {
             RankSample ranlSample = objPool.CreateObj<RankSample>(RankSampleObj, RankContent);
             ranlSample.SetRankData(rankDatas[i], i + 1, pointStr);
         }
+
+        #region 本地玩家排名資料
+
+        LocalUserRank_Txt.text = localUserData.rank > 999 ?
+                                 $"My Rank   #999+" :
+                                 $"My Rank   #{localUserData.rank}";
+        LocalUserPoint_Txt.text = $"{localUserData.point} Points";
+        LocalUserAward_Txt.text = $"{localUserData.award}";
+
+        #endregion
     }
 }
