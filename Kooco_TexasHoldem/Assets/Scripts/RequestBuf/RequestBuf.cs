@@ -53,6 +53,7 @@ namespace RequestBuf
         Request_InsufficientChips,              //籌碼不足
         Request_BuyChips,                       //購買籌碼
         BroadCastRequest_BattleResult,          //積分結果
+        BroadCastRequest_Chat,                  //聊天
     }
 
     public class MainPack
@@ -77,6 +78,18 @@ namespace RequestBuf
         public InsufficientChipsPack InsufficientChipsPack;
         public BuyChipsPack BuyChipsPack;
         public BattleResultPack BattleResultPack;
+        public ChatPack ChatPack;
+    }
+
+    /// <summary>
+    /// 聊天訊息包
+    /// </summary>
+    public class ChatPack
+    {
+        public string Id;               //發送者ID
+        public string Nickname;         //發送者暱稱
+        public int Avatar;              //發送者頭像
+        public string Content;          //條天內容
     }
 
     /// <summary>

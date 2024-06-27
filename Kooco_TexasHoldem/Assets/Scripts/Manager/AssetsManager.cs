@@ -23,6 +23,7 @@ public class AssetsManager : UnitySingleton<AssetsManager>
         {AlbumEnum.PasswordCheck, "SpriteAlbum/CheckPasswordAlbum" },                                   //檢查密碼正確性圖集
         {AlbumEnum.AvatarAlbum, "SpriteAlbum/AvatarAlbum" },                                            //頭像圖集
         {AlbumEnum.ArrowAlbum, "SpriteAlbum/ArrowAlbum" },                                              //箭頭圖集
+        {AlbumEnum.BonusRocketAlbum,"SpriteAlbum/BonusRocketAlbum" },                                   //Bonus火箭圖集
         {AlbumEnum.LinkAlbum, "SpriteAlbum/LinkAlbum" },                                                //連接圖集
         {AlbumEnum.TransactionStatusAlbum, "SpriteAlbum/TransactionStatusAlbum" },                      //交易狀態圖集
         {AlbumEnum.BillboardAlbum, "SpriteAlbum/BillboardAlbum" },                                      //廣告刊版圖集

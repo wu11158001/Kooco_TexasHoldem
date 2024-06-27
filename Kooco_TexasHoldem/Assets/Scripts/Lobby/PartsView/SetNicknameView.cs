@@ -27,8 +27,9 @@ public class SetNicknameView : MonoBehaviour
         //關閉
         Close_Btn.onClick.AddListener(() =>
         {
-            DataManager.UserNickname = "User Nickname";
+            DataManager.UserNickname = "User3ab457";
             GameObject.FindAnyObjectByType<LobbyView>().UpdateUserInfo();
+            DataManager.ReciveRankData();
             Destroy(gameObject);
         });
 

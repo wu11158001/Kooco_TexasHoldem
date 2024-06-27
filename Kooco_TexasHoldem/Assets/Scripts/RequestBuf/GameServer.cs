@@ -343,6 +343,47 @@ public class GameServer : MonoBehaviour
     }
 
     /// <summary>
+    /// 聊天測試
+    /// </summary>
+    public void TextChat()
+    {
+        MainPack pack = new MainPack();
+        pack.ActionCode = ActionCode.BroadCastRequest_Chat;
+
+        int clientIndex = UnityEngine.Random.Range(0, clientList.Count);
+        while (clientList[clientIndex].UserId == DataManager.UserId)
+        {
+            clientIndex = UnityEngine.Random.Range(0, clientList.Count);
+        }
+
+
+        string[] contents = new string[]
+        {
+            "Hurry up, hurry up.",
+            "The weather is sunny today, suitable for All In, don’t hesitate!!! Hurry up!",
+            "I have a pair of AA, fold it everyone~",
+        };
+
+        ChatPack chatPack = new ChatPack();
+        chatPack.Id = clientList[clientIndex].UserId;
+        chatPack.Nickname = clientList[clientIndex].NickName;
+        chatPack.Avatar = clientList[clientIndex].Avatar;
+        chatPack.Content = contents[UnityEngine.Random.Range(0, contents.Length)];
+
+        pack.ChatPack = chatPack;
+        targetBaseRequest.HandleRoomBroadcast(pack);
+    }
+
+    /// <summary>
+    /// 請求_聊天
+    /// </summary>
+    /// <param name="pack"></param>
+    public void BroadCastRequest_Chat(MainPack pack)
+    {
+        SendRoomBroadCast(pack, true);
+    }
+
+    /// <summary>
     /// 請求_玩家進出房間
     /// </summary>
     /// <param name="pack"></param>
@@ -504,7 +545,8 @@ public class GameServer : MonoBehaviour
                 }
                 else
                 {
-                    MainPack exitPack = new MainPack();
+                    client.RoomChips = 7000;
+                    /*MainPack exitPack = new MainPack();
                     exitPack.ActionCode = ActionCode.Request_PlayerInOutRoom;
 
                     PlayerInfoPack playerInfoPack = new PlayerInfoPack();
@@ -515,7 +557,7 @@ public class GameServer : MonoBehaviour
                     playerInOutRoomPack.PlayerInfoPack = playerInfoPack;
 
                     exitPack.PlayerInOutRoomPack = playerInOutRoomPack;
-                    Request_PlayerInOutRoom(exitPack);
+                    Request_PlayerInOutRoom(exitPack);*/
                 }
             }
 

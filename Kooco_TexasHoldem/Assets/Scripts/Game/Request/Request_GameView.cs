@@ -79,6 +79,11 @@ public class Request_GameView : BaseRequest
 
         switch (pack.ActionCode)
         {
+            //聊天
+            case ActionCode.BroadCastRequest_Chat:
+                thisView.ReciveChat(pack);
+                break;
+
             //玩家進出房間
             case ActionCode.Request_PlayerInOutRoom:
                 if (pack.PlayerInOutRoomPack.IsInRoom)
@@ -131,6 +136,25 @@ public class Request_GameView : BaseRequest
                 thisView.SetBattleResult(pack.BattleResultPack.FailPlayerId != Entry.TestInfoData.LocalUserId);
                 break;
         }
+    }
+
+    /// <summary>
+    /// 發送聊天訊息
+    /// </summary>
+    /// <param name="chatContent"></param>
+    public void SendRequestRequest_Chat(string chatContent)
+    {
+        MainPack pack = new MainPack();
+        pack.ActionCode = ActionCode.BroadCastRequest_Chat;
+
+        ChatPack chatPack = new ChatPack();
+        chatPack.Id = DataManager.UserId;
+        chatPack.Nickname = DataManager.UserNickname;
+        chatPack.Avatar = DataManager.UserAvatar;
+        chatPack.Content = chatContent;
+
+        pack.ChatPack = chatPack;
+        SendRequest(pack);
     }
 
     /// <summary>

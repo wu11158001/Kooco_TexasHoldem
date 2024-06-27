@@ -1920,7 +1920,9 @@ public class Reporter : MonoBehaviour
 #endif
 
         calculateStartIndex();
-        if (!show /*&& isGestureDone()*/)
+
+        //Entry is customize
+        if (!show && isGestureDone() && Entry.Instance.isUsingDebug)
         {
             doShow();
         }

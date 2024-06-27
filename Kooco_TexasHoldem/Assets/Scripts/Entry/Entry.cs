@@ -26,8 +26,7 @@ public class Entry : UnitySingleton<Entry>
     [Header("解析度")]
     public Vector2 resolution;
     [Header("Debug工具")]
-    [SerializeField] 
-    bool isUsingDebug, isShowDebugInStart;
+    public bool isUsingDebug;
     [SerializeField] 
     GameObject ReporterObj;
 
@@ -41,6 +40,7 @@ public class Entry : UnitySingleton<Entry>
         DataManager.UserCryptoChips = 11000;
         DataManager.UserVCChips = 230200;
         DataManager.UserStamina = 45;
+        DataManager.UserId = "LocalUser";
 
         #endregion
     }
@@ -51,8 +51,8 @@ public class Entry : UnitySingleton<Entry>
         {
             //Debug工具初始化
             Reporter.I.Initialize();
+            Reporter.I.show = false;
         }
-        ReporterObj.SetActive(isShowDebugInStart);
 
         LanguageManager.Instance.LoadLangageJson();
 
@@ -64,12 +64,6 @@ public class Entry : UnitySingleton<Entry>
 
     private void Update()
     {
-        //Debug工具開關
-        if (Input.GetKeyDown(KeyCode.F9))
-        {
-            ReporterObj.SetActive(!ReporterObj.activeSelf);
-        }
-
         //NFT測試
         if (Input.GetKeyDown(KeyCode.RightControl))
         {

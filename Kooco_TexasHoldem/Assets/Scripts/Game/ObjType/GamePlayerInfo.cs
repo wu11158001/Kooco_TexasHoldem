@@ -11,7 +11,7 @@ public class GamePlayerInfo : MonoBehaviour
 {
     [Header("用戶訊息")]
     [SerializeField]
-    Text Nickname_Txt, Chips_Txt, Tip_Txt, PokerShape_Txt, PotWinner_Txt, SideWinner_Txt, BlindCharacter_Txt;
+    Text Nickname_Txt, Chips_Txt, BackChips_Txt, PokerShape_Txt, PotWinner_Txt, SideWinner_Txt, BlindCharacter_Txt;
     [SerializeField]
     GameObject ActionFrame_Obj, PotWinner_Obj, SideWinner_Obj;
     [SerializeField]
@@ -37,17 +37,23 @@ public class GamePlayerInfo : MonoBehaviour
     [SerializeField]
     Text Action_Txt;
 
+    [Header("條天訊息")]
+    [SerializeField]
+    GameObject Chat_Obj;
+    [SerializeField]
+    Text Chat_Txt;
+
     [Header("動畫")]
     [SerializeField]
     Animator PokerShape_Ani;
 
     readonly int isWinHash = Animator.StringToHash("IsWin");
 
-    Coroutine cdCoroutine;      //倒數協程
+    Coroutine cdCoroutine;              //倒數協程
+    Coroutine chatCoroutine;            //聊天協程
 
-    double currRoomChips;       //當前擁有籌碼
-    RectTransform potPoint;     //底池位置
-    int pokerShapeIndex;        //牌型編號
+    double currRoomChips;               //當前擁有籌碼
+    int pokerShapeIndex;                //牌型編號
 
     /// <summary>
     /// 座位編號
@@ -78,6 +84,7 @@ public class GamePlayerInfo : MonoBehaviour
     {
         LanguageManager.Instance.AddUpdateLanguageFunc(UpdateLanguage);
         Chips_Txt.text = "0";
+        Chat_Obj.SetActive(false);
     }
 
     private void OnEnable()
@@ -131,7 +138,7 @@ public class GamePlayerInfo : MonoBehaviour
     {
         set
         {
-            Tip_Txt.text = value;
+            BackChips_Txt.text = value;
         }
     }
 
@@ -245,7 +252,32 @@ public class GamePlayerInfo : MonoBehaviour
         Avatar_Img.sprite = avatar;
         Nickname_Txt.text = $"@{nickName}";
         Chips_Txt.text = $"{StringUtils.SetChipsUnit(initChips)}";
-        this.potPoint = potPoint;
+    }
+
+    /// <summary>
+    /// 顯示聊天訊息
+    /// </summary>
+    /// <param name="chatContent"></param>
+    public void ShowChatInfo(string chatContent)
+    {
+        Chat_Obj.SetActive(true);
+        StringUtils.StrExceedSize(chatContent, Chat_Txt);
+
+        if (chatCoroutine != null)
+        {
+            StopCoroutine(chatCoroutine);
+        }
+        chatCoroutine = StartCoroutine(IYieldCloseChatInfo());
+    }
+
+    /// <summary>
+    /// 關閉聊訊息
+    /// </summary>
+    /// <returns></returns>
+    private IEnumerator IYieldCloseChatInfo()
+    {
+        yield return new WaitForSeconds(3);
+        Chat_Obj.SetActive(false);
     }
 
     /// <summary>

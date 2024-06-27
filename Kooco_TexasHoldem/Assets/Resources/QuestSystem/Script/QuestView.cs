@@ -26,16 +26,25 @@ public class QuestView : MonoBehaviour
     [SerializeField]
     Button WeeklyBtn;
 
+    [Header("Button滑塊")]
+    [SerializeField]
+    GameObject MaskObject;
+    Text MaskText;
+
     private void Awake()
     {
+        MaskText = MaskObject.transform.GetChild(0).GetComponent<Text>();
+
         DailyBtn.onClick.AddListener(() =>
         {
             if (!DailyQuestParent.gameObject.activeSelf)
             {
                 DailyQuestParent.gameObject.SetActive(true);
                 WeeklyQuestParent.gameObject.SetActive(false);
+
+
+                MaskMove(DailyQuestParent.parent.gameObject);
             }
-            
         });
 
         WeeklyBtn.onClick.AddListener(() =>
@@ -44,6 +53,8 @@ public class QuestView : MonoBehaviour
             {
                 DailyQuestParent.gameObject.SetActive(false);
                 WeeklyQuestParent.gameObject.SetActive(true);
+
+                MaskMove(WeeklyQuestParent.parent.gameObject);
             }
         });
 
@@ -52,7 +63,6 @@ public class QuestView : MonoBehaviour
             if (transform.parent.gameObject.activeSelf)
                 transform.parent.gameObject.SetActive(!transform.parent.gameObject.activeSelf);
         });
-
 
     }
     private void Start()
@@ -71,5 +81,16 @@ public class QuestView : MonoBehaviour
         Weeklyrect.gameObject.SetActive(true);
     }
 
-    
+    /// <summary>
+    /// 滑塊遮罩移動
+    /// </summary>
+    /// <param name="QuestMask">滑塊物件</param>
+    public void MaskMove(GameObject QuestMask)
+    {
+        RectTransform Maskrect = MaskObject.GetComponent<RectTransform>();
+        RectTransform QuestMaskRect = QuestMask.GetComponent<RectTransform>();
+
+        Maskrect.localPosition = QuestMaskRect.localPosition;
+        MaskText.text = QuestMask.name;
+    }
 }

@@ -13,6 +13,10 @@ public class GameView : MonoBehaviour
     [SerializeField]
     Request_GameView baseRequest;
 
+    [Header("遮罩按鈕")]
+    [SerializeField]
+    Button Mask_Btn;
+
     [Header("座位上玩家訊息")]
     [SerializeField]
     List<GamePlayerInfo> SeatGamePlayerInfoList;
@@ -59,13 +63,29 @@ public class GameView : MonoBehaviour
     [SerializeField]
     RectTransform MenuBg_Tr;
     [SerializeField]
-    Button Menu_Btn, MenuMask_Btn, BackGame_Btn, LogOut_Btn;
+    Button Menu_Btn, MenuClose_Btn, LogOut_Btn;
     [SerializeField]
     Text MenuNickname_Txt, MenuWalletAddr_Txt;
+    [SerializeField]
+    Image MenuAvatar_Img;
+
+    [Header("聊天")]
+    [SerializeField]
+    RectTransform ChatBg_Tr, ChatContent_Tr, NotReadChat_Tr;
+    [SerializeField]
+    Button Chat_Btn, ChatClose_Btn, ChatSend_Btn, NewMessage_Btn;
+    [SerializeField]
+    InputField Chat_If;
+    [SerializeField]
+    GameObject OtherChatSample, LocalChatSample;
+    [SerializeField]
+    ScrollRect ChatArea_Sr;
+    [SerializeField]
+    Text NotReadChat_Txt;
 
     [Header("遊戲結果")]
     [SerializeField]
-    RectTransform BuyChipsView, BattleResultView;
+    RectTransform BuyChipsView, BattleResultView, WinChipsParent_Tr;
 
     [Header("遊戲暫停")]
     [SerializeField]
@@ -74,20 +94,24 @@ public class GameView : MonoBehaviour
     Button GameContinue_Btn;
 
     //底池倍率
-    float[] potPercentRate = new float[]
+    readonly float[] PotPercentRate = new float[]
     {
         33, 50, 80, 100,
     };
 
     //加註大盲倍率
-    float[] potBbRate = new float[]
+    readonly float[] PotBbRate = new float[]
     {
         2.1f, 2.5f, 3.0f, 4.0f,
     };
 
+    const int MaxChatCount = 50;                                //保留聊天最大訊息數
+
+    ObjPool objPool;
     List<GamePlayerInfo> gamePlayerInfoList;                    //玩家資料
 
-    Vector2 InitPotPointPos;    //初始底池位置
+    Vector2 InitPotPointPos;                                    //初始底池位置
+    int notReadMsgCount;                                        //未讀取數
 
     private TableTypeEnum roomType;
     /// <summary>
@@ -165,6 +189,8 @@ public class GameView : MonoBehaviour
 
     public void Awake()
     {
+        objPool = new ObjPool(transform, MaxChatCount);
+
         ListenerEvent();
 
         //初始底池位置
@@ -176,6 +202,19 @@ public class GameView : MonoBehaviour
     /// </summary>
     private void ListenerEvent()
     {
+        //遮罩按鈕
+        Mask_Btn.onClick.AddListener(() =>
+        {
+            if (MenuBg_Tr.gameObject.activeSelf)
+            {
+                StartCoroutine(ILeftPageMove(false, MenuBg_Tr));
+            }
+            else if (ChatBg_Tr.gameObject.activeSelf)
+            {
+                StartCoroutine(ILeftPageMove(false, ChatBg_Tr));
+            }            
+        });
+
         //遊戲繼續按鈕
         GameContinue_Btn.onClick.AddListener(() =>
         {
@@ -187,13 +226,7 @@ public class GameView : MonoBehaviour
         //選單
         Menu_Btn.onClick.AddListener(() =>
         {
-            StartCoroutine(IIsShowMenu(true));
-        });
-
-        //選單遮罩按鈕
-        MenuMask_Btn.onClick.AddListener(() =>
-        {
-            StartCoroutine(IIsShowMenu(false));
+            StartCoroutine(ILeftPageMove(true, MenuBg_Tr));
         });
 
         //離開房間
@@ -202,10 +235,10 @@ public class GameView : MonoBehaviour
             GameRoomManager.Instance.RemoveGameRoom(transform.name);
         });
 
-        //返回遊戲
-        BackGame_Btn.onClick.AddListener(() =>
+        //關閉選單
+        MenuClose_Btn.onClick.AddListener(() =>
         {
-            StartCoroutine(IIsShowMenu(false));
+            StartCoroutine(ILeftPageMove(false, MenuBg_Tr));
         });
 
         #endregion
@@ -329,6 +362,50 @@ public class GameView : MonoBehaviour
         });
 
         #endregion
+
+        #region 聊天
+
+        //開啟聊天
+        Chat_Btn.onClick.AddListener(() =>
+        {
+            SetNotReadChatCount = 0;
+            StartCoroutine(ILeftPageMove(true, ChatBg_Tr));
+            StartCoroutine(IYieldSetNewMessageActive());
+            if (!DataManager.IsMobilePlatform)
+            {
+                Chat_If.Select();
+            }
+        });
+
+        //發送聊天訊息
+        ChatSend_Btn.onClick.AddListener(() =>
+        {
+            SendChat();
+        });
+
+        //關閉聊天
+        ChatClose_Btn.onClick.AddListener(() =>
+        {
+            StartCoroutine(ILeftPageMove(false, ChatBg_Tr));
+        });
+
+        //聊天移動至最新訊息位置
+        NewMessage_Btn.onClick.AddListener(() =>
+        {
+            StartCoroutine(IGoNewChatMessage());
+        });
+
+        //聊天區域
+        ChatArea_Sr.onValueChanged.AddListener((value) =>
+        {
+            if (NewMessage_Btn.gameObject.activeSelf &&
+                IsChatOnBottom())
+            {
+                NewMessage_Btn.gameObject.SetActive(false);
+            }            
+        });
+
+        #endregion
     }
 
     private void OnEnable()
@@ -350,6 +427,12 @@ public class GameView : MonoBehaviour
         BuyChipsView.gameObject.SetActive(false);
         BattleResultView.gameObject.SetActive(false);
 
+        //選單玩家訊息
+        StringUtils.StrExceedSize(DataManager.UserWalletAddress, MenuWalletAddr_Txt);
+        MenuNickname_Txt.text = $"@{DataManager.UserNickname}";
+        MenuAvatar_Img.sprite = AssetsManager.Instance.GetAlbumAsset(AlbumEnum.AvatarAlbum).album[DataManager.UserAvatar];
+
+        SetNotReadChatCount = 0;
 
         Init();
         GameInit();
@@ -357,8 +440,35 @@ public class GameView : MonoBehaviour
 
     private void Start()
     {
+        OtherChatSample.SetActive(false);
+        LocalChatSample.SetActive(false);
+        NewMessage_Btn.gameObject.SetActive(false);
+
         LanguageManager.Instance.AddUpdateLanguageFunc(UpdateLanguage);
-    }                  
+    }
+
+    private void Update()
+    {
+        #region 測試
+
+        if (Input.GetKeyDown(KeyCode.UpArrow))
+        {
+            baseRequest.gameServer.TextChat();
+        }
+
+        #endregion
+
+        //發送聊天訊息
+        if ((Input.GetKeyDown(KeyCode.Return) ||
+            Input.GetKeyDown(KeyCode.KeypadEnter)) &&
+            ChatBg_Tr.gameObject.activeSelf &&
+            !string.IsNullOrEmpty(Chat_If.text))
+        {
+            SendChat();
+            Chat_If.ActivateInputField();
+            Chat_If.Select();
+        }
+    }
 
     /// <summary>
     /// 遊戲暫停
@@ -523,42 +633,218 @@ public class GameView : MonoBehaviour
     }
 
     /// <summary>
-    /// 顯示選單
+    /// 左側頁面移動
     /// </summary>
-    /// <param name="isShow"></param>
+    /// <param name="isShow">是否顯示</param>
+    /// <param name="rt">移動物件</param>
     /// <returns></returns>
-    private IEnumerator IIsShowMenu(bool isShow)
+    private IEnumerator ILeftPageMove(bool isShow, RectTransform rt)
     {
-        MenuMask_Btn.gameObject.SetActive(isShow);
-        MenuBg_Tr.gameObject.SetActive(true);
+        Mask_Btn.gameObject.SetActive(isShow);
+        rt.gameObject.SetActive(true);
 
         if (isShow == true)
         {
-            MenuBg_Tr.anchoredPosition = new Vector2(-MenuBg_Tr.rect.width, 0);
-            StringUtils.StrExceedSize(DataManager.UserWalletAddress, MenuWalletAddr_Txt);
-            MenuNickname_Txt.text = $"@{DataManager.UserNickname}";
+            rt.anchoredPosition = new Vector2(-rt.rect.width, 0);
         }
 
         GameRoomManager.Instance.IsCanMoveSwitch = !isShow;
 
         //選單移動
         float moveTime = 0.25f;
-        float currX = MenuBg_Tr.anchoredPosition.x;
+        float currX = rt.anchoredPosition.x;
         float targetX = isShow ?
                         0 :
-                        -MenuBg_Tr.rect.width;
+                        -rt.rect.width;
 
         DateTime startTime = DateTime.Now;
         while ((DateTime.Now - startTime).TotalSeconds < moveTime)
         {
             float progress = (float)(DateTime.Now - startTime).TotalSeconds / moveTime;
             float x = Mathf.Lerp(currX, targetX, progress);
-            MenuBg_Tr.anchoredPosition = new Vector2(x, 0);
+            rt.anchoredPosition = new Vector2(x, 0);
             yield return null;
         }
 
-        MenuBg_Tr.gameObject.SetActive(isShow);
+        //關閉聊天
+        if (isShow == false &&
+            rt == ChatBg_Tr)
+        {
+            //判斷保留訊息數量
+            if (ChatContent_Tr.childCount > MaxChatCount)
+            {
+                int closeCount = ChatContent_Tr.childCount - MaxChatCount;
+                for (int i = 0; i < closeCount; i++)
+                {
+                    if (ChatContent_Tr.GetChild(2 + i).gameObject.activeSelf)
+                    {
+                        ChatContent_Tr.GetChild(2 + i).gameObject.SetActive(false);
+                        float chatHeight = ChatContent_Tr.GetChild(2 + i).GetComponent<RectTransform>().rect.height;
+                        float reduce = Mathf.Max(0, ChatContent_Tr.anchoredPosition.y - chatHeight);
+                        ChatContent_Tr.anchoredPosition = new Vector2(ChatContent_Tr.anchoredPosition.x,
+                                                                      reduce);
+                    }
+                }
+            }
+
+            yield return IGoNewChatMessage();
+        }
+
+        rt.gameObject.SetActive(isShow);
     }
+
+    #region 聊天
+
+    /// <summary>
+    /// 設置未讀聊天訊息數
+    /// </summary>
+    private int SetNotReadChatCount
+    {
+        get
+        {
+            return notReadMsgCount;
+        }
+        set
+        {
+            notReadMsgCount = value;
+            string countStr = value > 99 ?
+                          "99+" :
+                          $"{value}";
+            NotReadChat_Txt.text = countStr;
+            NotReadChat_Tr.gameObject.SetActive(value > 0);
+
+            NotReadChat_Tr.sizeDelta = value > 99 ?
+                                       new Vector2(20, 15) :
+                                       new Vector2(15, 15);
+        }
+    }
+
+    /// <summary>
+    /// 延遲設置新訊息按鈕是否顯示
+    /// </summary>
+    /// <returns></returns>
+    private IEnumerator IYieldSetNewMessageActive()
+    {
+        yield return null;
+        NewMessage_Btn.gameObject.SetActive(!IsChatOnBottom());
+    }
+
+    /// <summary>
+    /// 聊天移動至最新訊息位置
+    /// </summary>
+    /// <returns></returns>
+    private IEnumerator IGoNewChatMessage()
+    {
+        yield return null;
+
+        NewMessage_Btn.gameObject.SetActive(false);
+
+        //顯示在最新訊息
+        float chatAreaHeight = ChatArea_Sr.GetComponent<RectTransform>().rect.height;
+        float currChatContentHeight = ChatContent_Tr.rect.height;
+        float goPosY = Mathf.Max(0, currChatContentHeight - chatAreaHeight);
+        ChatContent_Tr.anchoredPosition = new Vector2(ChatContent_Tr.anchoredPosition.x,
+                                                      goPosY);
+    }
+
+    /// <summary>
+    /// 判斷聊天位置是否在最底部
+    /// </summary>
+    /// <returns></returns>
+    private bool IsChatOnBottom()
+    {
+        float chatAreaHeight = ChatArea_Sr.GetComponent<RectTransform>().rect.height;
+        float currChatContentHeight = ChatContent_Tr.rect.height;
+        float bottomPosY = Mathf.Max(0, currChatContentHeight - chatAreaHeight);
+        return ChatContent_Tr.anchoredPosition.y >= Mathf.Max(0, bottomPosY - 20);
+    }
+
+    /// <summary>
+    /// 發送聊天訊息
+    /// </summary>
+    private void SendChat()
+    {        
+        baseRequest.SendRequestRequest_Chat(Chat_If.text);
+        CreateChatContent(DataManager.UserAvatar,
+                          DataManager.UserNickname,
+                          Chat_If.text,
+                          true);
+
+        Chat_If.text = "";
+
+        if (!DataManager.IsMobilePlatform)
+        {
+            Chat_If.Select();
+        }
+
+        StartCoroutine(IGoNewChatMessage());
+    }
+
+    /// <summary>
+    /// 接收聊天訊息
+    /// </summary>
+    /// <param name="pack"></param>
+    public void ReciveChat(MainPack pack)
+    {
+        string id = pack.ChatPack.Id;
+        string nickname = pack.ChatPack.Nickname;
+        string content = pack.ChatPack.Content;
+        int avatar = pack.ChatPack.Avatar;
+
+        //判斷是否在最新訊息位置
+        bool isBottom = IsChatOnBottom();
+        if (ChatBg_Tr.gameObject.activeSelf)
+        {
+            NewMessage_Btn.gameObject.SetActive(!isBottom);
+        }
+        else
+        {
+            NewMessage_Btn.gameObject.SetActive(true);
+        }
+
+        CreateChatContent(avatar,
+                          nickname,
+                          content,
+                          false);
+
+        if (isBottom)
+        {
+            StartCoroutine(IGoNewChatMessage());
+        }
+
+        //未開啟聊天頁面顯示新訊息提示
+        if (!ChatBg_Tr.gameObject.activeSelf &&
+            id != DataManager.UserId)
+        {
+            GamePlayerInfo player = GetPlayer(id);
+            player.ShowChatInfo(content);
+
+            SetNotReadChatCount = ++SetNotReadChatCount;
+        }
+    }
+
+    /// <summary>
+    /// 產生聊天內容
+    /// </summary>
+    /// <param name="avatar"></param>
+    /// <param name="nickname"></param>
+    /// <param name="content">聊天內容</param>
+    /// <param name="isLocal">是否為本地玩家</param>
+    private void CreateChatContent(int avatar, string nickname, string content, bool isLocal)
+    {
+        GameObject sample = isLocal ?
+                            LocalChatSample :
+                            OtherChatSample;
+
+        ChatInfo chatInfo = objPool.CreateObj<ChatInfo>(sample, ChatContent_Tr);
+        chatInfo.gameObject.SetActive(true);
+        chatInfo.GetComponent<RectTransform>().SetSiblingIndex(ChatContent_Tr.childCount + 1);
+        chatInfo.SetChatInfo(avatar, 
+                             nickname, 
+                             content);    
+    }
+
+    #endregion
 
     /// <summary>
     /// 初始化
@@ -576,9 +862,10 @@ public class GameView : MonoBehaviour
         RaiseBtn_Txt.text = LanguageManager.Instance.GetText(strData.RaiseStr) + strData.RaiseValueStr;
         TotalPot_Txt.text = "$0";
 
-        MenuMask_Btn.gameObject.SetActive(false);
+        Mask_Btn.gameObject.SetActive(false);
         Raise_Tr.gameObject.SetActive(false);
-        StartCoroutine(IIsShowMenu(false));
+        StartCoroutine(ILeftPageMove(false, MenuBg_Tr));
+        StartCoroutine(ILeftPageMove(false, ChatBg_Tr));
     }
 
     /// <summary>
@@ -712,8 +999,8 @@ public class GameView : MonoBehaviour
     private void PotRaisePercent(int btnIndex)
     {
         int raiseValue = thisData.IsFirstRaisePlayer ?
-                         (int)((float)(thisData.SmallBlindValue * 2) * potBbRate[btnIndex]) :
-                         (int)((float)thisData.TotalPot * (potPercentRate[btnIndex] / 100));
+                         (int)((float)(thisData.SmallBlindValue * 2) * PotBbRate[btnIndex]) :
+                         (int)((float)thisData.TotalPot * (PotPercentRate[btnIndex] / 100));
         Raise_Sli.value = raiseValue;
     }
 
@@ -916,11 +1203,11 @@ public class GameView : MonoBehaviour
             {
                 if (thisData.TotalPot <= thisData.SmallBlindValue * 3)
                 {
-                    PotPercentRaiseTxtList[i].text = $"{potBbRate[i]}BB";
+                    PotPercentRaiseTxtList[i].text = $"{PotBbRate[i]}BB";
                 }
                 else
                 {
-                    PotPercentRaiseTxtList[i].text = $"{potPercentRate[i]}%";
+                    PotPercentRaiseTxtList[i].text = $"{PotPercentRate[i]}%";
                 }
             }
         }
@@ -1360,9 +1647,9 @@ public class GameView : MonoBehaviour
             player.SetWinnerEffect = true;
             Vector2 winnerSeatPos = player.gameObject.transform.position;
 
-            //產生贏得籌碼物件
+            //產生贏得籌碼物件            
             RectTransform rt = Instantiate(AssetsManager.Instance.GetObjtypeAsset(ObjTypeEnum.WinChips)).GetComponent<RectTransform>();
-            rt.SetParent(transform);
+            rt.SetParent(WinChipsParent_Tr);
             rt.anchoredPosition = Pot_Img.rectTransform.anchoredPosition;
             WinChips winChips = rt.GetComponent<WinChips>();
             winChips.SetWinChips = pack.WinnerPack.WinChips;
@@ -1443,7 +1730,7 @@ public class GameView : MonoBehaviour
             if (sideWinner.Value > 0)
             {
                 RectTransform rt = Instantiate(AssetsManager.Instance.GetObjtypeAsset(ObjTypeEnum.WinChips)).GetComponent<RectTransform>();
-                rt.SetParent(transform);
+                rt.SetParent(WinChipsParent_Tr);
                 rt.anchoredPosition = Pot_Img.rectTransform.anchoredPosition;
                 WinChips winChips = rt.GetComponent<WinChips>();
                 winChips.SetWinChips = sideWinner.Value;

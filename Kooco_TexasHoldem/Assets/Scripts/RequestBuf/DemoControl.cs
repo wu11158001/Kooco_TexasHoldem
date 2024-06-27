@@ -8,7 +8,7 @@ using RequestBuf;
 public class DemoControl : MonoBehaviour
 {
     [SerializeField]
-    Button AddNewPlayer_Btn, Exit_Btn, Fold_Btn, Raise_Btn, CallAndCheck_Btn, AllIn_Btn;
+    Button AddNewPlayer_Btn, Exit_Btn, Fold_Btn, Raise_Btn, CallAndCheck_Btn, AllIn_Btn, Chat_Btn;
 
     [SerializeField]
     GameServer gameServer;
@@ -77,6 +77,11 @@ public class DemoControl : MonoBehaviour
         {
             gameServer.TextPlayerAction(ActingEnum.AllIn);
             IsShowDemoControl(false);
+        });
+
+        Chat_Btn.onClick.AddListener(() =>
+        {
+            gameServer.TextChat();
         });
     }
 

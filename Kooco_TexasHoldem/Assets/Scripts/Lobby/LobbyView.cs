@@ -238,6 +238,8 @@ public class LobbyView : MonoBehaviour
             //排名
             case ItemType.Ranking:
                 itemObj = LobbyRankingView;
+
+
                 break;
         }
 

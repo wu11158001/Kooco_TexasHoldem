@@ -36,6 +36,7 @@ public static class DataManager
     [Header("用戶訊息")]
     public static string UserWalletAddress { get; set; }            //用戶錢包地址
     public static string UserWalletBalance { get; set; }            //用戶錢包餘額
+    public static string UserId { get; set; }                       //用戶ID
     public static string UserNickname { get; set; }                 //用戶暱稱
     public static int UserAvatar { get; set; }                      //用戶頭像
     public static int UserStamina { get; set; }                     //用戶耐力
@@ -68,10 +69,10 @@ public static class DataManager
         new QuestInfo(){ QuestName = "Cash Bet 1000 Amount",GetPoint = 10,FinishProgress = 1000,CurrentProgress = 0,GetCoin = 1000},
         new QuestInfo(){ QuestName = "Cash Bet 2000 Amount",GetPoint = 20,FinishProgress = 2000,CurrentProgress = 0,GetCoin = 2000},
         new QuestInfo(){ QuestName = "Cash Bet 3000 Amount",GetPoint = 30,FinishProgress = 3000,CurrentProgress = 0,GetCoin = 3000},
-        new QuestInfo(){ QuestName = "Cash Bet 4000 Amount",GetPoint = 40,FinishProgress = 4000,CurrentProgress = 536,GetCoin = 4000},
-        new QuestInfo(){ QuestName = "Cash Bet 5000 Amount",GetPoint = 50,FinishProgress = 5000,CurrentProgress = 333,GetCoin = 5000},
-        new QuestInfo(){ QuestName = "Cash Bet 6000 Amount",GetPoint = 60,FinishProgress = 6000,CurrentProgress = 666,GetCoin = 6000},
-        new QuestInfo(){ QuestName = "Cash Bet 7000 Amount",GetPoint = 70,FinishProgress = 7000,CurrentProgress = 999,GetCoin = 7000}
+        new QuestInfo(){ QuestName = "Cash Bet 4000 Amount",GetPoint = 40,FinishProgress = 4000,CurrentProgress = 0,GetCoin = 4000},
+        new QuestInfo(){ QuestName = "Cash Bet 5000 Amount",GetPoint = 50,FinishProgress = 5000,CurrentProgress = 0,GetCoin = 5000},
+        new QuestInfo(){ QuestName = "Cash Bet 6000 Amount",GetPoint = 60,FinishProgress = 6000,CurrentProgress = 0,GetCoin = 6000},
+        new QuestInfo(){ QuestName = "Cash Bet 7000 Amount",GetPoint = 70,FinishProgress = 7000,CurrentProgress = 0,GetCoin = 7000}
     };
     //  每周任務資料
     public static List<QuestInfo> WeekQuestList = new List<QuestInfo>
@@ -82,8 +83,9 @@ public static class DataManager
         new QuestInfo(){ QuestName = "Cash Bet 3000 Amount",GetPoint = 300,FinishProgress = 3000,CurrentProgress = 0,GetCoin = 7000},
         new QuestInfo(){ QuestName = "Cash Bet 4000 Amount",GetPoint = 400,FinishProgress = 4000,CurrentProgress = 0,GetCoin = 8000},
         new QuestInfo(){ QuestName = "Cash Bet 5000 Amount",GetPoint = 500,FinishProgress = 5000,CurrentProgress = 0,GetCoin = 9000},
-        new QuestInfo(){ QuestName = "Cash Bet 6000 Amount",GetPoint = 600,FinishProgress = 6000,CurrentProgress = 0,GetCoin = 10000},
     };
+    public static int CurrentBonusAmount { get; set; }                     //  當前任務紅利進度
+    public static int BonusMax { get; set; }                               //  任務紅利最大值
 
     [Header("排名")]
     public static List<RankData> CurrSeasonIntegralRankList;                //當季積分排名
