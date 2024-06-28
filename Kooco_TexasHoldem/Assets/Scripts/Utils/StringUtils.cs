@@ -6,6 +6,8 @@ using System.Text.RegularExpressions;
 using System;
 using System.Threading.Tasks;
 using UnityEngine.UI;
+using System.Threading;
+using System;
 
 public static class StringUtils
 {
@@ -43,6 +45,12 @@ public static class StringUtils
     /// <param name="str"></param>
     public static void CopyText(string str)
     {
+#if UNITY_WEBGL && !UNITY_EDITOR
+
+        JSBridgeManager.Instance.CopyText(str);
+
+#else
+
         TextEditor textEditor = new TextEditor()
         {
             text = str
@@ -50,7 +58,9 @@ public static class StringUtils
         textEditor.SelectAll();
         textEditor.Copy();
 
-        Debug.Log($"Copy Text:{str}");
+#endif
+
+        Debug.Log($"Copy Text:{str}");    
     }
 
     /// <summary>

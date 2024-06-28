@@ -18,7 +18,7 @@ public class LobbyMinePageView : MonoBehaviour
     [SerializeField]
     Button EditorAvatar_Btn, CopyWalletAddress_Btn;
     [SerializeField]
-    Text Nickname_Txt, WalletAddress_Txt;
+    Text Nickname_Txt, WalletAddress_Txt, Copied_Txt;
 
     [Header("更換頭像")]
     [SerializeField]
@@ -82,6 +82,11 @@ public class LobbyMinePageView : MonoBehaviour
 
     private void Awake()
     {
+        //錢包地址已複製文字
+        Color color = Copied_Txt.color;
+        color.a = 0;
+        Copied_Txt.color = color;
+
         ChangeAvatar_Tr.gameObject.SetActive(false);
 
         //紀錄展開物件初始化
@@ -114,6 +119,11 @@ public class LobbyMinePageView : MonoBehaviour
         CopyWalletAddress_Btn.onClick.AddListener(() =>
         {
             StringUtils.CopyText(DataManager.UserWalletAddress);
+            MonoBehaviourUtils.Instance.ColorFade(Copied_Txt,
+                                                  null,
+                                                  0.2f,
+                                                  0.5f,
+                                                  1.5f);
         });
 
         //開啟更換頭像

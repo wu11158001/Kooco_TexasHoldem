@@ -13,6 +13,8 @@ public class JSBridgeManager : UnitySingleton<JSBridgeManager>
     private static extern void JS_WindowClose();                                                 //關閉頁面
     [DllImport("__Internal")]
     private static extern void JS_OpenNewBrowser(string mail, string igIdAndName);               //開啟新瀏覽器
+    [DllImport("__Internal")]
+    private static extern void JS_CopyText(string copyStr);                                      //複製文字
 
     public override void Awake()
     {
@@ -52,5 +54,14 @@ public class JSBridgeManager : UnitySingleton<JSBridgeManager>
     public void OpenNewBrowser(string mail, string igIdAndName)
     {
         JS_OpenNewBrowser(mail, igIdAndName);
+    }
+
+    /// <summary>
+    /// Webgl複製文字
+    /// </summary>
+    /// <param name="copyStr"></param>
+    public void CopyText(string copyStr)
+    {
+        JS_CopyText(copyStr);
     }
 }

@@ -1,5 +1,17 @@
 mergeInto(LibraryManager.library, {
 
+    //複製文字
+    JS_CopyText: function (strPtr) {
+        var str = UTF8ToString(strPtr);
+        var textarea = document.createElement("textarea");
+        textarea.value = str;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textarea);
+        console.log("Copied text: " + str);
+    },
+
     //本地頁面跳轉
     JS_LocationHref: function(url){
         window.location.href = UTF8ToString(url);
