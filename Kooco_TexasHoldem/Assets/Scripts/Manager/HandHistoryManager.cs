@@ -6,12 +6,16 @@ using Newtonsoft.Json;
 
 public class HandHistoryManager : UnitySingleton<HandHistoryManager>
 {
-    private string filePath;
-    private List<ResultHistoryData> dataList;
+    string PlayerPrefsKey;
+    const int MaxSaveCount = 2;
+
+    List<ResultHistoryData> dataList;
+
+
 
     public override void Awake()
     {
-        filePath = Path.Combine(Application.persistentDataPath, "AsiaPoker_ResultHistoryData.json");
+        PlayerPrefsKey = $"AsiaPoker_ResultHistoryDataList_{DataManager.UserId}";
         LoadResultData();
 
         base.Awake();
@@ -33,15 +37,9 @@ public class HandHistoryManager : UnitySingleton<HandHistoryManager>
     /// </summary>
     private void LoadResultData()
     {
-        if (File.Exists(filePath))
-        {
-            string json = File.ReadAllText(filePath);
-            dataList = JsonConvert.DeserializeObject<List<ResultHistoryData>>(json) ?? new List<ResultHistoryData>();
-        }
-        else
-        {
-            dataList = new List<ResultHistoryData>();
-        }
+
+        string json = PlayerPrefs.GetString(PlayerPrefsKey, "[]");
+        dataList = JsonConvert.DeserializeObject<List<ResultHistoryData>>(json) ?? new List<ResultHistoryData>();
 
         Debug.Log("Load Result History Data");
     }
@@ -52,16 +50,16 @@ public class HandHistoryManager : UnitySingleton<HandHistoryManager>
     /// <param name="newData"></param>
     public void SaveResult(ResultHistoryData newData)
     {
-        if (dataList.Count >= 20)
+        if (dataList.Count >= MaxSaveCount)
         {
-            dataList.RemoveAt(0); // 移除第一筆數據
+            //移除第一筆數據
+            dataList.RemoveAt(0);
         }
 
         dataList.Add(newData);
-        string json = JsonConvert.SerializeObject(dataList, Formatting.Indented);
-        File.WriteAllText(filePath, json);
-
-        Debug.Log("Save Reult History Data");
+        string json = JsonConvert.SerializeObject(dataList);
+        PlayerPrefs.SetString(PlayerPrefsKey, json);
+        PlayerPrefs.Save();
     }
 
     #endregion
