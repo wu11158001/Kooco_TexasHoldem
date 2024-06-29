@@ -286,6 +286,7 @@ public class GameRoomManager : UnitySingleton<GameRoomManager>
         gameServer.Request_PlayerInOutRoom(pack);
         Entry.CurrGameServer = gameServer;
 
+        //房間腳本
         GameView gameView = room.GetComponent<GameView>();
         gameView.RoomType = roomType;
         gameView.SendRequest_UpdateRoomInfo();

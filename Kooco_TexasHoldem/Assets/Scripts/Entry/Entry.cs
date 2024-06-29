@@ -69,7 +69,7 @@ public class Entry : UnitySingleton<Entry>
         {
             DataManager.UserWalletAddress = "0xef279977cBC232C667082E06cfC252529513B738";
             NFTManager.Instance.UpdateNFT();
-        }    
+        }
     }
 
     #region Instagram登入

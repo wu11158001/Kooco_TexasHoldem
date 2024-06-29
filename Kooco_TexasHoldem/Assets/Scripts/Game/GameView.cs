@@ -63,7 +63,7 @@ public class GameView : MonoBehaviour
     [SerializeField]
     RectTransform MenuBg_Tr;
     [SerializeField]
-    Button Menu_Btn, MenuClose_Btn, LogOut_Btn;
+    Button Menu_Btn, MenuClose_Btn, LogOut_Btn, HandHistory_Btn;
     [SerializeField]
     Text MenuNickname_Txt, MenuWalletAddr_Txt;
     [SerializeField]
@@ -143,7 +143,7 @@ public class GameView : MonoBehaviour
 
     private ThisData thisData;
     public class ThisData
-    {
+    {        
         public GamePlayerInfo LocalGamePlayerInfo;         //本地玩家
         public int LocalPlayerSeat;                        //本地玩家座位
         public double LocalPlayerChips;                    //本地玩家籌碼
@@ -239,6 +239,15 @@ public class GameView : MonoBehaviour
         MenuClose_Btn.onClick.AddListener(() =>
         {
             StartCoroutine(ILeftPageMove(false, MenuBg_Tr));
+        });
+
+        //手牌紀錄
+        HandHistory_Btn.onClick.AddListener(() =>
+        {
+            StartCoroutine(ILeftPageMove(false, MenuBg_Tr));
+            GameRoomManager.Instance.IsCanMoveSwitch = false;
+            GameObject obj = Resources.Load<GameObject>("GameRoom/GameHandHistoryView");
+            Instantiate(obj, transform);
         });
 
         #endregion
@@ -1269,7 +1278,7 @@ public class GameView : MonoBehaviour
                                          playerInfoPack.UserID,
                                          playerInfoPack.NickName,
                                          playerInfoPack.Chips,
-                                         AssetsManager.Instance.GetAlbumAsset(AlbumEnum.AvatarAlbum).album[playerInfoPack.Avatar],
+                                         playerInfoPack.Avatar,
                                          Pot_Img.rectTransform);
 
         gamePlayerInfoList.Add(gamePlayerInfo);
@@ -1654,6 +1663,21 @@ public class GameView : MonoBehaviour
             WinChips winChips = rt.GetComponent<WinChips>();
             winChips.SetWinChips = pack.WinnerPack.WinChips;
             SetPotActive = false;
+
+            //獲勝牌局紀錄
+            if (count == 1)
+            {
+                ResultHistoryData saveResultData = new ResultHistoryData();
+                saveResultData.TypeAndBlindStr = $"{roomType} {thisData.SmallBlindValue}/{thisData.SmallBlindValue * 2}";
+                saveResultData.NickName = player.Nickname;
+                saveResultData.Avatar = player.Avatar;
+                saveResultData.HandPokers = new int[] { player.GetHandPoker[0].PokerNum, 
+                                                        player.GetHandPoker[1].PokerNum };
+                saveResultData.CommunityPoker = thisData.CurrCommunityPoker;
+                saveResultData.WinChips = pack.WinnerPack.WinChips;
+
+                HandHistoryManager.Instance.SaveResult(saveResultData);
+            }
 
             yield return new WaitForSeconds(0.5f);
 

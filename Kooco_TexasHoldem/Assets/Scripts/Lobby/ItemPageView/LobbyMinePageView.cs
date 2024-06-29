@@ -118,12 +118,15 @@ public class LobbyMinePageView : MonoBehaviour
         //複製錢包地址
         CopyWalletAddress_Btn.onClick.AddListener(() =>
         {
-            StringUtils.CopyText(DataManager.UserWalletAddress);
-            MonoBehaviourUtils.Instance.ColorFade(Copied_Txt,
-                                                  null,
-                                                  0.2f,
-                                                  0.5f,
-                                                  1.5f);
+            if (!string.IsNullOrEmpty(Copied_Txt.text))
+            {
+                StringUtils.CopyText(DataManager.UserWalletAddress);
+                MonoBehaviourUtils.Instance.ColorFade(Copied_Txt,
+                                                      null,
+                                                      0.2f,
+                                                      0.5f,
+                                                      1.5f);
+            }
         });
 
         //開啟更換頭像

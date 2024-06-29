@@ -18,7 +18,10 @@ public class RankSample : MonoBehaviour
     /// <param name="pointStr">點數文字</param>
     public void SetRankData(RankData rankData, int rank, string pointStr)
     {
-        Avatar_Img.sprite = AssetsManager.Instance.GetAlbumAsset(AlbumEnum.AvatarAlbum).album[rankData.avatar];
+        int avatarIndex = rankData.nickname == DataManager.UserNickname ?
+                          DataManager.UserAvatar :
+                          rankData.avatar;
+        Avatar_Img.sprite = AssetsManager.Instance.GetAlbumAsset(AlbumEnum.AvatarAlbum).album[avatarIndex];
         Nickname_Txt.text = rankData.nickname == DataManager.UserNickname ?
                             $"<color=#E6C94E>{rankData.nickname}</color>" :
                             $"<color=#FFFFFF>{rankData.nickname}</color>";

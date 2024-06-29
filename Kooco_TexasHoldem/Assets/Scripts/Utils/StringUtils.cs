@@ -47,7 +47,7 @@ public static class StringUtils
     {
 #if UNITY_WEBGL && !UNITY_EDITOR
 
-        JSBridgeManager.Instance.CopyText(str);
+        JSBridgeManager.Instance.CopyString(str);
 
 #else
 

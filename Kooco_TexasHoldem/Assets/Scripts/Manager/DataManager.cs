@@ -213,6 +213,14 @@ public static class DataManager
             new RankData() { avatar = 5, nickname = "JJ", point = 530, award = 60 },
             new RankData() { avatar = 4, nickname = "RR", point = 450, award = 40 },
         };
+
+        //刷新排名
+        LobbyRankingView lobbyRankingView = GameObject.FindFirstObjectByType<LobbyRankingView>();
+        if (lobbyRankingView != null &&
+            lobbyRankingView.gameObject.activeSelf)
+        {
+            lobbyRankingView.SetRank();
+        }
     }
 }
 

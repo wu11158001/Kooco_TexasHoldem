@@ -66,6 +66,16 @@ public class GamePlayerInfo : MonoBehaviour
     public string UserId { get; set; }
 
     /// <summary>
+    /// 暱稱
+    /// </summary>
+    public string Nickname { get; set; }
+
+    /// <summary>
+    /// 頭像
+    /// </summary>
+    public int Avatar { get; set; }
+
+    /// <summary>
     /// 當前下注值
     /// </summary>
     public double CurrBetValue { get; set; }
@@ -242,14 +252,17 @@ public class GamePlayerInfo : MonoBehaviour
     /// <param name="initChips">初始籌碼</param>
     /// <param name="avatar">頭像</param>
     /// <param name="potPoint">底池位置</param>
-    public void SetInitPlayerInfo(int seatIndex, string userId, string nickName, double initChips, Sprite avatar, RectTransform potPoint)
+    public void SetInitPlayerInfo(int seatIndex, string userId, string nickName, double initChips, int avatar, RectTransform potPoint)
     {
         Init();
 
+        UserId = userId;
+        Nickname = nickName;
+        Avatar = avatar;
+
         SeatIndex = seatIndex;
         currRoomChips = initChips;
-        UserId = userId;
-        Avatar_Img.sprite = avatar;
+        Avatar_Img.sprite = AssetsManager.Instance.GetAlbumAsset(AlbumEnum.AvatarAlbum).album[avatar];
         Nickname_Txt.text = $"@{nickName}";
         Chips_Txt.text = $"{StringUtils.SetChipsUnit(initChips)}";
     }

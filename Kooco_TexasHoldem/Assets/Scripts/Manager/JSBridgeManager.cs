@@ -5,22 +5,13 @@ using System.Runtime.InteropServices;
 
 public class JSBridgeManager : UnitySingleton<JSBridgeManager>
 {
-    [DllImport("__Internal")]
-    private static extern string JS_GetBrowserInfo();                                            //獲取瀏覽器訊息
-    [DllImport("__Internal")]
-    private static extern void JS_LocationHref(string url);                                      //本地頁面跳轉
-    [DllImport("__Internal")]
-    private static extern void JS_WindowClose();                                                 //關閉頁面
-    [DllImport("__Internal")]
-    private static extern void JS_OpenNewBrowser(string mail, string igIdAndName);               //開啟新瀏覽器
-    [DllImport("__Internal")]
-    private static extern void JS_CopyText(string copyStr);                                      //複製文字
-
     public override void Awake()
     {
         base.Awake();
     }
 
+    [DllImport("__Internal")]
+    private static extern string JS_GetBrowserInfo();
     /// <summary>
     /// 獲取瀏覽器訊息
     /// </summary>
@@ -29,6 +20,8 @@ public class JSBridgeManager : UnitySingleton<JSBridgeManager>
         JS_GetBrowserInfo();
     }
 
+    [DllImport("__Internal")]
+    private static extern void JS_LocationHref(string url);
     /// <summary>
     /// 本地頁面跳轉
     /// </summary>
@@ -38,6 +31,8 @@ public class JSBridgeManager : UnitySingleton<JSBridgeManager>
         JS_LocationHref(url);
     }
 
+    [DllImport("__Internal")]
+    private static extern void JS_WindowClose();
     /// <summary>
     /// 關閉頁面
     /// </summary>
@@ -46,6 +41,8 @@ public class JSBridgeManager : UnitySingleton<JSBridgeManager>
         JS_WindowClose();
     }
 
+    [DllImport("__Internal")]
+    private static extern void JS_OpenNewBrowser(string mail, string igIdAndName);
     /// <summary>
     /// 開啟新瀏覽器
     /// </summary>
@@ -56,12 +53,14 @@ public class JSBridgeManager : UnitySingleton<JSBridgeManager>
         JS_OpenNewBrowser(mail, igIdAndName);
     }
 
+    [DllImport("__Internal")]
+    private static extern void JS_CopyString(string copyStr);
     /// <summary>
     /// Webgl複製文字
     /// </summary>
     /// <param name="copyStr"></param>
-    public void CopyText(string copyStr)
+    public void CopyString(string copyStr)
     {
-        JS_CopyText(copyStr);
+        JS_CopyString(copyStr);
     }
 }

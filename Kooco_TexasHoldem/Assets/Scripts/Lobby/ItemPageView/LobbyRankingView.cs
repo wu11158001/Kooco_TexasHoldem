@@ -122,6 +122,7 @@ public class LobbyRankingView : MonoBehaviour
         //刷新排行
         RefreshRank_Btn.onClick.AddListener(() =>
         {
+            DataManager.ReciveRankData();
             Debug.Log("Ranl Refresh!");
         });
 
@@ -189,7 +190,7 @@ public class LobbyRankingView : MonoBehaviour
     /// <summary>
     /// 設置排名
     /// </summary>
-    private void SetRank()
+    public void SetRank()
     {
         List<RankData> rankDatas = null;
         string pointStr = "";
