@@ -31,6 +31,7 @@ namespace RequestBuf
 
     public enum ActingEnum
     {
+        None,
         Blind,      //大小盲
         Fold,       //棄牌
         Check,      //過牌

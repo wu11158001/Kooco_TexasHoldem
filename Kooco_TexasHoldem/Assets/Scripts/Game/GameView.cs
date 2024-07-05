@@ -83,6 +83,12 @@ public class GameView : MonoBehaviour
     [SerializeField]
     Text NotReadChat_Txt;
 
+    [Header("手牌紀錄")]
+    [SerializeField]
+    RectTransform HandHistoryBg_Tr;
+    [SerializeField]
+    Button HandHistoryClose_Btn;
+
     [Header("遊戲結果")]
     [SerializeField]
     RectTransform BuyChipsView, BattleResultView, WinChipsParent_Tr;
@@ -112,6 +118,14 @@ public class GameView : MonoBehaviour
 
     Vector2 InitPotPointPos;                                    //初始底池位置
     int notReadMsgCount;                                        //未讀取數
+
+    #region 遊戲過程紀錄
+
+    GameInitHistoryData gameInitHistoryData;                    //遊戲初始資料紀錄
+    ProcessHistoryData processHistoryData;                      //遊戲過程資料紀錄
+    ResultHistoryData saveResultData;                           //遊戲結果資料紀錄
+
+    #endregion
 
     private TableTypeEnum roomType;
     /// <summary>
@@ -160,7 +174,10 @@ public class GameView : MonoBehaviour
         public bool isLocalPlayerTurn;                     //本地玩家回合
         public bool isFold;                                //是否已棄牌
         public List<int> CurrCommunityPoker;               //當前公共牌
-        public List<string> potWinnerList;                 //主池贏家
+        public List<string> PotWinnerList;                 //主池贏家
+        public double PowWinChips;                         //主池贏得醜馬
+        public List<string> SideWinnerList;                //邊池贏家
+        public double SideWinChips;                        //邊池贏得籌碼
     }
 
     private StrData strData;
@@ -239,15 +256,6 @@ public class GameView : MonoBehaviour
         MenuClose_Btn.onClick.AddListener(() =>
         {
             StartCoroutine(ILeftPageMove(false, MenuBg_Tr));
-        });
-
-        //手牌紀錄
-        HandHistory_Btn.onClick.AddListener(() =>
-        {
-            StartCoroutine(ILeftPageMove(false, MenuBg_Tr));
-            GameRoomManager.Instance.IsCanMoveSwitch = false;
-            GameObject obj = Resources.Load<GameObject>("GameRoom/GameHandHistoryView");
-            Instantiate(obj, transform);
         });
 
         #endregion
@@ -415,6 +423,19 @@ public class GameView : MonoBehaviour
         });
 
         #endregion
+
+        //開啟手牌紀錄
+        HandHistory_Btn.onClick.AddListener(() =>
+        {
+            StartCoroutine(ILeftPageMove(false, MenuBg_Tr));
+            StartCoroutine(IUpPageMove(true, HandHistoryBg_Tr));
+        });
+
+        //關閉手牌紀錄
+        HandHistoryClose_Btn.onClick.AddListener(() =>
+        {
+            StartCoroutine(IUpPageMove(false, HandHistoryBg_Tr));
+        });
     }
 
     private void OnEnable()
@@ -637,8 +658,44 @@ public class GameView : MonoBehaviour
     {
         set
         {
+            thisData.TotalPot = value;
             StringUtils.ChipsChangeEffect(TotalPot_Txt, value);
         }
+    }
+
+    /// <summary>
+    /// 上方頁面移動
+    /// </summary>
+    /// <param name="isShow"></param>
+    /// <param name="rt"></param>
+    /// <returns></returns>
+    private IEnumerator IUpPageMove(bool isShow, RectTransform rt)
+    {
+        rt.gameObject.SetActive(true);
+        if (isShow == true)
+        {
+            rt.anchoredPosition = new Vector2(0, rt.rect.height);
+        }
+
+        GameRoomManager.Instance.IsCanMoveSwitch = !isShow;
+
+        //選單移動
+        float moveTime = 0.25f;
+        float currY = rt.anchoredPosition.y;
+        float targetY = isShow ?
+                        0 :
+                        rt.rect.height;
+
+        DateTime startTime = DateTime.Now;
+        while ((DateTime.Now - startTime).TotalSeconds < moveTime)
+        {
+            float progress = (float)(DateTime.Now - startTime).TotalSeconds / moveTime;
+            float y = Mathf.Lerp(currY, targetY, progress);
+            rt.anchoredPosition = new Vector2(0, y);
+            yield return null;
+        }
+
+        rt.gameObject.SetActive(isShow);
     }
 
     /// <summary>
@@ -888,12 +945,12 @@ public class GameView : MonoBehaviour
         }
         foreach (var player in gamePlayerInfoList)
         {
-            player.SetPotWinnerActive = false;
-            player.SetSideWinnerActive = false;
+            player.IsWinnerActive = false;
             player.SetTip = "";
             player.GetHandPoker[0].gameObject.SetActive(false);
             player.GetHandPoker[1].gameObject.SetActive(false);
-            player.OpenInfoMask = true;
+            player.IsOpenInfoMask = true;
+            player.IsPlaying = false;
         }
         foreach (var show in ShowPokerBtnList)
         {
@@ -927,8 +984,8 @@ public class GameView : MonoBehaviour
     private void OnFold()
     {
         baseRequest.SendRequest_PlayerActed(Entry.TestInfoData.LocalUserId,
-                                                ActingEnum.Fold,
-                                                0);       
+                                            ActingEnum.Fold,
+                                            0);       
     }
 
     /// <summary>
@@ -1278,8 +1335,7 @@ public class GameView : MonoBehaviour
                                          playerInfoPack.UserID,
                                          playerInfoPack.NickName,
                                          playerInfoPack.Chips,
-                                         playerInfoPack.Avatar,
-                                         Pot_Img.rectTransform);
+                                         playerInfoPack.Avatar);
 
         gamePlayerInfoList.Add(gamePlayerInfo);
         return gamePlayerInfo;
@@ -1293,6 +1349,7 @@ public class GameView : MonoBehaviour
     public GamePlayerInfo PlayerExitRoom(string id)
     {
         GamePlayerInfo exitPlayer = GetPlayer(id);
+
         SeatButtonList[exitPlayer.SeatIndex].image.enabled = true;
         gamePlayerInfoList.Remove(exitPlayer);
         Destroy(exitPlayer.gameObject);
@@ -1342,12 +1399,14 @@ public class GameView : MonoBehaviour
                     thisData.isFold = true;
                     thisData.IsPlaying = false;
 
-                    //關閉所有撲克外框
+                    /*//關閉所有撲克外框
                     List<Poker> pokers = CommunityPokerList.Concat(thisData.LocalGamePlayerInfo.GetHandPoker.ToList()).ToList();
                     foreach (var poker in pokers)
                     {
                         poker.PokerFrameEnable = false;
-                    }
+                    }                    
+                    SetPokerShapeTxtStr = "";
+                    */
                     break;
 
                 //All In
@@ -1359,17 +1418,29 @@ public class GameView : MonoBehaviour
         }
 
         GamePlayerInfo playerInfo = GetPlayer(id);
-        if (playerInfo != null && playerInfo.gameObject.activeSelf)
+        if (playerInfo != null && 
+            playerInfo.gameObject.activeSelf)
         {
             playerInfo.PlayerAction(actionEnum,
                                     betValue,
-                                    chips,
-                                    isLocalPlayer);
+                                    chips);
         }
 
         if (actionEnum == ActingEnum.AllIn)
         {
             playerInfo.SetTip = "All In";
+        }
+
+        //本地玩家有參與
+        if (thisData.LocalGamePlayerInfo.IsPlaying &&
+            playerInfo != null)
+        {
+            //紀錄存檔
+            ProcessStepHistoryData processStepHistoryData = AddNewStepHistory();
+            processStepHistoryData.ActionPlayerIndex = playerInfo.SeatIndex;
+            processStepHistoryData.ActionIndex = (int)actionEnum;
+
+            processHistoryData.processStepHistoryDataList.Add(processStepHistoryData);
         }
     }
 
@@ -1397,7 +1468,7 @@ public class GameView : MonoBehaviour
         }
 
         //顯示底池籌碼
-        SetPotActive = true;
+        //SetPotActive = true;
     }
 
     /// <summary>
@@ -1435,7 +1506,7 @@ public class GameView : MonoBehaviour
         TotalPot = pack.UpdateRoomInfoPack.TotalPot;
         if ((int)pack.UpdateRoomInfoPack.flowEnum >= 2)
         {
-            SetPotActive = true;
+            //SetPotActive = true;
         }
 
         //公共牌
@@ -1541,7 +1612,27 @@ public class GameView : MonoBehaviour
     /// <returns></returns>
     private IEnumerator IFlopCommunityPoker(List<int> currCommunityPoker)
     {
+        foreach (var player in gamePlayerInfoList)
+        {
+            if (!player.IsFold)
+            {
+                player.CurrBetAction = BetActionEnum.None;
+            }            
+        }
+
         thisData.CurrCommunityPoker = currCommunityPoker;
+
+        //本地玩家有參與
+        if (thisData.LocalGamePlayerInfo.IsPlaying &&
+            currCommunityPoker.Count > 0)
+        {
+            //紀錄存檔
+            ProcessStepHistoryData processStepHistoryData = AddNewStepHistory();
+            processStepHistoryData.ActionPlayerIndex = -1;
+            processStepHistoryData.ActionIndex = -1;
+
+            processHistoryData.processStepHistoryDataList.Add(processStepHistoryData);
+        }
 
         yield return IConcentrateBetChips();
 
@@ -1614,14 +1705,7 @@ public class GameView : MonoBehaviour
     private IEnumerator IPotResult(MainPack pack)
     {
         SetActingButtonEnable = false;
-
-        //關閉所有撲克外框
-        Poker[] localHandPoker = GetPlayer(Entry.TestInfoData.LocalUserId).GetHandPoker;
-        List<Poker> allPokerList = CommunityPokerList.Concat(localHandPoker.ToList()).ToList();
-        foreach (var poker in allPokerList)
-        {
-            poker.PokerFrameEnable = false;
-        }
+        thisData.PowWinChips = pack.WinnerPack.WinChips;
 
         yield return IConcentrateBetChips();
         yield return IFlopCommunityPoker(pack.CommunityPokerPack.CurrCommunityPoker);
@@ -1638,46 +1722,53 @@ public class GameView : MonoBehaviour
 
         yield return new WaitForSeconds(1);
 
+        //開啟遮罩
+        foreach (var player in gamePlayerInfoList)
+        {
+            player.IsOpenInfoMask = true;
+        }
+
         //贏得類型顯示
         WinType_Txt.text = LanguageManager.Instance.GetText("Pot");
         TotalPot_Txt.text = StringUtils.SetChipsUnit(pack.WinnerPack.WinChips);
 
         //贏家效果
-        thisData.potWinnerList = pack.WinnerPack.WinnerDic.Select(x => x.Key).ToList();
-        int count = 0;
+        thisData.PotWinnerList = pack.WinnerPack.WinnerDic.Select(x => x.Key).ToList();
+
         foreach (var winner in pack.WinnerPack.WinnerDic)
         {
-            count++;
+            //關閉所有撲克外框
+            List<Poker> playersPoker = new List<Poker>();
+            foreach (var p in gamePlayerInfoList)
+            {
+                foreach (var poker in p.GetHandPoker)
+                {
+                    playersPoker.Add(poker);
+                }
+            }
+            List<Poker> allPokerList = CommunityPokerList.Concat(playersPoker.ToList()).ToList();
+            foreach (var poker in allPokerList)
+            {
+                poker.PokerFrameEnable = false;
+            }
 
             GamePlayerInfo player = GetPlayer(winner.Key);
+            player.IsOpenInfoMask = false;
+
             JudgePokerShape(player, true, true);
 
-            player.SetPotWinnerActive = true;
-            player.SetWinnerEffect = true;
-            Vector2 winnerSeatPos = player.gameObject.transform.position;
+            player.IsWinnerActive = true;
+            player.PlayerRoomChips = winner.Value;
 
+            Vector2 winnerSeatPos = player.gameObject.transform.position;
+            /*
             //產生贏得籌碼物件            
             RectTransform rt = Instantiate(AssetsManager.Instance.GetObjtypeAsset(ObjTypeEnum.WinChips)).GetComponent<RectTransform>();
             rt.SetParent(WinChipsParent_Tr);
             rt.anchoredPosition = Pot_Img.rectTransform.anchoredPosition;
             WinChips winChips = rt.GetComponent<WinChips>();
             winChips.SetWinChips = pack.WinnerPack.WinChips;
-            SetPotActive = false;
-
-            //獲勝牌局紀錄
-            if (count == 1)
-            {
-                ResultHistoryData saveResultData = new ResultHistoryData();
-                saveResultData.TypeAndBlindStr = $"{roomType} {thisData.SmallBlindValue}/{thisData.SmallBlindValue * 2}";
-                saveResultData.NickName = player.Nickname;
-                saveResultData.Avatar = player.Avatar;
-                saveResultData.HandPokers = new int[] { player.GetHandPoker[0].PokerNum, 
-                                                        player.GetHandPoker[1].PokerNum };
-                saveResultData.CommunityPoker = thisData.CurrCommunityPoker;
-                saveResultData.WinChips = pack.WinnerPack.WinChips;
-
-                HandHistoryManager.Instance.SaveResult(saveResultData);
-            }
+            //SetPotActive = false;
 
             yield return new WaitForSeconds(0.5f);
 
@@ -1687,10 +1778,10 @@ public class GameView : MonoBehaviour
                                             Destroy(rt.gameObject);
                                             player.PlayerRoomChips = winner.Value;
                                         });
-
+            */
             yield return new WaitForSeconds(2);
 
-            //最後一位不關
+            /*//最後一位不關
             if (count < pack.WinnerPack.WinnerDic.Count())
             {
                 //關閉撲克外框
@@ -1700,9 +1791,67 @@ public class GameView : MonoBehaviour
                 {
                     poker.PokerFrameEnable = false;
                 }
-                player.SetWinnerEffect = false;
+            }*/
+        }
+
+        //記錄存檔
+        int winIndex = 0;
+        foreach (var winner in pack.WinnerPack.WinnerDic)
+        {
+            winIndex++;
+            GamePlayerInfo player = GetPlayer(winner.Key);
+
+            //本地玩家有參與
+            if (thisData.LocalGamePlayerInfo.IsPlaying)
+            {
+                //獲勝牌局紀錄存檔
+                if (winIndex == 1)
+                {
+                    string roomName = "";
+                    switch (roomType)
+                    {
+                        case TableTypeEnum.IntegralTable:
+                            roomName = "Integral Table";
+                            break;
+                        case TableTypeEnum.CryptoTable:
+                            roomName = "Crypto Table";
+                            break;
+                        case TableTypeEnum.VCTable:
+                            roomName = "VC Table";
+                            break;
+                    }
+
+                    saveResultData = new ResultHistoryData();
+                    saveResultData.RoomType = $"{roomName}";
+                    saveResultData.SmallBlind = thisData.SmallBlindValue;
+                    saveResultData.NickName = player.Nickname;
+                    saveResultData.Avatar = player.Avatar;
+                    saveResultData.HandPokers = new int[] { player.GetHandPoker[0].PokerNum,
+                                                            player.GetHandPoker[1].PokerNum };
+                    saveResultData.CommunityPoker = thisData.CurrCommunityPoker;
+                    saveResultData.WinChips = pack.WinnerPack.WinChips;
+                }
             }
         }
+
+        //主池紀錄存檔
+        if (thisData.LocalGamePlayerInfo.IsPlaying)
+        {
+            ProcessStepHistoryData processStepHistoryData = AddNewStepHistory();
+            processStepHistoryData.ActionPlayerIndex = -1;
+            processStepHistoryData.ActionIndex = -1;
+
+            processStepHistoryData.PotWinnerSeatList = new List<int>();
+            foreach (var id in thisData.PotWinnerList)
+            {
+                int potWinSeat = GetPlayer(id).SeatIndex;
+                processStepHistoryData.PotWinnerSeatList.Add(potWinSeat);
+            }
+            processStepHistoryData.PotWinChips = thisData.PowWinChips;
+
+            processHistoryData.processStepHistoryDataList.Add(processStepHistoryData);
+        }
+        
     }
 
     /// <summary>
@@ -1711,11 +1860,14 @@ public class GameView : MonoBehaviour
     /// <param name="pack"></param>
     public IEnumerator SideResult(MainPack pack)
     {
+        thisData.SideWinnerList = new List<string>();
+        thisData.SideWinChips = 0;
+
         //贏得類型顯示
         bool isShow = true;
         foreach (var item in pack.SidePack.SideWinnerDic)
         {
-            if (thisData.potWinnerList.Contains(item.Key))
+            if (thisData.PotWinnerList.Contains(item.Key))
             {
                 isShow = false;
             }
@@ -1725,34 +1877,55 @@ public class GameView : MonoBehaviour
         {
             WinType_Txt.text = LanguageManager.Instance.GetText("Side");
             TotalPot_Txt.text = StringUtils.SetChipsUnit(pack.SidePack.TotalSideChips);
+            
+            thisData.SideWinnerList = pack.SidePack.SideWinnerDic.Select(x => x.Key).ToList();
         }
 
-        //關閉所有撲克外框
+        foreach (var common in CommunityPokerList)
+        {
+            common.PokerFrameEnable = false;
+        }
+
+        //開啟遮罩
         foreach (var player in gamePlayerInfoList)
         {
-            //關閉撲克外框
-            Poker[] handPoker = player.GetHandPoker;
-            List<Poker> pokerList = CommunityPokerList.Concat(handPoker.ToList()).ToList();
-            foreach (var poker in pokerList)
-            {
-                poker.PokerFrameEnable = false;
-            }
-            player.SetWinnerEffect = false;
+            player.IsOpenInfoMask = true;
+            player.IsWinnerActive = false;
         }
 
         //邊池贏家效果
         foreach (var sideWinner in pack.SidePack.SideWinnerDic)
         {
             GamePlayerInfo player = GetPlayer(sideWinner.Key);
-            player.SetWinnerEffect = true;
-            player.SetSideWinnerActive = isShow;
-
-            Vector2 winnerSeatPos = player.gameObject.transform.position;
-            JudgePokerShape(player, true, true);
 
             //有贏得籌碼
             if (sideWinner.Value > 0)
             {
+                //關閉所有撲克外框
+                List<Poker> playersPoker = new List<Poker>();
+                foreach (var p in gamePlayerInfoList)
+                {
+                    foreach (var poker in p.GetHandPoker)
+                    {
+                        playersPoker.Add(poker);
+                    }
+                }
+                List<Poker> allPokerList = CommunityPokerList.Concat(playersPoker.ToList()).ToList();
+                foreach (var poker in allPokerList)
+                {
+                    poker.PokerFrameEnable = false;
+                }
+
+                thisData.SideWinChips = sideWinner.Value;
+                
+                player.IsOpenInfoMask = false;
+                player.IsWinnerActive = isShow;
+
+                Vector2 winnerSeatPos = player.gameObject.transform.position;
+                JudgePokerShape(player, true, true);
+
+                player.PlayerRoomChips += sideWinner.Value;
+                /*
                 RectTransform rt = Instantiate(AssetsManager.Instance.GetObjtypeAsset(ObjTypeEnum.WinChips)).GetComponent<RectTransform>();
                 rt.SetParent(WinChipsParent_Tr);
                 rt.anchoredPosition = Pot_Img.rectTransform.anchoredPosition;
@@ -1767,6 +1940,7 @@ public class GameView : MonoBehaviour
                                                 player.PlayerRoomChips += sideWinner.Value;
                                                 Destroy(rt.gameObject);
                                             });
+                */
             }
 
             yield return new WaitForSeconds(2);
@@ -1778,7 +1952,6 @@ public class GameView : MonoBehaviour
             {
                 poker.PokerFrameEnable = false;
             }
-            player.SetWinnerEffect = false;
         }
 
         yield return new WaitForSeconds(0.5f);
@@ -1797,6 +1970,26 @@ public class GameView : MonoBehaviour
         {
             GetPlayer(player.Key).PlayerRoomChips = player.Value;
         }
+
+        //邊池紀錄存檔
+        if (thisData.LocalGamePlayerInfo.IsPlaying &&
+            thisData.SideWinnerList.Count > 0)
+        {
+            ProcessStepHistoryData processStepHistoryData = AddNewStepHistory();
+            processStepHistoryData.ActionPlayerIndex = -1;
+            processStepHistoryData.ActionIndex = -1;
+
+            processStepHistoryData.SildWinnerSeatList = new List<int>();
+            foreach (var id in thisData.SideWinnerList)
+            {
+                int sideWinSeat = GetPlayer(id).SeatIndex;
+                processStepHistoryData.SildWinnerSeatList.Add(sideWinSeat);
+            }
+            processStepHistoryData.SildWinChips = thisData.SideWinChips;
+
+            processHistoryData.processStepHistoryDataList.Add(processStepHistoryData);
+        }
+        
     }
 
     /// <summary>
@@ -1808,33 +2001,46 @@ public class GameView : MonoBehaviour
         thisData.SmallBlindValue = pack.GameStagePack.SmallBlind;
         thisData.CurrRaiseValue = thisData.SmallBlindValue * 2;
 
+        //重製玩家行動文字顯示
+        if (pack.GameStagePack.flowEnum == FlowEnum.PotResult)
+        {
+            foreach (var player in gamePlayerInfoList)
+            {
+                player.SetShowActionStr(false);
+            }
+        }
+        else
+        {
+            foreach (var player in gamePlayerInfoList)
+            {
+                if (!player.IsFold)
+                {
+                    player.SetShowActionStr(false);
+                }
+            }
+        }        
+
         //判斷當前遊戲進程
         switch (pack.GameStagePack.flowEnum)
         {
             //發牌
             case FlowEnum.Licensing:
+                SavePreGame();
                 GameInit();
                 Tip_Txt.text = "";
 
-                //設置公共牌
-                List<string> userIdList = new List<string>();
-                foreach (var player in gamePlayerInfoList)
-                {
-                    userIdList.Add(player.UserId);
-                }
-                //設置手牌
                 HandPokerLicensing(pack.LicensingStagePack.HandPokerDic);
-
-                //Button座位
                 SetButtonSeat(pack.LicensingStagePack.ButtonSeatId);
-
                 break;
 
             //大小盲
             case FlowEnum.SetBlind:
-                SetActingButtonEnable = true;
+                SetActingButtonEnable = thisData.IsPlaying;
                 TotalPot = pack.GameRoomInfoPack.TotalPot;
                 SetBlind(pack.BlindStagePack);
+
+                gameInitHistoryData = HandHistoryManager.Instance.SetGameInitData(gamePlayerInfoList,
+                                                                                  thisData.TotalPot);
                 break;
 
             //翻牌
@@ -1880,6 +2086,19 @@ public class GameView : MonoBehaviour
     {
         thisData.IsPlaying = false;
 
+        //正在觀看紀錄影片
+        LobbyHandHistoryView handHistoryMainView = GameObject.FindAnyObjectByType<LobbyHandHistoryView>();
+        if (handHistoryMainView != null)
+        {
+            Destroy(handHistoryMainView.gameObject);
+        }
+        HistoryVideoView historyVideoView = GameObject.FindAnyObjectByType<HistoryVideoView>();
+        if (historyVideoView != null)
+        {
+            Destroy(historyVideoView.gameObject);
+        }
+
+        //顯示購買金幣/積分結果
         if (RoomType == TableTypeEnum.CryptoTable ||
             RoomType == TableTypeEnum.VCTable)
         {
@@ -1928,6 +2147,62 @@ public class GameView : MonoBehaviour
         BattleResultView battleResult = BattleResultView.GetComponent<BattleResultView>();
         battleResult.OnSetBattleResult(isWin, transform.name);
     }
+
+
+    #region 記錄存檔
+
+    /// <summary>
+    /// 上一局遊戲紀錄存檔
+    /// </summary>
+    private void SavePreGame()
+    {
+        //本地玩家有參與
+        if (thisData.LocalGamePlayerInfo.IsPlaying)
+        {
+            HandHistoryManager.Instance.SaveResult(saveResultData);
+            HandHistoryManager.Instance.SaveGameInit(gameInitHistoryData);
+            HandHistoryManager.Instance.SaveProcess(processHistoryData);
+        }
+
+        processHistoryData = new ProcessHistoryData();
+        processHistoryData.processStepHistoryDataList = new List<ProcessStepHistoryData>();
+
+        //更新存檔資料
+        HandHistoryView handHistoryView = GameObject.FindAnyObjectByType<HandHistoryView>();
+        handHistoryView?.UpdateHitoryDate();
+    }
+
+    /// <summary>
+    /// 添加行動存檔新紀錄
+    /// </summary>
+    /// <returns></returns>
+    private ProcessStepHistoryData AddNewStepHistory()
+    {
+        //紀錄存檔
+        ProcessStepHistoryData processStepHistoryData = new ProcessStepHistoryData();
+
+        processStepHistoryData.SeatList = new List<int>();
+        processStepHistoryData.ChipsList = new List<double>();
+        processStepHistoryData.BetChipsList = new List<double>();
+        processStepHistoryData.HandPoker1 = new List<int>();
+        processStepHistoryData.HandPoker2 = new List<int>();
+        processStepHistoryData.BetActionEnumIndex = new List<int>();
+        foreach (var player in gamePlayerInfoList)
+        {
+            processStepHistoryData.SeatList.Add(player.SeatIndex);
+            processStepHistoryData.ChipsList.Add(player.CurrRoomChips);
+            processStepHistoryData.BetChipsList.Add(player.CurrBetValue);
+            processStepHistoryData.HandPoker1.Add(player.GetHandPoker[0].PokerNum);
+            processStepHistoryData.HandPoker2.Add(player.GetHandPoker[1].PokerNum);
+            processStepHistoryData.BetActionEnumIndex.Add(Convert.ToInt32(player.CurrBetAction));
+        }
+        processStepHistoryData.CommunityPoker = thisData.CurrCommunityPoker;
+        processStepHistoryData.TotalPot = thisData.TotalPot;
+
+        return processStepHistoryData;
+    }
+
+    #endregion
 
     /// <summary>
     /// 移除資料

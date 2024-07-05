@@ -2108,7 +2108,7 @@ public class Reporter : MonoBehaviour
             clear();
 
         currentScene = scene.name;
-        Debug.Log("Scene " + currentScene + " is loaded");
+        //Debug.Log("Scene " + currentScene + " is loaded");
     }
 
     //save user config

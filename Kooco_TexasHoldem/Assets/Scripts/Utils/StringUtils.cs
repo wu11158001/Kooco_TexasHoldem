@@ -300,7 +300,7 @@ public static class StringUtils
     public static bool InitPasswordContent(Image img, InputField inputField)
     {
         //眼睛圖案紐
-        img.sprite = AssetsManager.Instance.GetAlbumAsset(AlbumEnum.PasswordEye).album[0];
+        img.sprite = AssetsManager.Instance.GetAlbumAsset(AlbumEnum.PasswordEyeAlbum).album[0];
         //輸入框
         inputField.contentType = InputField.ContentType.Password;
         inputField.text = "";

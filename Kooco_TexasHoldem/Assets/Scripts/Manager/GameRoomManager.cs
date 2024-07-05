@@ -37,6 +37,7 @@ public class GameRoomManager : UnitySingleton<GameRoomManager>
     public readonly int maxRoomCount = 2;
     public readonly float moveTargetDictance = 108;     //移動房間所需移動距離
 
+    public bool IsShow;                                 //是否顯示遊戲房間
 
     private ThisData thisData;
     public class ThisData
@@ -112,6 +113,15 @@ public class GameRoomManager : UnitySingleton<GameRoomManager>
     }
 
     /// <summary>
+    /// 獲取遊戲房間Canvas
+    /// </summary>
+    /// <returns></returns>
+    public Canvas GetGameRoomCanvas()
+    {
+        return GameRoomCanvas;
+    }
+
+    /// <summary>
     /// 初始化
     /// </summary>
     private void Init()
@@ -180,8 +190,14 @@ public class GameRoomManager : UnitySingleton<GameRoomManager>
     /// </summary>
     public bool IsShowGameRoom
     {
+        get
+        {
+            return IsShow;
+        }
         set
         {
+            IsShow = value;
+
             if (value == true)
             {
                 GameRoomCanvas.sortingOrder = 50;
@@ -328,7 +344,6 @@ public class GameRoomManager : UnitySingleton<GameRoomManager>
             thisData.SwitchBtnIndexList.Remove(thisData.RoomDic[roomName].Item2.BtnIndex);
             thisData.SwitchBtnList.Remove(thisData.RoomDic[roomName].Item2);
 
-            Debug.Log($"Room Destroy:{roomName}");
             Destroy(thisData.RoomDic[roomName].Item1.gameObject);
             Destroy(thisData.RoomDic[roomName].Item2.gameObject);
 
@@ -363,6 +378,7 @@ public class GameRoomManager : UnitySingleton<GameRoomManager>
 
         BgMask_Obj.SetActive(GetRoomCount > 0);
         IsCanMoveSwitch = GetRoomCount > 0;
+        GameRoomManager.Instance.IsShowGameRoom = GetRoomCount > 0;
 
         //切換按鈕空間大小
         float sizeX = (GetRoomCount + 1) * thisData.AddSwitchBtnParnetWidth;

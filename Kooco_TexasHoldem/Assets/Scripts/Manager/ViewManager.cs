@@ -18,6 +18,15 @@ public class ViewManager : UnitySingleton<ViewManager>
     }
 
     /// <summary>
+    /// 獲取Canvas
+    /// </summary>
+    /// <returns></returns>
+    public Canvas GetCanvas()
+    {
+        return mainCanvas;
+    }
+
+    /// <summary>
     /// 初始化
     /// </summary>
     public void Init()

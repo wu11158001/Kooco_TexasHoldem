@@ -18,8 +18,9 @@ public class HistorySample : MonoBehaviour
 
     public void SetData(ResultHistoryData resultHistory, int index)
     {
-        Index_Txt.text = $"Hand{index}";
-        TypeAndBlind_Txt.text = resultHistory.TypeAndBlindStr;
+        Index_Txt.text = $"Hand{index + 1}";
+        TypeAndBlind_Txt.text = $"<color=#FFFFFF><size=12>{resultHistory.RoomType}</size></color>" +
+                                $"  <color=#C0C0C0><size=11>{StringUtils.SetChipsUnit(resultHistory.SmallBlind)}/{StringUtils.SetChipsUnit(resultHistory.SmallBlind * 2)}</size></color>";
         Avatar_Img.sprite = AssetsManager.Instance.GetAlbumAsset(AlbumEnum.AvatarAlbum).album[resultHistory.Avatar];
         Nicaname_Txt.text = resultHistory.NickName;
         WinChips_Txt.text = StringUtils.SetChipsUnit(resultHistory.WinChips);
@@ -37,7 +38,7 @@ public class HistorySample : MonoBehaviour
 
         Play_Btn.onClick.AddListener(() =>
         {
-            Debug.Log($"Play{index}");
+            HandHistoryManager.Instance.PlayVideo(index);
         });
     }
 }

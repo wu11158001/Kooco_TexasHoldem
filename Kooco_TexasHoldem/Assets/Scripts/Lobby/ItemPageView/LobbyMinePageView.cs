@@ -75,6 +75,12 @@ public class LobbyMinePageView : MonoBehaviour
     [SerializeField]
     GameObject MyNFTViewObj;
 
+    [Header("手牌紀錄")]
+    [SerializeField]
+    Button HandHistory_Btn;
+    [SerializeField]
+    GameObject LobbyHandHistoryViewObj;
+
     List<Button> avatarBtnList;                                                 //頭像按鈕
     int tempAvatarIndex;                                                        //零時頭像index
     bool isAccountBalanceExpand;                                                //是否展開帳戶餘額
@@ -229,6 +235,17 @@ public class LobbyMinePageView : MonoBehaviour
             Transform lobbyView = GameObject.Find("LobbyView").transform;
             RectTransform MyNFTView = Instantiate(MyNFTViewObj, lobbyView).GetComponent<RectTransform>();
             ViewManager.Instance.InitViewTr(MyNFTView, "MyNFTView");
+        });
+
+        #endregion
+
+        #region 手牌紀錄
+
+        HandHistory_Btn.onClick.AddListener(() =>
+        {
+            Transform lobbyView = GameObject.Find("LobbyView").transform;
+            RectTransform lobbyHandHistoryView = Instantiate(LobbyHandHistoryViewObj, lobbyView).GetComponent<RectTransform>();
+            ViewManager.Instance.InitViewTr(lobbyHandHistoryView, "LobbyHandHistoryView");
         });
 
         #endregion

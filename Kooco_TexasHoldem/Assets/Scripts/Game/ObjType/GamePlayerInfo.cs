@@ -11,9 +11,9 @@ public class GamePlayerInfo : MonoBehaviour
 {
     [Header("用戶訊息")]
     [SerializeField]
-    Text Nickname_Txt, Chips_Txt, BackChips_Txt, PokerShape_Txt, PotWinner_Txt, SideWinner_Txt, BlindCharacter_Txt;
+    Text Nickname_Txt, Chips_Txt, BackChips_Txt, PokerShape_Txt, BlindCharacter_Txt;
     [SerializeField]
-    GameObject ActionFrame_Obj, PotWinner_Obj, SideWinner_Obj;
+    GameObject ActionFrame_Obj, Winner_Obj, InfoMask_Obj;
     [SerializeField]
     Image CDMask_Img, Avatar_Img, ButtonCharacter_Img;
 
@@ -43,17 +43,25 @@ public class GamePlayerInfo : MonoBehaviour
     [SerializeField]
     Text Chat_Txt;
 
-    [Header("動畫")]
-    [SerializeField]
-    Animator PokerShape_Ani;
-
-    readonly int isWinHash = Animator.StringToHash("IsWin");
-
     Coroutine cdCoroutine;              //倒數協程
     Coroutine chatCoroutine;            //聊天協程
 
-    double currRoomChips;               //當前擁有籌碼
     int pokerShapeIndex;                //牌型編號
+
+    /// <summary>
+    /// 是否有在進行遊戲
+    /// </summary>
+    public bool IsPlaying { get; set; }
+
+    /// <summary>
+    /// 是否已棄牌
+    /// </summary>
+    public bool IsFold { get; set; }
+
+    /// <summary>
+    /// 當前下注行為
+    /// </summary>
+    public BetActionEnum CurrBetAction { get; set; }
 
     /// <summary>
     /// 座位編號
@@ -76,6 +84,16 @@ public class GamePlayerInfo : MonoBehaviour
     public int Avatar { get; set; }
 
     /// <summary>
+    /// 座位上的腳色
+    /// </summary>
+    public SeatCharacterEnum SeatCharacter { get; set; }
+
+    /// <summary>
+    /// 當前擁有籌碼
+    /// </summary>
+    public double CurrRoomChips { get; set; }
+
+    /// <summary>
     /// 當前下注值
     /// </summary>
     public double CurrBetValue { get; set; }
@@ -85,22 +103,21 @@ public class GamePlayerInfo : MonoBehaviour
     /// </summary>
     private void UpdateLanguage()
     {
-        PotWinner_Txt.text = $"{LanguageManager.Instance.GetText("PotWinner")}";
-        SideWinner_Txt.text = $"{LanguageManager.Instance.GetText("SideWinner")}";
-        PokerShape_Txt.text = LanguageManager.Instance.GetText(PokerShape.shapeStr[pokerShapeIndex]);
+        SetPokerShapeTxtStr = LanguageManager.Instance.GetText(PokerShape.shapeStr[pokerShapeIndex]);
     }
 
     private void Awake()
     {
         LanguageManager.Instance.AddUpdateLanguageFunc(UpdateLanguage);
-        Chips_Txt.text = "0";
         Chat_Obj.SetActive(false);
     }
 
     private void OnEnable()
     {
         StopCountDown();
-        OpenInfoMask = true;
+        IsOpenInfoMask = true;
+
+        Init();
     }
 
     /// <summary>
@@ -108,21 +125,34 @@ public class GamePlayerInfo : MonoBehaviour
     /// </summary>
     public void Init()
     {
+        IsFold = false;
+        CurrBetAction = BetActionEnum.None;
         CurrBetValue = 0;
         CurrBrtChips_Txt.text = StringUtils.SetChipsUnit(0);
         ButtonCharacter_Img.gameObject.SetActive(false);
         BlindCharacter_Txt.text = "";
-        BetChips_Txt.text = CurrBetValue.ToString();
+        BetChips_Txt.text = StringUtils.SetChipsUnit(0);
         Action_Obj.SetActive(false);
         BetChips_Tr.gameObject.SetActive(false);
         ActionFrame = false;
+        HandPokers[0].PokerNum = -1;
         HandPokers[0].gameObject.SetActive(false);
-        HandPokers[1].gameObject.SetActive(false);
-        PotWinner_Obj.SetActive(false);
-        SideWinner_Obj.SetActive(false);
+        HandPokers[1].PokerNum = -1;
+        HandPokers[1].gameObject.SetActive(false);        
+        Winner_Obj.SetActive(false);
         SetTip = "";
-        PokerShape_Txt.text = "";
-        PokerShape_Ani.SetBool(isWinHash, false);
+        SetPokerShapeTxtStr = "";
+    }
+
+    /// <summary>
+    /// 設置牌型文字元件文字
+    /// </summary>
+    public string SetPokerShapeTxtStr
+    {
+        set
+        {
+            PokerShape_Txt.text = value;
+        }
     }
 
     /// <summary>
@@ -132,12 +162,12 @@ public class GamePlayerInfo : MonoBehaviour
     {
         get
         {
-            return currRoomChips;
+            return CurrRoomChips;
         }
         set
         {
-            currRoomChips = value;
-            StringUtils.ChipsChangeEffect(Chips_Txt, currRoomChips);
+            CurrRoomChips = value;
+            StringUtils.ChipsChangeEffect(Chips_Txt, CurrRoomChips);
         }
     }
 
@@ -164,35 +194,13 @@ public class GamePlayerInfo : MonoBehaviour
     }
 
     /// <summary>
-    /// 設定底池贏家顯示
+    /// 設定贏家顯示
     /// </summary>
-    public bool SetPotWinnerActive
+    public bool IsWinnerActive
     {
         set
         {
-            PotWinner_Obj.SetActive(value);
-        }
-    }
-
-    /// <summary>
-    /// 設定邊池贏家顯示
-    /// </summary>
-    public bool SetSideWinnerActive
-    {
-        set
-        {
-            SideWinner_Obj.SetActive(value);
-        }
-    }
-
-    /// <summary>
-    /// 設定贏家效果
-    /// </summary>
-    public bool SetWinnerEffect
-    {
-        set
-        {
-            PokerShape_Ani.SetBool(isWinHash, value);
+            Winner_Obj.SetActive(value);
         }
     }
 
@@ -234,12 +242,35 @@ public class GamePlayerInfo : MonoBehaviour
     /// <summary>
     /// 開訊息遮罩
     /// </summary>
-    public bool OpenInfoMask
+    public bool IsOpenInfoMask
     {
         set
         {
-            Avatar_Img.color = value == true ? new Color(1, 1, 1, 0.5f) : new Color(1, 1, 1, 1);
-            CDMask_Img.fillAmount = value == true ? 1 : 0;
+            InfoMask_Obj.SetActive(value);
+        }
+    }
+
+    /// <summary>
+    /// 設置當前下注值文字
+    /// </summary>
+    public double SetCurrBetTxt
+    {
+        set
+        {
+            StringUtils.ChipsChangeEffect(CurrBrtChips_Txt,
+                                          value);
+        }
+    }
+
+    /// <summary>
+    /// 設置擁有籌碼文字
+    /// </summary>
+    public double SetChipsTxt
+    {
+        set
+        {
+            StringUtils.ChipsChangeEffect(Chips_Txt,
+                                          value);
         }
     }
 
@@ -251,17 +282,16 @@ public class GamePlayerInfo : MonoBehaviour
     /// <param name="nickName">暱稱</param>
     /// <param name="initChips">初始籌碼</param>
     /// <param name="avatar">頭像</param>
-    /// <param name="potPoint">底池位置</param>
-    public void SetInitPlayerInfo(int seatIndex, string userId, string nickName, double initChips, int avatar, RectTransform potPoint)
+    public void SetInitPlayerInfo(int seatIndex, string userId, string nickName, double initChips, int avatar)
     {
         Init();
 
         UserId = userId;
         Nickname = nickName;
         Avatar = avatar;
-
         SeatIndex = seatIndex;
-        currRoomChips = initChips;
+
+        CurrRoomChips = initChips;
         Avatar_Img.sprite = AssetsManager.Instance.GetAlbumAsset(AlbumEnum.AvatarAlbum).album[avatar];
         Nickname_Txt.text = $"@{nickName}";
         Chips_Txt.text = $"{StringUtils.SetChipsUnit(initChips)}";
@@ -303,6 +333,8 @@ public class GamePlayerInfo : MonoBehaviour
         Init();
         StopCountDown();
 
+        IsPlaying = true;
+
         foreach (var poker in HandPokers)
         {
             poker.gameObject.SetActive(true);
@@ -311,7 +343,8 @@ public class GamePlayerInfo : MonoBehaviour
 
         HandPokers[0].PokerNum = hand0;
         HandPokers[1].PokerNum = hand1;
-        OpenInfoMask = false;
+
+        IsOpenInfoMask = false;
     }
 
     /// <summary>
@@ -320,20 +353,25 @@ public class GamePlayerInfo : MonoBehaviour
     /// <param name="seatCharacter"></param>
     public void SetSeatCharacter(SeatCharacterEnum seatCharacter)
     {
+        SeatCharacter = seatCharacter;
+
         switch (seatCharacter)
         {
+            case SeatCharacterEnum.None:
+                ButtonCharacter_Img.gameObject.SetActive(false);
+                BlindCharacter_Txt.text = "";
+                break;
+
             case SeatCharacterEnum.Button:
                 ButtonCharacter_Img.gameObject.SetActive(true);
                 break;
+
             case SeatCharacterEnum.SB:
                 BlindCharacter_Txt.text = "SB";
                 break;
+
             case SeatCharacterEnum.BB:
                 BlindCharacter_Txt.text = "BB";
-                break;
-            default:
-                ButtonCharacter_Img.gameObject.SetActive(false);
-                BlindCharacter_Txt.text = "";
                 break;
         }
     }
@@ -383,7 +421,8 @@ public class GamePlayerInfo : MonoBehaviour
     /// </summary>
     public void RountInit()
     {
-        CurrBrtChips_Txt.text = "0";
+        SetCurrBetTxt = 0;
+        CurrBetValue = 0;
     }
 
     /// <summary>
@@ -409,6 +448,8 @@ public class GamePlayerInfo : MonoBehaviour
 
         StringUtils.ChipsChangeEffect(CurrBrtChips_Txt, betValue);
         PlayerRoomChips = chips;
+
+        CurrBetValue = betValue;
     }
 
     /// <summary>
@@ -430,18 +471,14 @@ public class GamePlayerInfo : MonoBehaviour
     }
 
     /// <summary>
-    /// 顯示行動文字
+    /// 是否顯示行動文字
     /// </summary>
+    /// <param name="isShow"></param>
     /// <param name="actionStr">行動文字</param>
-    /// <returns></returns>
-    private IEnumerator ShowActionStr(string actionStr)
+    public void SetShowActionStr(bool isShow, string actionStr = "")
     {
-        Action_Obj.SetActive(true);
-        Action_Txt.text = LanguageManager.Instance.GetText(actionStr);
-
-        yield return new WaitForSeconds(1.0f);
-
-        Action_Obj.SetActive(false);
+        Action_Obj.SetActive(isShow);
+        Action_Txt.text = actionStr;
     }
 
     /// <summary>
@@ -450,17 +487,20 @@ public class GamePlayerInfo : MonoBehaviour
     /// <param name="actionEnum">行動</param>
     /// <param name="betValue">下注值</param>
     /// <param name="chips">玩家籌碼</param>
-    /// <param name="isLocalPlayer">是否本地玩家</param>
-    public void PlayerAction(ActingEnum actionEnum, double betValue, double chips, bool isLocalPlayer = false)
+    public void PlayerAction(ActingEnum actionEnum, double betValue, double chips)
     {
         if (!gameObject.activeSelf) return;
 
         StopCountDown();
-
-        CurrBetValue += CurrBetValue + betValue;
         ActionFrame = false;
 
-        StartCoroutine(ShowActionStr(actionEnum.ToString()));
+        CurrBetAction = (BetActionEnum)Convert.ToInt32(actionEnum);
+
+        if (actionEnum != ActingEnum.Blind)
+        {
+            SetShowActionStr(true,
+                             $"{actionEnum}");
+        }
 
         switch (actionEnum)
         {
@@ -471,23 +511,13 @@ public class GamePlayerInfo : MonoBehaviour
 
             //棄牌
             case ActingEnum.Fold:
-                if (isLocalPlayer)
+                IsFold = true;
+                foreach (var poker in HandPokers)
                 {
-                    //本地玩家
-                    foreach (var poker in HandPokers)
-                    {
-                        poker.SetColor = 0.5f;
-                    }
-                    PokerShape_Txt.text = "";
-                }
-                else
-                {
-                    //其他玩家
-                    HandPokers[0].gameObject.SetActive(false);
-                    HandPokers[1].gameObject.SetActive(false);
+                    poker.SetColor = 0.5f;
                 }
 
-                OpenInfoMask = true;
+                IsOpenInfoMask = true;
                 break;
 
             //過牌
@@ -518,7 +548,7 @@ public class GamePlayerInfo : MonoBehaviour
     public void SetPokerShapeStr(int shapeIndex)
     {
         pokerShapeIndex = shapeIndex;
-        PokerShape_Txt.text = LanguageManager.Instance.GetText(PokerShape.shapeStr[pokerShapeIndex]);
+        SetPokerShapeTxtStr = LanguageManager.Instance.GetText(PokerShape.shapeStr[pokerShapeIndex]);
     }
 
     private void OnDisable()

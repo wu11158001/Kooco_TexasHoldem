@@ -625,8 +625,8 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
     {
         isShowPassword = !isShowPassword;
         Sprite eye = isShowPassword ?
-                     AssetsManager.Instance.GetAlbumAsset(AlbumEnum.PasswordEye).album[1] :
-                     AssetsManager.Instance.GetAlbumAsset(AlbumEnum.PasswordEye).album[0];
+                     AssetsManager.Instance.GetAlbumAsset(AlbumEnum.PasswordEyeAlbum).album[1] :
+                     AssetsManager.Instance.GetAlbumAsset(AlbumEnum.PasswordEyeAlbum).album[0];
         img.sprite = eye;
 
         inputField.contentType = isShowPassword ?
@@ -650,8 +650,8 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
         string correctColor = "#87CF5A";
 
         img.sprite = isTrue ?
-                     AssetsManager.Instance.GetAlbumAsset(AlbumEnum.PasswordCheck).album[1] :
-                     AssetsManager.Instance.GetAlbumAsset(AlbumEnum.PasswordCheck).album[0];
+                     AssetsManager.Instance.GetAlbumAsset(AlbumEnum.PasswordCheckAlbum).album[1] :
+                     AssetsManager.Instance.GetAlbumAsset(AlbumEnum.PasswordCheckAlbum).album[0];
         string colorStr = isTrue ?
                           correctColor :
                           mistakeColor;
@@ -919,7 +919,7 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
 
         ConnectionTitle_Txt.text = $"Log In Using {walletEnum}";
         Connecting_Txt.text = $"Load Into {walletEnum}";
-        ConnectingLogo_Img.sprite = AssetsManager.Instance.GetAlbumAsset(AlbumEnum.WalletLogo).album[(int)walletEnum];
+        ConnectingLogo_Img.sprite = AssetsManager.Instance.GetAlbumAsset(AlbumEnum.WalletLogoAlbum).album[(int)walletEnum];
         connectionEffectCoroutine = StartCoroutine(IConnectionEffect());
 
         #endregion

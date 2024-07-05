@@ -27,11 +27,11 @@ public class Poker : MonoBehaviour
             pokerNumber = value;
             if (value <= -1)
             {
-                poker_Img.sprite = AssetsManager.Instance.GetAlbumAsset(AlbumEnum.PokerBack).album[0];
+                poker_Img.sprite = AssetsManager.Instance.GetAlbumAsset(AlbumEnum.pokerBackAlbum).album[0];
             }
             else
             {
-                poker_Img.sprite = AssetsManager.Instance.GetAlbumAsset(AlbumEnum.PokerNum).album[value];
+                poker_Img.sprite = AssetsManager.Instance.GetAlbumAsset(AlbumEnum.PokerNumAlbum).album[value];
             }            
         }
     }
@@ -74,7 +74,6 @@ public class Poker : MonoBehaviour
     /// </summary>
     public void StartWinEffect()
     {
-        poker_Img.rectTransform.localScale = new Vector3(1.1f, 1.1f, 1.1f);
         shining_Obj.SetActive(true);
     }
 
@@ -86,7 +85,7 @@ public class Poker : MonoBehaviour
     public IEnumerator IHorizontalFlopEffect(int frontNum)
     {
         poker_Img.rectTransform.rotation = Quaternion.Euler(poker_Img.rectTransform.eulerAngles.x, 180, poker_Img.rectTransform.eulerAngles.z);
-        poker_Img.sprite = AssetsManager.Instance.GetAlbumAsset(AlbumEnum.PokerBack).album[0];
+        poker_Img.sprite = AssetsManager.Instance.GetAlbumAsset(AlbumEnum.pokerBackAlbum).album[0];
 
         float turnTime = 0.5f;
         DateTime startTime = DateTime.Now;

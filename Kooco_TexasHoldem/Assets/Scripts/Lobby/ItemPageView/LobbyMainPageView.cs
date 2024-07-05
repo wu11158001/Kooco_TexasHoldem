@@ -58,7 +58,9 @@ public class LobbyMainPageView : MonoBehaviour
     {
         #region 廣告刊版切換
 
-        if (Input.GetMouseButtonDown(0) &&
+        if (!GameRoomManager.Instance.IsShow &&
+            Input.GetMouseButtonDown(0) &&
+            Utils.GetTouchUIObj() != null &&
             Utils.GetTouchUIObj().name == BillbpardBtnName)
         {
             isStartMoveBillboard = true;
