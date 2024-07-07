@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using System;
 using System.Linq;
 using UnityEngine.Events;
+using TMPro;
 
 public class TransactionHistoryView : MonoBehaviour
 {
@@ -20,7 +21,7 @@ public class TransactionHistoryView : MonoBehaviour
     [SerializeField]
     Transform HistoryArea;
     [SerializeField]
-    Text CurrPage_Txt;
+    TextMeshProUGUI CurrPage_Txt;
     [SerializeField]
     Toggle Cash_Tog, Gold_Tog;
 
@@ -32,7 +33,7 @@ public class TransactionHistoryView : MonoBehaviour
     [SerializeField]
     Image AllTypeExpand_Img, AllStatusExpand_Img;
     [SerializeField]
-    Text DateRange_Txt;
+    TextMeshProUGUI DateRange_Txt;
 
     [Header("日期範圍設置")]
     [SerializeField]
@@ -42,8 +43,8 @@ public class TransactionHistoryView : MonoBehaviour
     [SerializeField]
     GameObject SetDateRange_Obj;
     [SerializeField]
-    Dropdown StartFilterYear_Dd, StartFilterMonth_Dd, StartFilterDay_Dd,
-             EndFilterYear_Dd, EndFilterMonth_Dd, EndFilterDay_Dd;
+    TMP_Dropdown StartFilterYear_Dd, StartFilterMonth_Dd, StartFilterDay_Dd,
+                 EndFilterYear_Dd, EndFilterMonth_Dd, EndFilterDay_Dd;
 
     [Header("所有類型篩選")]
     [SerializeField]
@@ -654,7 +655,7 @@ public class TransactionHistoryView : MonoBehaviour
     /// <param name="year"></param>
     /// <param name="month"></param>
     /// <param name="dropdown"></param>
-    private void UpdateDayDropdown(int year, int month, Dropdown dropdown)
+    private void UpdateDayDropdown(int year, int month, TMP_Dropdown dropdown)
     {
         int daysInMonth = DateTime.DaysInMonth(year, month);
 

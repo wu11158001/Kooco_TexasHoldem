@@ -1,4 +1,4 @@
-﻿#if UNITY_2018_2_OR_NEWER
+#if UNITY_2018_2_OR_NEWER
 #define TMP_WEBGL_SUPPORT
 #endif
 

@@ -7,7 +7,7 @@ using System;
 using System.Threading.Tasks;
 using UnityEngine.UI;
 using System.Threading;
-using System;
+using TMPro;
 
 public static class StringUtils
 {
@@ -16,7 +16,7 @@ public static class StringUtils
     /// </summary>
     /// <param name="content">顯示內容</param>
     /// <param name="textComponent">Text元件</param>
-    public static void StrExceedSize(string content, Text textComponent)
+    public static void StrExceedSize(string content, TextMeshProUGUI textComponent)
     {
         if (string.IsNullOrEmpty(content))
         {
@@ -172,7 +172,7 @@ public static class StringUtils
     /// <param name="targetNum"></param>
     /// <param name="addStartStr">起始添加文字</param>
     /// <param name="addEndStr">結束添加文字</param>
-    async public static void ChipsChangeEffect(Text txtObj, double targetNum, string addStartStr = "", string addEndStr = "")
+    async public static void ChipsChangeEffect(TextMeshProUGUI txtObj, double targetNum, string addStartStr = "", string addEndStr = "")
     {
         float during = 0.5f;
 
@@ -273,7 +273,7 @@ public static class StringUtils
     /// <param name="dropdown"></param>
     /// <param name="phoneNumber"></param>
     /// <returns></returns>
-    public static string GetPhoneAddCode(Dropdown dropdown, string phoneNumber)
+    public static string GetPhoneAddCode(TMP_Dropdown dropdown, string phoneNumber)
     {
         if (string.IsNullOrEmpty(phoneNumber))
         {
@@ -297,12 +297,12 @@ public static class StringUtils
     /// <param name="img"></param>
     /// <param name="inputField"></param>
     /// <returns></returns>
-    public static bool InitPasswordContent(Image img, InputField inputField)
+    public static bool InitPasswordContent(Image img, TMP_InputField inputField)
     {
         //眼睛圖案紐
         img.sprite = AssetsManager.Instance.GetAlbumAsset(AlbumEnum.PasswordEyeAlbum).album[0];
         //輸入框
-        inputField.contentType = InputField.ContentType.Password;
+        inputField.contentType = TMP_InputField.ContentType.Password;
         inputField.text = "";
 
         return false;

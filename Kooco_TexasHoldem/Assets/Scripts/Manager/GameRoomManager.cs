@@ -34,6 +34,10 @@ public class GameRoomManager : UnitySingleton<GameRoomManager>
     [SerializeField]
     GameObject BgMask_Obj;
 
+    [Header("遊戲房間物件")]
+    [SerializeField]
+    GameObject GameViewObj;
+
     public readonly int maxRoomCount = 2;
     public readonly float moveTargetDictance = 108;     //移動房間所需移動距離
 
@@ -167,11 +171,12 @@ public class GameRoomManager : UnitySingleton<GameRoomManager>
     public bool IsCanMoveSwitch
     {
         set
-        {
+        {            
             GameRoomList_Sr.enabled = value;
             SwtichBtnCanvas.sortingOrder = value == true ?
-                                           50 :
+                                           100 :
                                            -1;
+            
         }
     }
 
@@ -278,8 +283,7 @@ public class GameRoomManager : UnitySingleton<GameRoomManager>
         }
 
         //創建房間介面
-        GameObject roomObj = Resources.Load<GameObject>($"GameRoom/GameView");
-        RectTransform room = Instantiate(roomObj).GetComponent<RectTransform>();
+        RectTransform room = Instantiate(GameViewObj).GetComponent<RectTransform>();
         room.gameObject.SetActive(true);
         room.SetParent(GameRoomList_Tr);
         string roomName = $"{roomType}{thisData.RoomNameIndex}";
@@ -371,11 +375,11 @@ public class GameRoomManager : UnitySingleton<GameRoomManager>
     private IEnumerator IJudgeShowSwitchBtn()
     {
         yield return null;
-
+        
         SwtichBtnCanvas.sortingOrder = GetRoomCount > 0 ?
-                                       50 :
+                                       100 :
                                        -1;
-
+        
         BgMask_Obj.SetActive(GetRoomCount > 0);
         IsCanMoveSwitch = GetRoomCount > 0;
         GameRoomManager.Instance.IsShowGameRoom = GetRoomCount > 0;

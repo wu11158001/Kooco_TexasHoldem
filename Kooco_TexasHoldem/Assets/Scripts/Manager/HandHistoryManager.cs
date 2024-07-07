@@ -6,6 +6,10 @@ using Newtonsoft.Json;
 
 public class HandHistoryManager : UnitySingleton<HandHistoryManager>
 {
+    [Header("影片播放介面")]
+    [SerializeField]
+    GameObject HistoryVideoViewObj;
+
     string ResultHistoryPlayerPrefsKey;                     //遊戲結果紀錄Key
     string GameInitHistoryPlayerPrefsKey;                   //遊戲初始資料Key
     string ProcessHistoryPlayerPrefsKey;                    //遊戲過程資料Key
@@ -22,11 +26,19 @@ public class HandHistoryManager : UnitySingleton<HandHistoryManager>
         GameInitHistoryPlayerPrefsKey = $"AsiaPoker_GameInifHistoryDataList_{DataManager.UserId}";
         ProcessHistoryPlayerPrefsKey = $"AsiaPoker_ProcessHistoryDataList_{DataManager.UserId}";
 
+        base.Awake();
+    }
+
+    /// <summary>
+    /// 讀取手牌紀錄資料
+    /// </summary>
+    public void LoadHandHistoryData()
+    {
         LoadResultData();
         LoadGameInitData();
         LoadProcessData();
 
-        base.Awake();
+        Debug.Log("Loaded Hand History Data!");
     }
 
     /// <summary>
@@ -46,7 +58,7 @@ public class HandHistoryManager : UnitySingleton<HandHistoryManager>
         HandHistoryView handHistoryView = GameObject.FindAnyObjectByType<HandHistoryView>();
         handHistoryView?.UpdateHitoryDate();
 
-        Debug.Log("Deleted Local Recode Data!!!");
+        Debug.Log("Deleted Hand History Data!!!");
     }
 
 
@@ -238,9 +250,7 @@ public class HandHistoryManager : UnitySingleton<HandHistoryManager>
             historyVideoView = null;
         }
 
-        GameObject obj = Resources.Load<GameObject>("HandHistory/HistoryVideoView");
-        historyVideoView = Instantiate(obj, parent).GetComponent<HistoryVideoView>();
-
+        historyVideoView = Instantiate(HistoryVideoViewObj, parent).GetComponent<HistoryVideoView>();
         historyVideoView.transform.SetSiblingIndex(parent.childCount + 1);
         historyVideoView.IsShowHandHistoryView = isInLobby;
         historyVideoView.SetInit(index);

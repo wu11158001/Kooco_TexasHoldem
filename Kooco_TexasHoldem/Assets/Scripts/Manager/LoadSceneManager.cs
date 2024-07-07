@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using System;
-
+using TMPro;
 public class LoadSceneManager : UnitySingleton<LoadSceneManager>
 {
     [SerializeField]
@@ -12,7 +12,11 @@ public class LoadSceneManager : UnitySingleton<LoadSceneManager>
     [SerializeField]
     Image Progress_Img;
     [SerializeField]
-    Text Loading_Txt, Progress_Txt;
+    TextMeshProUGUI Loading_Txt, Progress_Txt;
+
+    [Header("開啟介面")]
+    [SerializeField]
+    GameObject LoginViewObj, LobbyViewObj;
 
     DateTime startYieldTime;
 
@@ -131,12 +135,12 @@ public class LoadSceneManager : UnitySingleton<LoadSceneManager>
         {
             case SceneEnum.Login:
                 NFTManager.Instance.CancelUpdate();
-                ViewManager.Instance.OpenView(ViewEnum.LoginView);
+                ViewManager.Instance.CreateViewInMainCanvas<LoginView>(LoginViewObj);
                 break;
 
             case SceneEnum.Lobby:
                 DataManager.ReciveRankData();
-                ViewManager.Instance.OpenView(ViewEnum.LobbyView);
+                ViewManager.Instance.CreateViewInMainCanvas<LobbyView>(LobbyViewObj);
                 break;
 
             case SceneEnum.Game:

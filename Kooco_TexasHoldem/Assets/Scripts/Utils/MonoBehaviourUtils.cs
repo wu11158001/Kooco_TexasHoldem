@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using System;
+using TMPro;
 
 public class MonoBehaviourUtils : UnitySingleton<MonoBehaviourUtils>
 {
@@ -20,7 +21,7 @@ public class MonoBehaviourUtils : UnitySingleton<MonoBehaviourUtils>
     /// <param name="fadeInTime">淡入時間</param>
     /// <param name="fadeOutTime">淡出時間</param>
     /// <param name="during">完整顯示時間</param>
-    public void ColorFade(Text text, Image image, float fadeInTime, float fadeOutTime, float during)
+    public void ColorFade(TextMeshProUGUI text, Image image, float fadeInTime, float fadeOutTime, float during)
     {
         if (fadeCorotine != null)
         {
@@ -33,7 +34,7 @@ public class MonoBehaviourUtils : UnitySingleton<MonoBehaviourUtils>
                                                  fadeOutTime,
                                                  during));
     }
-    private IEnumerator IColorFade(Text text, Image image, float fadeInTime, float fadeOutTime, float during)
+    private IEnumerator IColorFade(TextMeshProUGUI text, Image image, float fadeInTime, float fadeOutTime, float during)
     {
         Color textColor = new Color();
         Color imageColor = new Color();

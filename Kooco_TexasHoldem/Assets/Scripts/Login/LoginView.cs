@@ -20,7 +20,7 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
 {
     [Header("切換/版本")]
     [SerializeField]
-    Text Vrsion_Txt;
+    TextMeshProUGUI Vrsion_Txt;
     [SerializeField]
     Toggle Wallet_Tog, Mobile_Tog;
     [SerializeField]
@@ -32,7 +32,7 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
     [SerializeField]
     Button Metamask_Btn, Trust_Btn, Binance_Btn, OKX_Btn, Coinbase_Btn;
     [SerializeField]
-    TMP_Text SignUp_TmpTxt;
+    TMP_Text SignUp_Txt;
 
     [Header("錢包連接_連接中頁面")]
     [SerializeField]
@@ -40,7 +40,7 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
     [SerializeField]
     Button BackToSelectWallet_Btn, RetryConnectWallet_Btn;
     [SerializeField]
-    Text ConnectionTitle_Txt, Connecting_Txt, ErrorConnect_Txt;
+    TextMeshProUGUI ConnectionTitle_Txt, Connecting_Txt, ErrorConnect_Txt;
     [SerializeField]
     Image ConnectingLogo_Img;
     [SerializeField]
@@ -52,11 +52,11 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
     [SerializeField]
     Button SMSOTPSend_Btn, SMSOTPSubmit_Btn;
     [SerializeField]
-    InputField SMSMobileNumber_If, SMSOTP_If;
+    TMP_InputField SMSMobileNumber_If, SMSOTP_If;
     [SerializeField]
-    Dropdown SMSMobileNumber_Dd;
+    TMP_Dropdown SMSMobileNumber_Dd;
     [SerializeField]
-    Text SMSMobileNumberError_Txt, SMSCodeError_Txt;
+    TextMeshProUGUI SMSMobileNumberError_Txt, SMSCodeError_Txt;
 
     [Header("手機登入")]
     [SerializeField]
@@ -64,11 +64,11 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
     [SerializeField]
     Button SignIn_Btn, Register_Btn, SignInPasswordEye_Btn;
     [SerializeField]
-    Dropdown SignInNumber_Dd;
+    TMP_Dropdown SignInNumber_Dd;
     [SerializeField]
-    InputField SignInNumber_If, SignInPassword_If;
+    TMP_InputField SignInNumber_If, SignInPassword_If;
     [SerializeField]
-    Text MobileTitle_Txt, MobileTip_Txt, MobileSignInError_Txt, SignInNumberError_Txt;
+    TextMeshProUGUI MobileTitle_Txt, MobileTip_Txt, MobileSignInError_Txt, SignInNumberError_Txt;
     [SerializeField]
     TMP_Text ForgotPassword_TmpTxt;
     [SerializeField]
@@ -80,13 +80,13 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
     [SerializeField]
     TMP_Text Privacy_TmpTxt;
     [SerializeField]
-    Text RegisterNumberError_Txt, RegisterCodeError_Txt, RegisterPasswordError_Txt, RegisterPrivacyError_Txt;
+    TextMeshProUGUI RegisterNumberError_Txt, RegisterCodeError_Txt, RegisterPasswordError_Txt, RegisterPrivacyError_Txt;
     [SerializeField]
     Button RegisterOTPSend_Btn, RegisterPasswordEye_Btn, RegisterSubmit_Btn, RegisterSuccSignin_Btn, RegisterSuccessfulCancel_Btn;
     [SerializeField]
-    InputField RegisterNumber_If, RegisterOTP_If, RegisterPassword_If;
+    TMP_InputField RegisterNumber_If, RegisterOTP_If, RegisterPassword_If;
     [SerializeField]
-    Dropdown RegisterNumber_Dd;
+    TMP_Dropdown RegisterNumber_Dd;
     [SerializeField]
     Toggle Privacy_Tog;
 
@@ -96,25 +96,25 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
     [SerializeField]
     Image RegisterCheckPassword1_Img, RegisterCheckPassword2_Img, RegisterCheckPassword3_Img;
     [SerializeField]
-    Text RegisterCheckPassword1_Txt, RegisterCheckPassword2_Txt, RegisterCheckPassword3_Txt;
+    TextMeshProUGUI RegisterCheckPassword1_Txt, RegisterCheckPassword2_Txt, RegisterCheckPassword3_Txt;
 
     [Header("註冊成功")]
     [SerializeField]
     GameObject RegisterSucce_Obj;
     [SerializeField]
-    Text RegisterSuccTip_Txt;
+    TextMeshProUGUI RegisterSuccTip_Txt;
 
     [Header("忘記密碼")]
     [SerializeField]
     GameObject LostPassword_Obj;
     [SerializeField]
-    InputField LostPswNumber_If, LostPswOTP_If, LosrPswPassword_If;
+    TMP_InputField LostPswNumber_If, LostPswOTP_If, LosrPswPassword_If;
     [SerializeField]
     Button BackToMobileSignIn_Btn, LostPswPasswordEye_Btn, LostPswOTPSend_Btn, LostPswSubmit_Btn;
     [SerializeField]
-    Text LostPswNumberError_Txt, LostPswCodeError_Txt, LostPswPasswordError_Txt;
+    TextMeshProUGUI LostPswNumberError_Txt, LostPswCodeError_Txt, LostPswPasswordError_Txt;
     [SerializeField]
-    Dropdown LostPswNumber_Dd;
+    TMP_Dropdown LostPswNumber_Dd;
 
     [Header("忘記密碼密碼檢查")]
     [SerializeField]
@@ -122,7 +122,7 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
     [SerializeField]
     Image LostPswCheckPassword1_Img, LostPswCheckPassword2_Img, LostPswCheckPassword3_Img;
     [SerializeField]
-    Text LostPswCheckPassword1_Txt, LostPswCheckPassword2_Txt, LostPswCheckPassword3_Txt;
+    TextMeshProUGUI LostPswCheckPassword1_Txt, LostPswCheckPassword2_Txt, LostPswCheckPassword3_Txt;
     [SerializeField]
 
     const string LocalPhoneNumber = "AsiaPoker_PhoneNumber";        //本地紀錄_手機號
@@ -140,7 +140,7 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
     string recodePhoneNumber;                                       //紀錄的手機號
     string recodePassword;                                          //紀錄的密碼
 
-    List<InputField> currIfList = new List<InputField>();           //當前可切換InputFild
+    List<TMP_InputField> currIfList = new List<TMP_InputField>();   //當前可切換InputFild
     UnityAction KybordEnterAction;                                  //Enter鍵執行方法
 
     /// <summary>
@@ -310,7 +310,7 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
 
             //設定TAB切換與Enter提交方法
             RegisterNumber_If.Select();
-            currIfList = new List<InputField>()
+            currIfList = new List<TMP_InputField>()
             {
                 RegisterNumber_If,
                 RegisterOTP_If,
@@ -436,9 +436,15 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
 
     private void Start()
     {
+        //下拉式選單添加國碼
+        Utils.SetOptionsToDropdown(SMSMobileNumber_Dd, DataManager.CountryCode);
+        Utils.SetOptionsToDropdown(SignInNumber_Dd, DataManager.CountryCode);
+        Utils.SetOptionsToDropdown(RegisterNumber_Dd, DataManager.CountryCode);
+        Utils.SetOptionsToDropdown(LostPswNumber_Dd, DataManager.CountryCode);
+
         _currentChainData = ThirdwebManager.Instance.supportedChains.Find(x => x.identifier == ThirdwebManager.Instance.activeChain);
 
-        SignUp_TmpTxt.text = $"Don't Have An Account? <color=#79E84B><link=Sign Up Here!><u>Sign Up Here!</u></link></color>";
+        SignUp_Txt.text = $"Don't Have An Account? <color=#79E84B><link=Sign Up Here!><u>Sign Up Here!</u></link></color>";
         ForgotPassword_TmpTxt.text = $"<color=#79E84B><link=Forgot Password?><u>Forgot Password?</u></link></color>";
         SMSMobileNumberError_Txt.text = "";
         SMSCodeError_Txt.text = "";
@@ -542,10 +548,10 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
     public void OnPointerClick(PointerEventData eventData)
     {
         //註冊
-        int SignUpLinkIndex = TMP_TextUtilities.FindIntersectingLink(SignUp_TmpTxt, Input.mousePosition, null);
+        int SignUpLinkIndex = TMP_TextUtilities.FindIntersectingLink(SignUp_Txt, Input.mousePosition, null);
         if (SignUpLinkIndex != -1)
         {
-            TMP_LinkInfo linkInfo = SignUp_TmpTxt.textInfo.linkInfo[SignUpLinkIndex];
+            TMP_LinkInfo linkInfo = SignUp_Txt.textInfo.linkInfo[SignUpLinkIndex];
             string linkID = linkInfo.GetLinkID();
 
             switch (linkID)
@@ -578,7 +584,7 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
 
                     //設定TAB切換與Enter提交方法
                     LostPswNumber_If.Select();
-                    currIfList = new List<InputField>()
+                    currIfList = new List<TMP_InputField>()
                     {
                         LostPswNumber_If,
                         LostPswOTP_If,
@@ -621,7 +627,7 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
     /// </summary>
     /// <param name="img"></param>
     /// <param name="inputField"></param>
-    private void PasswordShowBtnClick(Image img, InputField inputField)
+    private void PasswordShowBtnClick(Image img, TMP_InputField inputField)
     {
         isShowPassword = !isShowPassword;
         Sprite eye = isShowPassword ?
@@ -630,8 +636,8 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
         img.sprite = eye;
 
         inputField.contentType = isShowPassword ?
-                                 InputField.ContentType.Standard :
-                                 InputField.ContentType.Password;
+                                 TMP_InputField.ContentType.Standard :
+                                 TMP_InputField.ContentType.Password;
 
         string currPsw = inputField.text;
         inputField.text = "";
@@ -694,7 +700,7 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
 
         //設定TAB切換與Enter提交方法
         SignInNumber_If.Select();
-        currIfList = new List<InputField>()
+        currIfList = new List<TMP_InputField>()
         {
             SignInNumber_If,
             SignInPassword_If,
@@ -1029,7 +1035,7 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
 
         //設定TAB切換與Enter提交方法
         SMSMobileNumber_If.Select();
-        currIfList = new List<InputField>()
+        currIfList = new List<TMP_InputField>()
         {
             SMSMobileNumber_If,
             SMSOTP_If,

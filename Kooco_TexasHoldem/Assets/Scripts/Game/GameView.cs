@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System;
 using System.Linq;
-using Thirdweb;
+using TMPro;
 
 using RequestBuf;
 
@@ -27,7 +27,7 @@ public class GameView : MonoBehaviour
     [SerializeField]
     Button Raise_Btn, Call_Btn, Fold_Btn;
     [SerializeField]
-    Text RaiseBtn_Txt, CallBtn, FoldBtn_Txt;
+    TextMeshProUGUI RaiseBtn_Txt, CallBtn, FoldBtn_Txt;
     [SerializeField]
     RectTransform AutoActionFrame_Tr;
     [SerializeField]
@@ -37,7 +37,7 @@ public class GameView : MonoBehaviour
     [SerializeField]
     List<Button> PotPercentRaiseBtnList;
     [SerializeField]
-    List<Text> PotPercentRaiseTxtList;
+    List<TextMeshProUGUI> PotPercentRaiseTxtList;
     [SerializeField]
     Slider Raise_Sli;
     [SerializeField]
@@ -45,13 +45,13 @@ public class GameView : MonoBehaviour
     [SerializeField]
     SliderClickDetection SliderClickDetection;
     [SerializeField]
-    Text RaiseSliHandle_Txt, CurrRaise_Txt, MinRaiseBtn_Txt;
+    TextMeshProUGUI RaiseSliHandle_Txt, CurrRaise_Txt, MinRaiseBtn_Txt;
     [SerializeField]
     Button AllIn_Btn, MinRaise_Btn;
 
     [Header("訊息")]
     [SerializeField]
-    Text TotalPot_Txt, Tip_Txt, WinType_Txt;
+    TextMeshProUGUI TotalPot_Txt, Tip_Txt, WinType_Txt;
     [SerializeField]
     Image Pot_Img;
 
@@ -65,7 +65,7 @@ public class GameView : MonoBehaviour
     [SerializeField]
     Button Menu_Btn, MenuClose_Btn, LogOut_Btn, HandHistory_Btn;
     [SerializeField]
-    Text MenuNickname_Txt, MenuWalletAddr_Txt;
+    TextMeshProUGUI MenuNickname_Txt, MenuWalletAddr_Txt;
     [SerializeField]
     Image MenuAvatar_Img;
 
@@ -75,13 +75,13 @@ public class GameView : MonoBehaviour
     [SerializeField]
     Button Chat_Btn, ChatClose_Btn, ChatSend_Btn, NewMessage_Btn;
     [SerializeField]
-    InputField Chat_If;
+    TMP_InputField Chat_If;
     [SerializeField]
     GameObject OtherChatSample, LocalChatSample;
     [SerializeField]
     ScrollRect ChatArea_Sr;
     [SerializeField]
-    Text NotReadChat_Txt;
+    TextMeshProUGUI NotReadChat_Txt;
 
     [Header("手牌紀錄")]
     [SerializeField]
@@ -98,6 +98,8 @@ public class GameView : MonoBehaviour
     GameObject GamePause_Obj;
     [SerializeField]
     Button GameContinue_Btn;
+
+    const float PageMoveTime = 0.25f;                           //滑動頁面移動時間
 
     //底池倍率
     readonly float[] PotPercentRate = new float[]
@@ -388,10 +390,6 @@ public class GameView : MonoBehaviour
             SetNotReadChatCount = 0;
             StartCoroutine(ILeftPageMove(true, ChatBg_Tr));
             StartCoroutine(IYieldSetNewMessageActive());
-            if (!DataManager.IsMobilePlatform)
-            {
-                Chat_If.Select();
-            }
         });
 
         //發送聊天訊息
@@ -680,7 +678,7 @@ public class GameView : MonoBehaviour
         GameRoomManager.Instance.IsCanMoveSwitch = !isShow;
 
         //選單移動
-        float moveTime = 0.25f;
+        float moveTime = PageMoveTime;
         float currY = rt.anchoredPosition.y;
         float targetY = isShow ?
                         0 :
@@ -717,7 +715,7 @@ public class GameView : MonoBehaviour
         GameRoomManager.Instance.IsCanMoveSwitch = !isShow;
 
         //選單移動
-        float moveTime = 0.25f;
+        float moveTime = PageMoveTime;
         float currX = rt.anchoredPosition.x;
         float targetX = isShow ?
                         0 :
@@ -730,6 +728,14 @@ public class GameView : MonoBehaviour
             float x = Mathf.Lerp(currX, targetX, progress);
             rt.anchoredPosition = new Vector2(x, 0);
             yield return null;
+        }
+
+        //開啟聊天
+        if (isShow == true &&
+            rt == ChatBg_Tr &&
+            !DataManager.IsMobilePlatform)
+        {
+            Chat_If.Select();
         }
 
         //關閉聊天
@@ -1614,7 +1620,7 @@ public class GameView : MonoBehaviour
     {
         foreach (var player in gamePlayerInfoList)
         {
-            if (!player.IsFold)
+            if (!player.IsFold && !player.IsAllIn)
             {
                 player.CurrBetAction = BetActionEnum.None;
             }            
@@ -2004,6 +2010,7 @@ public class GameView : MonoBehaviour
         //重製玩家行動文字顯示
         if (pack.GameStagePack.flowEnum == FlowEnum.PotResult)
         {
+            //階段=遊戲結果
             foreach (var player in gamePlayerInfoList)
             {
                 player.SetShowActionStr(false);
@@ -2011,9 +2018,10 @@ public class GameView : MonoBehaviour
         }
         else
         {
+            //翻牌階段
             foreach (var player in gamePlayerInfoList)
             {
-                if (!player.IsFold)
+                if (!player.IsFold && !player.IsAllIn)
                 {
                     player.SetShowActionStr(false);
                 }

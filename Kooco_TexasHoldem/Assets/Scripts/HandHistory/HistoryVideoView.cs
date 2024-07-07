@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Linq;
-
-using RequestBuf;
+using TMPro;
 
 public class HistoryVideoView : MonoBehaviour
 {
@@ -16,7 +15,7 @@ public class HistoryVideoView : MonoBehaviour
     [SerializeField]
     Poker[] CommunityPokser;                   
     [SerializeField]
-    Text HandNum_Txt, TotalPot_Txt, WinType_Txt;
+    TextMeshProUGUI HandNum_Txt, TotalPot_Txt, WinType_Txt;
     [SerializeField]
     Image PlayBtn_Img;
 
@@ -266,11 +265,21 @@ public class HistoryVideoView : MonoBehaviour
             int seatIndex = gameInitsHistoryData.SeatList[i];
             Players[seatIndex].gameObject.SetActive(true);
             Players[seatIndex].IsOpenInfoMask = false;
+
+            string nickname = gameInitsHistoryData.NicknameList[i];
+            int avatarIndex = gameInitsHistoryData.AvatarList[i];
+            if (seatIndex == 0)
+            {
+                //本地玩家
+                nickname = DataManager.UserNickname;
+                avatarIndex = DataManager.UserAvatar;
+            }
+
             Players[seatIndex].SetInitPlayerInfo(gameInitsHistoryData.SeatList[i],
                                                  gameInitsHistoryData.UserIdList[i],
-                                                 gameInitsHistoryData.NicknameList[i],
+                                                 nickname,
                                                  gameInitsHistoryData.InitChipsList[i],
-                                                 gameInitsHistoryData.AvatarList[i]);
+                                                 avatarIndex);
 
             Players[seatIndex].SetCurrBetTxt = gameInitsHistoryData.CurrBetChipsList[i];
             Players[seatIndex].SetChipsTxt = gameInitsHistoryData.InitChipsList[i];
@@ -350,6 +359,7 @@ public class HistoryVideoView : MonoBehaviour
             //棄牌開啟遮罩
             Players[seatIndex].IsOpenInfoMask = processStepHistoryData.BetActionEnumIndex[i] == 2;
             Players[seatIndex].IsFold = processStepHistoryData.BetActionEnumIndex[i] == 2;
+            Players[seatIndex].IsAllIn = processStepHistoryData.BetActionEnumIndex[i] == 6;
 
             //玩家行動
             if (processStepHistoryData.BetActionEnumIndex[i] == 0 ||
@@ -360,7 +370,7 @@ public class HistoryVideoView : MonoBehaviour
             else
             {
                 Players[seatIndex].SetShowActionStr(true,
-                                                    ((BetActionEnum)processStepHistoryData.BetActionEnumIndex[i]).ToString());
+                                                    ((BetActionEnum)processStepHistoryData.BetActionEnumIndex[i]));
             }
         }
 

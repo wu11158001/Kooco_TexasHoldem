@@ -9,9 +9,19 @@ using UnityEngine.Events;
 using ZXing;
 using ZXing.QrCode;
 using UnityEngine.EventSystems;
+using TMPro;
 
 public static class Utils
 {
+    //將 Color 轉換為十六進位字串
+    public static string ColorToHex(Color color)
+    {
+        int r = Mathf.RoundToInt(color.r * 255f);
+        int g = Mathf.RoundToInt(color.g * 255f);
+        int b = Mathf.RoundToInt(color.b * 255f);
+        return $"#{r:X2}{g:X2}{b:X2}";
+    }
+
     // 觸碰的UI
     private static GraphicRaycaster graphicRaycaster;
     private static EventSystem eventSystem;
@@ -139,7 +149,7 @@ public static class Utils
     /// </summary>
     /// <param name="dropdown"></param>
     /// <param name="options"></param>
-    public static void SetOptionsToDropdown(Dropdown dropdown, List<string> options)
+    public static void SetOptionsToDropdown(TMP_Dropdown dropdown, List<string> options)
     {
         //清空當前選項
         dropdown.ClearOptions();

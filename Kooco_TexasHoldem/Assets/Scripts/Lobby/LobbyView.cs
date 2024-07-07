@@ -5,17 +5,22 @@ using UnityEngine.UI;
 using System;
 using Thirdweb;
 using System.Threading.Tasks;
+using TMPro;
 
 public class LobbyView : MonoBehaviour
 {
     [SerializeField]
     Request_LobbyView baseRequest;
 
+    [Header("遮罩物件")]
+    [SerializeField]
+    GameObject Mask_Obj;
+
     [Header("用戶訊息")]
     [SerializeField]
     Button Avatar_Btn;
     [SerializeField]
-    Text Nickname_Txt, Stamina_Txt, CryptoChips_Txt;
+    TextMeshProUGUI Nickname_Txt, Stamina_Txt, CryptoChips_Txt;
 
     [Header("用戶資源列表")]
     [SerializeField]
@@ -29,11 +34,11 @@ public class LobbyView : MonoBehaviour
     [SerializeField]
     Button Integral_Btn;
     [SerializeField]
-    Text IntegralBtn_Txt;
+    TextMeshProUGUI IntegralBtn_Txt;
 
     [Header("提示")]
     [SerializeField]
-    Text Tip_Txt;
+    TextMeshProUGUI Tip_Txt;
 
     [Header("項目按鈕")]
     [SerializeField]
@@ -47,7 +52,12 @@ public class LobbyView : MonoBehaviour
     [SerializeField]
     RectTransform Floor4;
     [SerializeField]
-    GameObject QuestView;    
+    GameObject QuestView;
+
+    [Header("設置暱稱")]
+    [SerializeField]
+    GameObject SetNicknameViewObj;
+
 
     /// <summary>
     /// 項目按鈕類型
@@ -154,14 +164,15 @@ public class LobbyView : MonoBehaviour
         isShowAssetList = false;
         SetIsShowAssetList = isShowAssetList;
 
+        HandHistoryManager.Instance.LoadHandHistoryData();
+
         UpdateUserInfo();
         OpenItemPage(ItemType.Main);        
     }
 
     private void Start()
     {
-        //設置暱稱
-        ViewManager.Instance.OpenPartsView(PartsViewEnum.SetNicknameView, transform);
+        StartCoroutine(IOpenSetNickname());
     }
 
     private void Update()
@@ -195,6 +206,19 @@ public class LobbyView : MonoBehaviour
         }
 
 #endif
+    }
+
+    /// <summary>
+    /// 開啟設置暱稱
+    /// </summary>
+    /// <returns></returns>
+    private IEnumerator IOpenSetNickname()
+    {
+        Mask_Obj.SetActive(true);
+        yield return new WaitForSeconds(0.5f);
+
+        Instantiate(SetNicknameViewObj, transform);
+        Mask_Obj.SetActive(false);
     }
 
     /// <summary>

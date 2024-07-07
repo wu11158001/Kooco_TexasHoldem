@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using System;
+using TMPro;
 
 public class LobbyRankingView : MonoBehaviour
 {
@@ -11,7 +12,7 @@ public class LobbyRankingView : MonoBehaviour
     [SerializeField]
     Button ChangeSeason_Btn, RefreshRank_Btn;
     [SerializeField]
-    Text Season_Txt, TimeLest_Txt, ChangeSeasonBtn_Txt;
+    TextMeshProUGUI Season_Txt, TimeLest_Txt, ChangeSeasonBtn_Txt;
     [SerializeField]
     GameObject RankSampleObj;
     [SerializeField]
@@ -21,13 +22,13 @@ public class LobbyRankingView : MonoBehaviour
 
     [Header("本地玩家")]
     [SerializeField]
-    Text LocalUserRank_Txt, LocalUserPoint_Txt, LocalUserAward_Txt;
+    TextMeshProUGUI LocalUserRank_Txt, LocalUserPoint_Txt, LocalUserAward_Txt;
 
     [Header("排行規則")]
     [SerializeField]
     GameObject Rule_Obj;
     [SerializeField]
-    Text RuleTitle_Txt, RuleContent_Txt;
+    TextMeshProUGUI RuleTitle_Txt, RuleContent_Txt;
     [SerializeField]
     Button RuleMask_Btn, Rule_Btn, RuleClose_Btn;
 

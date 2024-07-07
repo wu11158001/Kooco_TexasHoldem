@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using System;
 using UnityEngine.Events;
 using System.Linq;
+using TMPro;
 
 public class LobbyMinePageView : MonoBehaviour
 {
@@ -18,7 +19,7 @@ public class LobbyMinePageView : MonoBehaviour
     [SerializeField]
     Button EditorAvatar_Btn, CopyWalletAddress_Btn;
     [SerializeField]
-    Text Nickname_Txt, WalletAddress_Txt, Copied_Txt;
+    TextMeshProUGUI Nickname_Txt, WalletAddress_Txt, Copied_Txt;
 
     [Header("更換頭像")]
     [SerializeField]
@@ -36,7 +37,7 @@ public class LobbyMinePageView : MonoBehaviour
     [SerializeField]
     Image AccountBalanceExpand_Img;
     [SerializeField]
-    Text CryptoTableValue_Txt, VCTableValue_Txt, GoldValue_Txt, StaminaValue_Txt, OTPropsValue_Txt;
+    TextMeshProUGUI CryptoTableValue_Txt, VCTableValue_Txt, GoldValue_Txt, StaminaValue_Txt, OTPropsValue_Txt;
 
     [Header("分數紀錄")]
     [SerializeField]
@@ -48,13 +49,13 @@ public class LobbyMinePageView : MonoBehaviour
     [SerializeField]
     Slider VPIP_Sli, PFR_Sli, ATS_Sli, ThreeBET_Sli;
     [SerializeField]
-    Text VPIPpercent_Txt, PFRpercent_Txt, ATSpercent_Txt, ThreeBETpercent_Txt;
+    TextMeshProUGUI VPIPpercent_Txt, PFRpercent_Txt, ATSpercent_Txt, ThreeBETpercent_Txt;
 
     [Header("第三方連接")]
     [SerializeField]
     Button IGLink_Btn, LineLink_Btn;
     [SerializeField]
-    Text IGLinked_Txt, LineLinked_Txt;
+    TextMeshProUGUI IGLinked_Txt, LineLinked_Txt;
     [SerializeField]
     GameObject IGNotYetLinked_Obj, LineNotYetLinked_Obj;
     [SerializeField]
