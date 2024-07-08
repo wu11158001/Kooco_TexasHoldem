@@ -87,6 +87,7 @@ public class DemoControl : MonoBehaviour
 
     public void IsShowDemoControl(bool isShow)
     {
-        OtherControl_Tr.SetActive(isShow);
+        OtherControl_Tr.SetActive(true);
+        //OtherControl_Tr.SetActive(isShow);
     }
 }

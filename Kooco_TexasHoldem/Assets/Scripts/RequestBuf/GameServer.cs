@@ -430,6 +430,7 @@ public class GameServer : MonoBehaviour
             }
 
             clientList.Remove(client);
+            playingList.Remove(client);
 
             //Debug.Log($"{client.UserId}:Exit Room");
 

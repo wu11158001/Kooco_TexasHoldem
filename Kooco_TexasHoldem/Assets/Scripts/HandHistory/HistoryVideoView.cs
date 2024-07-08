@@ -11,7 +11,7 @@ public class HistoryVideoView : MonoBehaviour
     [SerializeField]
     Button Close_Btn, Pre_Btn, Play_Btn, Next_Btn, NextVideo_Btn, PreVideo_Btn;
     [SerializeField]
-    GamePlayerInfo[] Players;                   //所有玩家(0=本地玩家)
+    GamePlayerInfo[] Players;                                                               //所有玩家(0=本地玩家)
     [SerializeField]
     Poker[] CommunityPokser;                   
     [SerializeField]
@@ -27,15 +27,15 @@ public class HistoryVideoView : MonoBehaviour
     [SerializeField]
     RectTransform HandHistoryViewParent, HistorySample;
 
-    int dataIndex;                                            //讀取資料Index
-    int currPlayIndex;                                        //當前播放Index
-    ProcessHistoryData currProcessHistoryData;                //當前紀錄資料
-    ProcessStepHistoryData currProcessStepHistoryData;        //當前行動紀錄資料
+    int dataIndex;                                                                          //讀取資料Index
+    int currPlayIndex;                                                                      //當前播放Index
+    ProcessHistoryData currProcessHistoryData;                                              //當前紀錄資料
+    ProcessStepHistoryData currProcessStepHistoryData;                                      //當前行動紀錄資料
 
-    float switchVideoMoveDictance;                            //切換影片列表移動距離
+    float switchVideoMoveDictance;                                                          //切換影片列表移動距離
 
 
-    Coroutine playVideoWinCoroutine;                          //影片播放獲勝Coroutine
+    Coroutine playVideoWinCoroutine;                                                        //影片播放獲勝Coroutine
 
     /// <summary>
     /// 當前播放狀態
@@ -346,9 +346,17 @@ public class HistoryVideoView : MonoBehaviour
         TotalPot_Txt.text = $"${processStepHistoryData.TotalPot}";
         WinType_Txt.text = "";
 
+        foreach (var player in Players)
+        {            
+            player.gameObject.SetActive(false);
+        }
+
         for (int i = 0; i < processStepHistoryData.SeatList.Count; i++)
         {
             int seatIndex = processStepHistoryData.SeatList[i];
+
+            Players[seatIndex].gameObject.SetActive(true);
+
             Players[seatIndex].SetShowActionStr(false);
             Players[seatIndex].IsWinnerActive = false;
 

@@ -61,7 +61,7 @@ public class GameView : MonoBehaviour
 
     [Header("選單")]
     [SerializeField]
-    RectTransform MenuBg_Tr;
+    RectTransform MenuPage_Tr;
     [SerializeField]
     Button Menu_Btn, MenuClose_Btn, LogOut_Btn, HandHistory_Btn;
     [SerializeField]
@@ -71,7 +71,7 @@ public class GameView : MonoBehaviour
 
     [Header("聊天")]
     [SerializeField]
-    RectTransform ChatBg_Tr, ChatContent_Tr, NotReadChat_Tr;
+    RectTransform ChatPage_Tr, ChatContent_Tr, NotReadChat_Tr;
     [SerializeField]
     Button Chat_Btn, ChatClose_Btn, ChatSend_Btn, NewMessage_Btn;
     [SerializeField]
@@ -85,7 +85,7 @@ public class GameView : MonoBehaviour
 
     [Header("手牌紀錄")]
     [SerializeField]
-    RectTransform HandHistoryBg_Tr;
+    RectTransform HandHistoryPage_Tr;
     [SerializeField]
     Button HandHistoryClose_Btn;
 
@@ -113,7 +113,7 @@ public class GameView : MonoBehaviour
         2.1f, 2.5f, 3.0f, 4.0f,
     };
 
-    const int MaxChatCount = 50;                                //保留聊天最大訊息數
+    const int MaxChatCount = 5;                                //保留聊天最大訊息數
 
     ObjPool objPool;
     List<GamePlayerInfo> gamePlayerInfoList;                    //玩家資料
@@ -123,6 +123,7 @@ public class GameView : MonoBehaviour
 
     #region 遊戲過程紀錄
 
+    List<int> exitPlayerSeatList;                               //玩家離開座位
     GameInitHistoryData gameInitHistoryData;                    //遊戲初始資料紀錄
     ProcessHistoryData processHistoryData;                      //遊戲過程資料紀錄
     ResultHistoryData saveResultData;                           //遊戲結果資料紀錄
@@ -159,7 +160,7 @@ public class GameView : MonoBehaviour
 
     private ThisData thisData;
     public class ThisData
-    {        
+    {
         public GamePlayerInfo LocalGamePlayerInfo;         //本地玩家
         public int LocalPlayerSeat;                        //本地玩家座位
         public double LocalPlayerChips;                    //本地玩家籌碼
@@ -224,14 +225,22 @@ public class GameView : MonoBehaviour
         //遮罩按鈕
         Mask_Btn.onClick.AddListener(() =>
         {
-            if (MenuBg_Tr.gameObject.activeSelf)
+            if (MenuPage_Tr.gameObject.activeSelf)
             {
-                StartCoroutine(ILeftPageMove(false, MenuBg_Tr));
+                Mask_Btn.gameObject.SetActive(false);
+                StartCoroutine(UnityUtils.Instance.IViewSlide(false,
+                                                              MenuPage_Tr,
+                                                              DirectionEnum.Left,
+                                                              PageMoveTime,
+                                                              () =>
+                                                              {
+                                                                  GameRoomManager.Instance.IsCanMoveSwitch = true;
+                                                              }));
             }
-            else if (ChatBg_Tr.gameObject.activeSelf)
+            else if (ChatPage_Tr.gameObject.activeSelf)
             {
-                StartCoroutine(ILeftPageMove(false, ChatBg_Tr));
-            }            
+                CloseChatPage();
+            }
         });
 
         //遊戲繼續按鈕
@@ -245,7 +254,12 @@ public class GameView : MonoBehaviour
         //選單
         Menu_Btn.onClick.AddListener(() =>
         {
-            StartCoroutine(ILeftPageMove(true, MenuBg_Tr));
+            GameRoomManager.Instance.IsCanMoveSwitch = false;
+            Mask_Btn.gameObject.SetActive(true);
+            StartCoroutine(UnityUtils.Instance.IViewSlide(true,
+                                                          MenuPage_Tr,
+                                                          DirectionEnum.Left,
+                                                          PageMoveTime));
         });
 
         //離開房間
@@ -257,7 +271,15 @@ public class GameView : MonoBehaviour
         //關閉選單
         MenuClose_Btn.onClick.AddListener(() =>
         {
-            StartCoroutine(ILeftPageMove(false, MenuBg_Tr));
+            Mask_Btn.gameObject.SetActive(false);
+            StartCoroutine(UnityUtils.Instance.IViewSlide(false,
+                                                          MenuPage_Tr,
+                                                          DirectionEnum.Left,
+                                                          PageMoveTime,
+                                                          () =>
+                                                          {
+                                                              GameRoomManager.Instance.IsCanMoveSwitch = true;
+                                                          }));
         });
 
         #endregion
@@ -388,7 +410,12 @@ public class GameView : MonoBehaviour
         Chat_Btn.onClick.AddListener(() =>
         {
             SetNotReadChatCount = 0;
-            StartCoroutine(ILeftPageMove(true, ChatBg_Tr));
+            GameRoomManager.Instance.IsCanMoveSwitch = false;
+            Mask_Btn.gameObject.SetActive(true);
+            StartCoroutine(UnityUtils.Instance.IViewSlide(true,
+                                                          ChatPage_Tr,
+                                                          DirectionEnum.Left,
+                                                          PageMoveTime));
             StartCoroutine(IYieldSetNewMessageActive());
         });
 
@@ -401,7 +428,7 @@ public class GameView : MonoBehaviour
         //關閉聊天
         ChatClose_Btn.onClick.AddListener(() =>
         {
-            StartCoroutine(ILeftPageMove(false, ChatBg_Tr));
+            CloseChatPage();
         });
 
         //聊天移動至最新訊息位置
@@ -417,23 +444,42 @@ public class GameView : MonoBehaviour
                 IsChatOnBottom())
             {
                 NewMessage_Btn.gameObject.SetActive(false);
-            }            
+            }
         });
 
         #endregion
 
+        #region 手牌紀錄
+
         //開啟手牌紀錄
         HandHistory_Btn.onClick.AddListener(() =>
         {
-            StartCoroutine(ILeftPageMove(false, MenuBg_Tr));
-            StartCoroutine(IUpPageMove(true, HandHistoryBg_Tr));
+            Mask_Btn.gameObject.SetActive(false);
+            StartCoroutine(UnityUtils.Instance.IViewSlide(false,
+                                                          MenuPage_Tr,
+                                                          DirectionEnum.Left,
+                                                          PageMoveTime));
+            StartCoroutine(UnityUtils.Instance.IViewSlide(true,
+                                                          HandHistoryPage_Tr,
+                                                          DirectionEnum.Up,
+                                                          PageMoveTime));
         });
 
         //關閉手牌紀錄
         HandHistoryClose_Btn.onClick.AddListener(() =>
-        {
-            StartCoroutine(IUpPageMove(false, HandHistoryBg_Tr));
+        {            
+            StartCoroutine(UnityUtils.Instance.IViewSlide(false,
+                                                          HandHistoryPage_Tr,
+                                                          DirectionEnum.Up,
+                                                          PageMoveTime,
+                                                          () =>
+                                                          {
+                                                              GameRoomManager.Instance.IsCanMoveSwitch = true;
+                                                          }));
+
         });
+
+        #endregion
     }
 
     private void OnEnable()
@@ -471,6 +517,10 @@ public class GameView : MonoBehaviour
         OtherChatSample.SetActive(false);
         LocalChatSample.SetActive(false);
         NewMessage_Btn.gameObject.SetActive(false);
+        Mask_Btn.gameObject.SetActive(false);
+        MenuPage_Tr.gameObject.SetActive(false);
+        ChatPage_Tr.gameObject.SetActive(false);
+        HandHistoryPage_Tr.gameObject.SetActive(false);
 
         LanguageManager.Instance.AddUpdateLanguageFunc(UpdateLanguage);
     }
@@ -484,12 +534,43 @@ public class GameView : MonoBehaviour
             baseRequest.gameServer.TextChat();
         }
 
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            MainPack exitPack = new MainPack();
+            exitPack.ActionCode = ActionCode.Request_PlayerInOutRoom;
+
+            PlayerInfoPack playerInfoPack = new PlayerInfoPack();
+            playerInfoPack.UserID = gamePlayerInfoList[0].UserId;
+
+            PlayerInOutRoomPack playerInOutRoomPack = new PlayerInOutRoomPack();
+            playerInOutRoomPack.IsInRoom = false;
+            playerInOutRoomPack.PlayerInfoPack = playerInfoPack;
+
+            exitPack.PlayerInOutRoomPack = playerInOutRoomPack;
+            baseRequest.gameServer.Request_PlayerInOutRoom(exitPack);
+        }
+        if (Input.GetKeyDown(KeyCode.O))
+        {
+            MainPack exitPack = new MainPack();
+            exitPack.ActionCode = ActionCode.Request_PlayerInOutRoom;
+
+            PlayerInfoPack playerInfoPack = new PlayerInfoPack();
+            playerInfoPack.UserID = gamePlayerInfoList[1].UserId;
+
+            PlayerInOutRoomPack playerInOutRoomPack = new PlayerInOutRoomPack();
+            playerInOutRoomPack.IsInRoom = false;
+            playerInOutRoomPack.PlayerInfoPack = playerInfoPack;
+
+            exitPack.PlayerInOutRoomPack = playerInOutRoomPack;
+            baseRequest.gameServer.Request_PlayerInOutRoom(exitPack);
+        }
+
         #endregion
 
         //發送聊天訊息
         if ((Input.GetKeyDown(KeyCode.Return) ||
             Input.GetKeyDown(KeyCode.KeypadEnter)) &&
-            ChatBg_Tr.gameObject.activeSelf &&
+            ChatPage_Tr.gameObject.activeSelf &&
             !string.IsNullOrEmpty(Chat_If.text))
         {
             SendChat();
@@ -526,7 +607,7 @@ public class GameView : MonoBehaviour
             {
                 CurrRaise_Txt.text = StringUtils.SetChipsUnit(value);
                 RaiseSliHandle_Txt.text = StringUtils.SetChipsUnit(value);
-            }            
+            }
         }
     }
 
@@ -557,7 +638,7 @@ public class GameView : MonoBehaviour
                     strData.FoldStr = "Fold";
                     FoldBtn_Txt.text = LanguageManager.Instance.GetText(strData.FoldStr);
                 }
-            }            
+            }
         }
     }
 
@@ -662,263 +743,6 @@ public class GameView : MonoBehaviour
     }
 
     /// <summary>
-    /// 上方頁面移動
-    /// </summary>
-    /// <param name="isShow"></param>
-    /// <param name="rt"></param>
-    /// <returns></returns>
-    private IEnumerator IUpPageMove(bool isShow, RectTransform rt)
-    {
-        rt.gameObject.SetActive(true);
-        if (isShow == true)
-        {
-            rt.anchoredPosition = new Vector2(0, rt.rect.height);
-        }
-
-        GameRoomManager.Instance.IsCanMoveSwitch = !isShow;
-
-        //選單移動
-        float moveTime = PageMoveTime;
-        float currY = rt.anchoredPosition.y;
-        float targetY = isShow ?
-                        0 :
-                        rt.rect.height;
-
-        DateTime startTime = DateTime.Now;
-        while ((DateTime.Now - startTime).TotalSeconds < moveTime)
-        {
-            float progress = (float)(DateTime.Now - startTime).TotalSeconds / moveTime;
-            float y = Mathf.Lerp(currY, targetY, progress);
-            rt.anchoredPosition = new Vector2(0, y);
-            yield return null;
-        }
-
-        rt.gameObject.SetActive(isShow);
-    }
-
-    /// <summary>
-    /// 左側頁面移動
-    /// </summary>
-    /// <param name="isShow">是否顯示</param>
-    /// <param name="rt">移動物件</param>
-    /// <returns></returns>
-    private IEnumerator ILeftPageMove(bool isShow, RectTransform rt)
-    {
-        Mask_Btn.gameObject.SetActive(isShow);
-        rt.gameObject.SetActive(true);
-
-        if (isShow == true)
-        {
-            rt.anchoredPosition = new Vector2(-rt.rect.width, 0);
-        }
-
-        GameRoomManager.Instance.IsCanMoveSwitch = !isShow;
-
-        //選單移動
-        float moveTime = PageMoveTime;
-        float currX = rt.anchoredPosition.x;
-        float targetX = isShow ?
-                        0 :
-                        -rt.rect.width;
-
-        DateTime startTime = DateTime.Now;
-        while ((DateTime.Now - startTime).TotalSeconds < moveTime)
-        {
-            float progress = (float)(DateTime.Now - startTime).TotalSeconds / moveTime;
-            float x = Mathf.Lerp(currX, targetX, progress);
-            rt.anchoredPosition = new Vector2(x, 0);
-            yield return null;
-        }
-
-        //開啟聊天
-        if (isShow == true &&
-            rt == ChatBg_Tr &&
-            !DataManager.IsMobilePlatform)
-        {
-            Chat_If.Select();
-        }
-
-        //關閉聊天
-        if (isShow == false &&
-            rt == ChatBg_Tr)
-        {
-            //判斷保留訊息數量
-            if (ChatContent_Tr.childCount > MaxChatCount)
-            {
-                int closeCount = ChatContent_Tr.childCount - MaxChatCount;
-                for (int i = 0; i < closeCount; i++)
-                {
-                    if (ChatContent_Tr.GetChild(2 + i).gameObject.activeSelf)
-                    {
-                        ChatContent_Tr.GetChild(2 + i).gameObject.SetActive(false);
-                        float chatHeight = ChatContent_Tr.GetChild(2 + i).GetComponent<RectTransform>().rect.height;
-                        float reduce = Mathf.Max(0, ChatContent_Tr.anchoredPosition.y - chatHeight);
-                        ChatContent_Tr.anchoredPosition = new Vector2(ChatContent_Tr.anchoredPosition.x,
-                                                                      reduce);
-                    }
-                }
-            }
-
-            yield return IGoNewChatMessage();
-        }
-
-        rt.gameObject.SetActive(isShow);
-    }
-
-    #region 聊天
-
-    /// <summary>
-    /// 設置未讀聊天訊息數
-    /// </summary>
-    private int SetNotReadChatCount
-    {
-        get
-        {
-            return notReadMsgCount;
-        }
-        set
-        {
-            notReadMsgCount = value;
-            string countStr = value > 99 ?
-                          "99+" :
-                          $"{value}";
-            NotReadChat_Txt.text = countStr;
-            NotReadChat_Tr.gameObject.SetActive(value > 0);
-
-            NotReadChat_Tr.sizeDelta = value > 99 ?
-                                       new Vector2(20, 15) :
-                                       new Vector2(15, 15);
-        }
-    }
-
-    /// <summary>
-    /// 延遲設置新訊息按鈕是否顯示
-    /// </summary>
-    /// <returns></returns>
-    private IEnumerator IYieldSetNewMessageActive()
-    {
-        yield return null;
-        NewMessage_Btn.gameObject.SetActive(!IsChatOnBottom());
-    }
-
-    /// <summary>
-    /// 聊天移動至最新訊息位置
-    /// </summary>
-    /// <returns></returns>
-    private IEnumerator IGoNewChatMessage()
-    {
-        yield return null;
-
-        NewMessage_Btn.gameObject.SetActive(false);
-
-        //顯示在最新訊息
-        float chatAreaHeight = ChatArea_Sr.GetComponent<RectTransform>().rect.height;
-        float currChatContentHeight = ChatContent_Tr.rect.height;
-        float goPosY = Mathf.Max(0, currChatContentHeight - chatAreaHeight);
-        ChatContent_Tr.anchoredPosition = new Vector2(ChatContent_Tr.anchoredPosition.x,
-                                                      goPosY);
-    }
-
-    /// <summary>
-    /// 判斷聊天位置是否在最底部
-    /// </summary>
-    /// <returns></returns>
-    private bool IsChatOnBottom()
-    {
-        float chatAreaHeight = ChatArea_Sr.GetComponent<RectTransform>().rect.height;
-        float currChatContentHeight = ChatContent_Tr.rect.height;
-        float bottomPosY = Mathf.Max(0, currChatContentHeight - chatAreaHeight);
-        return ChatContent_Tr.anchoredPosition.y >= Mathf.Max(0, bottomPosY - 20);
-    }
-
-    /// <summary>
-    /// 發送聊天訊息
-    /// </summary>
-    private void SendChat()
-    {        
-        baseRequest.SendRequestRequest_Chat(Chat_If.text);
-        CreateChatContent(DataManager.UserAvatar,
-                          DataManager.UserNickname,
-                          Chat_If.text,
-                          true);
-
-        Chat_If.text = "";
-
-        if (!DataManager.IsMobilePlatform)
-        {
-            Chat_If.Select();
-        }
-
-        StartCoroutine(IGoNewChatMessage());
-    }
-
-    /// <summary>
-    /// 接收聊天訊息
-    /// </summary>
-    /// <param name="pack"></param>
-    public void ReciveChat(MainPack pack)
-    {
-        string id = pack.ChatPack.Id;
-        string nickname = pack.ChatPack.Nickname;
-        string content = pack.ChatPack.Content;
-        int avatar = pack.ChatPack.Avatar;
-
-        //判斷是否在最新訊息位置
-        bool isBottom = IsChatOnBottom();
-        if (ChatBg_Tr.gameObject.activeSelf)
-        {
-            NewMessage_Btn.gameObject.SetActive(!isBottom);
-        }
-        else
-        {
-            NewMessage_Btn.gameObject.SetActive(true);
-        }
-
-        CreateChatContent(avatar,
-                          nickname,
-                          content,
-                          false);
-
-        if (isBottom)
-        {
-            StartCoroutine(IGoNewChatMessage());
-        }
-
-        //未開啟聊天頁面顯示新訊息提示
-        if (!ChatBg_Tr.gameObject.activeSelf &&
-            id != DataManager.UserId)
-        {
-            GamePlayerInfo player = GetPlayer(id);
-            player.ShowChatInfo(content);
-
-            SetNotReadChatCount = ++SetNotReadChatCount;
-        }
-    }
-
-    /// <summary>
-    /// 產生聊天內容
-    /// </summary>
-    /// <param name="avatar"></param>
-    /// <param name="nickname"></param>
-    /// <param name="content">聊天內容</param>
-    /// <param name="isLocal">是否為本地玩家</param>
-    private void CreateChatContent(int avatar, string nickname, string content, bool isLocal)
-    {
-        GameObject sample = isLocal ?
-                            LocalChatSample :
-                            OtherChatSample;
-
-        ChatInfo chatInfo = objPool.CreateObj<ChatInfo>(sample, ChatContent_Tr);
-        chatInfo.gameObject.SetActive(true);
-        chatInfo.GetComponent<RectTransform>().SetSiblingIndex(ChatContent_Tr.childCount + 1);
-        chatInfo.SetChatInfo(avatar, 
-                             nickname, 
-                             content);    
-    }
-
-    #endregion
-
-    /// <summary>
     /// 初始化
     /// </summary>
     public void Init()
@@ -934,10 +758,7 @@ public class GameView : MonoBehaviour
         RaiseBtn_Txt.text = LanguageManager.Instance.GetText(strData.RaiseStr) + strData.RaiseValueStr;
         TotalPot_Txt.text = "$0";
 
-        Mask_Btn.gameObject.SetActive(false);
         Raise_Tr.gameObject.SetActive(false);
-        StartCoroutine(ILeftPageMove(false, MenuBg_Tr));
-        StartCoroutine(ILeftPageMove(false, ChatBg_Tr));
     }
 
     /// <summary>
@@ -991,7 +812,7 @@ public class GameView : MonoBehaviour
     {
         baseRequest.SendRequest_PlayerActed(Entry.TestInfoData.LocalUserId,
                                             ActingEnum.Fold,
-                                            0);       
+                                            0);
     }
 
     /// <summary>
@@ -1040,7 +861,7 @@ public class GameView : MonoBehaviour
     /// <param name="index"></param>
     private void ShowFoldPoker(int index)
     {
-        ShowPokerBtnList[index].gameObject.SetActive(false);  
+        ShowPokerBtnList[index].gameObject.SetActive(false);
         baseRequest.SendShowFoldPoker(index);
     }
 
@@ -1061,7 +882,7 @@ public class GameView : MonoBehaviour
         if (id != Entry.TestInfoData.LocalUserId)
         {
             gamePlayerInfo.GetHandPoker[pokerIndex].PokerNum = pokerNum;
-        }        
+        }
     }
 
     /// <summary>
@@ -1122,7 +943,7 @@ public class GameView : MonoBehaviour
         switch (AutoActionState)
         {
             //任何跟注
-            case AutoActingEnum.CallAny:                
+            case AutoActingEnum.CallAny:
                 OnCallAndCheck();
                 break;
 
@@ -1294,7 +1115,7 @@ public class GameView : MonoBehaviour
         string id = pack.PlayerInOutRoomPack.PlayerInfoPack.UserID;
         if (id == Entry.TestInfoData.LocalUserId)
         {
-            
+
         }
         else
         {
@@ -1321,7 +1142,7 @@ public class GameView : MonoBehaviour
                 seatIndex = playerInfoPack.Seat > thisData.LocalPlayerSeat ?
                             playerInfoPack.Seat - thisData.LocalPlayerSeat :
                             SeatButtonList.Count - (thisData.LocalPlayerSeat - playerInfoPack.Seat);
-    
+
             }
             gamePlayerInfo = SeatGamePlayerInfoList[seatIndex];
         }
@@ -1358,6 +1179,9 @@ public class GameView : MonoBehaviour
 
         SeatButtonList[exitPlayer.SeatIndex].image.enabled = true;
         gamePlayerInfoList.Remove(exitPlayer);
+
+        exitPlayerSeatList.Add(exitPlayer.SeatIndex);
+
         Destroy(exitPlayer.gameObject);
 
         if (RoomType == TableTypeEnum.IntegralTable)
@@ -1424,7 +1248,7 @@ public class GameView : MonoBehaviour
         }
 
         GamePlayerInfo playerInfo = GetPlayer(id);
-        if (playerInfo != null && 
+        if (playerInfo != null &&
             playerInfo.gameObject.activeSelf)
         {
             playerInfo.PlayerAction(actionEnum,
@@ -1498,14 +1322,14 @@ public class GameView : MonoBehaviour
         foreach (var player in pack.PlayerInfoPackList)
         {
             GamePlayerInfo gamePlayerInfo = AddPlayer(player);
-            if(pack.UpdateRoomInfoPack.playingIdList.Contains(gamePlayerInfo.UserId))
+            if (pack.UpdateRoomInfoPack.playingIdList.Contains(gamePlayerInfo.UserId))
             {
                 gamePlayerInfo.SetHandPoker(-1, -1);
             }
             if (player.CurrBetValue > 0)
             {
                 gamePlayerInfo.PlayerBet(player.CurrBetValue, player.Chips);
-            }            
+            }
         }
 
         //底池
@@ -1623,7 +1447,7 @@ public class GameView : MonoBehaviour
             if (!player.IsFold && !player.IsAllIn)
             {
                 player.CurrBetAction = BetActionEnum.None;
-            }            
+            }
         }
 
         thisData.CurrCommunityPoker = currCommunityPoker;
@@ -1695,11 +1519,11 @@ public class GameView : MonoBehaviour
             player.SetPokerShapeStr(resultIndex);
 
             if (isOpenMatchPokerFrame && resultIndex < 10)
-            {                
+            {
                 PokerShape.OpenMatchPokerFrame(pokers,
                                                matchPokerList,
                                                isWinEffect);
-            }           
+            }
         });
     }
 
@@ -1857,7 +1681,7 @@ public class GameView : MonoBehaviour
 
             processHistoryData.processStepHistoryDataList.Add(processStepHistoryData);
         }
-        
+
     }
 
     /// <summary>
@@ -1883,7 +1707,7 @@ public class GameView : MonoBehaviour
         {
             WinType_Txt.text = LanguageManager.Instance.GetText("Side");
             TotalPot_Txt.text = StringUtils.SetChipsUnit(pack.SidePack.TotalSideChips);
-            
+
             thisData.SideWinnerList = pack.SidePack.SideWinnerDic.Select(x => x.Key).ToList();
         }
 
@@ -1923,7 +1747,7 @@ public class GameView : MonoBehaviour
                 }
 
                 thisData.SideWinChips = sideWinner.Value;
-                
+
                 player.IsOpenInfoMask = false;
                 player.IsWinnerActive = isShow;
 
@@ -1995,7 +1819,7 @@ public class GameView : MonoBehaviour
 
             processHistoryData.processStepHistoryDataList.Add(processStepHistoryData);
         }
-        
+
     }
 
     /// <summary>
@@ -2026,7 +1850,7 @@ public class GameView : MonoBehaviour
                     player.SetShowActionStr(false);
                 }
             }
-        }        
+        }
 
         //判斷當前遊戲進程
         switch (pack.GameStagePack.flowEnum)
@@ -2052,13 +1876,13 @@ public class GameView : MonoBehaviour
                 break;
 
             //翻牌
-            case FlowEnum.Flop:                
+            case FlowEnum.Flop:
                 yield return IFlopCommunityPoker(pack.CommunityPokerPack.CurrCommunityPoker);
                 RountInit();
                 break;
 
             //轉牌
-            case FlowEnum.Turn:                
+            case FlowEnum.Turn:
                 yield return IFlopCommunityPoker(pack.CommunityPokerPack.CurrCommunityPoker);
                 RountInit();
                 break;
@@ -2112,7 +1936,7 @@ public class GameView : MonoBehaviour
         {
             BuyChipsView.gameObject.SetActive(true);
             BuyChipsView buyChipsV = BuyChipsView.GetComponent<BuyChipsView>();
-            buyChipsV.SetBuyChipsViewInfo(pack.InsufficientChipsPack.SmallBlind, 
+            buyChipsV.SetBuyChipsViewInfo(pack.InsufficientChipsPack.SmallBlind,
                                           transform.name,
                                           RoomType,
                                           SendRequest_BuyChips);
@@ -2156,6 +1980,197 @@ public class GameView : MonoBehaviour
         battleResult.OnSetBattleResult(isWin, transform.name);
     }
 
+    #region 聊天
+
+    /// <summary>
+    /// 關閉聊天
+    /// </summary>
+    private void CloseChatPage()
+    {
+        Mask_Btn.gameObject.SetActive(false);
+        StartCoroutine(UnityUtils.Instance.IViewSlide(false,
+                                                      ChatPage_Tr,
+                                                      DirectionEnum.Left,
+                                                      PageMoveTime,
+                                                      () =>
+                                                      {
+                                                          //判斷保留訊息數量
+                                                          if (ChatContent_Tr.childCount > MaxChatCount)
+                                                          {
+                                                              int closeCount = ChatContent_Tr.childCount - MaxChatCount;
+                                                              for (int i = 0; i < closeCount; i++)
+                                                              {
+                                                                  if (ChatContent_Tr.GetChild(2 + i).gameObject.activeSelf)
+                                                                  {
+                                                                      ChatContent_Tr.GetChild(2 + i).gameObject.SetActive(false);
+                                                                      float chatHeight = ChatContent_Tr.GetChild(2 + i).GetComponent<RectTransform>().rect.height;
+                                                                      float reduce = Mathf.Max(0, ChatContent_Tr.anchoredPosition.y - chatHeight);
+                                                                      ChatContent_Tr.anchoredPosition = new Vector2(ChatContent_Tr.anchoredPosition.x,
+                                                                                                                    reduce);
+                                                                  }
+                                                              }
+                                                          }
+
+                                                          StartCoroutine(IGoNewChatMessage());
+                                                          GameRoomManager.Instance.IsCanMoveSwitch = true;
+                                                      }));
+    }
+
+    /// <summary>
+    /// 設置未讀聊天訊息數
+    /// </summary>
+    private int SetNotReadChatCount
+    {
+        get
+        {
+            return notReadMsgCount;
+        }
+        set
+        {
+            notReadMsgCount = value;
+            string countStr = value > 99 ?
+                          "99+" :
+                          $"{value}";
+            NotReadChat_Txt.text = countStr;
+            NotReadChat_Tr.gameObject.SetActive(value > 0);
+
+            NotReadChat_Tr.sizeDelta = value > 99 ?
+                                       new Vector2(20, 15) :
+                                       new Vector2(15, 15);
+        }
+    }
+
+    /// <summary>
+    /// 延遲設置新訊息按鈕是否顯示
+    /// </summary>
+    /// <returns></returns>
+    private IEnumerator IYieldSetNewMessageActive()
+    {
+        yield return null;
+        NewMessage_Btn.gameObject.SetActive(!IsChatOnBottom());
+    }
+
+    /// <summary>
+    /// 聊天移動至最新訊息位置
+    /// </summary>
+    /// <returns></returns>
+    private IEnumerator IGoNewChatMessage()
+    {
+        yield return null;
+
+        NewMessage_Btn.gameObject.SetActive(false);
+
+        //顯示在最新訊息
+        float chatAreaHeight = ChatArea_Sr.GetComponent<RectTransform>().rect.height;
+        float currChatContentHeight = ChatContent_Tr.rect.height;
+        float goPosY = Mathf.Max(0, currChatContentHeight - chatAreaHeight);
+        ChatContent_Tr.anchoredPosition = new Vector2(ChatContent_Tr.anchoredPosition.x,
+                                                      goPosY);
+    }
+
+    /// <summary>
+    /// 判斷聊天位置是否在最底部
+    /// </summary>
+    /// <returns></returns>
+    private bool IsChatOnBottom()
+    {
+        float chatAreaHeight = ChatArea_Sr.GetComponent<RectTransform>().rect.height;
+        float currChatContentHeight = ChatContent_Tr.rect.height;
+        float bottomPosY = Mathf.Max(0, currChatContentHeight - chatAreaHeight);
+        return ChatContent_Tr.anchoredPosition.y >= Mathf.Max(0, bottomPosY - 20);
+    }
+
+    /// <summary>
+    /// 發送聊天訊息
+    /// </summary>
+    private void SendChat()
+    {
+        if (string.IsNullOrEmpty(Chat_If.text))
+        {
+            return;
+        }
+
+        baseRequest.SendRequestRequest_Chat(Chat_If.text);
+        CreateChatContent(DataManager.UserAvatar,
+                          DataManager.UserNickname,
+                          Chat_If.text,
+                          true);
+
+        Chat_If.text = "";
+
+        if (!DataManager.IsMobilePlatform)
+        {
+            Chat_If.Select();
+        }
+
+        StartCoroutine(IGoNewChatMessage());
+    }
+
+    /// <summary>
+    /// 接收聊天訊息
+    /// </summary>
+    /// <param name="pack"></param>
+    public void ReciveChat(MainPack pack)
+    {
+        string id = pack.ChatPack.Id;
+        string nickname = pack.ChatPack.Nickname;
+        string content = pack.ChatPack.Content;
+        int avatar = pack.ChatPack.Avatar;
+
+        //判斷是否在最新訊息位置
+        bool isBottom = IsChatOnBottom();
+        if (ChatPage_Tr.gameObject.activeSelf)
+        {
+            NewMessage_Btn.gameObject.SetActive(!isBottom);
+        }
+        else
+        {
+            NewMessage_Btn.gameObject.SetActive(true);
+        }
+
+        CreateChatContent(avatar,
+                          nickname,
+                          content,
+                          false);
+
+        if (isBottom)
+        {
+            StartCoroutine(IGoNewChatMessage());
+        }
+
+        //未開啟聊天頁面顯示新訊息提示
+        if (!ChatPage_Tr.gameObject.activeSelf &&
+            id != DataManager.UserId)
+        {
+            GamePlayerInfo player = GetPlayer(id);
+            player.ShowChatInfo(content);
+
+            SetNotReadChatCount = ++SetNotReadChatCount;
+        }
+    }
+
+    /// <summary>
+    /// 產生聊天內容
+    /// </summary>
+    /// <param name="avatar"></param>
+    /// <param name="nickname"></param>
+    /// <param name="content">聊天內容</param>
+    /// <param name="isLocal">是否為本地玩家</param>
+    private void CreateChatContent(int avatar, string nickname, string content, bool isLocal)
+    {
+        GameObject sample = isLocal ?
+                            LocalChatSample :
+                            OtherChatSample;
+
+        ChatInfoSample chatInfo = objPool.CreateObj<ChatInfoSample>(sample, ChatContent_Tr);
+        chatInfo.gameObject.SetActive(true);
+        chatInfo.GetComponent<RectTransform>().SetSiblingIndex(ChatContent_Tr.childCount + 1);
+        chatInfo.SetChatInfo(avatar,
+                             nickname,
+                             content);
+    }
+
+    #endregion
 
     #region 記錄存檔
 
@@ -2172,6 +2187,7 @@ public class GameView : MonoBehaviour
             HandHistoryManager.Instance.SaveProcess(processHistoryData);
         }
 
+        exitPlayerSeatList = new List<int>();
         processHistoryData = new ProcessHistoryData();
         processHistoryData.processStepHistoryDataList = new List<ProcessStepHistoryData>();
 
@@ -2206,6 +2222,7 @@ public class GameView : MonoBehaviour
         }
         processStepHistoryData.CommunityPoker = thisData.CurrCommunityPoker;
         processStepHistoryData.TotalPot = thisData.TotalPot;
+        processStepHistoryData.ExitPlayerSeatList = exitPlayerSeatList;
 
         return processStepHistoryData;
     }

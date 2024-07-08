@@ -125,14 +125,14 @@ public class LobbyMinePageView : MonoBehaviour
         //複製錢包地址
         CopyWalletAddress_Btn.onClick.AddListener(() =>
         {
-            if (!string.IsNullOrEmpty(Copied_Txt.text))
+            if (!string.IsNullOrEmpty(WalletAddress_Txt.text))
             {
                 StringUtils.CopyText(DataManager.UserWalletAddress);
-                MonoBehaviourUtils.Instance.ColorFade(Copied_Txt,
-                                                      null,
-                                                      0.2f,
-                                                      0.5f,
-                                                      1.5f);
+                UnityUtils.Instance.ColorFade(WalletAddress_Txt,
+                                              null,
+                                              0.2f,
+                                              0.5f,
+                                              1.5f);
             }
         });
 
