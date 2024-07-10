@@ -2032,8 +2032,9 @@ public class GameServer : MonoBehaviour
         double buyChips = pack.BuyChipsPack.BuyChipsValue;
 
         Client c = clientList.Where(x => x.UserId == id).FirstOrDefault();
-        c.RoomChips = buyChips;
+        c.RoomChips += buyChips;
 
+        pack.BuyChipsPack.BuyChipsValue = c.RoomChips;
         SendRequest(pack);
     }
 

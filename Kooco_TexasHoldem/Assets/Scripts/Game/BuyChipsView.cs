@@ -18,6 +18,7 @@ public class BuyChipsView : MonoBehaviour
     private ThisData thisData;
     public class ThisData
     {
+        public bool IsJustBuyChips;                           //一般購買籌碼/籌碼不足須購買
         public string RoomName;                               //掛載的房間名
         public double SmallBlind;                             //小盲值
         public UnityAction<double> SendBuyChipsCallback;      //發送購買籌碼回傳
@@ -41,7 +42,16 @@ public class BuyChipsView : MonoBehaviour
         //返回大廳
         Cancel_Btn.onClick.AddListener(() =>
         {
-            GameRoomManager.Instance.RemoveGameRoom(thisData.RoomName);
+            if (thisData.IsJustBuyChips)
+            {
+                //一般購買籌碼
+                gameObject.SetActive(false);
+            }
+            else
+            {
+                //籌碼不足須購買
+                GameRoomManager.Instance.RemoveGameRoom(thisData.RoomName);
+            }            
         });
 
         //購買Slider單位設定
@@ -78,12 +88,14 @@ public class BuyChipsView : MonoBehaviour
     /// <summary>
     /// 設定購買介面
     /// </summary>
-    /// <param name="smallBlind"></param>
-    /// <param name="roomName"></param>
-    /// <param name="tableTypeEnum"></param>
-    /// <param name="sendBuyCallback"></param>
-    public void SetBuyChipsViewInfo(double smallBlind, string roomName, TableTypeEnum tableTypeEnum, UnityAction<double> sendBuyCallback)
+    /// <param name="isJustBuyChips">一般購買籌碼/籌碼不足須購買</param>
+    /// <param name="smallBlind">小盲值</param>
+    /// <param name="roomName">房間名</param>
+    /// <param name="tableTypeEnum">遊戲房間類型</param>
+    /// <param name="sendBuyCallback">購買結果回傳</param>
+    public void SetBuyChipsViewInfo(bool isJustBuyChips, double smallBlind, string roomName, TableTypeEnum tableTypeEnum, UnityAction<double> sendBuyCallback)
     {
+        thisData.IsJustBuyChips = isJustBuyChips;
         thisData.RoomName = roomName;
         thisData.SmallBlind = smallBlind;
         thisData.SendBuyChipsCallback = sendBuyCallback;

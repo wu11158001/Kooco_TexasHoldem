@@ -63,7 +63,7 @@ public class GameView : MonoBehaviour
     [SerializeField]
     RectTransform MenuPage_Tr;
     [SerializeField]
-    Button Menu_Btn, MenuClose_Btn, LogOut_Btn, HandHistory_Btn;
+    Button Menu_Btn, MenuClose_Btn, BuyChips_Btn, LogOut_Btn, HandHistory_Btn;
     [SerializeField]
     TextMeshProUGUI MenuNickname_Txt, MenuWalletAddr_Txt;
     [SerializeField]
@@ -89,9 +89,13 @@ public class GameView : MonoBehaviour
     [SerializeField]
     Button HandHistoryClose_Btn;
 
+    [Header("購買籌碼")]
+    [SerializeField]
+    BuyChipsView buyChipsView;
+
     [Header("遊戲結果")]
     [SerializeField]
-    RectTransform BuyChipsView, BattleResultView, WinChipsParent_Tr;
+    RectTransform BattleResultView, WinChipsParent_Tr;
 
     [Header("遊戲暫停")]
     [SerializeField]
@@ -147,6 +151,8 @@ public class GameView : MonoBehaviour
             //積分房
             if (roomType == TableTypeEnum.IntegralTable)
             {
+                BuyChips_Btn.interactable = false;
+
                 for (int i = 0; i < SeatButtonList.Count; i++)
                 {
                     if (i != 0 && i != 3)
@@ -178,7 +184,7 @@ public class GameView : MonoBehaviour
         public bool isFold;                                //是否已棄牌
         public List<int> CurrCommunityPoker;               //當前公共牌
         public List<string> PotWinnerList;                 //主池贏家
-        public double PowWinChips;                         //主池贏得醜馬
+        public double PowWinChips;                         //主池贏得籌碼
         public List<string> SideWinnerList;                //邊池贏家
         public double SideWinChips;                        //邊池贏得籌碼
     }
@@ -251,7 +257,7 @@ public class GameView : MonoBehaviour
 
         #region 選單
 
-        //選單
+        //開啟選單
         Menu_Btn.onClick.AddListener(() =>
         {
             GameRoomManager.Instance.IsCanMoveSwitch = false;
@@ -271,15 +277,18 @@ public class GameView : MonoBehaviour
         //關閉選單
         MenuClose_Btn.onClick.AddListener(() =>
         {
-            Mask_Btn.gameObject.SetActive(false);
-            StartCoroutine(UnityUtils.Instance.IViewSlide(false,
-                                                          MenuPage_Tr,
-                                                          DirectionEnum.Left,
-                                                          PageMoveTime,
-                                                          () =>
-                                                          {
-                                                              GameRoomManager.Instance.IsCanMoveSwitch = true;
-                                                          }));
+            CloseMenu();
+        });
+
+        //購買籌碼
+        BuyChips_Btn.onClick.AddListener(() =>
+        {
+            buyChipsView.gameObject.SetActive(true);
+            buyChipsView.SetBuyChipsViewInfo(true,
+                                             thisData.SmallBlindValue,
+                                             transform.name,
+                                             RoomType,
+                                             SendRequest_BuyChips);
         });
 
         #endregion
@@ -498,7 +507,7 @@ public class GameView : MonoBehaviour
         }
 
         gamePlayerInfoList = new List<GamePlayerInfo>();
-        BuyChipsView.gameObject.SetActive(false);
+        buyChipsView.gameObject.SetActive(false);
         BattleResultView.gameObject.SetActive(false);
 
         //選單玩家訊息
@@ -588,6 +597,22 @@ public class GameView : MonoBehaviour
         {
             GamePause_Obj.SetActive(value);
         }
+    }
+
+    /// <summary>
+    /// 關閉選單
+    /// </summary>
+    private void CloseMenu()
+    {
+        Mask_Btn.gameObject.SetActive(false);
+        StartCoroutine(UnityUtils.Instance.IViewSlide(false,
+                                                      MenuPage_Tr,
+                                                      DirectionEnum.Left,
+                                                      PageMoveTime,
+                                                      () =>
+                                                      {
+                                                          GameRoomManager.Instance.IsCanMoveSwitch = true;
+                                                      }));
     }
 
     /// <summary>
@@ -1934,12 +1959,12 @@ public class GameView : MonoBehaviour
         if (RoomType == TableTypeEnum.CryptoTable ||
             RoomType == TableTypeEnum.VCTable)
         {
-            BuyChipsView.gameObject.SetActive(true);
-            BuyChipsView buyChipsV = BuyChipsView.GetComponent<BuyChipsView>();
-            buyChipsV.SetBuyChipsViewInfo(pack.InsufficientChipsPack.SmallBlind,
-                                          transform.name,
-                                          RoomType,
-                                          SendRequest_BuyChips);
+            buyChipsView.gameObject.SetActive(true);
+            buyChipsView.SetBuyChipsViewInfo(false,
+                                             pack.InsufficientChipsPack.SmallBlind,
+                                             transform.name,
+                                             RoomType,
+                                             SendRequest_BuyChips);
             thisData.LocalGamePlayerInfo.Init();
         }
         else if (RoomType == TableTypeEnum.IntegralTable)
@@ -1964,7 +1989,9 @@ public class GameView : MonoBehaviour
     /// <param name="pack"></param>
     public void BuyChipsGoBack(MainPack pack)
     {
-        BuyChipsView.gameObject.SetActive(false);
+        CloseMenu();
+
+        buyChipsView.gameObject.SetActive(false);
         double newChips = pack.BuyChipsPack.BuyChipsValue;
         thisData.LocalGamePlayerInfo.PlayerRoomChips = newChips;
     }
