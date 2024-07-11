@@ -246,6 +246,7 @@ public class GameServer : MonoBehaviour
         public double CurrBetValue;             //當前下注值
         public double AllBetValue;              //總下注直
         public bool IsActionTaken;              //該回合是否已行動過
+        public bool IsSitOut;                   //是否離座
     }
 
     /// <summary>
@@ -623,8 +624,9 @@ public class GameServer : MonoBehaviour
         //玩家手牌
         foreach (var client in clientList)
         {
-            //籌碼 < 小盲注
-            if (client.RoomChips <= SmallBlind)
+            //籌碼 < 小盲注 || 離座
+            if (client.RoomChips <= SmallBlind ||
+                client.IsSitOut == true)
             {
                 continue;
             }
@@ -699,6 +701,19 @@ public class GameServer : MonoBehaviour
             pokerList.RemoveAt(index);
             return poker;
         }
+    }
+
+    /// <summary>
+    /// 玩家離/回座
+    /// </summary>
+    /// <param name="pack"></param>
+    public void BroadCastSitOut(MainPack pack)
+    {
+        string id = pack.SitOutPack.UserId;
+        bool isSitOut = pack.SitOutPack.IsSitOut;
+
+        Client client = clientList.Where(x => x.UserId == id).FirstOrDefault();
+        client.IsSitOut = isSitOut;
     }
 
     /// <summary>

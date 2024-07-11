@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using MetaMask.Unity;
 using System.Numerics;
 using System;
+using Thirdweb;
 
 public static class DataManager
 {
@@ -68,7 +69,7 @@ public static class DataManager
     public static int UserOTProps { get; set; }                     //用戶加時道具數量
     public static double UserCryptoChips { get; set; }              //用戶加密貨幣籌碼
     public static double UserVCChips { get; set; }                  //用戶虛擬貨幣籌碼
-    public static double UserGoldChips{ get; set; }                 //用戶Gold籌碼
+    public static double UserGoldChips { get; set; }                 //用戶Gold籌碼
 
     #endregion
 
@@ -135,6 +136,40 @@ public static class DataManager
     public static DateTime RandEndDate;                                     //賽季結束日期
     public static int CurrRankSeason;                                       //當前賽季
     public static List<RankData> LocalUserRankData;                         //本地玩家排名資料
+
+
+    //  體力商品資料
+    public static List<ShopData> Stamina_Shop = new List<ShopData>()
+    {
+        new ShopData(){BuffName = "Percentage",BuffAmount = 10,CostCoin = 30 },
+        new ShopData(){BuffName = "Percentage",BuffAmount = 50,CostCoin = 150 },
+        new ShopData(){BuffName = "Percentage",BuffAmount = 100,CostCoin = 300},
+        //new ShopData(){BuffName = "rrr",BuffAmount = 29328392,CostCoin = 8787},
+    };
+
+    //  金幣商品資料
+    public static List<ShopData> Gold_Shop = new List<ShopData>()
+    {
+        new ShopData(){BuffName = "Points", BuffAmount = 100,CostCoin = 30},
+        new ShopData(){BuffName = "Points", BuffAmount = 300,CostCoin = 90},
+        new ShopData(){BuffName = "Points", BuffAmount = 400,CostCoin = 120},
+        new ShopData(){BuffName = "Points", BuffAmount = 500,CostCoin = 150},
+        new ShopData(){BuffName = "Points", BuffAmount = 850,CostCoin = 250},
+        new ShopData(){BuffName = "Points", BuffAmount = 1000,CostCoin = 300},
+        //new ShopData(){BuffName = "Testtttt", BuffAmount = 23333333,CostCoin = 888888},
+    };
+
+    //  加時商品資料
+    public static List<ShopData> ExtraTime_Shop = new List<ShopData>()
+    {
+        new ShopData(){BuffName = "Second", BuffAmount = 10,CostCoin = 30},
+        new ShopData(){BuffName = "Second", BuffAmount = 30,CostCoin = 90},
+        new ShopData(){BuffName = "Second", BuffAmount = 40,CostCoin = 120},
+        new ShopData(){BuffName = "Second", BuffAmount = 50,CostCoin = 150},
+        new ShopData(){BuffName = "Second", BuffAmount = 85,CostCoin = 250},
+        new ShopData(){BuffName = "Second", BuffAmount = 100,CostCoin = 300},
+    };
+
 
     /// <summary>
     /// 接收排名資料
@@ -278,4 +313,12 @@ public class RankData
     public string nickname;
     public int point;
     public int award;
+}
+
+//  商店商品資料
+public class ShopData
+{
+    public string BuffName;
+    public int BuffAmount;
+    public int CostCoin;
 }

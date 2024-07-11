@@ -46,7 +46,7 @@ public class LobbyView : MonoBehaviour
     [SerializeField]
     Button Mine_Btn, Shop_Btn, Main_Btn, Activity_Btn, Ranking_Btn;
     [SerializeField]
-    GameObject LobbyMainPageView, LobbyMinePageView, LobbyRankingView;
+    GameObject LobbyMainPageView, LobbyMinePageView, LobbyRankingView, LobbyShopView;
 
     [Header("任務介面")]
     [SerializeField]
@@ -79,7 +79,7 @@ public class LobbyView : MonoBehaviour
     /// </summary>
     private void UpdateLanguage()
     {
-       
+
     }
 
     private void Awake()
@@ -110,7 +110,7 @@ public class LobbyView : MonoBehaviour
 
         //積分房
         Integral_Btn.onClick.AddListener(() =>
-        {  
+        {
             if (battleData.isPairing)
             {
                 //正在配對取消配對
@@ -127,8 +127,8 @@ public class LobbyView : MonoBehaviour
                 else
                 {
                     //房間數已達上限
-                    ShowMaxRoomTip();                    
-                }                
+                    ShowMaxRoomTip();
+                }
             }
         });
 
@@ -152,6 +152,12 @@ public class LobbyView : MonoBehaviour
             OpenItemPage(ItemType.Ranking);
         });
 
+        //商店
+        Shop_Btn.onClick.AddListener(() =>
+        {
+            OpenItemPage(ItemType.Shop);
+        });
+
         #endregion
     }
 
@@ -167,7 +173,7 @@ public class LobbyView : MonoBehaviour
         HandHistoryManager.Instance.LoadHandHistoryData();
 
         UpdateUserInfo();
-        OpenItemPage(ItemType.Main);        
+        OpenItemPage(ItemType.Main);
     }
 
     private void Start()
@@ -262,8 +268,11 @@ public class LobbyView : MonoBehaviour
             //排名
             case ItemType.Ranking:
                 itemObj = LobbyRankingView;
+                break;
 
-
+            //商店
+            case ItemType.Shop:
+                itemObj = LobbyShopView;
                 break;
         }
 
@@ -309,7 +318,7 @@ public class LobbyView : MonoBehaviour
     /// </summary>
     public void ShowMaxRoomTip()
     {
-        if(tipCorutine != null) StopCoroutine(tipCorutine);
+        if (tipCorutine != null) StopCoroutine(tipCorutine);
         tipCorutine = StartCoroutine(IShowTip(LanguageManager.Instance.GetText("MaxRoomTip")));
     }
 

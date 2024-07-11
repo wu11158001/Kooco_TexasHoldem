@@ -32,6 +32,8 @@ public class GameView : MonoBehaviour
     RectTransform AutoActionFrame_Tr;
     [SerializeField]
     Button[] ShowPokerBtnList;
+    [SerializeField]
+    Button BackToSit_Btn;
 
     [Header("加注操作")]
     [SerializeField]
@@ -63,9 +65,9 @@ public class GameView : MonoBehaviour
     [SerializeField]
     RectTransform MenuPage_Tr;
     [SerializeField]
-    Button Menu_Btn, MenuClose_Btn, BuyChips_Btn, LogOut_Btn, HandHistory_Btn;
+    Button Menu_Btn, MenuClose_Btn, SitOut_Btn, BuyChips_Btn, LogOut_Btn, HandHistory_Btn;
     [SerializeField]
-    TextMeshProUGUI MenuNickname_Txt, MenuWalletAddr_Txt;
+    TextMeshProUGUI SitOutBtn_Txt, MenuNickname_Txt, MenuWalletAddr_Txt;
     [SerializeField]
     Image MenuAvatar_Img;
 
@@ -152,6 +154,7 @@ public class GameView : MonoBehaviour
             if (roomType == TableTypeEnum.IntegralTable)
             {
                 BuyChips_Btn.interactable = false;
+                SitOut_Btn.interactable = false;
 
                 for (int i = 0; i < SeatButtonList.Count; i++)
                 {
@@ -180,6 +183,7 @@ public class GameView : MonoBehaviour
         public bool IsFirstRaisePlayer;                    //首位加注玩家
         public bool IsUnableRaise;                         //無法加注
         public bool IsPlaying;                             //有參與遊戲
+        public bool IsSitOut;                              //是否離開座位
         public bool isLocalPlayerTurn;                     //本地玩家回合
         public bool isFold;                                //是否已棄牌
         public List<int> CurrCommunityPoker;               //當前公共牌
@@ -291,9 +295,27 @@ public class GameView : MonoBehaviour
                                              SendRequest_BuyChips);
         });
 
+        //離開/回到座位
+        SitOut_Btn.onClick.AddListener(() =>
+        {
+            thisData.IsSitOut = !thisData.IsSitOut;
+            SetSitOutDisplay(thisData.IsSitOut);
+            baseRequest.SendRequest_SitOut(thisData.IsSitOut);
+
+            CloseMenu();
+        });
+
         #endregion
 
         #region 操作按鈕
+
+        //回到座位
+        BackToSit_Btn.onClick.AddListener(() =>
+        {
+            thisData.IsSitOut = false;
+            SetSitOutDisplay(thisData.IsSitOut);
+            baseRequest.SendRequest_SitOut(thisData.IsSitOut);
+        });
 
         //棄牌顯示手牌按鈕
         for (int i = 0; i < ShowPokerBtnList.Count(); i++)
@@ -495,6 +517,7 @@ public class GameView : MonoBehaviour
     {
         thisData = new ThisData();
         thisData.IsPlaying = false;
+        SetSitOutDisplay(false);
 
         strData = new StrData();
 
@@ -509,6 +532,7 @@ public class GameView : MonoBehaviour
         gamePlayerInfoList = new List<GamePlayerInfo>();
         buyChipsView.gameObject.SetActive(false);
         BattleResultView.gameObject.SetActive(false);
+        BackToSit_Btn.gameObject.SetActive(false);
 
         //選單玩家訊息
         StringUtils.StrExceedSize(DataManager.UserWalletAddress, MenuWalletAddr_Txt);
@@ -613,6 +637,25 @@ public class GameView : MonoBehaviour
                                                       {
                                                           GameRoomManager.Instance.IsCanMoveSwitch = true;
                                                       }));
+    }
+
+    /// <summary>
+    /// 設置離/回座顯示
+    /// </summary>
+    /// <param name="isSitOut"></param>
+    private void SetSitOutDisplay(bool isSitOut)
+    {
+        SitOutBtn_Txt.text = thisData.IsSitOut ?
+                             "Back To Sit" :
+                             "Next Rount Sit Out";
+
+        if (!thisData.IsPlaying)
+        {
+            BackToSit_Btn.gameObject.SetActive(thisData.IsSitOut);
+            Tip_Txt.text = thisData.IsSitOut ?
+                           "" :
+                           "Waiting...";
+        }
     }
 
     /// <summary>
@@ -818,6 +861,7 @@ public class GameView : MonoBehaviour
         Call_Btn.gameObject.SetActive(true);
         Raise_Btn.gameObject.SetActive(true);
 
+        thisData.IsPlaying = false;
         thisData.isFold = false;
         thisData.CurrCommunityPoker = new List<int>();
     }
@@ -1888,6 +1932,7 @@ public class GameView : MonoBehaviour
 
                 HandPokerLicensing(pack.LicensingStagePack.HandPokerDic);
                 SetButtonSeat(pack.LicensingStagePack.ButtonSeatId);
+                SetSitOutDisplay(thisData.IsSitOut);
                 break;
 
             //大小盲

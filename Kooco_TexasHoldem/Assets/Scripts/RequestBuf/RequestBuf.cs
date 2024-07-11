@@ -55,6 +55,7 @@ namespace RequestBuf
         Request_BuyChips,                       //購買籌碼
         BroadCastRequest_BattleResult,          //積分結果
         BroadCastRequest_Chat,                  //聊天
+        BroadCastSitOut,                        //離座
     }
 
     public class MainPack
@@ -80,6 +81,7 @@ namespace RequestBuf
         public BuyChipsPack BuyChipsPack;
         public BattleResultPack BattleResultPack;
         public ChatPack ChatPack;
+        public SitOutPack SitOutPack;
     }
 
     /// <summary>
@@ -122,6 +124,15 @@ namespace RequestBuf
     {
         public bool IsInRoom;                       //true=進入房間,false=退出房間
         public PlayerInfoPack PlayerInfoPack;
+    }
+
+    /// <summary>
+    /// 玩家離座包
+    /// </summary>
+    public class SitOutPack
+    {
+        public string UserId;
+        public bool IsSitOut;                   //true=離座/false=回到座位
     }
 
     /// <summary>

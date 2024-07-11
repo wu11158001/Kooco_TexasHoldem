@@ -224,6 +224,23 @@ public class Request_GameView : BaseRequest
     }
 
     /// <summary>
+    /// 發送離/回座
+    /// </summary>
+    /// <param name="isSitOut">true=離座</param>
+    public void SendRequest_SitOut(bool isSitOut)
+    {
+        MainPack pack = new MainPack();
+        pack.ActionCode = ActionCode.BroadCastSitOut;
+
+        SitOutPack sitOutPack = new SitOutPack();
+        sitOutPack.UserId = DataManager.UserId;
+        sitOutPack.IsSitOut = isSitOut;
+
+        pack.SitOutPack = sitOutPack;
+        SendRequest(pack);
+    }
+
+    /// <summary>
     /// 離開房間
     /// </summary>
     /// <param name="id"></param>
