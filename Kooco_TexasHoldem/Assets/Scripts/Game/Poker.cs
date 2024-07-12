@@ -11,7 +11,20 @@ public class Poker : MonoBehaviour
     [SerializeField]
     GameObject shining_Obj;
 
+    RectTransform thisRt;
     int pokerNumber;    //撲克數字(-1=背面)
+
+    private void Awake()
+    {
+        thisRt = gameObject.GetComponent<RectTransform>();
+    }
+
+    private void OnEnable()
+    {
+        PokerFrameEnable = false;
+        shining_Obj.SetActive(false);
+        thisRt.localScale = Vector3.one;
+    }
 
     /// <summary>
     /// 撲克數字(-1=背面)
@@ -63,18 +76,13 @@ public class Poker : MonoBehaviour
         }
     }
 
-    private void OnEnable()
-    {
-        PokerFrameEnable = false;
-        shining_Obj.SetActive(false);
-    }
-
     /// <summary>
     /// 播放贏家效果
     /// </summary>
     public void StartWinEffect()
     {
         shining_Obj.SetActive(true);
+        thisRt.localScale = new Vector3(1.1f, 1.1f, 1);
     }
 
     /// <summary>

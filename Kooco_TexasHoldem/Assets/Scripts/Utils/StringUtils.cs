@@ -176,12 +176,20 @@ public static class StringUtils
     {
         float during = 0.5f;
 
-        DateTime startTime = DateTime.Now;
-        string str = txtObj.text.Replace("$", "");
+        // 定义正则表达式模式，匹配所有的数字
+        string pattern = @"\d+";
+        // 使用正则表达式查找所有匹配项
+        MatchCollection matches = Regex.Matches(txtObj.text, pattern);
+        // 将所有匹配项连接成一个字符串
+        string result = string.Join("", matches);
+        
+        string str = string.IsNullOrEmpty(result) ?
+                     "0" :
+                     result;
         float initNum = txtObj.text == "" ? 0 : (float)JudgeUnit(str);
 
         float currNum = initNum;
-
+        DateTime startTime = DateTime.Now;
         while (currNum != (float)targetNum)
         {
             float progress = (float)(DateTime.Now - startTime).TotalSeconds / during;

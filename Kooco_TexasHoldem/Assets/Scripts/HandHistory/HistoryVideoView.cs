@@ -281,7 +281,7 @@ public class HistoryVideoView : MonoBehaviour
                                                  gameInitsHistoryData.InitChipsList[i],
                                                  avatarIndex);
 
-            Players[seatIndex].SetCurrBetTxt = gameInitsHistoryData.CurrBetChipsList[i];
+            //Players[seatIndex].SetCurrBetTxt = gameInitsHistoryData.CurrBetChipsList[i];
             Players[seatIndex].SetChipsTxt = gameInitsHistoryData.InitChipsList[i];
 
             Players[seatIndex].GetHandPoker[0].gameObject.SetActive(true);
@@ -362,7 +362,7 @@ public class HistoryVideoView : MonoBehaviour
 
             Players[seatIndex].GetHandPoker[0].PokerNum = processStepHistoryData.HandPoker1[i];
             Players[seatIndex].GetHandPoker[1].PokerNum = processStepHistoryData.HandPoker2[i];
-            Players[seatIndex].SetCurrBetTxt = processStepHistoryData.BetChipsList[i];
+            //Players[seatIndex].SetCurrBetTxt = processStepHistoryData.BetChipsList[i];
 
             //棄牌開啟遮罩
             Players[seatIndex].IsOpenInfoMask = processStepHistoryData.BetActionEnumIndex[i] == 2;
@@ -370,14 +370,14 @@ public class HistoryVideoView : MonoBehaviour
             Players[seatIndex].IsAllIn = processStepHistoryData.BetActionEnumIndex[i] == 6;
 
             //玩家行動
-            if (processStepHistoryData.BetActionEnumIndex[i] == 0 ||
-                processStepHistoryData.BetActionEnumIndex[i] == 1)
+            if (processStepHistoryData.BetActionEnumIndex[i] == 0)
             {
                 Players[seatIndex].SetShowActionStr(false);
             }
             else
             {
                 Players[seatIndex].SetShowActionStr(true,
+                                                    processStepHistoryData.BetChipsList[i],
                                                     ((BetActionEnum)processStepHistoryData.BetActionEnumIndex[i]));
             }
         }

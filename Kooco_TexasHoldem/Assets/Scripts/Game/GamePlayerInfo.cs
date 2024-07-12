@@ -26,11 +26,7 @@ public class GamePlayerInfo : MonoBehaviour
 
     [Header("下注籌碼")]
     [SerializeField]
-    GameObject CurrBetChips_Obj;
-    [SerializeField]
     RectTransform BetChips_Tr;
-    [SerializeField]
-    TextMeshProUGUI CurrBrtChips_Txt, BetChips_Txt;
 
     [Header("行動")]
     [SerializeField]
@@ -38,7 +34,7 @@ public class GamePlayerInfo : MonoBehaviour
     [SerializeField]
     TextMeshProUGUI Action_Txt;
     [SerializeField]
-    Color foldColor, callColor, checkColor, raiseColor, allInColor;
+    Color foldColor, callColor, checkColor, raiseColor, allInColor, blindColor;
 
     [Header("條天訊息")]
     [SerializeField]
@@ -50,6 +46,8 @@ public class GamePlayerInfo : MonoBehaviour
     Coroutine chatCoroutine;            //聊天協程
 
     int pokerShapeIndex;                //牌型編號
+
+    Vector2 betChipsr_TrInitPos;         //下注籌碼物件初始位置
 
     /// <summary>
     /// 是否有在進行遊戲
@@ -133,11 +131,10 @@ public class GamePlayerInfo : MonoBehaviour
         IsAllIn = false;
         CurrBetAction = BetActionEnum.None;
         CurrBetValue = 0;
-        CurrBrtChips_Txt.text = StringUtils.SetChipsUnit(0);
         ButtonCharacter_Img.gameObject.SetActive(false);
         BlindCharacter_Txt.text = "";
-        BetChips_Txt.text = StringUtils.SetChipsUnit(0);
         Action_Img.gameObject.SetActive(false);
+        betChipsr_TrInitPos = BetChips_Tr.anchoredPosition;
         BetChips_Tr.gameObject.SetActive(false);
         ActionFrame = false;
         HandPokers[0].PokerNum = -1;
@@ -252,18 +249,6 @@ public class GamePlayerInfo : MonoBehaviour
         set
         {
             InfoMask_Obj.SetActive(value);
-        }
-    }
-
-    /// <summary>
-    /// 設置當前下注值文字
-    /// </summary>
-    public double SetCurrBetTxt
-    {
-        set
-        {
-            StringUtils.ChipsChangeEffect(CurrBrtChips_Txt,
-                                          value);
         }
     }
 
@@ -426,7 +411,6 @@ public class GamePlayerInfo : MonoBehaviour
     /// </summary>
     public void RountInit()
     {
-        SetCurrBetTxt = 0;
         CurrBetValue = 0;
     }
 
@@ -437,23 +421,8 @@ public class GamePlayerInfo : MonoBehaviour
     /// <param name="chips">玩家籌碼</param>
     public void PlayerBet(double betValue, double chips)
     {
-        /*
-        //下注籌碼移動效果
-        if (!betChips_Tr.gameObject.activeSelf)
-        {
-            betChips_Txt.text = "0";
-            betChips_Tr.gameObject.SetActive(true);
-            betChips_Tr.anchoredPosition = Vector2.zero;
-            ObjMoveUtils.ObjMoveTowardsTarget(betChips_Tr, potPoint.transform.position, 0.5f, 240);
-        }
-
-        //下注籌碼文字效果
-        StringUtils.ChipsChangeEffect(betChips_Txt, betValue);
-        */
-
-        StringUtils.ChipsChangeEffect(CurrBrtChips_Txt, betValue);
+        BetChips_Tr.gameObject.SetActive(true);
         PlayerRoomChips = chips;
-
         CurrBetValue = betValue;
     }
 
@@ -470,6 +439,7 @@ public class GamePlayerInfo : MonoBehaviour
                                     {
                                         if(BetChips_Tr != null)
                                         {
+                                            BetChips_Tr.anchoredPosition = betChipsr_TrInitPos;
                                             BetChips_Tr.gameObject.SetActive(false);
                                         }                                        
                                     });
@@ -479,8 +449,9 @@ public class GamePlayerInfo : MonoBehaviour
     /// 是否顯示行動文字
     /// </summary>
     /// <param name="isShow"></param>
+    /// <param name="betValue">下注值</param>
     /// <param name="actionStr">行動文字</param>
-    public void SetShowActionStr(bool isShow, BetActionEnum betActionEnum = BetActionEnum.None)
+    public void SetShowActionStr(bool isShow, double betValue = 0, BetActionEnum betActionEnum = BetActionEnum.None)
     {
         Action_Img.gameObject.SetActive(isShow);
 
@@ -505,11 +476,31 @@ public class GamePlayerInfo : MonoBehaviour
             case BetActionEnum.AllIn:
                 Action_Img.color = allInColor;
                 break;
+
+            case BetActionEnum.Blind:
+                Action_Img.color = blindColor;
+                break;
         }
 
-        Action_Txt.text = betActionEnum != BetActionEnum.None ?
-                          betActionEnum.ToString() :
-                          "";
+        if (betActionEnum == BetActionEnum.Blind ||
+            betActionEnum == BetActionEnum.Call ||
+            betActionEnum == BetActionEnum.Raise ||
+            betActionEnum == BetActionEnum.AllIn)
+        {
+            StringUtils.ChipsChangeEffect(Action_Txt,
+                                          betValue,
+                                          $"{betActionEnum}\n");
+        }
+        else
+        {
+            Action_Txt.text = betActionEnum != BetActionEnum.None ?
+                              betActionEnum.ToString() :
+                              "";
+        }
+
+        float txtWidth = Action_Txt.preferredHeight;
+        Action_Img.rectTransform.sizeDelta = new Vector2(Action_Img.rectTransform.rect.width,
+                                                         txtWidth + 5);
     }
 
     /// <summary>
@@ -527,11 +518,9 @@ public class GamePlayerInfo : MonoBehaviour
 
         CurrBetAction = (BetActionEnum)Convert.ToInt32(actionEnum);
 
-        if (actionEnum != ActingEnum.Blind)
-        {
-            SetShowActionStr(true,
-                             (BetActionEnum)(int)actionEnum);
-        }
+        SetShowActionStr(true,
+                         betValue,
+                         (BetActionEnum)(int)actionEnum);
 
         switch (actionEnum)
         {

@@ -51,7 +51,7 @@ public class GameView : MonoBehaviour
     [SerializeField]
     Button AllIn_Btn, MinRaise_Btn;
 
-    [Header("訊息")]
+    [Header("底池")]
     [SerializeField]
     TextMeshProUGUI TotalPot_Txt, Tip_Txt, WinType_Txt;
     [SerializeField]
@@ -97,7 +97,9 @@ public class GameView : MonoBehaviour
 
     [Header("遊戲結果")]
     [SerializeField]
-    RectTransform BattleResultView, WinChipsParent_Tr;
+    RectTransform BattleResultView;
+    [SerializeField]
+    GameObject WinChipsObj;
 
     [Header("遊戲暫停")]
     [SerializeField]
@@ -860,7 +862,7 @@ public class GameView : MonoBehaviour
 
         TotalPot_Txt.text = "$0";
         WinType_Txt.text = "";
-        Pot_Img.enabled = false;
+        SetPotActive = false;
         SetActionButton = false;
         AutoActionState = AutoActingEnum.None;
         Fold_Btn.gameObject.SetActive(true);
@@ -1373,7 +1375,7 @@ public class GameView : MonoBehaviour
         }
 
         //顯示底池籌碼
-        //SetPotActive = true;
+        SetPotActive = true;
     }
 
     /// <summary>
@@ -1449,11 +1451,6 @@ public class GameView : MonoBehaviour
             gamePlayerInfoList[sb].SetSeatCharacter(SeatCharacterEnum.SB);
             gamePlayerInfoList[bb].SetSeatCharacter(SeatCharacterEnum.BB);
         }
-
-        /*buttonSeat_Tr.gameObject.SetActive(true);
-        buttonSeat_Tr.position = buttonPlayer.gameObject.transform.position;
-
-        ObjMoveUtils.ObjMoveTowardsTarget(buttonSeat_Tr, pot_Img.transform.position, 0.5f, 160);*/
     }
 
     /// <summary>
@@ -1663,17 +1660,14 @@ public class GameView : MonoBehaviour
             JudgePokerShape(player, true, true);
 
             player.IsWinnerActive = true;
-            player.PlayerRoomChips = winner.Value;
+            //player.PlayerRoomChips = winner.Value;
 
             Vector2 winnerSeatPos = player.gameObject.transform.position;
-            /*
+            
             //產生贏得籌碼物件            
-            RectTransform rt = Instantiate(AssetsManager.Instance.GetObjtypeAsset(ObjTypeEnum.WinChips)).GetComponent<RectTransform>();
-            rt.SetParent(WinChipsParent_Tr);
-            rt.anchoredPosition = Pot_Img.rectTransform.anchoredPosition;
-            WinChips winChips = rt.GetComponent<WinChips>();
-            winChips.SetWinChips = pack.WinnerPack.WinChips;
-            //SetPotActive = false;
+            RectTransform rt = Instantiate(WinChipsObj, Pot_Img.transform).GetComponent<RectTransform>();
+            rt.anchoredPosition = Vector2.zero;
+            SetPotActive = false;
 
             yield return new WaitForSeconds(0.5f);
 
@@ -1683,7 +1677,7 @@ public class GameView : MonoBehaviour
                                             Destroy(rt.gameObject);
                                             player.PlayerRoomChips = winner.Value;
                                         });
-            */
+            
             yield return new WaitForSeconds(2);
 
             /*//最後一位不關
@@ -2107,8 +2101,8 @@ public class GameView : MonoBehaviour
         {
             notReadMsgCount = value;
             string countStr = value > 99 ?
-                          "99+" :
-                          $"{value}";
+                              "99+" :
+                              $"{value}";
             NotReadChat_Txt.text = countStr;
             NotReadChat_Tr.gameObject.SetActive(value > 0);
 
