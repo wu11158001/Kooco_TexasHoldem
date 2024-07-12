@@ -50,16 +50,42 @@ public class ViewManager : UnitySingleton<ViewManager>
     }
 
     /// <summary>
-    /// 創建View在主畫面
+    /// 創建View在當前Canvas畫面
     /// </summary>
     /// <param name="obj"></param>
     /// <returns></returns>
-    public T CreateViewInMainCanvas<T>(GameObject obj) where T : Component
+    public T CreateViewInCurrCanvas<T>(GameObject obj) where T : Component
     {
+        Transform parent = mainCanvas.transform;
+        if (GameRoomManager.Instance.GetGameRoomCanvas().sortingOrder > 0)
+        {
+            parent = GameRoomManager.Instance.GetGameRoomCanvas().transform;
+        }
+
+        GameRoomManager.Instance.IsCanMoveSwitch = false;
+
         RectTransform rt = Instantiate(obj).GetComponent<RectTransform>();
-        rt.SetParent(mainCanvas.transform);
+        rt.SetParent(parent);
         InitViewTr(rt, rt.name.Replace("(Clone)", ""));
 
-        return rt.GetComponent<T>();
+        if (rt.TryGetComponent<T>(out T component))
+        {
+            return component;
+        }
+        else
+        {
+            Debug.LogError("Not Get Component");
+            return null;
+        }
+    }
+
+    /// <summary>
+    /// 開啟確認介面
+    /// </summary>
+    /// <returns></returns>
+    public ConfirmView OpenConfirmView()
+    {
+        GameObject obj = Resources.Load<GameObject>("Prefab/CommonView/ConfirmView");
+        return CreateViewInCurrCanvas<ConfirmView>(obj);
     }
 }

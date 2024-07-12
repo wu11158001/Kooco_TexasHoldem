@@ -135,12 +135,12 @@ public class LoadSceneManager : UnitySingleton<LoadSceneManager>
         {
             case SceneEnum.Login:
                 NFTManager.Instance.CancelUpdate();
-                ViewManager.Instance.CreateViewInMainCanvas<LoginView>(LoginViewObj);
+                ViewManager.Instance.CreateViewInCurrCanvas<LoginView>(LoginViewObj);
                 break;
 
             case SceneEnum.Lobby:
                 DataManager.ReciveRankData();
-                ViewManager.Instance.CreateViewInMainCanvas<LobbyView>(LobbyViewObj);
+                ViewManager.Instance.CreateViewInCurrCanvas<LobbyView>(LobbyViewObj);
                 break;
 
             case SceneEnum.Game:

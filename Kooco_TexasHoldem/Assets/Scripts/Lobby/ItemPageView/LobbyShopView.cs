@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class LobbyShopView : MonoBehaviour
 {
@@ -43,7 +44,7 @@ public class LobbyShopView : MonoBehaviour
     [SerializeField]
     Image iconSprite;
     [SerializeField]
-    Text MallMsgInfo;
+    TextMeshProUGUI MallMsgInfo;
     [SerializeField]
     Button Cencle, Confirm,CloseBtn;
 
@@ -283,7 +284,7 @@ public class LobbyShopView : MonoBehaviour
                 DataManager.UserVCChips -= shopData.BuffAmount;
                 Debug.Log($"餘額 {DataManager.UserVCChips}");
             }
-
+            
         });
     }
 

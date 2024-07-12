@@ -275,7 +275,13 @@ public class GameView : MonoBehaviour
         //離開房間
         LogOut_Btn.onClick.AddListener(() =>
         {
-            GameRoomManager.Instance.RemoveGameRoom(transform.name);
+            ConfirmView confirmView = ViewManager.Instance.OpenConfirmView();
+            confirmView.SetContent("return to the lobby?",
+                                    "If you leave now, you will not be able to get back your staked chips.");
+            confirmView.SetBnt(() =>
+            {
+                GameRoomManager.Instance.RemoveGameRoom(transform.name);
+            });            
         });
 
         //關閉選單

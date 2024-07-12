@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class ShopSample : MonoBehaviour
 {
@@ -9,7 +10,7 @@ public class ShopSample : MonoBehaviour
     Image ItemIcon;
 
     [SerializeField]
-    Text Buff_Text,CostAmount_Text;
+    TextMeshProUGUI Buff_Text,CostAmount_Text;
 
     [SerializeField]
     Button BuyBtn;
@@ -36,7 +37,7 @@ public class ShopSample : MonoBehaviour
     /// <param name="img">商品Icon</param>
     /// <param name="info">購買訊息欄位</param>
     /// <param name="ItemName">商品名</param>
-    public void OnBuyAddListener(LobbyShopView shopView, GameObject MallMsg, ShopData shopData, Image img, Text info,string ItemName)
+    public void OnBuyAddListener(LobbyShopView shopView, GameObject MallMsg, ShopData shopData, Image img, TextMeshProUGUI info,string ItemName)
     {
         BuyBtn.onClick.AddListener(() =>
         {
@@ -53,7 +54,7 @@ public class ShopSample : MonoBehaviour
     /// </summary>
     /// <param name="img">關閉商品icon</param>
     /// <param name="info">顯示餘額不足訊息</param>
-    public void InsufficientBalance(Image img, Text info)
+    public void InsufficientBalance(Image img, TextMeshProUGUI info)
     {
         img.gameObject.SetActive(false);
         info.text = $"Insufficient balance.\nPlease proceed with collateralization.";

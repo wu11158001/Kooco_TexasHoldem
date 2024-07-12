@@ -28,7 +28,7 @@ public class VCTableBtnSample : MonoBehaviour
             AudioManager.Instance.PlayConfirmClick();
             if (GameRoomManager.Instance.JudgeIsCanBeCreateRoom())
             {
-                JoinRoomView joinRoomView = ViewManager.Instance.CreateViewInMainCanvas<JoinRoomView>(JoinRoomViewObj);
+                JoinRoomView joinRoomView = ViewManager.Instance.CreateViewInCurrCanvas<JoinRoomView>(JoinRoomViewObj);
                 joinRoomView.SetCreatRoomViewInfo(TableTypeEnum.VCTable, smallBlind);
             }
             else
