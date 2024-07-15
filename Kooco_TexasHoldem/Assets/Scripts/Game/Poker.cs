@@ -21,6 +21,14 @@ public class Poker : MonoBehaviour
 
     private void OnEnable()
     {
+        PokerInit();
+    }
+
+    /// <summary>
+    /// 撲克初始化
+    /// </summary>
+    public void PokerInit()
+    {
         PokerFrameEnable = false;
         shining_Obj.SetActive(false);
         thisRt.localScale = Vector3.one;

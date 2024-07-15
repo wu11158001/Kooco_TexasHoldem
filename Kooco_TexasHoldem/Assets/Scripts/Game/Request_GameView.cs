@@ -117,7 +117,7 @@ public class Request_GameView : BaseRequest
 
             //演示玩家行動
             case ActionCode.BroadCastRequest_ShowActing:
-                thisView.TotalPot = pack.GameRoomInfoPack.TotalPot;
+                thisView.SetTotalPot = pack.GameRoomInfoPack.TotalPot;
                 thisView.GetPlayerAction(pack.PlayerActedPack);
                 break;
 

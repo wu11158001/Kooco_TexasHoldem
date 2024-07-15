@@ -4,6 +4,71 @@ using UnityEngine;
 using System.IO;
 using Newtonsoft.Json;
 
+/// <summary>
+/// 紀錄結果資料
+/// </summary>
+public class ResultHistoryData
+{
+    public string RoomType;                         //房間類型
+    public double SmallBlind;                       //小盲注
+    public string NickName;                         //獲勝玩家暱稱
+    public int Avatar;                              //獲勝玩家頭像
+    public int[] HandPokers;                        //獲勝玩家手牌
+    public List<int> CommunityPoker;                //公共牌
+    public double WinChips;                         //贏得籌碼
+}
+
+/// <summary>
+/// 遊戲初始紀錄資料
+/// </summary>
+public class GameInitHistoryData
+{
+    public int ButtonSeat;                              //Button座位
+    public int SBSeat;                                  //小盲座位
+    public int BBSeat;                                  //大盲座位
+    public List<int> SeatList;                          //座位
+    public List<string> UserIdList;                     //用戶ID
+    public List<string> NicknameList;                   //暱稱
+    public List<int> AvatarList;                        //頭像
+    public List<int> HandPoker1List;                    //手牌1
+    public List<int> HandPoker2List;                    //手牌2
+    public List<double> InitChipsList;                  //初始籌碼
+    public List<double> CurrBetChipsList;               //當前下注籌碼
+    public double TotalPotChips;                        //底池籌碼
+}
+
+/// <summary>
+/// 遊戲過程紀錄資料
+/// </summary>
+public class ProcessHistoryData
+{
+    public List<ProcessStepHistoryData> processStepHistoryDataList;
+}
+/// <summary>
+/// 遊戲過程每次行動紀錄資料
+/// </summary>
+public class ProcessStepHistoryData
+{
+    public List<int> SeatList;                          //座位
+    public List<double> ChipsList;                      //本次行動各玩家擁有籌碼
+    public List<double> BetChipsList;                   //本次行動各玩家下注籌碼
+    public int ActionPlayerIndex;                       //行動玩家編號
+    public int ActionIndex;                             //ActingEnum Index
+    public List<int> CommunityPoker;                    //公共牌
+    public double TotalPot;                             //底池
+    public List<int> HandPoker1;                        //手牌1
+    public List<int> HandPoker2;                        //手牌2
+    public List<int> BetActionEnumIndex;                //下注行為編號(BetActionEnum)
+
+    public List<int> PotWinnerSeatList;                 //底池贏家位置
+    public double PotWinChips;                          //底池獲勝籌碼
+    public List<int> SildWinnerSeatList;                //邊池贏家位置
+    public double SildWinChips;                         //邊池獲勝籌碼
+    public Dictionary<int, double> BackChipsDic;        //退回籌碼(座位,退回籌碼值)
+
+    public List<int> ExitPlayerSeatList;                //退出玩家座位
+}
+
 public class HandHistoryManager : UnitySingleton<HandHistoryManager>
 {
     [Header("影片播放介面")]
@@ -258,69 +323,5 @@ public class HandHistoryManager : UnitySingleton<HandHistoryManager>
     }
 
     #endregion
-}
-
-/// <summary>
-/// 紀錄結果資料
-/// </summary>
-public class ResultHistoryData
-{
-    public string RoomType;                         //房間類型
-    public double SmallBlind;                       //小盲注
-    public string NickName;                         //獲勝玩家暱稱
-    public int Avatar;                              //獲勝玩家頭像
-    public int[] HandPokers;                        //獲勝玩家手牌
-    public List<int> CommunityPoker;                //公共牌
-    public double WinChips;                         //贏得籌碼
-}
-
-/// <summary>
-/// 遊戲初始紀錄資料
-/// </summary>
-public class GameInitHistoryData
-{
-    public int ButtonSeat;                              //Button座位
-    public int SBSeat;                                  //小盲座位
-    public int BBSeat;                                  //大盲座位
-    public List<int> SeatList;                          //座位
-    public List<string> UserIdList;                     //用戶ID
-    public List<string> NicknameList;                   //暱稱
-    public List<int> AvatarList;                        //頭像
-    public List<int> HandPoker1List;                    //手牌1
-    public List<int> HandPoker2List;                    //手牌2
-    public List<double> InitChipsList;                  //初始籌碼
-    public List<double> CurrBetChipsList;               //當前下注籌碼
-    public double TotalPotChips;                        //底池籌碼
-}
-
-/// <summary>
-/// 遊戲過程紀錄資料
-/// </summary>
-public class ProcessHistoryData
-{
-    public List<ProcessStepHistoryData> processStepHistoryDataList;
-}
-/// <summary>
-/// 遊戲過程每次行動紀錄資料
-/// </summary>
-public class ProcessStepHistoryData
-{
-    public List<int> SeatList;                          //座位
-    public List<double> ChipsList;                      //本次行動各玩家擁有籌碼
-    public List<double> BetChipsList;                   //本次行動各玩家下注籌碼
-    public int ActionPlayerIndex;                       //行動玩家編號
-    public int ActionIndex;                             //ActingEnum Index
-    public List<int> CommunityPoker;                    //公共牌
-    public double TotalPot;                             //底池
-    public List<int> HandPoker1;                        //手牌1
-    public List<int> HandPoker2;                        //手牌2
-    public List<int> BetActionEnumIndex;                //下注行為編號(BetActionEnum)
-
-    public List<int> PotWinnerSeatList;                 //底池贏家位置
-    public double PotWinChips;                          //底池獲勝籌碼
-    public List<int> SildWinnerSeatList;                //邊池贏家位置
-    public double SildWinChips;                         //邊池獲勝籌碼
-
-    public List<int> ExitPlayerSeatList;                //退出玩家座位
 }
 

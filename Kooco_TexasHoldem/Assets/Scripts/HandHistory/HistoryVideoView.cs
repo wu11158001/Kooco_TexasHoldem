@@ -281,7 +281,6 @@ public class HistoryVideoView : MonoBehaviour
                                                  gameInitsHistoryData.InitChipsList[i],
                                                  avatarIndex);
 
-            //Players[seatIndex].SetCurrBetTxt = gameInitsHistoryData.CurrBetChipsList[i];
             Players[seatIndex].SetChipsTxt = gameInitsHistoryData.InitChipsList[i];
 
             Players[seatIndex].GetHandPoker[0].gameObject.SetActive(true);
@@ -323,10 +322,18 @@ public class HistoryVideoView : MonoBehaviour
             else if (seatIndex == gameInitsHistoryData.SBSeat)
             {
                 Players[seatIndex].SetSeatCharacter(SeatCharacterEnum.SB);
+                Players[seatIndex].DisplayBetAction(true,
+                                                    gameInitsHistoryData.CurrBetChipsList[i],
+                                                    BetActionEnum.Blind,
+                                                    false);
             }
             else if (seatIndex == gameInitsHistoryData.BBSeat)
             {
                 Players[seatIndex].SetSeatCharacter(SeatCharacterEnum.BB);
+                Players[seatIndex].DisplayBetAction(true,
+                                                    gameInitsHistoryData.CurrBetChipsList[i],
+                                                    BetActionEnum.Blind,
+                                                    false);
             }
         }
 
@@ -343,26 +350,28 @@ public class HistoryVideoView : MonoBehaviour
     /// <param name="processStepHistoryData"></param>
     private IEnumerator IPlayRecode(ProcessStepHistoryData processStepHistoryData)
     {
-        TotalPot_Txt.text = $"${processStepHistoryData.TotalPot}";
+        TotalPot_Txt.text = StringUtils.SetChipsUnit(processStepHistoryData.TotalPot);
         WinType_Txt.text = "";
 
+        //初始化
         foreach (var player in Players)
         {            
             player.gameObject.SetActive(false);
+            player.SetBackChips = 0;
         }
 
+        //設置玩家訊息
         for (int i = 0; i < processStepHistoryData.SeatList.Count; i++)
         {
             int seatIndex = processStepHistoryData.SeatList[i];
 
             Players[seatIndex].gameObject.SetActive(true);
 
-            Players[seatIndex].SetShowActionStr(false);
+            Players[seatIndex].DisplayBetAction(false);
             Players[seatIndex].IsWinnerActive = false;
 
             Players[seatIndex].GetHandPoker[0].PokerNum = processStepHistoryData.HandPoker1[i];
             Players[seatIndex].GetHandPoker[1].PokerNum = processStepHistoryData.HandPoker2[i];
-            //Players[seatIndex].SetCurrBetTxt = processStepHistoryData.BetChipsList[i];
 
             //棄牌開啟遮罩
             Players[seatIndex].IsOpenInfoMask = processStepHistoryData.BetActionEnumIndex[i] == 2;
@@ -372,17 +381,22 @@ public class HistoryVideoView : MonoBehaviour
             //玩家行動
             if (processStepHistoryData.BetActionEnumIndex[i] == 0)
             {
-                Players[seatIndex].SetShowActionStr(false);
+                Players[seatIndex].DisplayBetAction(false);
             }
             else
             {
-                Players[seatIndex].SetShowActionStr(true,
+                Players[seatIndex].DisplayBetAction(true,
                                                     processStepHistoryData.BetChipsList[i],
-                                                    ((BetActionEnum)processStepHistoryData.BetActionEnumIndex[i]));
+                                                    ((BetActionEnum)processStepHistoryData.BetActionEnumIndex[i]),
+                                                    false);
             }
         }
 
         //公共牌
+        foreach (var common in CommunityPokser)
+        {
+            common.PokerInit();
+        }
         if (processStepHistoryData.CommunityPoker == null ||
             processStepHistoryData.CommunityPoker.Count == 0)
         {
@@ -424,6 +438,13 @@ public class HistoryVideoView : MonoBehaviour
             }
         }
 
+        //籌碼更新
+        for (int i = 0; i < processStepHistoryData.SeatList.Count; i++)
+        {
+            int seatIndex = processStepHistoryData.SeatList[i];
+            Players[seatIndex].SetChipsTxt = processStepHistoryData.ChipsList[i];
+        }
+
         //關閉所有撲克效果
         CloseAllPokerEffect();
 
@@ -453,14 +474,22 @@ public class HistoryVideoView : MonoBehaviour
         playVideoWinCoroutine = StartCoroutine(OnWinner(processStepHistoryData.SildWinnerSeatList,
                                                         processStepHistoryData.SildWinChips,
                                                         "Side"));
-        yield return playVideoWinCoroutine;
-
-        //籌碼更新
-        for (int i = 0; i < processStepHistoryData.SeatList.Count; i++)
+        //退回籌碼
+        if (processStepHistoryData.BackChipsDic != null)
         {
-            int seatIndex = processStepHistoryData.SeatList[i];
-            Players[seatIndex].SetChipsTxt = processStepHistoryData.ChipsList[i];
+            foreach (var item in processStepHistoryData.BackChipsDic)
+            {
+                int seat = item.Key;
+                double backChipsValue = item.Value;
+
+                if (backChipsValue > 0)
+                {
+                    Players[seat].SetBackChips = backChipsValue;
+                }
+            }
         }
+
+        yield return playVideoWinCoroutine;
 
         ///贏家(資料, 贏得籌碼, 主池/邊池文字)
         IEnumerator OnWinner(List<int> dataList, double winChips, string typeStr)
@@ -468,13 +497,13 @@ public class HistoryVideoView : MonoBehaviour
             if (dataList != null &&
                 dataList.Count > 0)
             {
-                TotalPot_Txt.text = $"${winChips}";
+                TotalPot_Txt.text = StringUtils.SetChipsUnit(winChips);
 
                 //開啟所有玩家遮罩
                 foreach (var player in Players)
                 {
                     player.IsOpenInfoMask = true;
-                    player.SetShowActionStr(false);
+                    player.DisplayBetAction(false);
                 }
 
                 //贏得類型顯示
@@ -488,12 +517,6 @@ public class HistoryVideoView : MonoBehaviour
 
                     Players[seat].IsOpenInfoMask = false;
                     Players[seat].IsWinnerActive = true;
-
-                    int dataSeat = processStepHistoryData.SeatList.Select((i, v) => (i, v))
-                                                                  .Where(x => x.v == seat)
-                                                                  .FirstOrDefault()
-                                                                  .i;
-                    Players[seat].SetChipsTxt = processStepHistoryData.ChipsList[dataSeat];
 
                     JudgePokerShape(seat, true);
 

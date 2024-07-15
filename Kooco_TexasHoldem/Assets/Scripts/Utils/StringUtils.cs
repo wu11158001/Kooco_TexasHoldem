@@ -175,14 +175,13 @@ public static class StringUtils
     async public static void ChipsChangeEffect(TextMeshProUGUI txtObj, double targetNum, string addStartStr = "", string addEndStr = "")
     {
         float during = 0.5f;
-
-        // 定义正则表达式模式，匹配所有的数字
-        string pattern = @"\d+";
-        // 使用正则表达式查找所有匹配项
-        MatchCollection matches = Regex.Matches(txtObj.text, pattern);
-        // 将所有匹配项连接成一个字符串
-        string result = string.Join("", matches);
         
+        //匹配所有的数字，保留小數點
+        string pattern = @"\d+(\.\d+)?[KBT]?";
+        //查找所有匹配项
+        MatchCollection matches = Regex.Matches(txtObj.text, pattern);
+        //将所有匹配项连接成一个字符串
+        string result = string.Join("", matches);        
         string str = string.IsNullOrEmpty(result) ?
                      "0" :
                      result;
@@ -212,8 +211,8 @@ public static class StringUtils
     public static double JudgeUnit(string str)
     {
         if (str.EndsWith("K")) return double.Parse(str.Replace("K", "")) * 10000;
-        else if (str.EndsWith("B")) return double.Parse(str.Replace("K", "")) * 1000000;
-        else if (str.EndsWith("T")) return double.Parse(str.Replace("K", "")) * 100000000;
+        else if (str.EndsWith("B")) return double.Parse(str.Replace("B", "")) * 1000000;
+        else if (str.EndsWith("T")) return double.Parse(str.Replace("T", "")) * 100000000;
         else
         {
             //小於1萬

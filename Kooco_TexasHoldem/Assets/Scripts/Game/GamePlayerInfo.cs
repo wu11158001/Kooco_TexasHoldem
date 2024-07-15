@@ -142,7 +142,7 @@ public class GamePlayerInfo : MonoBehaviour
         HandPokers[1].PokerNum = -1;
         HandPokers[1].gameObject.SetActive(false);        
         Winner_Obj.SetActive(false);
-        SetTip = "";
+        SetBackChips = 0;
         SetPokerShapeTxtStr = "";
     }
 
@@ -174,13 +174,15 @@ public class GamePlayerInfo : MonoBehaviour
     }
 
     /// <summary>
-    /// 設置提示
+    /// 設置退回籌碼
     /// </summary>
-    public string SetTip
+    public double SetBackChips
     {
         set
         {
-            BackChips_Txt.text = value;
+            BackChips_Txt.text = value > 0 ?
+                                 $"+{StringUtils.SetChipsUnit(value)}" :
+                                 "";
         }
     }
 
@@ -259,8 +261,7 @@ public class GamePlayerInfo : MonoBehaviour
     {
         set
         {
-            StringUtils.ChipsChangeEffect(Chips_Txt,
-                                          value);
+            Chips_Txt.text = StringUtils.SetChipsUnit(value);
         }
     }
 
@@ -411,7 +412,10 @@ public class GamePlayerInfo : MonoBehaviour
     /// </summary>
     public void RountInit()
     {
-        CurrBetValue = 0;
+        if (CurrBetAction != BetActionEnum.AllIn)
+        {
+            CurrBetValue = 0;
+        }
     }
 
     /// <summary>
@@ -446,12 +450,13 @@ public class GamePlayerInfo : MonoBehaviour
     }
 
     /// <summary>
-    /// 是否顯示行動文字
+    /// 顯示行動
     /// </summary>
     /// <param name="isShow"></param>
     /// <param name="betValue">下注值</param>
-    /// <param name="actionStr">行動文字</param>
-    public void SetShowActionStr(bool isShow, double betValue = 0, BetActionEnum betActionEnum = BetActionEnum.None)
+    /// <param name="betActionEnum">行動文字</param>
+    /// <param name="isEffect">是否使用籌碼變化效果</param>
+    public void DisplayBetAction(bool isShow, double betValue = 0, BetActionEnum betActionEnum = BetActionEnum.None, bool isEffect = true)
     {
         Action_Img.gameObject.SetActive(isShow);
 
@@ -487,9 +492,16 @@ public class GamePlayerInfo : MonoBehaviour
             betActionEnum == BetActionEnum.Raise ||
             betActionEnum == BetActionEnum.AllIn)
         {
-            StringUtils.ChipsChangeEffect(Action_Txt,
-                                          betValue,
-                                          $"{betActionEnum}\n");
+            if (isEffect)
+            {
+                StringUtils.ChipsChangeEffect(Action_Txt,
+                                              betValue,
+                                              $"{betActionEnum}\n");
+            }
+            else
+            {
+                Action_Txt.text = $"{betActionEnum}\n{StringUtils.SetChipsUnit(betValue)}";
+            }
         }
         else
         {
@@ -518,7 +530,7 @@ public class GamePlayerInfo : MonoBehaviour
 
         CurrBetAction = (BetActionEnum)Convert.ToInt32(actionEnum);
 
-        SetShowActionStr(true,
+        DisplayBetAction(true,
                          betValue,
                          (BetActionEnum)(int)actionEnum);
 

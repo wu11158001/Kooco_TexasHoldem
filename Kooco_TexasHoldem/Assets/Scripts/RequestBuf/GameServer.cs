@@ -1769,7 +1769,7 @@ public class GameServer : MonoBehaviour
                 Client c = playingList.Where(x => x.UserId == allInPlayer.Key).FirstOrDefault();
                 c.RoomChips += backChips;
 
-                sideValue -= backChips;
+                sideValue = Mathf.Max(0, (float)(sideValue - backChips));
             }
             else
             {
