@@ -43,7 +43,10 @@ public class SetNicknameView : MonoBehaviour
 
     private void Start()
     {
-        SetNickname_If.Select();
+        if (!DataManager.IsMobilePlatform)
+        {
+            SetNickname_If.Select();
+        }        
     }
 
     private void Update()

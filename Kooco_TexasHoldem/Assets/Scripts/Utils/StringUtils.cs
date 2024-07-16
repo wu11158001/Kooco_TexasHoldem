@@ -318,11 +318,11 @@ public static class StringUtils
     /// <summary>
     /// 檢查手機格式正確性
     /// </summary>
-    /// <param name="number"></param>
+    /// <param name="phone"></param>
     /// <returns></returns>
-    public static bool CheckPhoneNumber(string number)
+    public static bool CheckPhoneNumber(string phone)
     {
-        if (string.IsNullOrEmpty(number) || number.Length < 9)
+        if (string.IsNullOrEmpty(phone) || phone.Length < 9)
         {
             return false;
         }

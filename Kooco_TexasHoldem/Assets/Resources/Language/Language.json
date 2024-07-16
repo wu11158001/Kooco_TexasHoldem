@@ -5,39 +5,214 @@
     "zh_TW": null
   },
   {
-    "ID": "TexasHoldem",
-    "English": "Texas Holdem",
-    "zh_TW": "德州撲克"
+    "ID": "Retry",
+    "English": "RETRY",
+    "zh_TW": "重新嘗試"
   },
   {
-    "ID": "Create",
-    "English": "Create",
-    "zh_TW": "創建"
+    "ID": "Wallet",
+    "English": "Wallet",
+    "zh_TW": "錢包"
   },
   {
-    "ID": "ReturnLobby",
-    "English": "Return Lobby",
-    "zh_TW": "返回大廳"
+    "ID": "Mobile",
+    "English": "Mobile",
+    "zh_TW": "手機"
   },
   {
-    "ID": "Buy",
-    "English": "Buy",
-    "zh_TW": "購買"
+    "ID": "MobileNumber",
+    "English": "Mobile Number",
+    "zh_TW": "手機號碼"
   },
   {
-    "ID": "Confirm",
-    "English": "Confirm",
-    "zh_TW": "確認"
+    "ID": "OTPCode",
+    "English": "OTP Code",
+    "zh_TW": "一次性代碼"
   },
   {
-    "ID": "Win",
-    "English": "Win",
-    "zh_TW": "獲勝"
+    "ID": "SendCode",
+    "English": "SEND CODE",
+    "zh_TW": "傳送代碼"
   },
   {
-    "ID": "Fail",
-    "English": "Fail",
-    "zh_TW": "失敗"
+    "ID": "Submit",
+    "English": "SUBMIT",
+    "zh_TW": "提交"
+  },
+  {
+    "ID": "Password",
+    "English": "Password",
+    "zh_TW": "密碼"
+  },
+  {
+    "ID": "ResetPassword",
+    "English": "Reset Password",
+    "zh_TW": "重新設密碼"
+  },
+  {
+    "ID": "SignIn",
+    "English": "SIGN IN",
+    "zh_TW": "登入"
+  },
+  {
+    "ID": "SignUp",
+    "English": "Sign Up",
+    "zh_TW": "報名"
+  },
+  {
+    "ID": "Register",
+    "English": "REGISTER",
+    "zh_TW": "註冊"
+  },
+  {
+    "ID": "LostPassword",
+    "English": "Lost Password",
+    "zh_TW": "忘記密碼"
+  },
+  {
+    "ID": "PasswordInputTip",
+    "English": "Please Enter Here",
+    "zh_TW": "請在此輸入"
+  },
+  {
+    "ID": "OTPCodeInputTip",
+    "English": "Please Enter The OTP Code",
+    "zh_TW": "請輸入一次性密碼"
+  },
+  {
+    "ID": "PhoneInputTip",
+    "English": "Your Phone Number",
+    "zh_TW": "您的手機號碼"
+  },
+  {
+    "ID": "RememberMe",
+    "English": "Remember Me",
+    "zh_TW": "記住帳號密碼"
+  },
+  {
+    "ID": "EnterNewPassword",
+    "English": "Enter New Password.",
+    "zh_TW": "輸入新密碼。"
+  },
+  {
+    "ID": "AllowedCharacters",
+    "English": "Allowed Characters: Alphanumeric A-Z, 0-9.",
+    "zh_TW": "允許的字元：字母數字 A-Z、0-9。"
+  },
+  {
+    "ID": "AtLeast8Chars",
+    "English": "At Least 8 Chars.",
+    "zh_TW": "至少 8 個字元。"
+  },
+  {
+    "ID": "錯誤訊息",
+    "English": null,
+    "zh_TW": null
+  },
+  {
+    "ID": "PhoneError",
+    "English": "User Name Entered Incorrectly, Please Try Again.",
+    "zh_TW": "手機號格式錯誤。"
+  },
+  {
+    "ID": "CodeError",
+    "English": "Invalid Code, Please Try Again.",
+    "zh_TW": "密碼無效，請重新輸入。"
+  },
+  {
+    "ID": "PrivacyPolicyError",
+    "English": "Please Agree To The Privacy Policy.",
+    "zh_TW": "請同意隱私權政策。"
+  },
+  {
+    "ID": "登入(LoginView)",
+    "English": null,
+    "zh_TW": null
+  },
+  {
+    "ID": "錢包連接頁面",
+    "English": null,
+    "zh_TW": null
+  },
+  {
+    "ID": "WalletSiginTip",
+    "English": "Please, Sign In With Your Wallet.",
+    "zh_TW": "請使用您的錢包登入。"
+  },
+  {
+    "ID": "WalletConnectTip",
+    "English": "Connect Using Browser Wallet",
+    "zh_TW": "使用瀏覽器錢包連接"
+  },
+  {
+    "ID": "SignUpGuide",
+    "English": "Don't Have An Account? <color=#79E84B><link=Sign Up Here!><u>Sign Up Here!</u></link></color>",
+    "zh_TW": "沒有帳戶？<color=#79E84B><link=Sign Up Here!><u>在此註冊！</u></link></color>"
+  },
+  {
+    "ID": "錢包連接中頁面",
+    "English": null,
+    "zh_TW": null
+  },
+  {
+    "ID": "LogInUsing",
+    "English": "Log In Using",
+    "zh_TW": "登入到"
+  },
+  {
+    "ID": "LoadInto",
+    "English": "Load Into",
+    "zh_TW": "連接到"
+  },
+  {
+    "ID": "ErrorWalletLogin",
+    "English": "Error Logging Into",
+    "zh_TW": "連接錢包超時"
+  },
+  {
+    "ID": "簡訊驗證",
+    "English": null,
+    "zh_TW": null
+  },
+  {
+    "ID": "SMSVerification",
+    "English": "SMS Verification",
+    "zh_TW": "簡訊驗證"
+  },
+  {
+    "ID": "手機登入",
+    "English": null,
+    "zh_TW": null
+  },
+  {
+    "ID": "PhoneLoginTip",
+    "English": "Please use your mobile phone number to log in.",
+    "zh_TW": "請使用您的手機號碼登入。"
+  },
+  {
+    "ID": "RegisterTip",
+    "English": "You Will Receive A New Account.",
+    "zh_TW": "您將收到一個新帳戶。"
+  },
+  {
+    "ID": "ForgotPassword",
+    "English": "<color=#79E84B><link=Forgot Password?><u>Forgot Password?</u></link></color>",
+    "zh_TW": "<color=#79E84B><link=Forgot Password?><u>忘記密碼?</u></link></color>"
+  },
+  {
+    "ID": "手機註冊",
+    "English": null,
+    "zh_TW": null
+  },
+  {
+    "ID": "PrivacyPolicy",
+    "English": "Agree To The <color=#79E84B><link=Terms><u>Terms</u></link></color> & <color=#79E84B><link=Privacy Policy><u>Privacy Policy</u></link></color>",
+    "zh_TW": "同意 <color=#79E84B><link=Terms><u>條款</u></link></color> & <color=#79E84B><link=Privacy Policy><u>隱私權政策</u></link></color>"
+  },
+  {
+    "ID": "RegisterSuccTip",
+    "English": "<size=14><color=#FFFFFF>Registration Successful</color></size>\\n<size=12><color=#C6C2C2>Account Successfully Created</color></size>",
+    "zh_TW": "<size=14><color=#FFFFFF>註冊成功</color></size>\\n<size=12><color=#C6C2C2>成功建立帳戶</color></size>"
   },
   {
     "ID": "大廳",

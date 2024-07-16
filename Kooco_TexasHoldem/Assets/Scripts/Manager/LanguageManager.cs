@@ -142,7 +142,7 @@ public class LanguageManager
         }
         else
         {
-            Debug.LogError("移除更新語言方法錯誤!!!");
+            Debug.LogError("未找到移除更新語言方法!!!");
         }    
     }
 
@@ -151,7 +151,7 @@ public class LanguageManager
     /// </summary>
     private void UpdateLanguage()
     {
-        Debug.Log($"Change Language:{thisData.CurrLanguageIndex}");
+        Debug.Log($"Change Language:{languageId[thisData.CurrLanguageIndex]}");
         foreach (var func in updateLanguageFuncList)
         {
             func();

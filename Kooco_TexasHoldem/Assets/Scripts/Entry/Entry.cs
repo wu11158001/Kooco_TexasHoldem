@@ -64,6 +64,8 @@ public class Entry : UnitySingleton<Entry>
 
     private void Update()
     {
+        #region 測試操作
+
         //NFT測試
         if (Input.GetKeyDown(KeyCode.RightControl))
         {
@@ -71,10 +73,24 @@ public class Entry : UnitySingleton<Entry>
             NFTManager.Instance.UpdateNFT();
         }
 
+        //移除手牌紀錄
         if (Input.GetKeyDown(KeyCode.F8))
         {
             HandHistoryManager.Instance.OnDeleteHistoryData();
         }
+
+        //更換語言_英文
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            LanguageManager.Instance.ChangeLanguage(0);
+        }
+        //更換語言_繁體中文
+        if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            LanguageManager.Instance.ChangeLanguage(1);
+        }
+
+        #endregion
     }
 
     #region Instagram登入
