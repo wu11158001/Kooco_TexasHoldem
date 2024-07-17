@@ -2,10 +2,24 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using Thirdweb;
-using Newtonsoft.Json;
-using UnityEngine.Networking;
-using System.Threading.Tasks;
+using TMPro;
+
+[System.Serializable]
+public class NFTAssets
+{
+    public NFTData[] nfts;
+}
+
+[System.Serializable]
+public class NFTData
+{
+    public string name;                         //NFT名稱
+    public string updated_at;                   //更新日期
+    public string description;                  //描述
+    public string display_image_url;            //顯示圖像
+    public string identifier;                   //tokenId
+    public string rarity = "0";                 //稀有度
+}
 
 public class MyNFTView : MonoBehaviour
 {
@@ -15,6 +29,8 @@ public class MyNFTView : MonoBehaviour
     Transform HorixontalContent, VerticalContent;
     [SerializeField]
     GameObject Horizontal_Sv, Vertical_Sv, NFTHorizontalSample, NFTVerticalSample, NoNFT_Obj;
+    [SerializeField]
+    TextMeshProUGUI Title_Txt, NoNFT_Txt;
 
     /// <summary>
     /// 顯示方向
@@ -45,8 +61,24 @@ public class MyNFTView : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 更新文本翻譯
+    /// </summary>
+    private void UpdateLanguage()
+    {
+        Title_Txt.text = LanguageManager.Instance.GetText("My NFT");
+        NoNFT_Txt.text = LanguageManager.Instance.GetText("NFT is not owned yet.");
+    }
+
+    private void OnDestroy()
+    {
+        LanguageManager.Instance.RemoveLanguageFun(UpdateLanguage);
+    }
+
     private void Awake()
     {
+        LanguageManager.Instance.AddUpdateLanguageFunc(UpdateLanguage);
+
         //返回
         Back_Btn.onClick.AddListener(() =>
         {
@@ -120,21 +152,4 @@ public class MyNFTView : MonoBehaviour
             }
         }        
     }
-}
-
-[System.Serializable]
-public class NFTAssets
-{
-    public NFTData[] nfts;
-}
-
-[System.Serializable]
-public class NFTData
-{
-    public string name;
-    public string updated_at;
-    public string description;
-    public string display_image_url;
-    public string identifier;                   //tokenId
-    public string rarity = "0";
 }

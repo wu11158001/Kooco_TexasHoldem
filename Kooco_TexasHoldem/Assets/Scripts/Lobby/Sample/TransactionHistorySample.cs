@@ -37,7 +37,19 @@ public class TransactionHistorySample : MonoBehaviour
     /// <param name="data"></param>
     public void SetTransactionHistory(TransactionHistoryData data)
     {
-        Type_Txt.text = data.type;
+        string typeStr = "";
+        switch (data.type)
+        {
+            case "Pledge":
+                typeStr = LanguageManager.Instance.GetText("Pledge");
+                break;
+
+            case "Buy-In":
+                typeStr = LanguageManager.Instance.GetText("BUY-IN");
+                break;
+        }
+
+        Type_Txt.text = typeStr;
         DateTime date = Utils.ConvertTimestampToDate(long.Parse(data.time));
         TypeTime_Txt.text = $"{date.Month}/{date.Day} {date.Hour}:{date.Minute}";
         StringUtils.StrExceedSize(data.title1, Title1_Txt);

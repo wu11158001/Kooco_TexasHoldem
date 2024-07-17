@@ -410,6 +410,26 @@
     "zh_TW": "失敗"
   },
   {
+    "ID": "Pledge",
+    "English": "Pledge",
+    "zh_TW": "質押"
+  },
+  {
+    "ID": "我的NFT",
+    "English": null,
+    "zh_TW": null
+  },
+  {
+    "ID": "My NFT",
+    "English": "My NFT",
+    "zh_TW": "我的 NFT"
+  },
+  {
+    "ID": "NFT is not owned yet.",
+    "English": "NFT is not owned yet.",
+    "zh_TW": "NFT 尚未擁有。"
+  },
+  {
     "ID": "遊戲",
     "English": null,
     "zh_TW": null

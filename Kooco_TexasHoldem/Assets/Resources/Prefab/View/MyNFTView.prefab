@@ -1242,6 +1242,8 @@ MonoBehaviour:
   NFTHorizontalSample: {fileID: 1045707229057794719}
   NFTVerticalSample: {fileID: 8372433848252460789}
   NoNFT_Obj: {fileID: 2113010133511568833}
+  Title_Txt: {fileID: 5459229776078275798}
+  NoNFT_Txt: {fileID: 2748413239386788035}
 --- !u!222 &7231061612608406071
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1987,7 +1989,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: NFT is not owned yet
+  m_text: NFT is not owned yet.
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 67393bfc3a860b042baa08f7fbeadd93, type: 2}
   m_sharedMaterial: {fileID: -4543751221255232905, guid: 67393bfc3a860b042baa08f7fbeadd93, type: 2}
