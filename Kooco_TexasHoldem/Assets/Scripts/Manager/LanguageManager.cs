@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using LitJson;
 using UnityEngine.Events;
+using TMPro;
 
 public class LanguageManager
 {
@@ -27,8 +28,15 @@ public class LanguageManager
     }
     private LanguageManager() 
     {
+        fontAssetList = Resources.LoadAll<TMP_FontAsset>("TmpFonts");
         thisData = new ThisData();
     }
+
+    /// <summary>
+    /// //字型資源
+    /// 0 = 思源黑體-Medium
+    /// </summary>
+    private TMP_FontAsset[] fontAssetList;          
 
     /// <summary>
     /// 紀錄翻譯文本
@@ -100,6 +108,9 @@ public class LanguageManager
 
             languageDic.Add(serchName, lang);
         }
+
+        //預設語言
+        ChangeLanguage(0);
     }
 
     /// <summary>
@@ -109,14 +120,16 @@ public class LanguageManager
     /// <returns></returns>
     public string GetText(string id)
     {
-        if (languageDic.ContainsKey(id))
+        string str = id.Replace("\n", "\\n");
+
+        if (languageDic.ContainsKey(str))
         {
-            return languageDic[id][thisData.CurrLanguageIndex];
+            return languageDic[str][thisData.CurrLanguageIndex];
         }
         else
         {
             Debug.LogError($"{id}:翻譯文本不存在");
-            return "";
+            return id;
         }
     }
 
@@ -152,6 +165,7 @@ public class LanguageManager
     private void UpdateLanguage()
     {
         Debug.Log($"Change Language:{languageId[thisData.CurrLanguageIndex]}");
+
         foreach (var func in updateLanguageFuncList)
         {
             func?.Invoke();
@@ -172,6 +186,35 @@ public class LanguageManager
         }
 
         thisData.CurrLanguageIndex = index;
+        ChangeFont();
         UpdateLanguage();
+    }
+
+    /// <summary>
+    /// 更換字體
+    /// </summary>
+    private void ChangeFont()
+    {
+        TMP_Text[] tmpTexts = Resources.FindObjectsOfTypeAll<TMP_Text>();
+        foreach (var item in tmpTexts)
+        {
+            switch (thisData.CurrLanguageIndex)
+            {
+                //英文
+                case 0:
+                    item.font = fontAssetList[0];
+                    break;
+
+                //繁體中文
+                case 1:
+                    item.font = fontAssetList[0];
+                    break;
+
+                //預設
+                default:
+                    item.font = fontAssetList[0];
+                    break;
+            }
+        }
     }
 }
