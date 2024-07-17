@@ -86,11 +86,11 @@ public class LobbyView : MonoBehaviour
     {
         #region 用戶資源列表
 
-        Assets_CryptoChips_Txt.text = LanguageManager.Instance.GetText("CryptoTable");
-        Assets_VCChips_Txt.text = LanguageManager.Instance.GetText("VCTable");
+        Assets_CryptoChips_Txt.text = LanguageManager.Instance.GetText("Crypto Table");
+        Assets_VCChips_Txt.text = LanguageManager.Instance.GetText("VC Table");
         Assets_Gold_Txt.text = LanguageManager.Instance.GetText("Gold");
         Assets_Stamina_Txt.text = LanguageManager.Instance.GetText("Stamina");
-        Assets_OTProps_Txt.text = LanguageManager.Instance.GetText("OTProps");
+        Assets_OTProps_Txt.text = LanguageManager.Instance.GetText("OT Props");
 
         #endregion
 
@@ -104,18 +104,18 @@ public class LobbyView : MonoBehaviour
         #endregion
     }
 
+    private void OnDestroy()
+    {
+        LanguageManager.Instance.RemoveLanguageFun(UpdateLanguage);
+        WalletManager.Instance.CancelCheckConnect();
+    }
+
     private void Awake()
     {
         battleData = new BattleData();
 
         LanguageManager.Instance.AddUpdateLanguageFunc(UpdateLanguage);
         ListenerEvent();
-    }
-
-    private void OnDestroy()
-    {
-        LanguageManager.Instance.RemoveLanguageFun(UpdateLanguage);
-        WalletManager.Instance.CancelCheckConnect();
     }
 
     /// <summary>

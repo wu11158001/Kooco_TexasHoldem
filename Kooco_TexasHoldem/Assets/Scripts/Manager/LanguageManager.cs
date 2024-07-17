@@ -106,6 +106,11 @@ public class LanguageManager
                 lang[j] = data.GetId(languageId[j]);
             }
 
+            if (languageDic.ContainsKey(serchName))
+            {
+                Debug.LogError($"Add Language Same Key:{serchName}");
+                continue;
+            }
             languageDic.Add(serchName, lang);
         }
 

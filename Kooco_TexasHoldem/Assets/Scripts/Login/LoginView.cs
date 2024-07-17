@@ -184,13 +184,13 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
 
         WalletTog_Txt.text = LanguageManager.Instance.GetText("Wallet");
         MobileTog_Txt.text = LanguageManager.Instance.GetText("Mobile");
-        SelectWalletTitle_Txt.text = LanguageManager.Instance.GetText("SignIn");
-        SelectWalletTip_Txt.text = LanguageManager.Instance.GetText("WalletSiginTip");
+        SelectWalletTitle_Txt.text = LanguageManager.Instance.GetText("SIGN IN");
+        SelectWalletTip_Txt.text = LanguageManager.Instance.GetText("Please, Sign In With Your Wallet.");
         foreach (var item in ConnectTip_TxtList)
         {
-            item.text = LanguageManager.Instance.GetText("WalletConnectTip");
+            item.text = LanguageManager.Instance.GetText("Connect Using Browser Wallet");
         }
-        SignUp_Txt.text = LanguageManager.Instance.GetText("SignUpGuide");
+        SignUp_Txt.text = LanguageManager.Instance.GetText("Don't Have An Account? <color=#79E84B><link=Sign Up Here!><u>Sign Up Here!</u></link></color>");
 
         #endregion
 
@@ -203,69 +203,74 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
         #region 錢包簡訊認證頁面
 
         SMSMobileNumber_Txt.text = LanguageManager.Instance.GetText("MobileNumber");
-        SMSMobileNumberIf_Placeholder.text = LanguageManager.Instance.GetText("PhoneInputTip");
-        SMSOTPCode_Txt.text = LanguageManager.Instance.GetText("OTPCode");
-        SMSOTPIf_Placeholder.text = LanguageManager.Instance.GetText("OTPCodeInputTip");
-        SMSOTPSendBtn_Txt.text = LanguageManager.Instance.GetText("SendCode");
-        SMSOTPSubmitBtn_Txt.text = LanguageManager.Instance.GetText("Submit");
+        SMSMobileNumberIf_Placeholder.text = LanguageManager.Instance.GetText("Your Phone Number");
+        SMSOTPCode_Txt.text = LanguageManager.Instance.GetText("OTP Code");
+        SMSOTPIf_Placeholder.text = LanguageManager.Instance.GetText("Please Enter The OTP Code");
+        SMSOTPSendBtn_Txt.text = LanguageManager.Instance.GetText("SEND CODE");
+        SMSOTPSubmitBtn_Txt.text = LanguageManager.Instance.GetText("SUBMIT");
 
         #endregion
 
         #region 手機登入
 
-        MobileTitle_Txt.text = LanguageManager.Instance.GetText("SignIn");
+        MobileTitle_Txt.text = LanguageManager.Instance.GetText("SIGN IN");
         SignInMobileNumber_Txt.text = LanguageManager.Instance.GetText("MobileNumber");
-        SignInNumberIf_Placeholder.text = LanguageManager.Instance.GetText("PhoneInputTip");
+        SignInNumberIf_Placeholder.text = LanguageManager.Instance.GetText("Your Phone Number");
         SignInPassword_Txt.text = LanguageManager.Instance.GetText("Password");
-        SignInPasswordIf_Placeholder.text = LanguageManager.Instance.GetText("PasswordInputTip");
-        RememberMeTog_Txt.text = LanguageManager.Instance.GetText("RememberMe");
-        SignInBtn_Txt.text = LanguageManager.Instance.GetText("SignIn");
-        RegisterBtn_Txt.text = LanguageManager.Instance.GetText("Register");
-        ForgotPassword_TmpTxt.text = LanguageManager.Instance.GetText("ForgotPassword");
+        SignInPasswordIf_Placeholder.text = LanguageManager.Instance.GetText("Please Enter Here");
+        RememberMeTog_Txt.text = LanguageManager.Instance.GetText("Remember Me");
+        SignInBtn_Txt.text = LanguageManager.Instance.GetText("SIGN IN");
+        RegisterBtn_Txt.text = LanguageManager.Instance.GetText("REGISTER");
+        ForgotPassword_TmpTxt.text = LanguageManager.Instance.GetText("<color=#79E84B><link=Forgot Password?><u>Forgot Password?</u></link></color>");
 
         #endregion
 
         #region 手機註冊
 
         RegisterNumber_Txt.text = LanguageManager.Instance.GetText("MobileNumber");
-        RegisterNumberIf_Placeholder.text = LanguageManager.Instance.GetText("PhoneInputTip");
-        RegisterCode_Txt.text = LanguageManager.Instance.GetText("OTPCode");
-        RegisterOTPIf_Placeholder.text = LanguageManager.Instance.GetText("OTPCodeInputTip");
-        RegisterOTPSendBtn_Txt.text = LanguageManager.Instance.GetText("SendCode");
+        RegisterNumberIf_Placeholder.text = LanguageManager.Instance.GetText("Your Phone Number");
+        RegisterCode_Txt.text = LanguageManager.Instance.GetText("OTP Code");
+        RegisterOTPIf_Placeholder.text = LanguageManager.Instance.GetText("Please Enter The OTP Code");
+        RegisterOTPSendBtn_Txt.text = LanguageManager.Instance.GetText("SEND CODE");
         RegisterPassword_Txt.text = LanguageManager.Instance.GetText("Password");
-        RegisterPasswordIf_Placeholder.text = LanguageManager.Instance.GetText("PasswordInputTip");
-        RegisterCheckPassword1_Txt.text = LanguageManager.Instance.GetText("EnterNewPassword");
-        RegisterCheckPassword2_Txt.text = LanguageManager.Instance.GetText("AllowedCharacters");
-        RegisterCheckPassword3_Txt.text = LanguageManager.Instance.GetText("AtLeast8Chars");
-        Privacy_TmpTxt.text = LanguageManager.Instance.GetText("PrivacyPolicy");
-        RegisterSubmitBtn_Txt.text = LanguageManager.Instance.GetText("Submit");
+        RegisterPasswordIf_Placeholder.text = LanguageManager.Instance.GetText("Please Enter Here");
+        RegisterCheckPassword1_Txt.text = LanguageManager.Instance.GetText("Enter New Password.");
+        RegisterCheckPassword2_Txt.text = LanguageManager.Instance.GetText("Allowed Characters: Alphanumeric A-Z, 0-9.");
+        RegisterCheckPassword3_Txt.text = LanguageManager.Instance.GetText("At Least 8 Chars.");
+        Privacy_TmpTxt.text = LanguageManager.Instance.GetText("Agree To The <color=#79E84B><link=Terms><u>Terms</u></link></color> & <color=#79E84B><link=Privacy Policy><u>Privacy Policy</u></link></color>");
+        RegisterSubmitBtn_Txt.text = LanguageManager.Instance.GetText("SUBMIT");
 
         #endregion
 
         #region 註冊成功
 
-        RegisterSuccTitle_Txt.text = LanguageManager.Instance.GetText("SignUp");
-        RegisterSuccTip_Txt.text = LanguageManager.Instance.GetText("RegisterSuccTip");
-        RegisterSuccSigninBtn_Txt.text = LanguageManager.Instance.GetText("SignIn");
+        RegisterSuccTitle_Txt.text = LanguageManager.Instance.GetText("Sign Up");
+        RegisterSuccTip_Txt.text = LanguageManager.Instance.GetText("<size=14><color=#FFFFFF>Registration Successful</color></size>\n<size=12><color=#C6C2C2>Account Successfully Created</color></size>");
+        RegisterSuccSigninBtn_Txt.text = LanguageManager.Instance.GetText("SIGN IN");
 
         #endregion
 
         #region 忘記密碼
 
-        LostPasswordTitle_Txt.text = LanguageManager.Instance.GetText("LostPassword");
+        LostPasswordTitle_Txt.text = LanguageManager.Instance.GetText("Lost Password");
         LostPswNumber_Txt.text = LanguageManager.Instance.GetText("MobileNumber");
-        LostPswNumberIf_Placeholder.text = LanguageManager.Instance.GetText("PhoneInputTip");
-        LostPswCode_Txt.text = LanguageManager.Instance.GetText("OTPCode");
-        LostPswOTPIf_Placeholder.text = LanguageManager.Instance.GetText("OTPCodeInputTip");
-        LostPswOTPSendBtn_Txt.text = LanguageManager.Instance.GetText("SendCode");
-        LostPswPassword_Txt.text = LanguageManager.Instance.GetText("ResetPassword");
-        LosrPswPasswordIf_Placeholder.text = LanguageManager.Instance.GetText("PasswordInputTip");
-        LostPswCheckPassword1_Txt.text = LanguageManager.Instance.GetText("EnterNewPassword");
-        LostPswCheckPassword2_Txt.text = LanguageManager.Instance.GetText("AllowedCharacters");
-        LostPswCheckPassword3_Txt.text = LanguageManager.Instance.GetText("AtLeast8Chars");
-        LostPswSubmitBtn_Txt.text = LanguageManager.Instance.GetText("Submit");
+        LostPswNumberIf_Placeholder.text = LanguageManager.Instance.GetText("Your Phone Number");
+        LostPswCode_Txt.text = LanguageManager.Instance.GetText("OTP Code");
+        LostPswOTPIf_Placeholder.text = LanguageManager.Instance.GetText("Please Enter The OTP Code");
+        LostPswOTPSendBtn_Txt.text = LanguageManager.Instance.GetText("SEND CODE");
+        LostPswPassword_Txt.text = LanguageManager.Instance.GetText("Reset Password");
+        LosrPswPasswordIf_Placeholder.text = LanguageManager.Instance.GetText("Please Enter Here");
+        LostPswCheckPassword1_Txt.text = LanguageManager.Instance.GetText("Enter New Password.");
+        LostPswCheckPassword2_Txt.text = LanguageManager.Instance.GetText("Allowed Characters: Alphanumeric A-Z, 0-9.");
+        LostPswCheckPassword3_Txt.text = LanguageManager.Instance.GetText("At Least 8 Chars.");
+        LostPswSubmitBtn_Txt.text = LanguageManager.Instance.GetText("SUBMIT");
 
         #endregion
+    }
+
+    private void OnDestroy()
+    {
+        LanguageManager.Instance.RemoveLanguageFun(UpdateLanguage);
     }
 
     private void Awake()
@@ -274,11 +279,6 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
 
         recordConnect = new RecordConnect();
         ListenerEvent();
-    }
-
-    private void OnDestroy()
-    {
-        LanguageManager.Instance.RemoveLanguageFun(UpdateLanguage);
     }
 
     /// <summary>
@@ -381,7 +381,7 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
         {
             if (!StringUtils.CheckPhoneNumber(SMSMobileNumber_If.text))
             {
-                SMSMobileNumberError_Txt.text = LanguageManager.Instance.GetText("PhoneError");
+                SMSMobileNumberError_Txt.text = LanguageManager.Instance.GetText("User Name Entered Incorrectly, Please Try Again.");
                 return;
             }
 
@@ -433,7 +433,7 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
         {
             if (!StringUtils.CheckPhoneNumber(RegisterNumber_If.text))
             {
-                RegisterNumberError_Txt.text = LanguageManager.Instance.GetText("PhoneError");
+                RegisterNumberError_Txt.text = LanguageManager.Instance.GetText("User Name Entered Incorrectly, Please Try Again.");
             }
             else
             {
@@ -503,7 +503,7 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
         {
             if (!StringUtils.CheckPhoneNumber(LostPswNumber_If.text))
             {
-                LostPswNumberError_Txt.text = LanguageManager.Instance.GetText("PhoneError");
+                LostPswNumberError_Txt.text = LanguageManager.Instance.GetText("User Name Entered Incorrectly, Please Try Again.");
             }
             else
             {
@@ -796,7 +796,7 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
                                  recodePassword :
                                  "";
 
-        MobileTip_Txt.text = LanguageManager.Instance.GetText("PhoneLoginTip");
+        MobileTip_Txt.text = LanguageManager.Instance.GetText("Please use your mobile phone number to log in.");
         MobileSignIn_Obj.SetActive(true);
         MobileSiginPage_Obj.SetActive(true);
         RegisterPage_Obj.SetActive(false);
@@ -823,7 +823,7 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
     {
         if (!StringUtils.CheckPhoneNumber(SignInNumber_If.text))
         {
-            SignInNumberError_Txt.text = LanguageManager.Instance.GetText("PhoneError");
+            SignInNumberError_Txt.text = LanguageManager.Instance.GetText("User Name Entered Incorrectly, Please Try Again.");
         }
         else
         {
@@ -844,7 +844,7 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
             }
             else
             {
-                MobileSignInError_Txt.text = LanguageManager.Instance.GetText("CodeError");
+                MobileSignInError_Txt.text = LanguageManager.Instance.GetText("Invalid Code, Please Try Again.");
                 Debug.LogError("Correct is Phone:886-987654321 / Password:A12345678");
             }
         }
@@ -855,8 +855,8 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
     /// </summary>
     private void MobileRegisterInit()
     {
-        MobileTitle_Txt.text = LanguageManager.Instance.GetText("Register");
-        MobileTip_Txt.text = LanguageManager.Instance.GetText("RegisterTip");
+        MobileTitle_Txt.text = LanguageManager.Instance.GetText("REGISTER");
+        MobileTip_Txt.text = LanguageManager.Instance.GetText("You Will Receive A New Account.");
 
         RegisterNumberError_Txt.text = "";
         RegisterCodeError_Txt.text = "";
@@ -895,13 +895,13 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
         {
             //手機號格式錯誤
             isCorrect = false;
-            RegisterNumberError_Txt.text = LanguageManager.Instance.GetText("PhoneError");
+            RegisterNumberError_Txt.text = LanguageManager.Instance.GetText("User Name Entered Incorrectly, Please Try Again.");
         }
 
         if (string.IsNullOrEmpty(RegisterOTP_If.text))
         {
             //OTP為空
-            RegisterCodeError_Txt.text = LanguageManager.Instance.GetText("CodeError");
+            RegisterCodeError_Txt.text = LanguageManager.Instance.GetText("Invalid Code, Please Try Again.");
             isCorrect = false;
         }
 
@@ -909,14 +909,14 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
         {
             //密碼錯誤
             isCorrect = false;
-            RegisterPasswordError_Txt.text = LanguageManager.Instance.GetText("CodeError");
+            RegisterPasswordError_Txt.text = LanguageManager.Instance.GetText("Invalid Code, Please Try Again.");
         }
 
         if (!Privacy_Tog.isOn)
         {
             //隱私條款未同意
             isCorrect = false;
-            RegisterPrivacyError_Txt.text = LanguageManager.Instance.GetText("PrivacyPolicyError");
+            RegisterPrivacyError_Txt.text = LanguageManager.Instance.GetText("Please Agree To The Privacy Policy.");
         }
 
         if (isCorrect)
@@ -957,13 +957,13 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
         {
             //手機號格式錯誤
             isCorrect = false;
-            LostPswNumberError_Txt.text = LanguageManager.Instance.GetText("PhoneError");
+            LostPswNumberError_Txt.text = LanguageManager.Instance.GetText("User Name Entered Incorrectly, Please Try Again.");
         }
 
         if (string.IsNullOrEmpty(LostPswOTP_If.text))
         {
             //OTP為空
-            LostPswCodeError_Txt.text = LanguageManager.Instance.GetText("CodeError");
+            LostPswCodeError_Txt.text = LanguageManager.Instance.GetText("Invalid Code, Please Try Again.");
             isCorrect = false;
         }
 
@@ -971,7 +971,7 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
         {
             //密碼錯誤
             isCorrect = false;
-            LostPswPasswordError_Txt.text = LanguageManager.Instance.GetText("CodeError");
+            LostPswPasswordError_Txt.text = LanguageManager.Instance.GetText("Invalid Code, Please Try Again.");
         }
 
         if (isCorrect)
@@ -1059,8 +1059,8 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
         Connecting_Obj.SetActive(true);
         RetryConnectWallet_Obj.SetActive(false);
 
-        ConnectionTitle_Txt.text = $"{LanguageManager.Instance.GetText("LogInUsing")} {walletEnum}";
-        Connecting_Txt.text = $"{LanguageManager.Instance.GetText("LoadInto")} {walletEnum}";
+        ConnectionTitle_Txt.text = $"{LanguageManager.Instance.GetText("Log In Using In Usingsing")} {walletEnum}";
+        Connecting_Txt.text = $"{LanguageManager.Instance.GetText("Load Into")} {walletEnum}";
         ConnectingLogo_Img.sprite = AssetsManager.Instance.GetAlbumAsset(AlbumEnum.WalletLogoAlbum).album[(int)walletEnum];
         connectionEffectCoroutine = StartCoroutine(IConnectionEffect());
 
@@ -1122,7 +1122,7 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
     {
         Connecting_Obj.SetActive(false);
         RetryConnectWallet_Obj.SetActive(true);
-        ErrorConnect_Txt.text = $"{LanguageManager.Instance.GetText("ErrorWalletLogin")} {recordConnect.TheWalletEnum}";
+        ErrorConnect_Txt.text = $"{LanguageManager.Instance.GetText("Error Logging Into")} {recordConnect.TheWalletEnum}";
 
         CancelInvoke(nameof(TryBinanceConnect));
         if (connectionEffectCoroutine != null)
@@ -1165,7 +1165,7 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
     /// </summary>
     private void SMSVerification()
     {
-        ConnectionTitle_Txt.text = LanguageManager.Instance.GetText("SMSVerification");
+        ConnectionTitle_Txt.text = LanguageManager.Instance.GetText("SMS Verification");
         WalletLoadingPage_Obj.SetActive(false);
         SMSVerificationPage_Obj.SetActive(true);
 
@@ -1195,13 +1195,13 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
         {
             //手機號格式錯誤
             isCorrect = false;
-            SMSMobileNumberError_Txt.text = LanguageManager.Instance.GetText("PhoneError");
+            SMSMobileNumberError_Txt.text = LanguageManager.Instance.GetText("User Name Entered Incorrectly, Please Try Again.");
         }
 
         if (string.IsNullOrEmpty(SMSOTP_If.text))
         {
             //OTP為空
-            SMSCodeError_Txt.text = LanguageManager.Instance.GetText("CodeError");
+            SMSCodeError_Txt.text = LanguageManager.Instance.GetText("Invalid Code, Please Try Again.");
             isCorrect = false;
         }
 
@@ -1219,13 +1219,13 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
             }
             else
             {
-                SMSCodeError_Txt.text = LanguageManager.Instance.GetText("CodeError");
+                SMSCodeError_Txt.text = LanguageManager.Instance.GetText("Invalid Code, Please Try Again.");
                 Debug.LogError("Correct is Phone:886-987654321 / Code:12345678");
             }
         }     
         else
         {
-            SMSCodeError_Txt.text = LanguageManager.Instance.GetText("CodeError");
+            SMSCodeError_Txt.text = LanguageManager.Instance.GetText("Invalid Code, Please Try Again.");
         }
     }
 

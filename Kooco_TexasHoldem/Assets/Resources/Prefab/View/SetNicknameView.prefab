@@ -611,8 +611,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Set Your Nickname
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 67393bfc3a860b042baa08f7fbeadd93, type: 2}
-  m_sharedMaterial: {fileID: -4543751221255232905, guid: 67393bfc3a860b042baa08f7fbeadd93, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: c9adb1f542a93ae489bacfeae21e8394, type: 2}
+  m_sharedMaterial: {fileID: -8643439910342830561, guid: c9adb1f542a93ae489bacfeae21e8394, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -830,7 +830,7 @@ GameObject:
   - component: {fileID: 1286390833746766223}
   - component: {fileID: 6522739836809944177}
   m_Layer: 0
-  m_Name: Placeholder
+  m_Name: SetNicknameIf_Placeholder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -883,7 +883,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Set Your Nickname
+  m_text: Enter nickname
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 67393bfc3a860b042baa08f7fbeadd93, type: 2}
   m_sharedMaterial: {fileID: -4543751221255232905, guid: 67393bfc3a860b042baa08f7fbeadd93, type: 2}
@@ -1239,7 +1239,11 @@ MonoBehaviour:
   Close_Btn: {fileID: 3237369164543287916}
   Subimt_Btn: {fileID: 2326623262122482001}
   SetNickname_If: {fileID: 6538862511574322412}
+  SetNicknameTitle_Txt: {fileID: 2539439096730999178}
+  Title_Txt: {fileID: 4745864547647964368}
+  SetNicknameIf_Placeholder: {fileID: 1286390833746766223}
   Error_Txt: {fileID: 5811004607732362387}
+  SubimtBtn_Txt: {fileID: 7470854855441165256}
 --- !u!222 &2401892952165117894
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1699,7 +1703,7 @@ MonoBehaviour:
   m_CharacterValidation: 0
   m_RegexValue: 
   m_GlobalPointSize: 14
-  m_CharacterLimit: 10
+  m_CharacterLimit: 12
   m_OnEndEdit:
     m_PersistentCalls:
       m_Calls: []

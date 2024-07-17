@@ -11,10 +11,29 @@ public class SetNicknameView : MonoBehaviour
     [SerializeField]
     TMP_InputField SetNickname_If;
     [SerializeField]
-    TextMeshProUGUI Error_Txt;
+    TextMeshProUGUI SetNicknameTitle_Txt, Title_Txt, SetNicknameIf_Placeholder,
+                    Error_Txt, SubimtBtn_Txt;
+
+    /// <summary>
+    /// 更新文本翻譯
+    /// </summary>
+    private void UpdateLanguage()
+    {
+        SetNicknameTitle_Txt.text = LanguageManager.Instance.GetText("Set Your Nickname");
+        Title_Txt.text = LanguageManager.Instance.GetText("Nickname");
+        SetNicknameIf_Placeholder.text = LanguageManager.Instance.GetText("Enter nickname");
+        SubimtBtn_Txt.text = LanguageManager.Instance.GetText("SUBMIT");
+    }
+
+    private void OnDestroy()
+    {
+        LanguageManager.Instance.RemoveLanguageFun(UpdateLanguage);
+    }
 
     private void Awake()
     {
+        LanguageManager.Instance.AddUpdateLanguageFunc(UpdateLanguage);
+
         Error_Txt.text = "";
 
         ListenerEvent();
@@ -64,11 +83,13 @@ public class SetNicknameView : MonoBehaviour
     {
         if (SetNickname_If.text.Length <= 0)
         {
-            Error_Txt.text = "User Name Entered Incorrectly, Please Try Again.";
+            Error_Txt.text = LanguageManager.Instance.GetText("User Name Entered Incorrectly, Please Try Again.");
         }
         else
         {
-            DataManager.UserNickname = SetNickname_If.text;
+            string nickname = SetNickname_If.text.Trim();
+
+            DataManager.UserNickname = nickname;
             GameObject.FindAnyObjectByType<LobbyView>().UpdateUserInfo();
             DataManager.ReciveRankData();
             Destroy(gameObject);
