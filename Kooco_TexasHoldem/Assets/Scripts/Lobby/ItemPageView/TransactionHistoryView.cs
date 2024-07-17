@@ -7,6 +7,19 @@ using System.Linq;
 using UnityEngine.Events;
 using TMPro;
 
+/// <summary>
+/// 交易紀錄資料類
+/// </summary>
+public class TransactionHistoryData
+{
+    public string type;
+    public string time;
+    public string title1;
+    public string title2;
+    public int status;
+    public string pl;
+}
+
 public class TransactionHistoryView : MonoBehaviour
 {
     [Header("Mask")]
@@ -21,9 +34,12 @@ public class TransactionHistoryView : MonoBehaviour
     [SerializeField]
     Transform HistoryArea;
     [SerializeField]
-    TextMeshProUGUI CurrPage_Txt;
-    [SerializeField]
     Toggle Cash_Tog, Gold_Tog;
+    [SerializeField]
+    TextMeshProUGUI Title_Txt, Tip_Txt,
+                    CashTog_Txt, GoldTog_Txt, VirtualCode_Txt,
+                    ItemType_Txt, ItemTitle_Txt, ItemStatus_Txt, ItemPL_Txt,
+                    CurrPage_Txt;
 
     [Header("交易紀錄篩選")]
     [SerializeField]
@@ -33,7 +49,7 @@ public class TransactionHistoryView : MonoBehaviour
     [SerializeField]
     Image AllTypeExpand_Img, AllStatusExpand_Img;
     [SerializeField]
-    TextMeshProUGUI DateRange_Txt;
+    TextMeshProUGUI SetDateRangeTitle_Txt, DateRange_Txt, FilterSubmitBtn_Txt;
 
     [Header("日期範圍設置")]
     [SerializeField]
@@ -45,14 +61,21 @@ public class TransactionHistoryView : MonoBehaviour
     [SerializeField]
     TMP_Dropdown StartFilterYear_Dd, StartFilterMonth_Dd, StartFilterDay_Dd,
                  EndFilterYear_Dd, EndFilterMonth_Dd, EndFilterDay_Dd;
+    [SerializeField]
+    TextMeshProUGUI StartFilterDateTitle_Txt, EndFilterDateTitle_Txt, SetDataRangeSubmitBtn_Txt;
 
     [Header("所有類型篩選")]
     [SerializeField]
     Toggle TypeBuyIn_Tog, TypeAnte_Tog, TypeAll_Tog;
+    [SerializeField]
+    TextMeshProUGUI AllTypeTitle_Txt, TypeBuyInTog_Txt, TypeAnteTog_Txt, TypeAllTog_Txt;
 
     [Header("所有狀態")]
     [SerializeField]
     Toggle ProcessingStatus_Tog, SuccessStatus_Tog, FailStatus_Tog, AllStatus_Tog;
+    [SerializeField]
+    TextMeshProUGUI AllStatusTitle_Txt, ProcessingStatusTog_Txt, SuccessStatusTog_Txt,
+                    FailStatusTog_Txt, AllStatusTog_Txt;
 
     const string expandContentName = "Content";                                 //展開內容物件名稱
     const string expandTopBgName = "TopBg";                                     //收起上方物件名稱
@@ -92,8 +115,63 @@ public class TransactionHistoryView : MonoBehaviour
         All,
     }
 
+    /// <summary>
+    /// 更新文本翻譯
+    /// </summary>
+    private void UpdateLanguage()
+    {
+        #region 交易紀錄顯示
+
+        Title_Txt.text = LanguageManager.Instance.GetText("TRANSACTION HISTORY");
+        Tip_Txt.text = LanguageManager.Instance.GetText("Only Show Transactions From The Last 3 Months.");
+        CashTog_Txt.text = LanguageManager.Instance.GetText("CASH");
+        GoldTog_Txt.text = LanguageManager.Instance.GetText("GOLD");
+        VirtualCode_Txt.text = LanguageManager.Instance.GetText("VIRTUAL CODE");
+        ItemType_Txt.text = LanguageManager.Instance.GetText("Type");
+        ItemTitle_Txt.text = LanguageManager.Instance.GetText("Title");
+        ItemStatus_Txt.text = LanguageManager.Instance.GetText("Status");
+        ItemPL_Txt.text = LanguageManager.Instance.GetText("P&L");
+
+        #endregion
+
+        #region 交易紀錄篩選
+
+        SetDateRangeTitle_Txt.text = LanguageManager.Instance.GetText("Date Range");
+        StartFilterDateTitle_Txt.text = LanguageManager.Instance.GetText("Start Date");
+        EndFilterDateTitle_Txt.text = LanguageManager.Instance.GetText("End Date");
+        SetDataRangeSubmitBtn_Txt.text = LanguageManager.Instance.GetText("SUBMIT");
+        FilterSubmitBtn_Txt.text = LanguageManager.Instance.GetText("SUBMIT");
+
+        #endregion
+
+        #region
+
+        AllTypeTitle_Txt.text = LanguageManager.Instance.GetText("All Type");
+        TypeBuyInTog_Txt.text = LanguageManager.Instance.GetText("BUY-IN");
+        TypeAnteTog_Txt.text = LanguageManager.Instance.GetText("ANTE");
+        TypeAllTog_Txt.text = LanguageManager.Instance.GetText("ALL");
+
+        #endregion
+
+        #region 所有狀態
+
+        AllStatusTitle_Txt.text = LanguageManager.Instance.GetText("All Status");
+        ProcessingStatusTog_Txt.text = LanguageManager.Instance.GetText("PROCESSING");
+        SuccessStatusTog_Txt.text = LanguageManager.Instance.GetText("SUCCESS");
+        FailStatusTog_Txt.text = LanguageManager.Instance.GetText("FAIL");
+        AllStatusTog_Txt.text = LanguageManager.Instance.GetText("ALL");
+
+        #endregion
+    }
+
+    private void OnDestroy()
+    {
+        LanguageManager.Instance.RemoveLanguageFun(UpdateLanguage);
+    }
+
     private void Awake()
     {
+        LanguageManager.Instance.AddUpdateLanguageFunc(UpdateLanguage);
         ListenerEvent();
     }
 
@@ -581,7 +659,7 @@ public class TransactionHistoryView : MonoBehaviour
             page = 1;
         }
         currPage = page;
-        CurrPage_Txt.text = $"{page} OF {maxPages}";
+        CurrPage_Txt.text = $"{page} {LanguageManager.Instance.GetText("OF")} {maxPages}";
 
         List<TransactionHistoryData> getData = filterData.Skip((page - 1) * 10).Take(10).ToList();
         if (getData.Count == 0)
@@ -669,17 +747,4 @@ public class TransactionHistoryView : MonoBehaviour
     }
 
     #endregion
-}
-
-/// <summary>
-/// 交易紀錄資料類
-/// </summary>
-public class TransactionHistoryData
-{
-    public string type;
-    public string time;
-    public string title1;
-    public string title2;
-    public int status;
-    public string pl;
 }

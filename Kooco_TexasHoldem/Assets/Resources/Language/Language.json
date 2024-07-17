@@ -130,6 +130,26 @@
     "zh_TW": "加時道具"
   },
   {
+    "ID": "Type",
+    "English": "Type",
+    "zh_TW": "類型"
+  },
+  {
+    "ID": "Title",
+    "English": "Title",
+    "zh_TW": "標題"
+  },
+  {
+    "ID": "Status",
+    "English": "Status",
+    "zh_TW": "狀態"
+  },
+  {
+    "ID": "P&L",
+    "English": "P&L",
+    "zh_TW": "交易結果"
+  },
+  {
     "ID": "錯誤訊息",
     "English": null,
     "zh_TW": null
@@ -298,6 +318,96 @@
     "ID": "Ranking",
     "English": "Ranking",
     "zh_TW": "排名"
+  },
+  {
+    "ID": "交易紀錄",
+    "English": null,
+    "zh_TW": null
+  },
+  {
+    "ID": "TRANSACTION HISTORY",
+    "English": "TRANSACTION HISTORY",
+    "zh_TW": "交易記錄"
+  },
+  {
+    "ID": "Only Show Transactions From The Last 3 Months.",
+    "English": "Only Show Transactions From The Last 3 Months.",
+    "zh_TW": "僅顯示最近 3 個月的交易。"
+  },
+  {
+    "ID": "CASH",
+    "English": "CASH",
+    "zh_TW": "現金"
+  },
+  {
+    "ID": "GOLD",
+    "English": "GOLD",
+    "zh_TW": "黃金"
+  },
+  {
+    "ID": "VIRTUAL CODE",
+    "English": "VIRTUAL CODE",
+    "zh_TW": "虛擬程式碼"
+  },
+  {
+    "ID": "OF",
+    "English": "OF",
+    "zh_TW": "之"
+  },
+  {
+    "ID": "Date Range",
+    "English": "Date Range",
+    "zh_TW": "日期範圍"
+  },
+  {
+    "ID": "Start Date",
+    "English": "Start Date",
+    "zh_TW": "開始日期"
+  },
+  {
+    "ID": "End Date",
+    "English": "End Date",
+    "zh_TW": "結束日期"
+  },
+  {
+    "ID": "All Type",
+    "English": "All Type",
+    "zh_TW": "所有類型"
+  },
+  {
+    "ID": "BUY-IN",
+    "English": "BUY-IN",
+    "zh_TW": "買入"
+  },
+  {
+    "ID": "ANTE",
+    "English": "ANTE",
+    "zh_TW": "賭注"
+  },
+  {
+    "ID": "ALL",
+    "English": "ALL",
+    "zh_TW": "全部"
+  },
+  {
+    "ID": "All Status",
+    "English": "All Status",
+    "zh_TW": "所有狀態"
+  },
+  {
+    "ID": "PROCESSING",
+    "English": "PROCESSING",
+    "zh_TW": "處理中"
+  },
+  {
+    "ID": "SUCCESS",
+    "English": "SUCCESS",
+    "zh_TW": "成功"
+  },
+  {
+    "ID": "FAIL",
+    "English": "FAIL",
+    "zh_TW": "失敗"
   },
   {
     "ID": "遊戲",

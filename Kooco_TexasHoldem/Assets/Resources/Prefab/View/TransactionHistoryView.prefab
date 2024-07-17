@@ -35,7 +35,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 26, y: 340}
+  m_AnchoredPosition: {x: -4, y: 340}
   m_SizeDelta: {x: -90, y: -814}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1283706050616370750
@@ -414,7 +414,7 @@ GameObject:
   - component: {fileID: 1758830638424132173}
   - component: {fileID: 2977233765878870066}
   m_Layer: 5
-  m_Name: Label
+  m_Name: AllStatusTog_Txt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1817,7 +1817,7 @@ GameObject:
   - component: {fileID: 2720606099988520283}
   - component: {fileID: 2204581609565406411}
   m_Layer: 0
-  m_Name: Title_Txt
+  m_Name: ItemTitle_Txt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3532,7 +3532,7 @@ GameObject:
   - component: {fileID: 7709061440287263501}
   - component: {fileID: 3584729099740431279}
   m_Layer: 5
-  m_Name: Label
+  m_Name: FailStatusTog_Txt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4198,7 +4198,7 @@ GameObject:
   - component: {fileID: 7404686178193113086}
   - component: {fileID: 6534476526701703999}
   m_Layer: 0
-  m_Name: Status_Txt
+  m_Name: ItemStatus_Txt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6549,9 +6549,18 @@ MonoBehaviour:
   RightTurnPage_Btn: {fileID: 8195411013538123822}
   TransactionHistorySampleObj: {fileID: 7148156034976379521}
   HistoryArea: {fileID: 2730833981678731344}
-  CurrPage_Txt: {fileID: 4910245486821425834}
   Cash_Tog: {fileID: 2477611018799226677}
   Gold_Tog: {fileID: 2010108757351622634}
+  Title_Txt: {fileID: 8181662462006382203}
+  Tip_Txt: {fileID: 8260190603504773486}
+  CashTog_Txt: {fileID: 2381505139714663995}
+  GoldTog_Txt: {fileID: 3721040227639573881}
+  VirtualCode_Txt: {fileID: 7707356632209342356}
+  ItemType_Txt: {fileID: 2060769981509567469}
+  ItemTitle_Txt: {fileID: 2204581609565406411}
+  ItemStatus_Txt: {fileID: 6534476526701703999}
+  ItemPL_Txt: {fileID: 6397360115124006428}
+  CurrPage_Txt: {fileID: 4910245486821425834}
   Filter_Btn: {fileID: 4525965855596774927}
   FilterMask_Btn: {fileID: 5149677353076344619}
   AllTypeExpand_Btn: {fileID: 3874696789370052070}
@@ -6564,7 +6573,9 @@ MonoBehaviour:
   AllStatus_Obj: {fileID: 1018885654969263714}
   AllTypeExpand_Img: {fileID: 3862896170423420788}
   AllStatusExpand_Img: {fileID: 8309641450718583593}
+  SetDateRangeTitle_Txt: {fileID: 4173376957568703552}
   DateRange_Txt: {fileID: 5432895530729903341}
+  FilterSubmitBtn_Txt: {fileID: 4031704088030014429}
   Filter_Sr: {fileID: 3558358786773011485}
   CloseSetDate_Btn: {fileID: 1493172842570889714}
   DateRange_Btn: {fileID: 6467138418697533782}
@@ -6576,13 +6587,25 @@ MonoBehaviour:
   EndFilterYear_Dd: {fileID: 4759841910670021809}
   EndFilterMonth_Dd: {fileID: 7884331832680565173}
   EndFilterDay_Dd: {fileID: 1680699352379344465}
+  StartFilterDateTitle_Txt: {fileID: 4617082676394207767}
+  EndFilterDateTitle_Txt: {fileID: 2037698158652083486}
+  SetDataRangeSubmitBtn_Txt: {fileID: 2163119359334654145}
   TypeBuyIn_Tog: {fileID: 4497614019022478389}
   TypeAnte_Tog: {fileID: 2667261957550177429}
   TypeAll_Tog: {fileID: 2057725795523933571}
+  AllTypeTitle_Txt: {fileID: 4304472522830419435}
+  TypeBuyInTog_Txt: {fileID: 3306356311181449271}
+  TypeAnteTog_Txt: {fileID: 4884110150912171603}
+  TypeAllTog_Txt: {fileID: 3997660652755173192}
   ProcessingStatus_Tog: {fileID: 3788618017971900464}
   SuccessStatus_Tog: {fileID: 5946162854378946342}
   FailStatus_Tog: {fileID: 6592981073743591648}
   AllStatus_Tog: {fileID: 7591500949927504634}
+  AllStatusTitle_Txt: {fileID: 4851042659063461760}
+  ProcessingStatusTog_Txt: {fileID: 3611177947412380234}
+  SuccessStatusTog_Txt: {fileID: 4261486209706986324}
+  FailStatusTog_Txt: {fileID: 3584729099740431279}
+  AllStatusTog_Txt: {fileID: 2977233765878870066}
 --- !u!222 &7231061612608406071
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -7679,7 +7702,7 @@ GameObject:
   - component: {fileID: 6346460117972654714}
   - component: {fileID: 3306356311181449271}
   m_Layer: 5
-  m_Name: Label
+  m_Name: TypeBuyInTog_Txt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9503,7 +9526,7 @@ GameObject:
   - component: {fileID: 8445696660460006100}
   - component: {fileID: 4884110150912171603}
   m_Layer: 5
-  m_Name: Label
+  m_Name: TypeAnteTog_Txt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10939,7 +10962,7 @@ GameObject:
   - component: {fileID: 6723765947933496157}
   - component: {fileID: 2060769981509567469}
   m_Layer: 0
-  m_Name: Type_Txt
+  m_Name: ItemType_Txt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -11380,7 +11403,7 @@ GameObject:
   - component: {fileID: 7504528295384301383}
   - component: {fileID: 4031704088030014429}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: FilterSubmitBtn_Txt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -12515,7 +12538,7 @@ GameObject:
   - component: {fileID: 1493050406171626048}
   - component: {fileID: 3611177947412380234}
   m_Layer: 5
-  m_Name: Label
+  m_Name: ProcessingStatusTog_Txt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -12730,7 +12753,7 @@ GameObject:
   - component: {fileID: 3634943337028012993}
   - component: {fileID: 3997660652755173192}
   m_Layer: 5
-  m_Name: Label
+  m_Name: TypeAllTog_Txt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -13561,7 +13584,7 @@ GameObject:
   - component: {fileID: 522508124497890556}
   - component: {fileID: 2381505139714663995}
   m_Layer: 0
-  m_Name: Label
+  m_Name: CashTog_Txt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -15391,7 +15414,7 @@ GameObject:
   - component: {fileID: 3527873084458120454}
   - component: {fileID: 4261486209706986324}
   m_Layer: 5
-  m_Name: Label
+  m_Name: SuccessStatusTog_Txt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -16526,7 +16549,7 @@ GameObject:
   - component: {fileID: 286604508547447645}
   - component: {fileID: 6397360115124006428}
   m_Layer: 0
-  m_Name: P&L_Txt
+  m_Name: ItemPL_Txt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -17504,7 +17527,7 @@ GameObject:
   - component: {fileID: 8623127277462820507}
   - component: {fileID: 3721040227639573881}
   m_Layer: 0
-  m_Name: Label
+  m_Name: GoldTog_Txt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -17557,7 +17580,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Gold
+  m_text: GOLD
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 67393bfc3a860b042baa08f7fbeadd93, type: 2}
   m_sharedMaterial: {fileID: -4543751221255232905, guid: 67393bfc3a860b042baa08f7fbeadd93, type: 2}
