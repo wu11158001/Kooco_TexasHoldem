@@ -2513,10 +2513,10 @@ RectTransform:
   - {fileID: 1489557964676344524}
   m_Father: {fileID: 9070942925796218431}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 180, y: -20}
+  m_SizeDelta: {x: 360, y: 40}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &5140026088069825745
 MonoBehaviour:
@@ -6829,15 +6829,19 @@ MonoBehaviour:
   Golden_Tog: {fileID: 1181379126507716581}
   ChangeSeason_Btn: {fileID: 5681658488600003620}
   RefreshRank_Btn: {fileID: 2675298045707600204}
-  Season_Txt: {fileID: 7861732395260439218}
-  TimeLest_Txt: {fileID: 7511416301238979937}
-  ChangeSeasonBtn_Txt: {fileID: 2922421578032178767}
   RankSampleObj: {fileID: 2941004854263360414}
   RankContent: {fileID: 9070942925796218431}
   TopThreeData:
   - {fileID: 4335445165277993641}
   - {fileID: 3383097868867007768}
   - {fileID: 4949301025913800841}
+  IntegralTog_Txt: {fileID: 6326798033065899006}
+  CashTog_Txt: {fileID: 2712519799796710627}
+  GoldenTog_Txt: {fileID: 6782945126711337483}
+  Season_Txt: {fileID: 7861732395260439218}
+  ChangeSeasonBtn_Txt: {fileID: 2922421578032178767}
+  TimeLestTitle_Txt: {fileID: 4362211894210544829}
+  TimeLest_Txt: {fileID: 7511416301238979937}
   LocalUserRank_Txt: {fileID: 1472523776683564706}
   LocalUserPoint_Txt: {fileID: 1847655198361595452}
   LocalUserAward_Txt: {fileID: 5712707009752686322}

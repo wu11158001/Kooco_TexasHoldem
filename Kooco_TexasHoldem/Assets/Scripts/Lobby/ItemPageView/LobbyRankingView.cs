@@ -12,13 +12,15 @@ public class LobbyRankingView : MonoBehaviour
     [SerializeField]
     Button ChangeSeason_Btn, RefreshRank_Btn;
     [SerializeField]
-    TextMeshProUGUI Season_Txt, TimeLest_Txt, ChangeSeasonBtn_Txt;
-    [SerializeField]
     GameObject RankSampleObj;
     [SerializeField]
     Transform RankContent;
     [SerializeField]
     RankSample[] TopThreeData;
+    [SerializeField]
+    TextMeshProUGUI IntegralTog_Txt, CashTog_Txt, GoldenTog_Txt,
+                    Season_Txt, ChangeSeasonBtn_Txt,
+                    TimeLestTitle_Txt, TimeLest_Txt;
 
     [Header("本地玩家")]
     [SerializeField]
@@ -55,11 +57,31 @@ public class LobbyRankingView : MonoBehaviour
         Previous,
     }
 
+    /// <summary>
+    /// 更新文本翻譯
+    /// </summary>
+    private void UpdateLanguage()
+    {
+        IntegralTog_Txt.text = LanguageManager.Instance.GetText("INTEGRAL");
+        CashTog_Txt.text = LanguageManager.Instance.GetText("CASH");
+        GoldenTog_Txt.text = LanguageManager.Instance.GetText("GOLDEN");
+        TimeLestTitle_Txt.text = $"{LanguageManager.Instance.GetText("Time Lest")}:";
+        ChangeSeasonBtn_Txt.text = currSeasonType == SeasonType.Current ?
+                                       LanguageManager.Instance.GetText("Previous") :
+                                       LanguageManager.Instance.GetText("Current");
+    }
+
+    private void OnDestroy()
+    {
+        LanguageManager.Instance.RemoveLanguageFun(UpdateLanguage);
+    }
+
     private void Awake()
     {
-        objPool = new ObjPool(transform, 50);
-
+        LanguageManager.Instance.AddUpdateLanguageFunc(UpdateLanguage);
         ListenerEvent();
+
+        objPool = new ObjPool(transform, 50);
     }
 
     /// <summary>
@@ -110,12 +132,12 @@ public class LobbyRankingView : MonoBehaviour
                              SeasonType.Current;
 
             ChangeSeasonBtn_Txt.text = currSeasonType == SeasonType.Current ?
-                                       "Previous" :
-                                       "Current";
+                                       LanguageManager.Instance.GetText("Previous") :
+                                       LanguageManager.Instance.GetText("Current");
 
             Season_Txt.text = currSeasonType == SeasonType.Current ?
-                              $"SEASON {DataManager.CurrRankSeason}" :
-                              $"SEASON {DataManager.CurrRankSeason - 1}";
+                              $"{LanguageManager.Instance.GetText("SEASON")} {DataManager.CurrRankSeason}" :
+                              $"{LanguageManager.Instance.GetText("SEASON")} {DataManager.CurrRankSeason - 1}";
 
             SetRank();
         });
@@ -170,7 +192,7 @@ public class LobbyRankingView : MonoBehaviour
     private void OnEnable()
     {
         Rule_Obj.gameObject.SetActive(false);
-        Season_Txt.text = $"SEASON {DataManager.CurrRankSeason}";
+        Season_Txt.text = $"{LanguageManager.Instance.GetText("SEASON")} {DataManager.CurrRankSeason}";
         RankSampleObj.SetActive(false);
         currSeasonType = SeasonType.Current;
         currRankType = RankType.Integral;
@@ -184,7 +206,9 @@ public class LobbyRankingView : MonoBehaviour
         if ((DataManager.RandEndDate - DateTime.Now).TotalSeconds > 0)
         {
             TimeSpan timeLest = DataManager.RandEndDate - DateTime.Now;
-            TimeLest_Txt.text = $"{timeLest.Days }D : {timeLest.Hours}H : {timeLest.Minutes}M";
+            TimeLest_Txt.text = $"{timeLest.Days }{LanguageManager.Instance.GetText("D")} : " +
+                                $"{timeLest.Hours}{LanguageManager.Instance.GetText("H")} : " +
+                                $"{timeLest.Minutes}{LanguageManager.Instance.GetText("M")}";
         }        
     }
 
@@ -201,7 +225,7 @@ public class LobbyRankingView : MonoBehaviour
         switch (currRankType)
         {
             case RankType.Integral:
-                pointStr = "Points";
+                pointStr = LanguageManager.Instance.GetText("Points");
                 rankDatas = currSeasonType == SeasonType.Current ?
                             DataManager.CurrSeasonIntegralRankList :
                             DataManager.PreSeasonIntegralRankList;
@@ -211,7 +235,7 @@ public class LobbyRankingView : MonoBehaviour
                 break;
 
             case RankType.Cash:
-                pointStr = "Cash";
+                pointStr = LanguageManager.Instance.GetText("Cash");
                 rankDatas = currSeasonType == SeasonType.Current ?
                             DataManager.CurrSeasonCashRankList :
                             DataManager.PreSeasonCashRankList;
@@ -221,7 +245,7 @@ public class LobbyRankingView : MonoBehaviour
                 break;
 
             case RankType.Golden:
-                pointStr = "Golden";
+                pointStr = LanguageManager.Instance.GetText("Golden");
                 rankDatas = currSeasonType == SeasonType.Current ?
                             DataManager.CurrSeasonGoldenRankList :
                             DataManager.PreSeasonGoldenRankList;
@@ -258,9 +282,9 @@ public class LobbyRankingView : MonoBehaviour
         #region 本地玩家排名資料
 
         LocalUserRank_Txt.text = localUserData.rank > 999 ?
-                                 $"My Rank   #999+" :
-                                 $"My Rank   #{localUserData.rank}";
-        LocalUserPoint_Txt.text = $"{localUserData.point} Points";
+                                 $"{LanguageManager.Instance.GetText("My Rank")}   #999+" :
+                                 $"{LanguageManager.Instance.GetText("My Rank")}   #{localUserData.rank}";
+        LocalUserPoint_Txt.text = $"{localUserData.point} {pointStr}";
         LocalUserAward_Txt.text = $"{localUserData.award}";
 
         #endregion

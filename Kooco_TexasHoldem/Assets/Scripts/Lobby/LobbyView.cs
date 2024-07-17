@@ -84,6 +84,8 @@ public class LobbyView : MonoBehaviour
     /// </summary>
     private void UpdateLanguage()
     {
+        IntegralBtn_Txt.text = LanguageManager.Instance.GetText("INTEGRAL");
+
         #region 用戶資源列表
 
         Assets_CryptoChips_Txt.text = LanguageManager.Instance.GetText("Crypto Table");
@@ -337,7 +339,7 @@ public class LobbyView : MonoBehaviour
     /// </summary>
     private void EndPair()
     {
-        IntegralBtn_Txt.text = LanguageManager.Instance.GetText("Integral");
+        IntegralBtn_Txt.text = LanguageManager.Instance.GetText("INTEGRAL");
         battleData.isPairing = false;
     }
 

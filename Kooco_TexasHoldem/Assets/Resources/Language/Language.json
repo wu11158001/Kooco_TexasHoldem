@@ -150,6 +150,46 @@
     "zh_TW": "交易結果"
   },
   {
+    "ID": "INTEGRAL",
+    "English": "INTEGRAL",
+    "zh_TW": "積分"
+  },
+  {
+    "ID": "CASH",
+    "English": "CASH",
+    "zh_TW": "現金"
+  },
+  {
+    "ID": "GOLD",
+    "English": "GOLD",
+    "zh_TW": "黃金"
+  },
+  {
+    "ID": "GOLDEN",
+    "English": "GOLDEN",
+    "zh_TW": "黃金"
+  },
+  {
+    "ID": "OF",
+    "English": "OF",
+    "zh_TW": "之"
+  },
+  {
+    "ID": "Cash",
+    "English": "Cash",
+    "zh_TW": "現金"
+  },
+  {
+    "ID": "Points",
+    "English": "Points",
+    "zh_TW": "點"
+  },
+  {
+    "ID": "Golden",
+    "English": "Golden",
+    "zh_TW": "黃金"
+  },
+  {
     "ID": "錯誤訊息",
     "English": null,
     "zh_TW": null
@@ -285,11 +325,6 @@
     "zh_TW": null
   },
   {
-    "ID": "Integral",
-    "English": "INTEGRAL",
-    "zh_TW": "積分"
-  },
-  {
     "ID": "Pairing",
     "English": "Pairing",
     "zh_TW": "配對中"
@@ -335,24 +370,9 @@
     "zh_TW": "僅顯示最近 3 個月的交易。"
   },
   {
-    "ID": "CASH",
-    "English": "CASH",
-    "zh_TW": "現金"
-  },
-  {
-    "ID": "GOLD",
-    "English": "GOLD",
-    "zh_TW": "黃金"
-  },
-  {
     "ID": "VIRTUAL CODE",
     "English": "VIRTUAL CODE",
     "zh_TW": "虛擬程式碼"
-  },
-  {
-    "ID": "OF",
-    "English": "OF",
-    "zh_TW": "之"
   },
   {
     "ID": "Date Range",
@@ -428,6 +448,51 @@
     "ID": "NFT is not owned yet.",
     "English": "NFT is not owned yet.",
     "zh_TW": "NFT 尚未擁有。"
+  },
+  {
+    "ID": "排名",
+    "English": null,
+    "zh_TW": null
+  },
+  {
+    "ID": "SEASON",
+    "English": "SEASON",
+    "zh_TW": "季賽"
+  },
+  {
+    "ID": "Previous",
+    "English": "Previous",
+    "zh_TW": "上個賽季"
+  },
+  {
+    "ID": "Current",
+    "English": "Current",
+    "zh_TW": "當前賽季"
+  },
+  {
+    "ID": "My Rank",
+    "English": "My Rank",
+    "zh_TW": "我的排名"
+  },
+  {
+    "ID": "Time Lest",
+    "English": "Time Lest",
+    "zh_TW": "賽季結束"
+  },
+  {
+    "ID": "D",
+    "English": "D",
+    "zh_TW": "天"
+  },
+  {
+    "ID": "H",
+    "English": "H",
+    "zh_TW": "時"
+  },
+  {
+    "ID": "M",
+    "English": "M",
+    "zh_TW": "分"
   },
   {
     "ID": "遊戲",
