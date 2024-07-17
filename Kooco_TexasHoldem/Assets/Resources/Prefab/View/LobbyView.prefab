@@ -219,8 +219,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Ranking
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 67393bfc3a860b042baa08f7fbeadd93, type: 2}
+  m_sharedMaterial: {fileID: -4543751221255232905, guid: 67393bfc3a860b042baa08f7fbeadd93, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1273,8 +1273,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 10
-  m_fontSizeBase: 10
+  m_fontSize: 12
+  m_fontSizeBase: 12
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -1846,8 +1846,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Shop
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 67393bfc3a860b042baa08f7fbeadd93, type: 2}
+  m_sharedMaterial: {fileID: -4543751221255232905, guid: 67393bfc3a860b042baa08f7fbeadd93, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1982,8 +1982,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Mine
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 67393bfc3a860b042baa08f7fbeadd93, type: 2}
+  m_sharedMaterial: {fileID: -4543751221255232905, guid: 67393bfc3a860b042baa08f7fbeadd93, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -2118,8 +2118,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Activity
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 67393bfc3a860b042baa08f7fbeadd93, type: 2}
+  m_sharedMaterial: {fileID: -4543751221255232905, guid: 67393bfc3a860b042baa08f7fbeadd93, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -4879,6 +4879,11 @@ MonoBehaviour:
   ShowAssets_Btn: {fileID: 2500511071112085360}
   AssetList_Obj: {fileID: 7786376478511549179}
   ShowAssetsBtn_Img: {fileID: 71564956131580029}
+  Assets_CryptoChips_Txt: {fileID: 5610152927081153840}
+  Assets_VCChips_Txt: {fileID: 6725676853513859685}
+  Assets_Gold_Txt: {fileID: 4937562140825995873}
+  Assets_Stamina_Txt: {fileID: 193127624550016251}
+  Assets_OTProps_Txt: {fileID: 7987534246591094198}
   Integral_Btn: {fileID: 2346216736524750537}
   IntegralBtn_Txt: {fileID: 4026597352031316312}
   Tip_Txt: {fileID: 3433806613782114970}
@@ -4892,6 +4897,10 @@ MonoBehaviour:
   LobbyMinePageView: {fileID: 6752597787101536108, guid: b33876997bb0a6a40962eea04ef1b32b, type: 3}
   LobbyRankingView: {fileID: 7532165618673014345, guid: 5b90ffcffb6e64a4d80acdef6b16c56f, type: 3}
   LobbyShopView: {fileID: 7532165618673014345, guid: 23d8bfa511521f544a6be501ad3cbe39, type: 3}
+  MineBtn_Txt: {fileID: 3518349737872176522}
+  ShopBtn_Txt: {fileID: 3819655656664424585}
+  ActivityBtn_Txt: {fileID: 3699860969951470928}
+  RankingBtn_Txt: {fileID: 1745195127409051160}
   Floor4: {fileID: 2597165869620148159}
   QuestView: {fileID: 2916295124333432222, guid: 283920420f2c80d4b9b4945f925ddf2a, type: 3}
   SetNicknameViewObj: {fileID: 6043452908557475935, guid: 175ae92ef0320254b9b25a2c371a3300, type: 3}

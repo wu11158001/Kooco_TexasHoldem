@@ -276,6 +276,11 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
         ListenerEvent();
     }
 
+    private void OnDestroy()
+    {
+        LanguageManager.Instance.RemoveLanguageFun(UpdateLanguage);
+    }
+
     /// <summary>
     /// 事件聆聽
     /// </summary>
@@ -1225,9 +1230,4 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
     }
 
     #endregion
-
-    private void OnDestroy()
-    {
-        LanguageManager.Instance.RemoveLanguageFun(UpdateLanguage);
-    }
 }

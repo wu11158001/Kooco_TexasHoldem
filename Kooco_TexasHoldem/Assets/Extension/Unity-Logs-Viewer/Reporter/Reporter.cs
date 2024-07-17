@@ -574,7 +574,6 @@ public class Reporter : MonoBehaviour
     void Start()
     {
         logDate = System.DateTime.Now.ToString();
-        StartCoroutine("readInfo");
     }
 
     //clear all logs
@@ -2137,41 +2136,6 @@ public class Reporter : MonoBehaviour
         PlayerPrefs.SetInt("Reporter_showSearchText", (showSearchText == true) ? 1 : 0);
 
         PlayerPrefs.Save();
-    }
-
-    //read build information 
-    IEnumerator readInfo()
-    {
-        yield break;
-        string prefFile = "build_info.txt";
-        string url = prefFile;
-
-        if (prefFile.IndexOf("://") == -1)
-        {
-            string streamingAssetsPath = Application.streamingAssetsPath;
-            if (streamingAssetsPath == "")
-                streamingAssetsPath = Application.dataPath + "/StreamingAssets/";
-            url = System.IO.Path.Combine(streamingAssetsPath, prefFile);
-        }
-
-        if (!url.Contains("://"))
-            url = "file://" + url;
-
-
-        // float startTime = Time.realtimeSinceStartup;
-        WWW www = new WWW(url);
-        yield return www;
-
-        if (!string.IsNullOrEmpty(www.error))
-        {
-            Debug.LogError(www.error);
-        }
-        else
-        {
-            buildDate = www.text;
-        }
-
-        yield break;
     }
 }
 

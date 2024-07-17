@@ -105,6 +105,31 @@
     "zh_TW": "至少 8 個字元。"
   },
   {
+    "ID": "CryptoTable",
+    "English": "Crypto Table",
+    "zh_TW": "加密貨幣桌"
+  },
+  {
+    "ID": "VCTable",
+    "English": "VC Table",
+    "zh_TW": "虛擬貨幣桌"
+  },
+  {
+    "ID": "Gold",
+    "English": "Gold",
+    "zh_TW": "黃金"
+  },
+  {
+    "ID": "Stamina",
+    "English": "Stamina",
+    "zh_TW": "耐力"
+  },
+  {
+    "ID": "OTProps",
+    "English": "OT Props",
+    "zh_TW": "加時道具"
+  },
+  {
     "ID": "錯誤訊息",
     "English": null,
     "zh_TW": null
@@ -220,14 +245,9 @@
     "zh_TW": null
   },
   {
-    "ID": "BattleRoom",
-    "English": "Battle",
-    "zh_TW": "積分對戰"
-  },
-  {
-    "ID": "CashRoom",
-    "English": "Cash",
-    "zh_TW": "現金桌"
+    "ID": "Integral",
+    "English": "INTEGRAL",
+    "zh_TW": "積分"
   },
   {
     "ID": "Pairing",
@@ -236,23 +256,28 @@
   },
   {
     "ID": "MaxRoomTip",
-    "English": "Maximum number of rooms reached",
-    "zh_TW": "已達最大房間數"
+    "English": "Maximum game room reached!",
+    "zh_TW": "已達最大遊戲房間!"
   },
   {
-    "ID": "WalletDisconnect",
-    "English": "Wallet Disconnect",
-    "zh_TW": "斷開錢包"
+    "ID": "Mine",
+    "English": "Mine",
+    "zh_TW": "我的"
   },
   {
-    "ID": "WalletAddress",
-    "English": "Wallet Address",
-    "zh_TW": "錢包地址"
+    "ID": "Shop",
+    "English": "Shop",
+    "zh_TW": "商城"
   },
   {
-    "ID": "WalletBalance",
-    "English": "Wallet Balance",
-    "zh_TW": "錢包餘額"
+    "ID": "Activity",
+    "English": "Activity",
+    "zh_TW": "活動"
+  },
+  {
+    "ID": "Ranking",
+    "English": "Ranking",
+    "zh_TW": "排名"
   },
   {
     "ID": "遊戲",

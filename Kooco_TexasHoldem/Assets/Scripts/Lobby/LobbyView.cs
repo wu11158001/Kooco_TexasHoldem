@@ -29,6 +29,9 @@ public class LobbyView : MonoBehaviour
     GameObject AssetList_Obj;
     [SerializeField]
     Image ShowAssetsBtn_Img;
+    [SerializeField]
+    TextMeshProUGUI Assets_CryptoChips_Txt, Assets_VCChips_Txt, Assets_Gold_Txt,
+                    Assets_Stamina_Txt, Assets_OTProps_Txt;
 
     [Header("積分房")]
     [SerializeField]
@@ -47,6 +50,8 @@ public class LobbyView : MonoBehaviour
     Button Mine_Btn, Shop_Btn, Main_Btn, Activity_Btn, Ranking_Btn;
     [SerializeField]
     GameObject LobbyMainPageView, LobbyMinePageView, LobbyRankingView, LobbyShopView;
+    [SerializeField]
+    TextMeshProUGUI MineBtn_Txt, ShopBtn_Txt, ActivityBtn_Txt, RankingBtn_Txt;
 
     [Header("任務介面")]
     [SerializeField]
@@ -79,7 +84,24 @@ public class LobbyView : MonoBehaviour
     /// </summary>
     private void UpdateLanguage()
     {
+        #region 用戶資源列表
 
+        Assets_CryptoChips_Txt.text = LanguageManager.Instance.GetText("CryptoTable");
+        Assets_VCChips_Txt.text = LanguageManager.Instance.GetText("VCTable");
+        Assets_Gold_Txt.text = LanguageManager.Instance.GetText("Gold");
+        Assets_Stamina_Txt.text = LanguageManager.Instance.GetText("Stamina");
+        Assets_OTProps_Txt.text = LanguageManager.Instance.GetText("OTProps");
+
+        #endregion
+
+        #region 項目按鈕
+
+        MineBtn_Txt.text = LanguageManager.Instance.GetText("Mine");
+        ShopBtn_Txt.text = LanguageManager.Instance.GetText("Shop");
+        ActivityBtn_Txt.text = LanguageManager.Instance.GetText("Activity");
+        RankingBtn_Txt.text = LanguageManager.Instance.GetText("Ranking");
+
+        #endregion
     }
 
     private void Awake()
@@ -88,6 +110,12 @@ public class LobbyView : MonoBehaviour
 
         LanguageManager.Instance.AddUpdateLanguageFunc(UpdateLanguage);
         ListenerEvent();
+    }
+
+    private void OnDestroy()
+    {
+        LanguageManager.Instance.RemoveLanguageFun(UpdateLanguage);
+        WalletManager.Instance.CancelCheckConnect();
     }
 
     /// <summary>
@@ -187,7 +215,7 @@ public class LobbyView : MonoBehaviour
         if (battleData.isPairing)
         {
             TimeSpan waitingTime = DateTime.Now - battleData.startPairTime;
-            IntegralBtn_Txt.text = $"Pairing:{(int)waitingTime.TotalMinutes} : {waitingTime.Seconds:00}";
+            IntegralBtn_Txt.text = $"{LanguageManager.Instance.GetText("Pairing")}:{(int)waitingTime.TotalMinutes} : {waitingTime.Seconds:00}";
 
             if (waitingTime.Seconds >= 3)
             {
@@ -309,7 +337,7 @@ public class LobbyView : MonoBehaviour
     /// </summary>
     private void EndPair()
     {
-        IntegralBtn_Txt.text = "INTEGRAL";
+        IntegralBtn_Txt.text = LanguageManager.Instance.GetText("Integral");
         battleData.isPairing = false;
     }
 
@@ -381,12 +409,5 @@ public class LobbyView : MonoBehaviour
         {
             Floor4.gameObject.SetActive(!Floor4.gameObject.activeSelf);
         }
-    }
-
-
-    private void OnDestroy()
-    {
-        LanguageManager.Instance.RemoveLanguageFun(UpdateLanguage);
-        WalletManager.Instance.CancelCheckConnect();
     }
 }

@@ -154,7 +154,7 @@ public class LanguageManager
         Debug.Log($"Change Language:{languageId[thisData.CurrLanguageIndex]}");
         foreach (var func in updateLanguageFuncList)
         {
-            func();
+            func?.Invoke();
         }
     }
 
