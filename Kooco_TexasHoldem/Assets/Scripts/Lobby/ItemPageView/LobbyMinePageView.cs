@@ -28,6 +28,8 @@ public class LobbyMinePageView : MonoBehaviour
     GameObject AvatarSapmle;
     [SerializeField]
     Button CloseChangeAvatar_Btn, ChangeAvatarSubmit_Btn;
+    [SerializeField]
+    TextMeshProUGUI ChangeAvatarTitle_Txt, ChangeAvatarSubmitBtn_Txt;
 
     [Header("帳戶餘額")]
     [SerializeField]
@@ -37,7 +39,12 @@ public class LobbyMinePageView : MonoBehaviour
     [SerializeField]
     Image AccountBalanceExpand_Img;
     [SerializeField]
-    TextMeshProUGUI CryptoTableValue_Txt, VCTableValue_Txt, GoldValue_Txt, StaminaValue_Txt, OTPropsValue_Txt;
+    TextMeshProUGUI AccountBalanceTitle_Txt, AccountBalanceReflashBtn_Txt,
+                    CryptoTable_Txt, CryptoTableValue_Txt,
+                    VCTable_Txt, VCTableValue_Txt,
+                    Gold_Txt, GoldValue_Txt,
+                    Stamina_Txt, StaminaValue_Txt,
+                    OTProps_Txt, OTPropsValue_Txt;
 
     [Header("分數紀錄")]
     [SerializeField]
@@ -49,46 +56,140 @@ public class LobbyMinePageView : MonoBehaviour
     [SerializeField]
     Slider VPIP_Sli, PFR_Sli, ATS_Sli, ThreeBET_Sli;
     [SerializeField]
-    TextMeshProUGUI VPIPpercent_Txt, PFRpercent_Txt, ATSpercent_Txt, ThreeBETpercent_Txt;
+    TextMeshProUGUI ScoreRecordTitle_Txt, ScoreRecordReflashBtn_Txt,
+                    VPIPpercent_Txt, PFRpercent_Txt, ATSpercent_Txt, ThreeBETpercent_Txt;
 
     [Header("第三方連接")]
     [SerializeField]
     Button IGLink_Btn, LineLink_Btn;
     [SerializeField]
-    TextMeshProUGUI IGLinked_Txt, LineLinked_Txt;
-    [SerializeField]
     GameObject IGNotYetLinked_Obj, LineNotYetLinked_Obj;
     [SerializeField]
     Image IGLinked_Img, LineLinked_Img;
-    const string expandContentName = "Content";                                 //展開內容物件名稱
-    const string expandTopBgName = "TopBg";                                     //收起上方物件名稱
-    const float expandTIme = 0.1f;                                              //內容展開時間
+    [SerializeField]
+    TextMeshProUGUI SocialMediaTitle_Txt,
+                    IGNotYetLinked_Txt, LineNotYetLinked_Txt,
+                    IGLinked_Txt, LineLinked_Txt;
 
     [Header("交易紀錄")]
     [SerializeField]
     Button TransactionHistory_Btn;
     [SerializeField]
     GameObject TransactionHistoryViewObj;
+    [SerializeField]
+    TextMeshProUGUI TransactionHistoryTitle_Txt;
 
     [Header("My NFT")]
     [SerializeField]
     Button MyNFT_Btn;
     [SerializeField]
     GameObject MyNFTViewObj;
+    [SerializeField]
+    TextMeshProUGUI MyNftTitle_Txt;
 
     [Header("手牌紀錄")]
     [SerializeField]
     Button HandHistory_Btn;
     [SerializeField]
     GameObject LobbyHandHistoryViewObj;
+    [SerializeField]
+    TextMeshProUGUI HandHistoryTitle_Txt;
+
+    [Header("設定")]
+    [SerializeField]
+    TextMeshProUGUI SettingsTitle_Txt;
+
+    const string expandContentName = "Content";                                 //展開內容物件名稱
+    const string expandTopBgName = "TopBg";                                     //收起上方物件名稱
+    const float expandTIme = 0.1f;                                              //內容展開時間
 
     List<Button> avatarBtnList;                                                 //頭像按鈕
     int tempAvatarIndex;                                                        //零時頭像index
     bool isAccountBalanceExpand;                                                //是否展開帳戶餘額
     bool isScoreRecordExpand;                                                   //是否展開分數紀錄
 
+    /// <summary>
+    /// 更新文本翻譯
+    /// </summary>
+    private void UpdateLanguage()
+    {
+        #region 用戶訊息
+
+        Copied_Txt.text = LanguageManager.Instance.GetText("Copied!");
+
+        #endregion
+
+        #region 更換頭像
+
+        ChangeAvatarTitle_Txt.text = LanguageManager.Instance.GetText("Change Avatar");
+        ChangeAvatarSubmitBtn_Txt.text = LanguageManager.Instance.GetText("SUBMIT");
+
+        #endregion
+
+        #region 帳戶餘額
+
+        AccountBalanceTitle_Txt.text = LanguageManager.Instance.GetText("Account Balance");
+        AccountBalanceReflashBtn_Txt.text = LanguageManager.Instance.GetText("REFLASH");
+        CryptoTable_Txt.text = LanguageManager.Instance.GetText("Crypto Table");
+        VCTable_Txt.text = LanguageManager.Instance.GetText("VC Table");
+        Gold_Txt.text = LanguageManager.Instance.GetText("Gold");
+        Stamina_Txt.text = LanguageManager.Instance.GetText("Stamina");
+        OTProps_Txt.text = LanguageManager.Instance.GetText("OT Props");
+
+        #endregion
+
+        #region 分數紀錄
+
+        ScoreRecordTitle_Txt.text = LanguageManager.Instance.GetText("Score Record");
+        ScoreRecordReflashBtn_Txt.text = LanguageManager.Instance.GetText("REFLASH");
+
+        #endregion
+
+        #region 第三方連接
+
+        SocialMediaTitle_Txt.text = LanguageManager.Instance.GetText("Social Media");
+        IGNotYetLinked_Txt.text = LanguageManager.Instance.GetText("Not Yet Linked");
+        LineNotYetLinked_Txt.text = LanguageManager.Instance.GetText("Not Yet Linked");
+
+        #endregion
+
+        #region 交易紀錄
+
+        TransactionHistoryTitle_Txt.text = LanguageManager.Instance.GetText("Transaction History");
+
+        #endregion
+
+        #region My NFT
+
+        MyNftTitle_Txt.text = LanguageManager.Instance.GetText("My NFT");
+
+        #endregion
+
+        #region 手牌紀錄
+
+        HandHistoryTitle_Txt.text = LanguageManager.Instance.GetText("Hand History");
+
+        #endregion
+
+        #region 設定
+
+        SettingsTitle_Txt.text = LanguageManager.Instance.GetText("Settings");
+
+        #endregion
+
+        SetUserInfo();
+    }
+
+    private void OnDestroy()
+    {
+        LanguageManager.Instance.RemoveLanguageFun(UpdateLanguage);
+    }
+
     private void Awake()
     {
+        LanguageManager.Instance.AddUpdateLanguageFunc(UpdateLanguage);
+        ListenerEvent();
+
         //錢包地址已複製文字
         Color color = Copied_Txt.color;
         color.a = 0;
@@ -111,8 +212,6 @@ public class LobbyMinePageView : MonoBehaviour
         }
         AccountBalanceExpand_Img.sprite = AssetsManager.Instance.GetAlbumAsset(AlbumEnum.ArrowAlbum).album[1];
         ScoreRecordExpand_Img.sprite = AssetsManager.Instance.GetAlbumAsset(AlbumEnum.ArrowAlbum).album[1];
-
-        ListenerEvent();
     }
 
     /// <summary>
@@ -252,11 +351,6 @@ public class LobbyMinePageView : MonoBehaviour
         #endregion
     }
 
-    private void OnEnable()
-    {
-        SetUserInfo();
-    }
-
     private void Start()
     {
         //產生選擇的頭像
@@ -312,8 +406,8 @@ public class LobbyMinePageView : MonoBehaviour
         IGNotYetLinked_Obj.SetActive(string.IsNullOrEmpty(DataManager.IGIUserIdAndName));
         IGLink_Btn.interactable = string.IsNullOrEmpty(DataManager.IGIUserIdAndName);                                  
         IGLinked_Txt.text = string.IsNullOrEmpty(DataManager.IGIUserIdAndName) ?
-                            "LINK NOW" :
-                            "LINKED";
+                            LanguageManager.Instance.GetText("LINK NOW") :
+                            LanguageManager.Instance.GetText("LINKED");
         IGLinked_Img.sprite = string.IsNullOrEmpty(DataManager.LineMail) ?
                         AssetsManager.Instance.GetAlbumAsset(AlbumEnum.LinkAlbum).album[0] :
                         AssetsManager.Instance.GetAlbumAsset(AlbumEnum.LinkAlbum).album[1];
@@ -322,8 +416,8 @@ public class LobbyMinePageView : MonoBehaviour
         LineNotYetLinked_Obj.SetActive(string.IsNullOrEmpty(DataManager.LineMail));
         LineLink_Btn.interactable = string.IsNullOrEmpty(DataManager.IGIUserIdAndName);
         LineLinked_Txt.text = string.IsNullOrEmpty(DataManager.LineMail) ?
-                            "LINK NOW" :
-                            "LINKED";
+                            LanguageManager.Instance.GetText("LINK NOW") :
+                            LanguageManager.Instance.GetText("LINKED");
         LineLinked_Img.sprite = string.IsNullOrEmpty(DataManager.LineMail) ?
                                 AssetsManager.Instance.GetAlbumAsset(AlbumEnum.LinkAlbum).album[0] :
                                 AssetsManager.Instance.GetAlbumAsset(AlbumEnum.LinkAlbum).album[1];

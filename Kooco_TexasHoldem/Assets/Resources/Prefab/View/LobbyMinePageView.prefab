@@ -8996,14 +8996,23 @@ MonoBehaviour:
   AvatarSapmle: {fileID: 5615557808598567116}
   CloseChangeAvatar_Btn: {fileID: 132200843411359679}
   ChangeAvatarSubmit_Btn: {fileID: 6988252091571765562}
+  ChangeAvatarTitle_Txt: {fileID: 4378808691591205891}
+  ChangeAvatarSubmitBtn_Txt: {fileID: 1462740420862421155}
   AccountBalance_Obj: {fileID: 3190796235734844218}
   AccountBalanceExpand_Btn: {fileID: 7178634589460441095}
   AccountBalanceReflash_Btn: {fileID: 6944746543534818823}
   AccountBalanceExpand_Img: {fileID: 4843038033832244240}
+  AccountBalanceTitle_Txt: {fileID: 6716933754122190109}
+  AccountBalanceReflashBtn_Txt: {fileID: 9109337189798582327}
+  CryptoTable_Txt: {fileID: 2873116562370204215}
   CryptoTableValue_Txt: {fileID: 7425583791783634823}
+  VCTable_Txt: {fileID: 3252523253632076951}
   VCTableValue_Txt: {fileID: 7027548175859872928}
+  Gold_Txt: {fileID: 3736794426186485623}
   GoldValue_Txt: {fileID: 7183931229965878675}
+  Stamina_Txt: {fileID: 8228591395683011067}
   StaminaValue_Txt: {fileID: 7627976398068916317}
+  OTProps_Txt: {fileID: 7283960896371959936}
   OTPropsValue_Txt: {fileID: 6323825049635871229}
   ScoreRecord_Obj: {fileID: 7829967764670922625}
   ScoreRecordExpand_Btn: {fileID: 3720335183371690085}
@@ -9013,24 +9022,33 @@ MonoBehaviour:
   PFR_Sli: {fileID: 2557808748649035447}
   ATS_Sli: {fileID: 1447393527230534321}
   ThreeBET_Sli: {fileID: 3148895625592441901}
+  ScoreRecordTitle_Txt: {fileID: 2713811140846964776}
+  ScoreRecordReflashBtn_Txt: {fileID: 1338733736067982832}
   VPIPpercent_Txt: {fileID: 8032108378051204603}
   PFRpercent_Txt: {fileID: 5243393422202171392}
   ATSpercent_Txt: {fileID: 1213736290374096506}
   ThreeBETpercent_Txt: {fileID: 560132277793082835}
   IGLink_Btn: {fileID: 8406419190504893892}
   LineLink_Btn: {fileID: 7714983049675322003}
-  IGLinked_Txt: {fileID: 753103685634731079}
-  LineLinked_Txt: {fileID: 5167941931419277615}
   IGNotYetLinked_Obj: {fileID: 2414054288938701907}
   LineNotYetLinked_Obj: {fileID: 8176015738949242591}
   IGLinked_Img: {fileID: 4351448962306811374}
   LineLinked_Img: {fileID: 7734710633031918401}
+  SocialMediaTitle_Txt: {fileID: 6165923875443502712}
+  IGNotYetLinked_Txt: {fileID: 3683374032110675388}
+  LineNotYetLinked_Txt: {fileID: 4167899943325611968}
+  IGLinked_Txt: {fileID: 753103685634731079}
+  LineLinked_Txt: {fileID: 5167941931419277615}
   TransactionHistory_Btn: {fileID: 7112698518765981088}
   TransactionHistoryViewObj: {fileID: 3537822008069001750, guid: 7846f6c4a33fa0948bc3115d1d669fa1, type: 3}
+  TransactionHistoryTitle_Txt: {fileID: 53905211550346938}
   MyNFT_Btn: {fileID: 9141139043753423783}
   MyNFTViewObj: {fileID: 3537822008069001750, guid: 32233d08b897b234cbc58b3d13de7da6, type: 3}
+  MyNftTitle_Txt: {fileID: 8741687566260839098}
   HandHistory_Btn: {fileID: 3512199050491858995}
   LobbyHandHistoryViewObj: {fileID: 8438428948897096562, guid: b95772a80fd83ed43b86b349f9682f14, type: 3}
+  HandHistoryTitle_Txt: {fileID: 6730331301460305755}
+  SettingsTitle_Txt: {fileID: 6452158261205765355}
 --- !u!1 &6806961639976115128
 GameObject:
   m_ObjectHideFlags: 0
@@ -11175,7 +11193,7 @@ GameObject:
   - component: {fileID: 8903220365494563897}
   - component: {fileID: 8741687566260839098}
   m_Layer: 5
-  m_Name: ScoreRecordTitle_Txt
+  m_Name: MyNftTitle_Txt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

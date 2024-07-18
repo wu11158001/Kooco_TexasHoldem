@@ -35,11 +35,6 @@
     "zh_TW": "傳送代碼"
   },
   {
-    "ID": "SUBMIT",
-    "English": "SUBMIT",
-    "zh_TW": "提交"
-  },
-  {
     "ID": "Password",
     "English": "Password",
     "zh_TW": "密碼"
@@ -88,6 +83,21 @@
     "ID": "Remember Me",
     "English": "Remember Me",
     "zh_TW": "記住帳號密碼"
+  },
+  {
+    "ID": "SUBMIT",
+    "English": "SUBMIT",
+    "zh_TW": "提交"
+  },
+  {
+    "ID": "REFLASH",
+    "English": "REFLASH",
+    "zh_TW": "重新整理"
+  },
+  {
+    "ID": "Copied!",
+    "English": "Copied!",
+    "zh_TW": "已複製!"
   },
   {
     "ID": "Enter New Password.",
@@ -188,6 +198,46 @@
     "ID": "Golden",
     "English": "Golden",
     "zh_TW": "黃金"
+  },
+  {
+    "ID": "My NFT",
+    "English": "My NFT",
+    "zh_TW": "我的 NFT"
+  },
+  {
+    "ID": "Transaction History",
+    "English": "Transaction History",
+    "zh_TW": "交易紀錄"
+  },
+  {
+    "ID": "Change Avatar",
+    "English": "Change Avatar",
+    "zh_TW": "更換頭像"
+  },
+  {
+    "ID": "Account Balance",
+    "English": "Account Balance",
+    "zh_TW": "帳戶餘額"
+  },
+  {
+    "ID": "Score Record",
+    "English": "Score Record",
+    "zh_TW": "成績記錄"
+  },
+  {
+    "ID": "Social Media",
+    "English": "Social Media",
+    "zh_TW": "社群媒體"
+  },
+  {
+    "ID": "Hand History",
+    "English": "Hand History",
+    "zh_TW": "手牌紀錄"
+  },
+  {
+    "ID": "Settings",
+    "English": "Settings",
+    "zh_TW": "設定"
   },
   {
     "ID": "錯誤訊息",
@@ -440,11 +490,6 @@
     "zh_TW": null
   },
   {
-    "ID": "My NFT",
-    "English": "My NFT",
-    "zh_TW": "我的 NFT"
-  },
-  {
     "ID": "NFT is not owned yet.",
     "English": "NFT is not owned yet.",
     "zh_TW": "NFT 尚未擁有。"
@@ -493,6 +538,26 @@
     "ID": "M",
     "English": "M",
     "zh_TW": "分"
+  },
+  {
+    "ID": "個人主頁面",
+    "English": null,
+    "zh_TW": null
+  },
+  {
+    "ID": "LINK NOW",
+    "English": "LINK NOW",
+    "zh_TW": "立即連結"
+  },
+  {
+    "ID": "LINKED",
+    "English": "LINKED",
+    "zh_TW": "已連接"
+  },
+  {
+    "ID": "Not Yet Linked",
+    "English": "Not Yet Linked",
+    "zh_TW": "尚未連結"
   },
   {
     "ID": "遊戲",
