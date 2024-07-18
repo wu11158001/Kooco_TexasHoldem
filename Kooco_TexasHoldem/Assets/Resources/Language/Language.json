@@ -125,6 +125,11 @@
     "zh_TW": "虛擬貨幣桌"
   },
   {
+    "ID": "Integral Table",
+    "English": "Integral Table",
+    "zh_TW": "積分房"
+  },
+  {
     "ID": "Crypto Table",
     "English": "Crypto Table",
     "zh_TW": "加密貨幣桌"
@@ -263,6 +268,11 @@
     "ID": "LAUNCH",
     "English": "LAUNCH",
     "zh_TW": "發射"
+  },
+  {
+    "ID": "Hand",
+    "English": "Hand",
+    "zh_TW": "手牌"
   },
   {
     "ID": "錯誤訊息",
@@ -583,6 +593,16 @@
     "ID": "Not Yet Linked",
     "English": "Not Yet Linked",
     "zh_TW": "尚未連結"
+  },
+  {
+    "ID": "手牌紀錄",
+    "English": null,
+    "zh_TW": null
+  },
+  {
+    "ID": "Show last 20 hands",
+    "English": "Show last 20 hands",
+    "zh_TW": "已顯示最近20局手牌"
   },
   {
     "ID": "遊戲",

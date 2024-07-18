@@ -36,6 +36,8 @@ public class TransactionHistoryView : MonoBehaviour
     [SerializeField]
     Toggle Cash_Tog, Gold_Tog;
     [SerializeField]
+    Image Tip_Img;
+    [SerializeField]
     TextMeshProUGUI Title_Txt, Tip_Txt,
                     CashTog_Txt, GoldTog_Txt, VirtualCode_Txt,
                     ItemType_Txt, ItemTitle_Txt, ItemStatus_Txt, ItemPL_Txt,
@@ -122,8 +124,10 @@ public class TransactionHistoryView : MonoBehaviour
     {
         #region 交易紀錄顯示
 
-        Title_Txt.text = LanguageManager.Instance.GetText("TRANSACTION HISTORY");
         Tip_Txt.text = LanguageManager.Instance.GetText("Only Show Transactions From The Last 3 Months.");
+        StringUtils.TextInFrontOfImageFollow(Tip_Txt,
+                                     Tip_Img);
+        Title_Txt.text = LanguageManager.Instance.GetText("TRANSACTION HISTORY");        
         CashTog_Txt.text = LanguageManager.Instance.GetText("CASH");
         GoldTog_Txt.text = LanguageManager.Instance.GetText("GOLD");
         VirtualCode_Txt.text = LanguageManager.Instance.GetText("VIRTUAL CODE");

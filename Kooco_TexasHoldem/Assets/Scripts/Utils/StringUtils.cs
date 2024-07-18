@@ -12,6 +12,27 @@ using TMPro;
 public static class StringUtils
 {
     /// <summary>
+    /// 文字前方圖片跟隨(提示類驚嘆號等功能)
+    /// </summary>
+    /// <param name="textComponent"></param>
+    /// <param name="img"></param>
+    public static void TextInFrontOfImageFollow(TextMeshProUGUI textComponent, Image img)
+    {
+        float txtWidth = textComponent.preferredWidth;
+
+        textComponent.rectTransform.sizeDelta = new Vector2(txtWidth, 
+                                                            textComponent.rectTransform.sizeDelta.y);
+
+        Vector2 size = img.rectTransform.sizeDelta;
+        img.transform.SetParent(textComponent.transform);
+        img.rectTransform.anchorMax = new Vector2(0, 0.5f);
+        img.rectTransform.anchorMin = new Vector2(0, 0.5f);
+        img.rectTransform.pivot = new Vector2(0, 0.5f);
+        img.rectTransform.sizeDelta = size;
+        img.rectTransform.anchoredPosition = new Vector2(-size.x, 0);
+    }
+
+    /// <summary>
     /// 文字內容超過Text元件添加...
     /// </summary>
     /// <param name="content">顯示內容</param>
