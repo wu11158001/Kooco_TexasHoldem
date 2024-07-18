@@ -1,7 +1,7 @@
 public enum BetActionEnum
 {
     None,
-    Blind,      //大小盲
+    Blinds,     //盲注
     Fold,       //棄牌
     Check,      //過牌
     Raise,      //加注

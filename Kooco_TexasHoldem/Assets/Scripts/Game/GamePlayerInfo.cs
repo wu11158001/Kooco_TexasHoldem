@@ -482,12 +482,12 @@ public class GamePlayerInfo : MonoBehaviour
                 Action_Img.color = allInColor;
                 break;
 
-            case BetActionEnum.Blind:
+            case BetActionEnum.Blinds:
                 Action_Img.color = blindColor;
                 break;
         }
 
-        if (betActionEnum == BetActionEnum.Blind ||
+        if (betActionEnum == BetActionEnum.Blinds ||
             betActionEnum == BetActionEnum.Call ||
             betActionEnum == BetActionEnum.Raise ||
             betActionEnum == BetActionEnum.AllIn)
@@ -496,17 +496,17 @@ public class GamePlayerInfo : MonoBehaviour
             {
                 StringUtils.ChipsChangeEffect(Action_Txt,
                                               betValue,
-                                              $"{betActionEnum}\n");
+                                              $"{LanguageManager.Instance.GetText($"{betActionEnum}")}\n");
             }
             else
             {
-                Action_Txt.text = $"{betActionEnum}\n{StringUtils.SetChipsUnit(betValue)}";
+                Action_Txt.text = $"{LanguageManager.Instance.GetText($"{betActionEnum}")}\n{StringUtils.SetChipsUnit(betValue)}";
             }
         }
         else
         {
             Action_Txt.text = betActionEnum != BetActionEnum.None ?
-                              betActionEnum.ToString() :
+                              $"{LanguageManager.Instance.GetText($"{betActionEnum}")}" :
                               "";
         }
 

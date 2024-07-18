@@ -238,7 +238,8 @@ public class HistoryVideoView : MonoBehaviour
     /// <param name="index"></param>
     public void SetInit(int index)
     {
-        HandNum_Txt.text = $"HAND{index + 1}";
+        WinType_Txt.text = "";
+        HandNum_Txt.text = $"{LanguageManager.Instance.GetText("Hand")}{index + 1}";
         int allVideoCount = HandHistoryManager.Instance.GetResultDataList().Count;
         NextVideo_Btn.gameObject.SetActive(index + 1 < allVideoCount);
         PreVideo_Btn.gameObject.SetActive(index > 0);
@@ -324,7 +325,7 @@ public class HistoryVideoView : MonoBehaviour
                 Players[seatIndex].SetSeatCharacter(SeatCharacterEnum.SB);
                 Players[seatIndex].DisplayBetAction(true,
                                                     gameInitsHistoryData.CurrBetChipsList[i],
-                                                    BetActionEnum.Blind,
+                                                    BetActionEnum.Blinds,
                                                     false);
             }
             else if (seatIndex == gameInitsHistoryData.BBSeat)
@@ -332,7 +333,7 @@ public class HistoryVideoView : MonoBehaviour
                 Players[seatIndex].SetSeatCharacter(SeatCharacterEnum.BB);
                 Players[seatIndex].DisplayBetAction(true,
                                                     gameInitsHistoryData.CurrBetChipsList[i],
-                                                    BetActionEnum.Blind,
+                                                    BetActionEnum.Blinds,
                                                     false);
             }
         }
@@ -462,7 +463,7 @@ public class HistoryVideoView : MonoBehaviour
         } 
         playVideoWinCoroutine = StartCoroutine(OnWinner(processStepHistoryData.PotWinnerSeatList,
                                                         processStepHistoryData.PotWinChips,
-                                                        "Pot"));
+                                                        $"{LanguageManager.Instance.GetText("Pot")}"));
         yield return playVideoWinCoroutine;
 
         //邊池贏家
@@ -473,7 +474,7 @@ public class HistoryVideoView : MonoBehaviour
         }
         playVideoWinCoroutine = StartCoroutine(OnWinner(processStepHistoryData.SildWinnerSeatList,
                                                         processStepHistoryData.SildWinChips,
-                                                        "Side"));
+                                                        $"{LanguageManager.Instance.GetText("Side")}"));
         //退回籌碼
         if (processStepHistoryData.BackChipsDic != null)
         {
@@ -507,7 +508,7 @@ public class HistoryVideoView : MonoBehaviour
                 }
 
                 //贏得類型顯示
-                WinType_Txt.text = LanguageManager.Instance.GetText(typeStr);
+                WinType_Txt.text = typeStr;
 
                 //贏家顯示
                 foreach (var seat in dataList)
