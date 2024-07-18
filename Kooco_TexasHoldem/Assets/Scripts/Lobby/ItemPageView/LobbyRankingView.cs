@@ -67,8 +67,8 @@ public class LobbyRankingView : MonoBehaviour
         GoldenTog_Txt.text = LanguageManager.Instance.GetText("GOLDEN");
         TimeLestTitle_Txt.text = $"{LanguageManager.Instance.GetText("Time Lest")}:";
         ChangeSeasonBtn_Txt.text = currSeasonType == SeasonType.Current ?
-                                       LanguageManager.Instance.GetText("Previous") :
-                                       LanguageManager.Instance.GetText("Current");
+                                   LanguageManager.Instance.GetText("Previous") :
+                                   LanguageManager.Instance.GetText("Current");
     }
 
     private void OnDestroy()

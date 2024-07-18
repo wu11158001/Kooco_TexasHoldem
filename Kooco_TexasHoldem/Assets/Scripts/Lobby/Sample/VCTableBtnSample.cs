@@ -9,9 +9,31 @@ public class VCTableBtnSample : MonoBehaviour
     [SerializeField]
     Button Launch_Btn;
     [SerializeField]
-    TextMeshProUGUI Blinds_Txt, MinBuy_Txt;
-    [SerializeField]
     GameObject JoinRoomViewObj;
+    [SerializeField]
+    TextMeshProUGUI BlindsStr_Txt, Blinds_Txt,
+                    MinBuyStr_Txt, MinBuy_Txt,
+                    LaunchBtn_Txt;
+
+    /// <summary>
+    /// 更新文本翻譯
+    /// </summary>
+    private void UpdateLanguage()
+    {
+        BlindsStr_Txt.text = LanguageManager.Instance.GetText("Blinds");
+        MinBuyStr_Txt.text = LanguageManager.Instance.GetText("Min Buy-In");
+        LaunchBtn_Txt.text = LanguageManager.Instance.GetText("LAUNCH");
+    }
+
+    private void OnDestroy()
+    {
+        LanguageManager.Instance.RemoveLanguageFun(UpdateLanguage);
+    }
+
+    private void Awake()
+    {
+        LanguageManager.Instance.AddUpdateLanguageFunc(UpdateLanguage);
+    }
 
     /// <summary>
     /// 設定虛擬貨幣桌按鈕訊息

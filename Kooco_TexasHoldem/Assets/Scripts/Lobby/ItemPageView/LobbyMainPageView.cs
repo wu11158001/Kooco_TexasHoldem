@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Linq;
+using TMPro;
 
 public class LobbyMainPageView : MonoBehaviour
 {
@@ -18,12 +19,16 @@ public class LobbyMainPageView : MonoBehaviour
     GameObject CryptoTableBtnSample;
     [SerializeField]
     RectTransform CryptoTableParent;
+    [SerializeField]
+    TextMeshProUGUI CryptoTableTital_Txt;
 
     [Header("虛擬貨幣桌")]
     [SerializeField]
     GameObject VCTableBtnSample;
     [SerializeField]
     RectTransform VCTableParent;
+    [SerializeField]
+    TextMeshProUGUI VCTableTital_Txt;
 
     const string BillbpardBtnName = "BillbpardBtn";         //點擊判斷名稱
     const float BillboardChangeTime = 5;                    //廣告刊版更換時間
@@ -41,8 +46,24 @@ public class LobbyMainPageView : MonoBehaviour
     Vector2 startMousePos;                                  //移動廣告刊版起始移動點
     DateTime billboardStartTime;                            //廣告刊版輪播起始時間
 
+    /// <summary>
+    /// 更新文本翻譯
+    /// </summary>
+    private void UpdateLanguage()
+    {
+        CryptoTableTital_Txt.text = LanguageManager.Instance.GetText("CRYPTO TABLE");
+        VCTableTital_Txt.text = LanguageManager.Instance.GetText("VIRTUAL CURRENCY TABLE");
+    }
+
+    private void OnDestroy()
+    {
+        LanguageManager.Instance.RemoveLanguageFun(UpdateLanguage);
+    }
+
     private void Awake()
     {
+        LanguageManager.Instance.AddUpdateLanguageFunc(UpdateLanguage);
+
         billboardSizeWidth = BillboardSample.GetComponent<RectTransform>().rect.width;
     }
 

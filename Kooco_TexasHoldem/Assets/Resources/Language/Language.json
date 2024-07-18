@@ -115,6 +115,16 @@
     "zh_TW": "至少 8 個字元。"
   },
   {
+    "ID": "CRYPTO TABLE",
+    "English": "CRYPTO TABLE",
+    "zh_TW": "加密貨幣桌"
+  },
+  {
+    "ID": "VIRTUAL CURRENCY TABLE",
+    "English": "VIRTUAL CURRENCY TABLE",
+    "zh_TW": "虛擬貨幣桌"
+  },
+  {
     "ID": "Crypto Table",
     "English": "Crypto Table",
     "zh_TW": "加密貨幣桌"
@@ -238,6 +248,21 @@
     "ID": "Settings",
     "English": "Settings",
     "zh_TW": "設定"
+  },
+  {
+    "ID": "Blinds",
+    "English": "Blinds",
+    "zh_TW": "盲注"
+  },
+  {
+    "ID": "Min Buy-In",
+    "English": "Min Buy-In",
+    "zh_TW": "最低買入額"
+  },
+  {
+    "ID": "LAUNCH",
+    "English": "LAUNCH",
+    "zh_TW": "發射"
   },
   {
     "ID": "錯誤訊息",
