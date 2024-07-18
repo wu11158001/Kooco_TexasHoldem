@@ -300,8 +300,8 @@ public static class DataManager
 
     #region 遊戲
 
-    public static int MaxPlayerCount = 6;               //最大遊戲人數
-    public static int MaxVideoSaveCount = 20;           //最大紀錄影片數量
+    public static int MaxPlayerCount = 6;                                           //最大遊戲人數
+    public static int MaxVideoSaveCount = 20;                                       //最大紀錄影片數量
 
     #endregion
 }

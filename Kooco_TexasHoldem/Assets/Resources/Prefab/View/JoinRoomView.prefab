@@ -267,7 +267,7 @@ MonoBehaviour:
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
   m_Interactable: 1
-  m_TargetGraphic: {fileID: 4851747642159023283}
+  m_TargetGraphic: {fileID: 6300330013264709154}
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
@@ -675,7 +675,7 @@ MonoBehaviour:
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
   m_Interactable: 1
-  m_TargetGraphic: {fileID: 3285765641534010277}
+  m_TargetGraphic: {fileID: 3225740201161290981}
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
@@ -1776,7 +1776,7 @@ MonoBehaviour:
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
   m_Interactable: 1
-  m_TargetGraphic: {fileID: 2448887029389135056}
+  m_TargetGraphic: {fileID: 2572845934840490581}
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
@@ -2218,17 +2218,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   baseRequest: {fileID: 8819878342560726024}
-  Title_Txt: {fileID: 5693679988635765627}
-  SB_Txt: {fileID: 6069781483147745419}
-  BB_Txt: {fileID: 664452254962646676}
-  PreBuyChips_Txt: {fileID: 3344865708499615156}
-  MinBuyChips_Txt: {fileID: 3050535669765721477}
-  MaxBuyChips_Txt: {fileID: 5076660429235420243}
   BuyChips_Sli: {fileID: 1156752187251427586}
   Cancel_Btn: {fileID: 529893571240760427}
   Buy_Btn: {fileID: 6066299126894212644}
   BuyPlus_Btn: {fileID: 8510103836058171503}
   BuyMinus_Btn: {fileID: 1568527260600982240}
+  Title_Txt: {fileID: 5693679988635765627}
+  BlindsTitle_Txt: {fileID: 4491109728580074653}
+  SB_Txt: {fileID: 6069781483147745419}
+  BB_Txt: {fileID: 664452254962646676}
+  PreBuyChips_Txt: {fileID: 3344865708499615156}
+  MinBuyChips_Txt: {fileID: 3050535669765721477}
+  MaxBuyChips_Txt: {fileID: 5076660429235420243}
+  CancelBtn_Txt: {fileID: 2572845934840490581}
+  BuyBtn_Txt: {fileID: 1603493937035676819}
 --- !u!114 &8819878342560726024
 MonoBehaviour:
   m_ObjectHideFlags: 0

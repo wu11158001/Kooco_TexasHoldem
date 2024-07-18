@@ -100,6 +100,16 @@
     "zh_TW": "已複製!"
   },
   {
+    "ID": "Cancel",
+    "English": "Cancel",
+    "zh_TW": "取消"
+  },
+  {
+    "ID": "Buy",
+    "English": "Buy",
+    "zh_TW": "購買"
+  },
+  {
     "ID": "Enter New Password.",
     "English": "Enter New Password.",
     "zh_TW": "輸入新密碼。"
@@ -113,6 +123,11 @@
     "ID": "At Least 8 Chars.",
     "English": "At Least 8 Chars.",
     "zh_TW": "至少 8 個字元。"
+  },
+  {
+    "ID": "INTEGRAL",
+    "English": "INTEGRAL",
+    "zh_TW": "積分"
   },
   {
     "ID": "CRYPTO TABLE",
@@ -173,11 +188,6 @@
     "ID": "P&L",
     "English": "P&L",
     "zh_TW": "交易結果"
-  },
-  {
-    "ID": "INTEGRAL",
-    "English": "INTEGRAL",
-    "zh_TW": "積分"
   },
   {
     "ID": "CASH",
@@ -273,6 +283,11 @@
     "ID": "Hand",
     "English": "Hand",
     "zh_TW": "手牌"
+  },
+  {
+    "ID": "Loading",
+    "English": "Loading",
+    "zh_TW": "載入中"
   },
   {
     "ID": "錯誤訊息",
