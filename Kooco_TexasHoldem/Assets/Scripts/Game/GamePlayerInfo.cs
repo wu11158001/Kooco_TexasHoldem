@@ -12,11 +12,11 @@ public class GamePlayerInfo : MonoBehaviour
 {
     [Header("用戶訊息")]
     [SerializeField]
-    TextMeshProUGUI Nickname_Txt, Chips_Txt, BackChips_Txt, PokerShape_Txt, BlindCharacter_Txt;
-    [SerializeField]
     GameObject ActionFrame_Obj, Winner_Obj, InfoMask_Obj;
     [SerializeField]
     Image CDMask_Img, Avatar_Img, ButtonCharacter_Img;
+    [SerializeField]
+    TextMeshProUGUI Nickname_Txt, Chips_Txt, BackChips_Txt, PokerShape_Txt, BlindCharacter_Txt, Winner_Txt;
 
     [Header("手牌")]
     [SerializeField]
@@ -205,6 +205,7 @@ public class GamePlayerInfo : MonoBehaviour
         set
         {
             Winner_Obj.SetActive(value);
+            Winner_Txt.text = LanguageManager.Instance.GetText("Winner");
         }
     }
 

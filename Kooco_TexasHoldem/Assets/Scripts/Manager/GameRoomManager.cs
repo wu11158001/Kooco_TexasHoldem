@@ -320,7 +320,7 @@ public class GameRoomManager : UnitySingleton<GameRoomManager>
         switchBtnObj.SetParent(SwitchBtnParent);
         switchBtnObj.localScale = Vector3.one;
         SwitchRoomBtn switchRoomBtn = switchBtnObj.GetComponent<SwitchRoomBtn>();
-        switchRoomBtn.SetSwitchBtnInfo(GetRoomName(roomType), roomName, thisData.RoomNameIndex);
+        switchRoomBtn.SetSwitchBtnInfo(GetRoomName(roomType), thisData.RoomNameIndex);
         switchRoomBtn.SetSelectFrameActive = true;
 
         thisData.SwitchBtnList.Add(switchRoomBtn);

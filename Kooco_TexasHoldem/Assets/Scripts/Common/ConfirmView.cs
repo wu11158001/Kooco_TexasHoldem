@@ -8,11 +8,12 @@ using UnityEngine.Events;
 public class ConfirmView : MonoBehaviour
 {
     [SerializeField]
-    TextMeshProUGUI Title_Txt, Content_Txt;
-    [SerializeField]
     Image Content_Img;
     [SerializeField]
     Button Close_Btn, Cancel_Btn, Confirm_Btn;
+    [SerializeField]
+    TextMeshProUGUI Title_Txt, Content_Txt,
+                    CancelBtn_Txt, ConfirmBtn_Txt;
 
     /// <summary>
     /// 設定確認介面內容
@@ -27,6 +28,9 @@ public class ConfirmView : MonoBehaviour
 
         Content_Img.gameObject.SetActive(contentSp != null);
         Content_Img.sprite = contentSp;
+
+        CancelBtn_Txt.text = LanguageManager.Instance.GetText("Cancel");
+        ConfirmBtn_Txt.text = LanguageManager.Instance.GetText("Confirm");
     }
 
     /// <summary>

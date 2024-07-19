@@ -4,16 +4,18 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
 using TMPro;
-using RequestBuf;
 
 public class BuyChipsView : MonoBehaviour
 {
     [SerializeField]
-    TextMeshProUGUI Title_Txt, SB_Txt, BB_Txt, PreBuyChips_Txt, MinBuyChips_Txt, MaxBuyChips_Txt;
-    [SerializeField]
     Slider BuyChips_Sli;
     [SerializeField]
     Button Cancel_Btn, Buy_Btn, BuyPlus_Btn, BuyMinus_Btn;
+    [SerializeField]
+    TextMeshProUGUI Title_Txt, BlindsTitle_Txt,
+                    SB_Txt, BB_Txt, PreBuyChips_Txt, 
+                    MinBuyChips_Txt, MaxBuyChips_Txt,
+                    CancelBtn_Txt, BuyBtn_Txt;
 
     private ThisData thisData;
     public class ThisData
@@ -24,8 +26,24 @@ public class BuyChipsView : MonoBehaviour
         public UnityAction<double> SendBuyChipsCallback;      //發送購買籌碼回傳
     }
 
+    /// <summary>
+    /// 更新文本翻譯
+    /// </summary>
+    private void UpdateLanguage()
+    {
+        BlindsTitle_Txt.text = LanguageManager.Instance.GetText("Blinds");
+        CancelBtn_Txt.text = LanguageManager.Instance.GetText("Cancel");
+        BuyBtn_Txt.text = LanguageManager.Instance.GetText("Buy");
+    }
+
+    private void OnDestroy()
+    {
+        LanguageManager.Instance.RemoveLanguageFun(UpdateLanguage);
+    }
+
     public void Awake()
     {
+        LanguageManager.Instance.AddUpdateLanguageFunc(UpdateLanguage);
         ListenerEvent();
     }
 
@@ -116,7 +134,7 @@ public class BuyChipsView : MonoBehaviour
                 maxBuyChipsStr = $"{StringUtils.SetChipsUnit(DataManager.UserVCChips)}";
                 break;
         }
-        Title_Txt.text = titleStr;
+        Title_Txt.text = LanguageManager.Instance.GetText(titleStr);
 
         SB_Txt.text = $"{smallBlind} /";
         BB_Txt.text = $"{smallBlind * 2}";

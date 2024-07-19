@@ -27,19 +27,17 @@ public class GameView : MonoBehaviour
     [SerializeField]
     Button Raise_Btn, Call_Btn, Fold_Btn;
     [SerializeField]
-    TextMeshProUGUI RaiseBtn_Txt, CallBtn, FoldBtn_Txt;
-    [SerializeField]
     RectTransform AutoActionFrame_Tr;
     [SerializeField]
     Button[] ShowPokerBtnList;
     [SerializeField]
     Button BackToSit_Btn;
+    [SerializeField]
+    TextMeshProUGUI RaiseBtn_Txt, CallBtn, FoldBtn_Txt, BackToSitBtn_Txt;
 
     [Header("加注操作")]
     [SerializeField]
     List<Button> PotPercentRaiseBtnList;
-    [SerializeField]
-    List<TextMeshProUGUI> PotPercentRaiseTxtList;
     [SerializeField]
     Slider Raise_Sli;
     [SerializeField]
@@ -47,15 +45,17 @@ public class GameView : MonoBehaviour
     [SerializeField]
     SliderClickDetection SliderClickDetection;
     [SerializeField]
-    TextMeshProUGUI RaiseSliHandle_Txt, CurrRaise_Txt, MinRaiseBtn_Txt;
-    [SerializeField]
     Button AllIn_Btn, MinRaise_Btn;
+    [SerializeField]
+    List<TextMeshProUGUI> PotPercentRaiseTxtList;
+    [SerializeField]
+    TextMeshProUGUI RaiseSliHandle_Txt, CurrRaise_Txt, MinRaiseBtn_Txt;
 
     [Header("底池")]
     [SerializeField]
-    TextMeshProUGUI TotalPot_Txt, Tip_Txt, WinType_Txt;
-    [SerializeField]
     Image Pot_Img;
+    [SerializeField]
+    TextMeshProUGUI TotalPot_Txt, Tip_Txt, WinType_Txt;
 
     [Header("公共牌")]
     [SerializeField]
@@ -67,9 +67,11 @@ public class GameView : MonoBehaviour
     [SerializeField]
     Button Menu_Btn, MenuClose_Btn, SitOut_Btn, BuyChips_Btn, LogOut_Btn, HandHistory_Btn;
     [SerializeField]
-    TextMeshProUGUI SitOutBtn_Txt, MenuNickname_Txt, MenuWalletAddr_Txt;
-    [SerializeField]
     Image MenuAvatar_Img;
+    [SerializeField]
+    TextMeshProUGUI MenuCloseBtn_Txt, SitOutBtn_Txt, BuyChipsBtn_Txt, HandHistoryBtn_Txt,
+                    LogOutBtn_Txt, GameSettingsBtn_Txt,
+                    MenuNickname_Txt, MenuWalletAddr_Txt;
 
     [Header("聊天")]
     [SerializeField]
@@ -77,19 +79,24 @@ public class GameView : MonoBehaviour
     [SerializeField]
     Button Chat_Btn, ChatClose_Btn, ChatSend_Btn, NewMessage_Btn;
     [SerializeField]
-    TMP_InputField Chat_If;
-    [SerializeField]
     GameObject OtherChatSample, LocalChatSample;
     [SerializeField]
     ScrollRect ChatArea_Sr;
     [SerializeField]
-    TextMeshProUGUI NotReadChat_Txt;
+    TMP_InputField Chat_If;
+    [SerializeField]
+    TextMeshProUGUI NotReadChat_Txt, NewMessageBtn_Txt, 
+                    ChatSendBtn_Txt, ChatIf_Placeholder;
 
     [Header("手牌紀錄")]
     [SerializeField]
     RectTransform HandHistoryPage_Tr;
     [SerializeField]
     Button HandHistoryClose_Btn;
+    [SerializeField]
+    Image HandHistoryTip_Img;
+    [SerializeField]
+    TextMeshProUGUI HandHistoryTitle_Txt, HandHistoryTip_Txt;
 
     [Header("購買籌碼")]
     [SerializeField]
@@ -121,7 +128,7 @@ public class GameView : MonoBehaviour
         2.1f, 2.5f, 3.0f, 4.0f,
     };
 
-    const int MaxChatCount = 5;                                //保留聊天最大訊息數
+    const int MaxChatCount = 50;                                //保留聊天最大訊息數
 
     ObjPool objPool;
     List<GamePlayerInfo> gamePlayerInfoList;                    //玩家資料
@@ -216,8 +223,49 @@ public class GameView : MonoBehaviour
         FoldBtn_Txt.text = LanguageManager.Instance.GetText(strData.FoldStr);
         CallBtn.text = LanguageManager.Instance.GetText(strData.CallStr) + strData.CallValueStr;
         RaiseBtn_Txt.text = LanguageManager.Instance.GetText(strData.RaiseStr) + strData.RaiseValueStr;
+        BackToSitBtn_Txt.text = LanguageManager.Instance.GetText("Back To Sit");
 
         #endregion
+
+        #region 選單
+
+        MenuCloseBtn_Txt.text = LanguageManager.Instance.GetText("MENU");
+        BuyChipsBtn_Txt.text = LanguageManager.Instance.GetText("Buy Chips");
+        HandHistoryBtn_Txt.text = LanguageManager.Instance.GetText("Hand History");
+        LogOutBtn_Txt.text = LanguageManager.Instance.GetText("Log Out");
+        GameSettingsBtn_Txt.text = LanguageManager.Instance.GetText("Game Settings");
+
+        #endregion
+
+        #region 聊天
+
+        NewMessageBtn_Txt.text = LanguageManager.Instance.GetText("New Message");
+        ChatSendBtn_Txt.text = LanguageManager.Instance.GetText("Send");
+        ChatIf_Placeholder.text = LanguageManager.Instance.GetText("Enter text...");
+
+        #endregion
+
+        #region 手牌紀錄
+
+        HandHistoryTitle_Txt.text = LanguageManager.Instance.GetText("HAND HISTORY");
+        HandHistoryTip_Txt.text = LanguageManager.Instance.GetText("Show last 20 hands");
+        StringUtils.TextInFrontOfImageFollow(HandHistoryTip_Txt,
+                                             HandHistoryTip_Img);
+
+        #endregion
+
+        SetSitOutDisplay();
+    }
+
+    private void OnDisable()
+    {
+        OnRemoveData();
+    }
+
+    private void OnDestroy()
+    {
+        LanguageManager.Instance.RemoveLanguageFun(UpdateLanguage);
+        OnRemoveData();
     }
 
     public void Awake()
@@ -279,8 +327,8 @@ public class GameView : MonoBehaviour
         LogOut_Btn.onClick.AddListener(() =>
         {
             ConfirmView confirmView = ViewManager.Instance.OpenConfirmView();
-            confirmView.SetContent("return to the lobby?",
-                                    "If you leave now, you will not be able to get back your staked chips.");
+            confirmView.SetContent(LanguageManager.Instance.GetText("return to the lobby?"),
+                                   LanguageManager.Instance.GetText("If you leave now, you will not be able to get back your staked chips."));
             confirmView.SetBnt(() =>
             {
                 GameRoomManager.Instance.RemoveGameRoom(transform.name);
@@ -308,7 +356,7 @@ public class GameView : MonoBehaviour
         SitOut_Btn.onClick.AddListener(() =>
         {
             thisData.IsSitOut = !thisData.IsSitOut;
-            SetSitOutDisplay(thisData.IsSitOut);
+            SetSitOutDisplay();
             baseRequest.SendRequest_SitOut(thisData.IsSitOut);
 
             CloseMenu();
@@ -322,7 +370,7 @@ public class GameView : MonoBehaviour
         BackToSit_Btn.onClick.AddListener(() =>
         {
             thisData.IsSitOut = false;
-            SetSitOutDisplay(thisData.IsSitOut);
+            SetSitOutDisplay();
             baseRequest.SendRequest_SitOut(thisData.IsSitOut);
         });
 
@@ -349,7 +397,7 @@ public class GameView : MonoBehaviour
             strData.RaiseValueStr = newRaiseValue >= thisData.LocalPlayerChips ?
                                     $"\n{StringUtils.SetChipsUnit(thisData.LocalPlayerChips)}" :
                                     $"\n{StringUtils.SetChipsUnit(newRaiseValue)}";
-            //RaiseBtn_Txt.text = LanguageManager.Instance.GetText(strData.RaiseStr) + strData.RaiseValueStr;
+            RaiseBtn_Txt.text = LanguageManager.Instance.GetText(strData.RaiseStr) + strData.RaiseValueStr;
 
             SetRaiseToText = newRaiseValue;
             thisData.CurrRaiseValue = (int)newRaiseValue;
@@ -526,7 +574,7 @@ public class GameView : MonoBehaviour
     {
         thisData = new ThisData();
         thisData.IsPlaying = false;
-        SetSitOutDisplay(false);
+        SetSitOutDisplay();
 
         strData = new StrData();
 
@@ -553,6 +601,7 @@ public class GameView : MonoBehaviour
 
         Init();
         GameInit();
+        LanguageManager.Instance.AddUpdateLanguageFunc(UpdateLanguage);
     }
 
     private void Start()
@@ -564,8 +613,6 @@ public class GameView : MonoBehaviour
         MenuPage_Tr.gameObject.SetActive(false);
         ChatPage_Tr.gameObject.SetActive(false);
         HandHistoryPage_Tr.gameObject.SetActive(false);
-
-        LanguageManager.Instance.AddUpdateLanguageFunc(UpdateLanguage);
     }
 
     private void Update()
@@ -652,19 +699,18 @@ public class GameView : MonoBehaviour
     /// <summary>
     /// 設置離/回座顯示
     /// </summary>
-    /// <param name="isSitOut"></param>
-    private void SetSitOutDisplay(bool isSitOut)
+    private void SetSitOutDisplay()
     {
         SitOutBtn_Txt.text = thisData.IsSitOut ?
-                             "Back To Sit" :
-                             "Next Rount Sit Out";
+                             $"{LanguageManager.Instance.GetText("Back To Sit")}" :
+                             $"{LanguageManager.Instance.GetText("Sit out next hand")}";
 
         if (!thisData.IsPlaying)
         {
             BackToSit_Btn.gameObject.SetActive(thisData.IsSitOut);
             Tip_Txt.text = thisData.IsSitOut ?
                            "" :
-                           "Waiting...";
+                           $"{LanguageManager.Instance.GetText("Waiting for the next round...")}";
         }
     }
 
@@ -678,8 +724,8 @@ public class GameView : MonoBehaviour
             if (value >= thisData.LocalPlayerChips)
             {
                 //All In
-                CurrRaise_Txt.text = $"All In";
-                RaiseSliHandle_Txt.text = $"All In";
+                CurrRaise_Txt.text = LanguageManager.Instance.GetText("AllIn");
+                RaiseSliHandle_Txt.text = LanguageManager.Instance.GetText("AllIn");
             }
             else
             {
@@ -825,7 +871,7 @@ public class GameView : MonoBehaviour
     /// </summary>
     public void Init()
     {
-        Tip_Txt.text = $"{LanguageManager.Instance.GetText("Waiting")}...";
+        Tip_Txt.text = $"{LanguageManager.Instance.GetText("Waiting for the next round...")}";
         strData.FoldStr = "CheckOrFold";
         FoldBtn_Txt.text = LanguageManager.Instance.GetText(strData.FoldStr);
         strData.CallStr = "Check";
@@ -1901,7 +1947,7 @@ public class GameView : MonoBehaviour
 
                 HandPokerLicensing(pack.LicensingStagePack.HandPokerDic);
                 SetButtonSeat(pack.LicensingStagePack.ButtonSeatId);
-                SetSitOutDisplay(thisData.IsSitOut);
+                SetSitOutDisplay();
                 break;
 
             //大小盲
@@ -2278,16 +2324,5 @@ public class GameView : MonoBehaviour
     {
         thisData = null;
         StopAllCoroutines();
-    }
-
-    private void OnDisable()
-    {
-        OnRemoveData();
-    }
-
-    private void OnDestroy()
-    {
-        LanguageManager.Instance.RemoveLanguageFun(UpdateLanguage);
-        OnRemoveData();
     }
 }

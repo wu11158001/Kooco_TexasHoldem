@@ -1622,17 +1622,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab1446eed2a9dd04998b7c8123f37634, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Nickname_Txt: {fileID: 5692360153272519685}
-  Chips_Txt: {fileID: 7190155709451056350}
-  BackChips_Txt: {fileID: 3050555929480799815}
-  PokerShape_Txt: {fileID: 4248226365171403388}
-  BlindCharacter_Txt: {fileID: 9133265238706687232}
   ActionFrame_Obj: {fileID: 4744875307746458263}
   Winner_Obj: {fileID: 2235761810662541378}
   InfoMask_Obj: {fileID: 6083374891319791226}
   CDMask_Img: {fileID: 3691945924851990027}
   Avatar_Img: {fileID: 3608347479597064850}
   ButtonCharacter_Img: {fileID: 1289473406143166504}
+  Nickname_Txt: {fileID: 5692360153272519685}
+  Chips_Txt: {fileID: 7190155709451056350}
+  BackChips_Txt: {fileID: 3050555929480799815}
+  PokerShape_Txt: {fileID: 4248226365171403388}
+  BlindCharacter_Txt: {fileID: 9133265238706687232}
+  Winner_Txt: {fileID: 9128626508004737227}
   HandPoker_Tr: {fileID: 4004839333868821721}
   HandPokers:
   - {fileID: 7601145433908172516}

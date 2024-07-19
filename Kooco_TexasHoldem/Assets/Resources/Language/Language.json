@@ -105,9 +105,44 @@
     "zh_TW": "取消"
   },
   {
+    "ID": "Confirm",
+    "English": "Confirm",
+    "zh_TW": "確認"
+  },
+  {
     "ID": "Buy",
     "English": "Buy",
     "zh_TW": "購買"
+  },
+  {
+    "ID": "Enter text...",
+    "English": "Enter text...",
+    "zh_TW": "輸入文字..."
+  },
+  {
+    "ID": "Send",
+    "English": "Send",
+    "zh_TW": "傳送訊息"
+  },
+  {
+    "ID": "Hand",
+    "English": "Hand",
+    "zh_TW": "手牌"
+  },
+  {
+    "ID": "Loading",
+    "English": "Loading",
+    "zh_TW": "載入中"
+  },
+  {
+    "ID": "Win",
+    "English": "Win",
+    "zh_TW": "獲勝"
+  },
+  {
+    "ID": "Fail",
+    "English": "Fail",
+    "zh_TW": "失敗"
   },
   {
     "ID": "Enter New Password.",
@@ -138,6 +173,16 @@
     "ID": "VIRTUAL CURRENCY TABLE",
     "English": "VIRTUAL CURRENCY TABLE",
     "zh_TW": "虛擬貨幣桌"
+  },
+  {
+    "ID": "CRYPTO",
+    "English": "CRYPTO",
+    "zh_TW": "加密桌"
+  },
+  {
+    "ID": "VC",
+    "English": "VC",
+    "zh_TW": "虛擬桌"
   },
   {
     "ID": "Integral Table",
@@ -255,6 +300,11 @@
     "zh_TW": "社群媒體"
   },
   {
+    "ID": "HAND HISTORY",
+    "English": "HAND HISTORY",
+    "zh_TW": "手牌紀錄"
+  },
+  {
     "ID": "Hand History",
     "English": "Hand History",
     "zh_TW": "手牌紀錄"
@@ -263,11 +313,6 @@
     "ID": "Settings",
     "English": "Settings",
     "zh_TW": "設定"
-  },
-  {
-    "ID": "Blinds",
-    "English": "Blinds",
-    "zh_TW": "盲注"
   },
   {
     "ID": "Min Buy-In",
@@ -280,14 +325,19 @@
     "zh_TW": "發射"
   },
   {
-    "ID": "Hand",
-    "English": "Hand",
-    "zh_TW": "手牌"
+    "ID": "詢問彈窗",
+    "English": null,
+    "zh_TW": null
   },
   {
-    "ID": "Loading",
-    "English": "Loading",
-    "zh_TW": "載入中"
+    "ID": "return to the lobby?",
+    "English": "return to the lobby?",
+    "zh_TW": "返回大廳？"
+  },
+  {
+    "ID": "If you leave now, you will not be able to get back your staked chips.",
+    "English": "If you leave now, you will not be able to get back your staked chips.",
+    "zh_TW": "如果您現在離開，您將無法取回質押的籌碼。"
   },
   {
     "ID": "錯誤訊息",
@@ -620,44 +670,9 @@
     "zh_TW": "已顯示最近20局手牌"
   },
   {
-    "ID": "遊戲",
+    "ID": "德州撲克遊戲",
     "English": null,
     "zh_TW": null
-  },
-  {
-    "ID": "Waiting",
-    "English": "Waiting",
-    "zh_TW": "等待下一局"
-  },
-  {
-    "ID": "Check",
-    "English": "Check",
-    "zh_TW": "過牌"
-  },
-  {
-    "ID": "Fold",
-    "English": "Fold",
-    "zh_TW": "棄牌"
-  },
-  {
-    "ID": "CallAny",
-    "English": "Call Any",
-    "zh_TW": "任何跟注"
-  },
-  {
-    "ID": "Raise",
-    "English": "Raise",
-    "zh_TW": "加注"
-  },
-  {
-    "ID": "Call",
-    "English": "Call",
-    "zh_TW": "跟注"
-  },
-  {
-    "ID": "RaiseTo",
-    "English": "Raise To",
-    "zh_TW": "加注至"
   },
   {
     "ID": "Pot",
@@ -670,9 +685,29 @@
     "zh_TW": "邊池"
   },
   {
-    "ID": "Blind",
-    "English": "Blind",
+    "ID": "Blinds",
+    "English": "Blinds",
     "zh_TW": "盲注"
+  },
+  {
+    "ID": "Check",
+    "English": "Check",
+    "zh_TW": "過牌"
+  },
+  {
+    "ID": "Fold",
+    "English": "Fold",
+    "zh_TW": "棄牌"
+  },
+  {
+    "ID": "Raise",
+    "English": "Raise",
+    "zh_TW": "加注"
+  },
+  {
+    "ID": "Call",
+    "English": "Call",
+    "zh_TW": "跟注"
   },
   {
     "ID": "AllIn",
@@ -680,24 +715,74 @@
     "zh_TW": "All In"
   },
   {
-    "ID": "PotWinner",
-    "English": "Pot Winner",
-    "zh_TW": "底池贏家"
+    "ID": "CallAny",
+    "English": "Call Any",
+    "zh_TW": "任何跟注"
   },
   {
-    "ID": "SideWinner",
-    "English": "Side Winner",
-    "zh_TW": "邊池贏家"
-  },
-  {
-    "ID": "ExitRoom",
-    "English": "Exit Room",
-    "zh_TW": "退出牌局"
+    "ID": "RaiseTo",
+    "English": "RaiseTo",
+    "zh_TW": "加注至"
   },
   {
     "ID": "CheckOrFold",
     "English": "Check / Fold",
     "zh_TW": "過牌 / 棄牌"
+  },
+  {
+    "ID": "Winner",
+    "English": "Winner",
+    "zh_TW": "贏家"
+  },
+  {
+    "ID": "Waiting for the next round...",
+    "English": "Waiting for the next round...",
+    "zh_TW": "等待下一局..."
+  },
+  {
+    "ID": "Back To Sit",
+    "English": "Back To Sit",
+    "zh_TW": "回到座位"
+  },
+  {
+    "ID": "Sit out next hand",
+    "English": "Sit out next hand",
+    "zh_TW": "下一局留座離桌"
+  },
+  {
+    "ID": "遊戲內選單",
+    "English": null,
+    "zh_TW": null
+  },
+  {
+    "ID": "MENU",
+    "English": "MENU",
+    "zh_TW": "選單"
+  },
+  {
+    "ID": "Buy Chips",
+    "English": "Buy Chips",
+    "zh_TW": "購買籌碼"
+  },
+  {
+    "ID": "Log Out",
+    "English": "Log Out",
+    "zh_TW": "登出"
+  },
+  {
+    "ID": "Game Settings",
+    "English": "Game Settings",
+    "zh_TW": "遊戲設定"
+  },
+  {
+    "ID": "聊天",
+    "English": null,
+    "zh_TW": null
+  },
+  {
+    "ID": "New Message",
+    "English": "New Message",
+    "zh_TW": "新訊息"
   },
   {
     "ID": "牌型名稱",

@@ -13,7 +13,7 @@ public class SwitchRoomBtn : MonoBehaviour
     [SerializeField]
     RectTransform selectFrame_Tr;
 
-    private string btnStr;
+    private string roomName;
 
     public int BtnIndex { get; set; }
 
@@ -22,9 +22,9 @@ public class SwitchRoomBtn : MonoBehaviour
     /// </summary>
     private void UpdateLanguage()
     {
-        if (!string.IsNullOrEmpty(btnStr))
+        if (!string.IsNullOrEmpty(roomName))
         {
-            roomName_Txt.text = LanguageManager.Instance.GetText(btnStr);
+            roomName_Txt.text = LanguageManager.Instance.GetText(roomName);
         }
     }
 
@@ -47,13 +47,13 @@ public class SwitchRoomBtn : MonoBehaviour
     /// <summary>
     /// 設置切換房間按鈕訊息
     /// </summary>
-    /// <param name="btnStr"></param>
     /// <param name="roomName"></param>
-    public void SetSwitchBtnInfo(string btnStr, string roomName, int btnIndex)
+    /// <param name="btnIndex"></param>
+    public void SetSwitchBtnInfo(string roomName, int btnIndex)
     {
-        BtnIndex = btnIndex;
-        this.btnStr = btnStr;
-        roomName_Txt.text = btnStr;
+        this.BtnIndex = btnIndex;
+        this.roomName = roomName;
+        roomName_Txt.text = roomName;
         thisBtn.onClick.AddListener(() =>
         {
             GameRoomManager.Instance.SwitchBtnClick(btnIndex);

@@ -43,8 +43,10 @@ public class BattleResultView : MonoBehaviour
     public void OnSetBattleResult(bool isWin, string roomName)
     {
         thidData.RoomName = roomName;
-        string resultStr = isWin ? "Win" : "Fail";
+        string resultStr = isWin ?
+                           LanguageManager.Instance.GetText("Win") :
+                           LanguageManager.Instance.GetText("Fail");
         result_Txt.text = resultStr;
-        confirmBtn_Txt.text = "Confirm";
+        confirmBtn_Txt.text = LanguageManager.Instance.GetText("Confirm");
     }
 }

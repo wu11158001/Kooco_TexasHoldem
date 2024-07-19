@@ -5,8 +5,6 @@ using UnityEngine.UI;
 using UnityEngine.Events;
 using TMPro;
 
-using RequestBuf;
-
 public class JoinRoomView : MonoBehaviour
 {
     [SerializeField]
@@ -17,9 +15,9 @@ public class JoinRoomView : MonoBehaviour
     Button Cancel_Btn, Buy_Btn, BuyPlus_Btn, BuyMinus_Btn;
     [SerializeField]
     TextMeshProUGUI Title_Txt, BlindsTitle_Txt,
-                SB_Txt, BB_Txt, PreBuyChips_Txt,
-                MinBuyChips_Txt, MaxBuyChips_Txt,
-                CancelBtn_Txt, BuyBtn_Txt;
+                    SB_Txt, BB_Txt, PreBuyChips_Txt,
+                    MinBuyChips_Txt, MaxBuyChips_Txt,
+                    CancelBtn_Txt, BuyBtn_Txt;
 
     double smallBlind;                  //小盲值
     TableTypeEnum tableType;            //房間類型

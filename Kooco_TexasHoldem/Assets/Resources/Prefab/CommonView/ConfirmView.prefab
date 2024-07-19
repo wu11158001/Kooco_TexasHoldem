@@ -261,7 +261,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: CONFIRM
+  m_text: Confirm
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -397,7 +397,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: CANCEL
+  m_text: Cancel
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -1329,12 +1329,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 55ae97cbd7ec00d49859d0d4dc9848d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Title_Txt: {fileID: 5337669527528911516}
-  Content_Txt: {fileID: 1995664289017617084}
   Content_Img: {fileID: 1960570181022677089}
   Close_Btn: {fileID: 727135632368631804}
   Cancel_Btn: {fileID: 2650971166009427792}
   Confirm_Btn: {fileID: 3009354933230391400}
+  Title_Txt: {fileID: 5337669527528911516}
+  Content_Txt: {fileID: 1995664289017617084}
+  CancelBtn_Txt: {fileID: 3841248413214979802}
+  ConfirmBtn_Txt: {fileID: 4246855302012318737}
 --- !u!222 &8569033773369755215
 CanvasRenderer:
   m_ObjectHideFlags: 0

@@ -25,7 +25,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4674370421815969}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -35,7 +35,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -85, y: 0}
+  m_AnchoredPosition: {x: -86.6264, y: -13.475647}
   m_SizeDelta: {x: 25, y: 25}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1186637120015955953
@@ -557,7 +557,7 @@ MonoBehaviour:
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
   m_Interactable: 1
-  m_TargetGraphic: {fileID: 3133532834807362634}
+  m_TargetGraphic: {fileID: 1438474977320226969}
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
@@ -1346,10 +1346,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 6391359319741976248}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 33.99997}
-  m_SizeDelta: {x: 0, y: -70}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 20.524353}
+  m_SizeDelta: {x: 100, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7164973249532258228
 CanvasRenderer:
@@ -1550,7 +1550,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4883161593437170706}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1560,7 +1560,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 17.5, y: 0}
+  m_AnchoredPosition: {x: 15.873596, y: -13.475647}
   m_SizeDelta: {x: 25, y: 25}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1235705815789564526
@@ -1718,7 +1718,7 @@ MonoBehaviour:
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
   m_Interactable: 1
-  m_TargetGraphic: {fileID: 3599798634183882654}
+  m_TargetGraphic: {fileID: 4923388051759605399}
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
@@ -2058,8 +2058,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 65}
-  m_SizeDelta: {x: 100, y: 100}
+  m_AnchoredPosition: {x: 0, y: 78.47562}
+  m_SizeDelta: {x: 245.25, y: 73.0488}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &7564755892930331617
 GameObject:
@@ -2112,17 +2112,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e842eddc6c423554baf93400f01b931a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Title_Txt: {fileID: 3233364502679837549}
-  SB_Txt: {fileID: 4310923904099757008}
-  BB_Txt: {fileID: 3958707156377036279}
-  PreBuyChips_Txt: {fileID: 4749730601948986648}
-  MinBuyChips_Txt: {fileID: 4464387751575893391}
-  MaxBuyChips_Txt: {fileID: 2396145212709245986}
   BuyChips_Sli: {fileID: 1777264493382083182}
   Cancel_Btn: {fileID: 251296389950278430}
   Buy_Btn: {fileID: 153470564943522666}
   BuyPlus_Btn: {fileID: 4389323938999036524}
   BuyMinus_Btn: {fileID: 1655112945363625092}
+  Title_Txt: {fileID: 3233364502679837549}
+  BlindsTitle_Txt: {fileID: 628529644172058529}
+  SB_Txt: {fileID: 4310923904099757008}
+  BB_Txt: {fileID: 3958707156377036279}
+  PreBuyChips_Txt: {fileID: 4749730601948986648}
+  MinBuyChips_Txt: {fileID: 4464387751575893391}
+  MaxBuyChips_Txt: {fileID: 2396145212709245986}
+  CancelBtn_Txt: {fileID: 6667088389123610949}
+  BuyBtn_Txt: {fileID: 7565712001324658428}
 --- !u!222 &265656182725162527
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2709,7 +2712,7 @@ MonoBehaviour:
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
   m_Interactable: 1
-  m_TargetGraphic: {fileID: 4819333214849132692}
+  m_TargetGraphic: {fileID: 6667088389123610949}
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []

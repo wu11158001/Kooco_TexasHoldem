@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 1977965747112051506}
   - component: {fileID: 7082580612432146819}
   m_Layer: 5
-  m_Name: Tip_Txt
+  m_Name: HandHistoryTip_Txt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -29,13 +29,14 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 1579194827568252106}
   m_Father: {fileID: 2520460153030292112}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 250, y: 30}
+  m_SizeDelta: {x: 250, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1977965747112051506
 CanvasRenderer:
@@ -65,7 +66,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Displayed the last 20 hands
+  m_text: Show last 20 hands
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 67393bfc3a860b042baa08f7fbeadd93, type: 2}
   m_sharedMaterial: {fileID: -4543751221255232905, guid: 67393bfc3a860b042baa08f7fbeadd93, type: 2}
@@ -148,7 +149,7 @@ GameObject:
   - component: {fileID: 1349193031018586482}
   - component: {fileID: 4481104843469831323}
   m_Layer: 5
-  m_Name: MenuCloseB_Txt
+  m_Name: MenuCloseBtn_Txt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -498,9 +499,9 @@ RectTransform:
   - {fileID: 7895365819809019848}
   m_Father: {fileID: 7161370105925558879}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 145, y: -35}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 280, y: 60}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1713344487209717816
@@ -2690,7 +2691,6 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8323467558226953115}
-  - {fileID: 1579194827568252106}
   m_Father: {fileID: 6442408185117287109}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
@@ -3419,7 +3419,7 @@ GameObject:
   - component: {fileID: 1450785476364526418}
   - component: {fileID: 568007034792089186}
   m_Layer: 5
-  m_Name: Placeholder
+  m_Name: ChatIf_Placeholder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3474,8 +3474,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Enter text...
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 67393bfc3a860b042baa08f7fbeadd93, type: 2}
+  m_sharedMaterial: {fileID: -4543751221255232905, guid: 67393bfc3a860b042baa08f7fbeadd93, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -5394,36 +5394,37 @@ MonoBehaviour:
   Raise_Btn: {fileID: 1731130837798298710}
   Call_Btn: {fileID: 4507901033771419328}
   Fold_Btn: {fileID: 415474277880085598}
-  RaiseBtn_Txt: {fileID: 6015941751485632776}
-  CallBtn: {fileID: 4521782613114109918}
-  FoldBtn_Txt: {fileID: 8475580012239651252}
   AutoActionFrame_Tr: {fileID: 3645123124189837803}
   ShowPokerBtnList:
   - {fileID: 6442092456366520562}
   - {fileID: 8007092420552672186}
   BackToSit_Btn: {fileID: 1598480768956187184}
+  RaiseBtn_Txt: {fileID: 6015941751485632776}
+  CallBtn: {fileID: 4521782613114109918}
+  FoldBtn_Txt: {fileID: 8475580012239651252}
+  BackToSitBtn_Txt: {fileID: 6619515098594045456}
   PotPercentRaiseBtnList:
   - {fileID: 5216915589376090378}
   - {fileID: 2921993457749449628}
   - {fileID: 1701668260700964692}
   - {fileID: 6013136028255321375}
+  Raise_Sli: {fileID: 4696743092089770123}
+  Raise_Tr: {fileID: 6108999664203616627}
+  SliderClickDetection: {fileID: 5426683795672595269}
+  AllIn_Btn: {fileID: 7689949609802353301}
+  MinRaise_Btn: {fileID: 3333210110953860074}
   PotPercentRaiseTxtList:
   - {fileID: 6442800447696027711}
   - {fileID: 1500415735827729625}
   - {fileID: 3027319285148525818}
   - {fileID: 201501599610511644}
-  Raise_Sli: {fileID: 4696743092089770123}
-  Raise_Tr: {fileID: 6108999664203616627}
-  SliderClickDetection: {fileID: 5426683795672595269}
   RaiseSliHandle_Txt: {fileID: 5630185997043779327}
   CurrRaise_Txt: {fileID: 8884150533659415671}
   MinRaiseBtn_Txt: {fileID: 7823426256816929200}
-  AllIn_Btn: {fileID: 7689949609802353301}
-  MinRaise_Btn: {fileID: 3333210110953860074}
+  Pot_Img: {fileID: 3133094170602993138}
   TotalPot_Txt: {fileID: 1008066242075854149}
   Tip_Txt: {fileID: 8994459488410692222}
   WinType_Txt: {fileID: 8013912900794345424}
-  Pot_Img: {fileID: 3133094170602993138}
   CommunityPokerList:
   - {fileID: 8268409361159707680}
   - {fileID: 7205486240772552194}
@@ -5437,10 +5438,15 @@ MonoBehaviour:
   BuyChips_Btn: {fileID: 6598117583903154225}
   LogOut_Btn: {fileID: 2345417321227503460}
   HandHistory_Btn: {fileID: 9013087433615290804}
+  MenuAvatar_Img: {fileID: 5057604088493802312}
+  MenuCloseBtn_Txt: {fileID: 4481104843469831323}
   SitOutBtn_Txt: {fileID: 2628417778852843349}
+  BuyChipsBtn_Txt: {fileID: 6912386848046429537}
+  HandHistoryBtn_Txt: {fileID: 8370710027419231943}
+  LogOutBtn_Txt: {fileID: 3690674205276075214}
+  GameSettingsBtn_Txt: {fileID: 1646863608274377459}
   MenuNickname_Txt: {fileID: 7645453557826017615}
   MenuWalletAddr_Txt: {fileID: 6228956401512909656}
-  MenuAvatar_Img: {fileID: 5057604088493802312}
   ChatPage_Tr: {fileID: 2650940697778809434}
   ChatContent_Tr: {fileID: 7161370105925558879}
   NotReadChat_Tr: {fileID: 549597411896904175}
@@ -5448,13 +5454,19 @@ MonoBehaviour:
   ChatClose_Btn: {fileID: 3246562491949423702}
   ChatSend_Btn: {fileID: 4799246849655263717}
   NewMessage_Btn: {fileID: 2683976295927941584}
-  Chat_If: {fileID: 2692987931153142205}
   OtherChatSample: {fileID: 552192274331787213}
   LocalChatSample: {fileID: 8650875614192055968}
   ChatArea_Sr: {fileID: 7660861425399434392}
+  Chat_If: {fileID: 2692987931153142205}
   NotReadChat_Txt: {fileID: 7573914742494665441}
+  NewMessageBtn_Txt: {fileID: 7037512636741943910}
+  ChatSendBtn_Txt: {fileID: 637854425717125907}
+  ChatIf_Placeholder: {fileID: 1450785476364526418}
   HandHistoryPage_Tr: {fileID: 6442408185117287109}
   HandHistoryClose_Btn: {fileID: 2656183058658840595}
+  HandHistoryTip_Img: {fileID: 3565511683649984873}
+  HandHistoryTitle_Txt: {fileID: 7202323370735202362}
+  HandHistoryTip_Txt: {fileID: 7082580612432146819}
   buyChipsView: {fileID: 3206520187363870020}
   BattleResultView: {fileID: 4365519394436732982}
   WinChipsObj: {fileID: 2644066895869908512, guid: 2d51c37f43d33154f9ac2a504a2e1a24, type: 3}
@@ -6510,8 +6522,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 155.8, y: 22.5}
-  m_SizeDelta: {x: 114.3, y: 20}
+  m_AnchoredPosition: {x: 96.62875, y: 14.99999}
+  m_SizeDelta: {x: 240, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6251760067321705863
 CanvasRenderer:
@@ -6541,7 +6553,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Waiting...
+  m_text: Waiting for the next round...
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 67393bfc3a860b042baa08f7fbeadd93, type: 2}
   m_sharedMaterial: {fileID: -4543751221255232905, guid: 67393bfc3a860b042baa08f7fbeadd93, type: 2}
@@ -8097,7 +8109,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 154.1, y: -5.000004}
+  m_AnchoredPosition: {x: 86.8, y: -10.000004}
   m_SizeDelta: {x: 100, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6952764421782669702
@@ -8194,7 +8206,7 @@ GameObject:
   - component: {fileID: 1274011427295074796}
   - component: {fileID: 3565511683649984873}
   m_Layer: 5
-  m_Name: Tip_Img
+  m_Name: HandHistoryTip_Img
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8207,12 +8219,12 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7282604042138246034}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 2520460153030292112}
+  m_Father: {fileID: 8323467558226953115}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -8459,7 +8471,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Sit Out
+  m_text: Sit out next hand
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 67393bfc3a860b042baa08f7fbeadd93, type: 2}
   m_sharedMaterial: {fileID: -4543751221255232905, guid: 67393bfc3a860b042baa08f7fbeadd93, type: 2}
@@ -9940,7 +9952,7 @@ GameObject:
   - component: {fileID: 3093206564566928297}
   - component: {fileID: 7202323370735202362}
   m_Layer: 5
-  m_Name: Title_Txt
+  m_Name: HandHistoryTitle_Txt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10234,9 +10246,9 @@ RectTransform:
   - {fileID: 3100969257221890225}
   m_Father: {fileID: 7161370105925558879}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 145, y: -95}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 280, y: 60}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &3562132693557904294
