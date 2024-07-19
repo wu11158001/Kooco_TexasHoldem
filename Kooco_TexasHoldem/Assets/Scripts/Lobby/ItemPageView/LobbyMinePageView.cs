@@ -97,6 +97,10 @@ public class LobbyMinePageView : MonoBehaviour
 
     [Header("設定")]
     [SerializeField]
+    GameObject SettingsViewObj;
+    [SerializeField]
+    Button Settings_Btn;
+    [SerializeField]
     TextMeshProUGUI SettingsTitle_Txt;
 
     const string expandContentName = "Content";                                 //展開內容物件名稱
@@ -346,6 +350,16 @@ public class LobbyMinePageView : MonoBehaviour
             Transform lobbyView = GameObject.Find("LobbyView").transform;
             RectTransform lobbyHandHistoryView = Instantiate(LobbyHandHistoryViewObj, lobbyView).GetComponent<RectTransform>();
             ViewManager.Instance.InitViewTr(lobbyHandHistoryView, "LobbyHandHistoryView");
+        });
+
+        #endregion
+
+        #region 設定
+
+        //開啟設定
+        Settings_Btn.onClick.AddListener(() =>
+        {
+            Instantiate(SettingsViewObj, transform);
         });
 
         #endregion

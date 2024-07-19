@@ -53,8 +53,17 @@ public class LanguageManager
     /// </summary>
     string[] languageId =
     {
-        "English",      //英文
-        "zh_TW",        //繁體中文        
+        "English",              //英文
+        "zh_TW",                //繁體中文        
+    };
+
+    /// <summary>
+    /// 更換語言顯示
+    /// </summary>
+    public string[] languageShowName =
+    {
+        "English",              //英文
+        "繁體中文"              //繁體中文
     };
 
     /// <summary>
@@ -70,9 +79,11 @@ public class LanguageManager
         {
             switch (language)
             {
+                //英文
                 case "English":
                     return English;
 
+                //繁體中文
                 case "zh_TW":
                     return zh_TW;
 

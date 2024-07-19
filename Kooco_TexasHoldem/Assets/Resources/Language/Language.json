@@ -145,6 +145,11 @@
     "zh_TW": "失敗"
   },
   {
+    "ID": "Language",
+    "English": "Language",
+    "zh_TW": "語言"
+  },
+  {
     "ID": "Enter New Password.",
     "English": "Enter New Password.",
     "zh_TW": "輸入新密碼。"
@@ -312,6 +317,11 @@
   {
     "ID": "Settings",
     "English": "Settings",
+    "zh_TW": "設定"
+  },
+  {
+    "ID": "SETTINGS",
+    "English": "SETTINGS",
     "zh_TW": "設定"
   },
   {
