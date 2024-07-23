@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: WalletLogoAlbum
   m_EditorClassIdentifier: 
   album:
-  - {fileID: 21300000, guid: c2e697f03058e2f4ba8d6f4d9ad88161, type: 3}
-  - {fileID: 21300000, guid: 4d3b547c14946504d8f2dc983f427193, type: 3}
-  - {fileID: 21300000, guid: 4fada2f67f0b99246a979894b091d5e4, type: 3}
-  - {fileID: 21300000, guid: 334bf1d98fbac1d4a92377b29ec32ec1, type: 3}
-  - {fileID: 21300000, guid: 8848df07e87e7f14180436951eddb947, type: 3}
+  - {fileID: 21300000, guid: 17f7849f4c30cd14aaecf63b34d744f5, type: 3}
+  - {fileID: 21300000, guid: 8a9a2abcfb1380f439020d61b5596177, type: 3}
+  - {fileID: 21300000, guid: 855acb1f55e313848aeb4b83e975a9f5, type: 3}
+  - {fileID: 21300000, guid: a41d6f3f7a1569448ad6ab9a4903fef3, type: 3}
+  - {fileID: 21300000, guid: 9b94b31f63854df42834d44f084b8b2d, type: 3}

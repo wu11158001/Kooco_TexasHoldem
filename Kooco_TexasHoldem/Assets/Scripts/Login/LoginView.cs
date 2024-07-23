@@ -149,7 +149,10 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
 
     const string LocalPhoneNumber = "AsiaPoker_PhoneNumber";        //本地紀錄_手機號
     const string LocalPaswword = "AsiaPoker_Password";              //本地紀錄_密碼
+    const string LocalCodeStartTime = "AsiaPoker_CodeStartTime";    //本地紀錄_OTP發送時間
+
     const int ErrorWalletConnectTime = 30;                          //判定連接失敗等待時間
+    const int codeCountDownTime = 22;                               //發送OTP倒數時間
 
     ChainData _currentChainData;                                    //當前連接練
     string _address;                                                //錢包地址
@@ -161,6 +164,7 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
     bool isLostPswPasswordCorrect;                                  //是否忘記密碼密碼正確
     string recodePhoneNumber;                                       //紀錄的手機號
     string recodePassword;                                          //紀錄的密碼
+    DateTime codeStartTime;                                         //發送OTP倒數開始時間
 
     List<TMP_InputField> currIfList = new List<TMP_InputField>();   //當前可切換InputFild
     UnityAction KybordEnterAction;                                  //Enter鍵執行方法
@@ -206,7 +210,6 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
         SMSMobileNumberIf_Placeholder.text = LanguageManager.Instance.GetText("Your Phone Number");
         SMSOTPCode_Txt.text = LanguageManager.Instance.GetText("OTP Code");
         SMSOTPIf_Placeholder.text = LanguageManager.Instance.GetText("Please Enter The OTP Code");
-        SMSOTPSendBtn_Txt.text = LanguageManager.Instance.GetText("SEND CODE");
         SMSOTPSubmitBtn_Txt.text = LanguageManager.Instance.GetText("SUBMIT");
 
         #endregion
@@ -231,7 +234,6 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
         RegisterNumberIf_Placeholder.text = LanguageManager.Instance.GetText("Your Phone Number");
         RegisterCode_Txt.text = LanguageManager.Instance.GetText("OTP Code");
         RegisterOTPIf_Placeholder.text = LanguageManager.Instance.GetText("Please Enter The OTP Code");
-        RegisterOTPSendBtn_Txt.text = LanguageManager.Instance.GetText("SEND CODE");
         RegisterPassword_Txt.text = LanguageManager.Instance.GetText("Password");
         RegisterPasswordIf_Placeholder.text = LanguageManager.Instance.GetText("Please Enter Here");
         RegisterCheckPassword1_Txt.text = LanguageManager.Instance.GetText("Enter New Password.");
@@ -257,7 +259,6 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
         LostPswNumberIf_Placeholder.text = LanguageManager.Instance.GetText("Your Phone Number");
         LostPswCode_Txt.text = LanguageManager.Instance.GetText("OTP Code");
         LostPswOTPIf_Placeholder.text = LanguageManager.Instance.GetText("Please Enter The OTP Code");
-        LostPswOTPSendBtn_Txt.text = LanguageManager.Instance.GetText("SEND CODE");
         LostPswPassword_Txt.text = LanguageManager.Instance.GetText("Reset Password");
         LosrPswPasswordIf_Placeholder.text = LanguageManager.Instance.GetText("Please Enter Here");
         LostPswCheckPassword1_Txt.text = LanguageManager.Instance.GetText("Enter New Password.");
@@ -393,6 +394,8 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
             SMSMobileNumberError_Txt.text = "";
             SMSCodeError_Txt.text = "";
             SMSOTP_If.text = "";
+
+            SetCodeCountDown();
         });
 
         //簡訊OTP提交
@@ -440,6 +443,8 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
                 RegisterNumberError_Txt.text = "";
                 string phone = StringUtils.GetPhoneAddCode(RegisterNumber_Dd, RegisterNumber_If.text);
                 Debug.Log($"Register Send Code:{phone}");
+
+                SetCodeCountDown();
             }
         });
 
@@ -510,6 +515,8 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
                 LostPswNumberError_Txt.text = "";
                 string phone = StringUtils.GetPhoneAddCode(LostPswNumber_Dd, LostPswNumber_If.text);
                 Debug.Log($"Lost Password Send Code:{phone}");
+
+                SetCodeCountDown();
             }
         });
 
@@ -554,6 +561,15 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
         //獲取本地紀錄
         recodePhoneNumber = PlayerPrefs.GetString(LocalPhoneNumber);
         recodePassword = PlayerPrefs.GetString(LocalPaswword);
+        string recodeOtpTime = PlayerPrefs.GetString(LocalCodeStartTime);
+        if (DateTime.TryParse(recodeOtpTime, out DateTime parseTime))
+        {
+            codeStartTime = parseTime;
+        }
+        else
+        {
+            codeStartTime = DateTime.Now.AddSeconds(-codeCountDownTime);
+        }
 
         ///自動連接Coinbase
         if (!DataManager.IsNotFirstInLogin &&
@@ -568,6 +584,21 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
 
     private void Update()
     {
+        //發送OTP倒數
+        float codeTime = (float)(DateTime.Now - codeStartTime).TotalSeconds;
+        LostPswOTPSend_Btn.interactable = codeTime > codeCountDownTime;
+        LostPswOTPSendBtn_Txt.text = codeTime > codeCountDownTime ?
+                                     LanguageManager.Instance.GetText("SEND CODE") :
+                                     $"{LanguageManager.Instance.GetText("RESEND")} {codeCountDownTime - (int)codeTime}";
+        RegisterOTPSend_Btn.interactable = codeTime > codeCountDownTime;
+        RegisterOTPSendBtn_Txt.text = codeTime > codeCountDownTime ?
+                                      LanguageManager.Instance.GetText("SEND CODE") :
+                                      $"{LanguageManager.Instance.GetText("RESEND")} {codeCountDownTime - (int)codeTime}";
+        SMSOTPSend_Btn.interactable = codeTime > codeCountDownTime;
+        SMSOTPSendBtn_Txt.text = codeTime > codeCountDownTime ?
+                                 LanguageManager.Instance.GetText("SEND CODE") :
+                                 $"{LanguageManager.Instance.GetText("RESEND")} {codeCountDownTime - (int)codeTime}";
+
         //連接錢包過久判定失敗
         if (Connecting_Obj.activeSelf &&
             (DateTime.Now - startConnectTime).TotalSeconds >= ErrorWalletConnectTime)
@@ -726,6 +757,16 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
                     break;
             }
         }
+    }
+
+    /// <summary>
+    /// 設定OTP倒數
+    /// </summary>
+    private void SetCodeCountDown()
+    {
+        codeStartTime = DateTime.Now;
+        string codeStartTimeStr = codeStartTime.ToString("yyyy-MM-dd HH:mm:ss");
+        PlayerPrefs.SetString(LocalCodeStartTime, codeStartTimeStr);
     }
 
     /// <summary>
@@ -1059,7 +1100,7 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
         Connecting_Obj.SetActive(true);
         RetryConnectWallet_Obj.SetActive(false);
 
-        ConnectionTitle_Txt.text = $"{LanguageManager.Instance.GetText("Log In Using In Usingsing")} {walletEnum}";
+        ConnectionTitle_Txt.text = $"{LanguageManager.Instance.GetText("Log In Using")} {walletEnum}";
         Connecting_Txt.text = $"{LanguageManager.Instance.GetText("Load Into")} {walletEnum}";
         ConnectingLogo_Img.sprite = AssetsManager.Instance.GetAlbumAsset(AlbumEnum.WalletLogoAlbum).album[(int)walletEnum];
         connectionEffectCoroutine = StartCoroutine(IConnectionEffect());

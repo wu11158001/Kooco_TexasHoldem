@@ -64,6 +64,11 @@ public class LobbyView : MonoBehaviour
     GameObject SetNicknameViewObj;
 
 
+    [Header("存提款介面")]
+    [SerializeField]
+    GameObject Transfers_AnteView;
+
+
     /// <summary>
     /// 項目按鈕類型
     /// </summary>
@@ -229,9 +234,15 @@ public class LobbyView : MonoBehaviour
         //  任務生成測試
         if (Input.GetKeyDown(KeyCode.Q))
         {
-            DisplayQuestUI();
+            DisplayFloor4UI(QuestView);
         }
 
+        //  存提款介面測試
+        if (Input.GetKeyDown(KeyCode.S))
+        {
+            DisplayFloor4UI(Transfers_AnteView);
+        }
+        
 
 #if UNITY_EDITOR
 
@@ -399,17 +410,18 @@ public class LobbyView : MonoBehaviour
     }
 
     /// <summary>
-    /// 開啟任務介面
+    /// 開啟Floor4介面
     /// </summary>
-    public void DisplayQuestUI()
+    public void DisplayFloor4UI(GameObject UIobj)
     {
         if (Floor4.childCount < 1)
         {
-            Instantiate(QuestView, Floor4);
+            Instantiate(UIobj, Floor4);
         }
         else
         {
-            Floor4.gameObject.SetActive(!Floor4.gameObject.activeSelf);
+            
+            Destroy(Floor4.GetChild(0).gameObject);
         }
     }
 }

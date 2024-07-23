@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using System;
 using System.Linq;
 using TMPro;
+using System.Threading.Tasks;
 
 using RequestBuf;
 
@@ -1270,6 +1271,7 @@ public class GameView : MonoBehaviour
 
             }
             gamePlayerInfo = SeatGamePlayerInfoList[seatIndex];
+            SeatButtonList[seatIndex].image.enabled = false;
         }
         else
         {
@@ -1279,8 +1281,7 @@ public class GameView : MonoBehaviour
 
             playerInfoPack.NickName = DataManager.UserNickname;
         }
-
-        SeatButtonList[seatIndex].image.enabled = false;
+        
         gamePlayerInfo.gameObject.SetActive(true);
 
         gamePlayerInfo.SetInitPlayerInfo(seatIndex,
@@ -1302,7 +1303,7 @@ public class GameView : MonoBehaviour
     {
         GamePlayerInfo exitPlayer = GetPlayer(id);
 
-        SeatButtonList[exitPlayer.SeatIndex].image.enabled = true;
+        //SeatButtonList[exitPlayer.SeatIndex].image.enabled = true;
         gamePlayerInfoList.Remove(exitPlayer);
 
         exitPlayerSeatList.Add(exitPlayer.SeatIndex);
@@ -1520,7 +1521,6 @@ public class GameView : MonoBehaviour
                 thisData.IsPlaying = true;
                 player.SetHandPoker(dic.Value.Item1,
                                     dic.Value.Item2);
-
                 JudgePokerShape(player, true);
             }
             else
@@ -2267,7 +2267,9 @@ public class GameView : MonoBehaviour
     private void SavePreGame()
     {
         //本地玩家有參與
-        if (thisData.LocalGamePlayerInfo.IsPlaying)
+        if (thisData != null &&
+            thisData.LocalGamePlayerInfo != null &&
+            thisData.LocalGamePlayerInfo.IsPlaying)
         {
             HandHistoryManager.Instance.SaveResult(saveResultData);
             HandHistoryManager.Instance.SaveGameInit(gameInitHistoryData);

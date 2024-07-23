@@ -253,8 +253,8 @@ public class TransactionHistoryView : MonoBehaviour
             }
             isAllTypeExpand = false;
             isAllSatusExpand = false;
-            AllTypeExpand_Img.sprite = AssetsManager.Instance.GetAlbumAsset(AlbumEnum.ArrowAlbum).album[1];
-            AllStatusExpand_Img.sprite = AssetsManager.Instance.GetAlbumAsset(AlbumEnum.ArrowAlbum).album[1];
+            AllTypeExpand_Img.sprite = AssetsManager.Instance.GetAlbumAsset(AlbumEnum.ArrowAlbum).album[3];
+            AllStatusExpand_Img.sprite = AssetsManager.Instance.GetAlbumAsset(AlbumEnum.ArrowAlbum).album[3];
         });
 
         //篩選遮罩按鈕
@@ -663,7 +663,7 @@ public class TransactionHistoryView : MonoBehaviour
             page = 1;
         }
         currPage = page;
-        CurrPage_Txt.text = $"{page} {LanguageManager.Instance.GetText("OF")} {maxPages}";
+        CurrPage_Txt.text = $"<color=#E5F2FF>{page}</color><color=#858BAD> {LanguageManager.Instance.GetText("OF")} {maxPages}</color>";
 
         List<TransactionHistoryData> getData = filterData.Skip((page - 1) * 10).Take(10).ToList();
         if (getData.Count == 0)
@@ -721,8 +721,8 @@ public class TransactionHistoryView : MonoBehaviour
         contentObj.gameObject.SetActive(isExpand);
         rt.sizeDelta = new Vector2(rt.rect.width, targetHeight);
         img.sprite = isExpand == true ?
-                     AssetsManager.Instance.GetAlbumAsset(AlbumEnum.ArrowAlbum).album[0] :
-                     AssetsManager.Instance.GetAlbumAsset(AlbumEnum.ArrowAlbum).album[1];
+                     AssetsManager.Instance.GetAlbumAsset(AlbumEnum.ArrowAlbum).album[1] :
+                     AssetsManager.Instance.GetAlbumAsset(AlbumEnum.ArrowAlbum).album[3];
 
         completeCallback?.Invoke();
     }

@@ -214,8 +214,8 @@ public class LobbyMinePageView : MonoBehaviour
             contentObj.gameObject.SetActive(false);
             expandObj.sizeDelta = new Vector2(expandObj.rect.width, TopBgObj.rect.height);
         }
-        AccountBalanceExpand_Img.sprite = AssetsManager.Instance.GetAlbumAsset(AlbumEnum.ArrowAlbum).album[1];
-        ScoreRecordExpand_Img.sprite = AssetsManager.Instance.GetAlbumAsset(AlbumEnum.ArrowAlbum).album[1];
+        AccountBalanceExpand_Img.sprite = AssetsManager.Instance.GetAlbumAsset(AlbumEnum.ArrowAlbum).album[3];
+        ScoreRecordExpand_Img.sprite = AssetsManager.Instance.GetAlbumAsset(AlbumEnum.ArrowAlbum).album[3];
     }
 
     /// <summary>
@@ -520,8 +520,8 @@ public class LobbyMinePageView : MonoBehaviour
         contentObj.gameObject.SetActive(isExpand);
         rt.sizeDelta = new Vector2(rt.rect.width, targetHeight);
         img.sprite = isExpand == true ?
-                     AssetsManager.Instance.GetAlbumAsset(AlbumEnum.ArrowAlbum).album[0] :
-                     AssetsManager.Instance.GetAlbumAsset(AlbumEnum.ArrowAlbum).album[1];
+                     AssetsManager.Instance.GetAlbumAsset(AlbumEnum.ArrowAlbum).album[1] :
+                     AssetsManager.Instance.GetAlbumAsset(AlbumEnum.ArrowAlbum).album[3];
 
         completeCallback?.Invoke();
     }

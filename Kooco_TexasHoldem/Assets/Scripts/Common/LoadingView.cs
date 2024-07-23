@@ -13,7 +13,7 @@ public class LoadingView : MonoBehaviour
     /// </summary>
     private void UpdateLanguage()
     {
-        Loading_Txt.text = $"{LanguageManager.Instance.GetText("Loading")}...";
+        Loading_Txt.text = $"{LanguageManager.Instance.GetText("Now Loading...")}";
     }
 
     private void OnDestroy()

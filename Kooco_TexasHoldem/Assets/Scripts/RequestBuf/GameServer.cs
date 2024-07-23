@@ -103,7 +103,7 @@ public class GameServer : MonoBehaviour
         {
             SetPoker();
             gameRoomData.CurrFlow = FlowEnum.PotResult;
-            gameRoomData.CurrCommunityPoker = (List<int>)gameRoomData.CommunityPoker.Take(5).ToList();
+            gameRoomData.CurrCommunityPoker = new List<int>(); //(List<int>)gameRoomData.CommunityPoker.Take(5).ToList();
             gameRoomData.TotalPot = 0;
             gameRoomData.CurrCallValue = SmallBlind;
         }
@@ -610,7 +610,7 @@ public class GameServer : MonoBehaviour
         {
             pokerList.Add(i);
         }
-
+        
         string str = "";
         //牌面結果
         for (int i = 0; i < 5; i++)
@@ -650,8 +650,9 @@ public class GameServer : MonoBehaviour
         }
 
         playingList = (List<Client>)playingList.OrderBy(x => x.Seat).ToList();
-
- /*       
+        
+        
+        /*
         //測試用
         gameRoomData.CommunityPoker = new List<int>() {1,14,6,4,38};
         clientList[0].HandPoker0 = 0;
@@ -660,7 +661,7 @@ public class GameServer : MonoBehaviour
         gameRoomData.HandPokerDic.Add(clientList[0].UserId, (clientList[0].HandPoker0, clientList[0].HandPoker1));
         clientList[0].CurrBetValue = 0;
         playingList.Add(clientList[0]);
-
+        
         clientList[1].HandPoker0 = 26;
         clientList[1].HandPoker1 = 39;
         clientList[1].State = PlayerStateEnum.Playing;
@@ -668,7 +669,7 @@ public class GameServer : MonoBehaviour
         clientList[1].CurrBetValue = 0;
         playingList.Add(clientList[1]);
         
-        /*clientList[2].HandPoker0 = 8;
+        clientList[2].HandPoker0 = 8;
         clientList[2].HandPoker1 = 10;
         clientList[2].State = PlayerStateEnum.Playing;
         gameRoomData.HandPokerDic.Add(clientList[2].UserId, (clientList[2].HandPoker0, clientList[2].HandPoker1));
@@ -682,17 +683,17 @@ public class GameServer : MonoBehaviour
         clientList[3].CurrBetValue = 0;
         playingList.Add(clientList[3]);
         
-        if (clientList.Count == 3)
+        if (clientList.Count == 2)
         {
             int index = clientList.Count - 1;
-            clientList[index].HandPoker0 = 17;
-            clientList[index].HandPoker1 = 20;
+            clientList[index].HandPoker0 = 0;
+            clientList[index].HandPoker1 = 13;
             clientList[index].State = PlayerStateEnum.Playing;
             gameRoomData.HandPokerDic.Add(clientList[index].UserId, (clientList[index].HandPoker0, clientList[index].HandPoker1));
             clientList[index].CurrBetValue = 0;
             playingList.Add(clientList[index]);
-        }
- */
+        }*/
+ 
         //發牌
         int Licensing()
         {

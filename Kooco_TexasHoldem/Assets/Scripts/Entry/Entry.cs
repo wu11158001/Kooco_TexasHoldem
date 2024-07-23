@@ -91,6 +91,33 @@ public class Entry : UnitySingleton<Entry>
         }
 
         #endregion
+
+        if (Input.GetKeyDown(KeyCode.K))
+        {
+            Test();
+        }
+    }
+
+    public List<int> hands1;
+    public List<int> hands2;
+    public List<int> hands3;
+    public List<int> hands4;
+    public List<int> hands5;
+    public List<int> hands6;
+    public int num;
+    public List<int> community;
+    public int numSimulations;
+
+    void Test()
+    {
+        Debug.Log("Start");
+        System.DateTime startTime = DateTime.Now;
+        PokerWinRateCalculator pokerWinRateCalculator = new PokerWinRateCalculator(hands1, community);
+        pokerWinRateCalculator.CalculateWinRate((winRate) =>
+        {
+            Debug.LogError($"Time={(System.DateTime.Now - startTime).TotalSeconds}");
+            Debug.LogError($"Rate={winRate}");
+        });        
     }
 
     #region Instagram登入

@@ -16,6 +16,20 @@ public class ChatInfoSample : MonoBehaviour
     [SerializeField]
     RectTransform ContentBg_Tr;
 
+    int Avatar { get; set; }
+    string Nickname { get; set; }
+    string Content { get; set; }
+
+    private void OnEnable()
+    {
+        if (!string.IsNullOrEmpty(Content))
+        {
+            SetChatInfo(Avatar,
+                        Nickname,
+                        Content);
+        }
+    }
+
     /// <summary>
     /// 設置聊天內容
     /// </summary>
@@ -24,6 +38,10 @@ public class ChatInfoSample : MonoBehaviour
     /// <param name="content"></param>
     public void SetChatInfo(int avatar, string nickname, string content)
     {
+        this.Avatar = avatar;
+        this.Nickname = nickname;
+        this.Content = content;
+
         float initThisHeight = thisRt.rect.height;                                      //初始物件高度
         float maxContentTxtWidth = Content_Txt.rectTransform.rect.width;                //內容文字最大寬度
         float initContentTxtHeight = Content_Txt.rectTransform.rect.height;             //初始內容文字高度

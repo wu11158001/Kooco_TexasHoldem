@@ -60,8 +60,7 @@ public class QuestView : MonoBehaviour
 
         CloseQuest.onClick.AddListener(() =>
         {
-            if (transform.parent.gameObject.activeSelf)
-                transform.parent.gameObject.SetActive(!transform.parent.gameObject.activeSelf);
+            Destroy(this.gameObject);
         });
 
     }

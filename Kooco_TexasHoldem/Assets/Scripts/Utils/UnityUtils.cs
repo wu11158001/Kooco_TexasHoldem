@@ -113,6 +113,23 @@ public class UnityUtils : UnitySingleton<UnityUtils>
             yield return null;
         }
 
+        //移動結束設定置目標位置
+        switch (startDirection)
+        {
+            case DirectionEnum.Up:
+                rt.anchoredPosition = new Vector2(0, target);
+                break;
+            case DirectionEnum.Left:
+                rt.anchoredPosition = new Vector2(target, 0);
+                break;
+            case DirectionEnum.Right:
+                rt.anchoredPosition = new Vector2(target, 0);
+                break;
+            case DirectionEnum.Down:
+                rt.anchoredPosition = new Vector2(0, target);
+                break;
+        }
+
         endAction?.Invoke();
 
         rt.gameObject.SetActive(isSlideIn);
