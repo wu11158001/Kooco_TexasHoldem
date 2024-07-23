@@ -2,14 +2,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 using System;
 
 public class Poker : MonoBehaviour
 {
     [SerializeField]
-    Image poker_Img, frame_Img;
+    Image poker_Img, frame_Img, Pattern_Img, SmallPattern_Img;
     [SerializeField]
-    GameObject shining_Obj;
+    GameObject shining_Obj, PokerBack_Obj;
+    [SerializeField]
+    TextMeshProUGUI Num_Txt;
 
     RectTransform thisRt;
     int pokerNumber;    //撲克數字(-1=背面)
@@ -46,14 +49,52 @@ public class Poker : MonoBehaviour
         set
         {
             pokerNumber = value;
-            if (value <= -1)
+            PokerBack_Obj.SetActive(value <= -1);
+            if (value >= 0)
             {
-                poker_Img.sprite = AssetsManager.Instance.GetAlbumAsset(AlbumEnum.pokerBackAlbum).album[0];
-            }
-            else
-            {
-                poker_Img.sprite = AssetsManager.Instance.GetAlbumAsset(AlbumEnum.PokerNumAlbum).album[value];
-            }            
+                //數字
+                string suitsStr = "";
+                int num = value % 13 + 1;
+
+                switch (num)
+                {
+                    case 1:
+                        suitsStr = "A";
+                        break;
+
+                    case 11:
+                        suitsStr = "J";
+                        break;
+
+                    case 12:
+                        suitsStr = "Q";
+                        break;
+
+                    case 13:
+                        suitsStr = "K";
+                        break;
+
+                    default:
+                        suitsStr = num.ToString(); ;
+                        break;
+                }
+                Num_Txt.text = suitsStr;
+
+                //花色
+                int suitsImg = value / 13;
+                Pattern_Img.sprite = AssetsManager.Instance.GetAlbumAsset(AlbumEnum.PokerSuitsAlbum).album[suitsImg];
+                SmallPattern_Img.sprite = AssetsManager.Instance.GetAlbumAsset(AlbumEnum.PokerSuitsAlbum).album[suitsImg];
+                if (suitsImg == 0 ||
+                    suitsImg == 3)
+                {
+                    Num_Txt.color = Color.black;
+                }
+                else
+                {
+                    Num_Txt.color = Color.red;
+                }
+
+            }          
         }
     }
 
@@ -64,12 +105,16 @@ public class Poker : MonoBehaviour
     {
         set
         {
-            frame_Img.enabled = value;
+            frame_Img.enabled = false;
+            shining_Obj.SetActive(value);
+            poker_Img.rectTransform.localScale = Vector3.one;
+
+            /*frame_Img.enabled = value;
             poker_Img.rectTransform.localScale = Vector3.one;
             if (value == false)
             {
                 shining_Obj.SetActive(false);
-            }
+            }*/
         }
     }
 
@@ -101,7 +146,7 @@ public class Poker : MonoBehaviour
     public IEnumerator IHorizontalFlopEffect(int frontNum)
     {
         poker_Img.rectTransform.rotation = Quaternion.Euler(poker_Img.rectTransform.eulerAngles.x, 180, poker_Img.rectTransform.eulerAngles.z);
-        poker_Img.sprite = AssetsManager.Instance.GetAlbumAsset(AlbumEnum.pokerBackAlbum).album[0];
+        PokerBack_Obj.SetActive(true);
 
         float turnTime = 0.5f;
         DateTime startTime = DateTime.Now;

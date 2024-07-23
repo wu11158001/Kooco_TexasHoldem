@@ -2,6 +2,7 @@ public enum AlbumEnum
 {
     PokerNumAlbum,                      //撲克牌數字圖集
     pokerBackAlbum,                     //撲克牌背面圖集
+    PokerSuitsAlbum,                    //撲克花色圖集
     WalletLogoAlbum,                    //錢包Logo圖集
     PasswordEyeAlbum,                   //密碼顯示眼睛圖集
     PasswordCheckAlbum,                 //檢查密碼正確性圖集

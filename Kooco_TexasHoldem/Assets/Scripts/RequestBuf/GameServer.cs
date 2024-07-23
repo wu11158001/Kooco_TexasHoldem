@@ -65,7 +65,7 @@ public class GameServer : MonoBehaviour
         maxRoomPeople = RoomType == TableTypeEnum.IntegralTable ? 2 : 6;
 
         //測試用
-        int initPlayerCount = RoomType == TableTypeEnum.IntegralTable ? 1 : UnityEngine.Random.Range(2, 6);
+        int initPlayerCount = 2;//RoomType == TableTypeEnum.IntegralTable ? 1 : UnityEngine.Random.Range(2, 6);
         gameRoomData.ButtonSeat = UnityEngine.Random.Range(0, initPlayerCount);
         for (int i = 0; i < initPlayerCount; i++)
         {
@@ -654,7 +654,7 @@ public class GameServer : MonoBehaviour
         
         /*
         //測試用
-        gameRoomData.CommunityPoker = new List<int>() {1,14,6,4,38};
+        gameRoomData.CommunityPoker = new List<int>() {8,19,11,27,37};
         clientList[0].HandPoker0 = 0;
         clientList[0].HandPoker1 = 13;
         clientList[0].State = PlayerStateEnum.Playing;
@@ -668,7 +668,7 @@ public class GameServer : MonoBehaviour
         gameRoomData.HandPokerDic.Add(clientList[1].UserId, (clientList[1].HandPoker0, clientList[1].HandPoker1));
         clientList[1].CurrBetValue = 0;
         playingList.Add(clientList[1]);
-        
+        /*
         clientList[2].HandPoker0 = 8;
         clientList[2].HandPoker1 = 10;
         clientList[2].State = PlayerStateEnum.Playing;
@@ -683,11 +683,11 @@ public class GameServer : MonoBehaviour
         clientList[3].CurrBetValue = 0;
         playingList.Add(clientList[3]);
         
-        if (clientList.Count == 2)
+        if (clientList.Count == 3)
         {
             int index = clientList.Count - 1;
-            clientList[index].HandPoker0 = 0;
-            clientList[index].HandPoker1 = 13;
+            clientList[index].HandPoker0 = 12;
+            clientList[index].HandPoker1 = 7;
             clientList[index].State = PlayerStateEnum.Playing;
             gameRoomData.HandPokerDic.Add(clientList[index].UserId, (clientList[index].HandPoker0, clientList[index].HandPoker1));
             clientList[index].CurrBetValue = 0;

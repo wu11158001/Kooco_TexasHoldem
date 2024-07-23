@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ede173b4f2d04194b8318a1957fdff40, type: 3}
+  m_Name: PokerSuitsAlbum
+  m_EditorClassIdentifier: 
+  album:
+  - {fileID: 21300000, guid: 1586d6e9f5a78794a8b1c68e070df522, type: 3}
+  - {fileID: 21300000, guid: 71530b99d954d444da50eb3003cfe935, type: 3}
+  - {fileID: 21300000, guid: a472a74d94050a9458dd7fbe34cda56e, type: 3}
+  - {fileID: 21300000, guid: a6652920c67b83542803bd0234f7331d, type: 3}
