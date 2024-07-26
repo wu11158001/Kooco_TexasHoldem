@@ -405,6 +405,11 @@
     "zh_TW": null
   },
   {
+    "ID": "If you have not downloaded the wallet, please download it first. <color=#79E84B><link=DownloadWallet><u>Download Here!</u></link></color>",
+    "English": "If you have not downloaded the wallet, please download it first. <color=#79E84B><link=DownloadWallet><u>Download Here!</u></link></color>",
+    "zh_TW": "如果您未下載錢包，請先下載。 <color=#79E84B><link=DownloadWallet><u>在這裡下載!</u></link></color>"
+  },
+  {
     "ID": "Log In Using",
     "English": "Log In Using",
     "zh_TW": "登入到"

@@ -8,15 +8,22 @@ using TMPro;
 public class TransactionHistorySample : MonoBehaviour
 {
     [SerializeField]
-    TextMeshProUGUI Type_Txt, TypeTime_Txt, Title1_Txt, Title2_Txt, PL_Txt;
-    [SerializeField]
     Button Copy_Btn;
     [SerializeField]
     Image Status_Img;
+    [SerializeField]
+    TextMeshProUGUI Type_Txt, TypeTime_Txt, Title1_Txt, Title2_Txt, PL_Txt, Copied_Txt;
 
     private void Awake()
     {
         ListenerEvent();
+    }
+
+    private void Start()
+    {
+        Color copiedColor = Copied_Txt.color;
+        copiedColor.a = 0;
+        Copied_Txt.color = copiedColor;
     }
 
     /// <summary>
@@ -28,6 +35,11 @@ public class TransactionHistorySample : MonoBehaviour
         Copy_Btn.onClick.AddListener(() =>
         {
             StringUtils.CopyText(Title2_Txt.text);
+            UnityUtils.Instance.ColorFade(Copied_Txt,
+                                          null,
+                                          0.2f,
+                                          0.5f,
+                                          1.5f);
         });
     }
 

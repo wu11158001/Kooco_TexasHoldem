@@ -11,6 +11,40 @@ public class JSBridgeManager : UnitySingleton<JSBridgeManager>
     }
 
     [DllImport("__Internal")]
+    private static extern bool JS_WindowCheckWallet(string walletName);
+    /// <summary>
+    /// Window檢查錢包擴充是否安裝
+    /// </summary>
+    /// <param name="wallet"></param>
+    /// <returns></returns>
+    public bool WindowCheckWallet(WalletEnum wallet)
+    {
+        return JS_WindowCheckWallet(wallet.ToString());
+    }
+
+    [DllImport("__Internal")]
+    private static extern bool JS_OpenDownloadWallet(string walletName);
+    /// <summary>
+    /// 開啟下載錢包分頁
+    /// </summary>
+    /// <param name="wallet"></param>
+    /// <returns></returns>
+    public bool OpenDownloadWallet(WalletEnum wallet)
+    {
+        return JS_OpenDownloadWallet(wallet.ToString());
+    }
+
+    [DllImport("__Internal")]
+    private static extern bool JS_Reload();
+    /// <summary>
+    /// 瀏覽器重新整理
+    /// </summary>
+    public void Reload()
+    {
+        JS_Reload();
+    }
+
+    [DllImport("__Internal")]
     private static extern string JS_GetBrowserInfo();
     /// <summary>
     /// 獲取瀏覽器訊息

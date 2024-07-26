@@ -34,11 +34,11 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
     [SerializeField]
     Button Metamask_Btn, Trust_Btn, Binance_Btn, OKX_Btn, Coinbase_Btn;
     [SerializeField]
-    TMP_Text SignUp_Txt;
-    [SerializeField]
     TextMeshProUGUI SelectWalletTitle_Txt, SelectWalletTip_Txt;
     [SerializeField]
     List<TextMeshProUGUI> ConnectTip_TxtList;
+    [SerializeField]
+    TMP_Text SignUp_Txt;
 
     [Header("錢包連接_連接中頁面")]
     [SerializeField]
@@ -51,6 +51,8 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
     Image ConnectingLogo_Img;
     [SerializeField]
     List<Image> EffectPointList;
+    [SerializeField]
+    TMP_Text DownloadWallet_Txt;
 
     [Header("錢包連接_簡訊認證頁面")]
     [SerializeField]
@@ -165,6 +167,7 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
     string recodePhoneNumber;                                       //紀錄的手機號
     string recodePassword;                                          //紀錄的密碼
     DateTime codeStartTime;                                         //發送OTP倒數開始時間
+    WalletEnum currConnectingWallet;                                //當前連接錢包
 
     List<TMP_InputField> currIfList = new List<TMP_InputField>();   //當前可切換InputFild
     UnityAction KybordEnterAction;                                  //Enter鍵執行方法
@@ -200,6 +203,7 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
 
         #region 錢包連接中頁面
 
+        DownloadWallet_Txt.text = LanguageManager.Instance.GetText("If you have not downloaded the wallet, please download it first. <color=#79E84B><link=DownloadWallet><u>Download Here!</u></link></color>");
         RetryConnectWalletBtn_Txt.text = LanguageManager.Instance.GetText("Retry");
 
         #endregion
@@ -557,6 +561,7 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
         SMSCodeError_Txt.text = "";
         Vrsion_Txt.text = Entry.Instance.version;
         Wallet_Tog.isOn = true;
+
         OnSwlwctWalletInit();
 
         //獲取本地紀錄
@@ -755,6 +760,23 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
                 //隱私權政策
                 case "Privacy Policy":
                     Debug.Log("Clicked on Priacy Policy");
+                    break;
+            }
+        }
+
+        //下載錢包
+        int DownloadWalletIndex = TMP_TextUtilities.FindIntersectingLink(DownloadWallet_Txt, Input.mousePosition, null);
+        if (DownloadWalletIndex != -1)
+        {
+            TMP_LinkInfo linkInfo = DownloadWallet_Txt.textInfo.linkInfo[DownloadWalletIndex];
+            string linkID = linkInfo.GetLinkID();
+
+            switch (linkID)
+            {
+                //下載點選錢包APP
+                case "DownloadWallet":
+                    DataManager.IsOpenDownloadWallet = true;
+                    JSBridgeManager.Instance.OpenDownloadWallet(currConnectingWallet);
                     break;
             }
         }
@@ -1086,7 +1108,7 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
     /// </summary>
     /// <param name="walletProviderStr">連接形式</param>
     /// <param name="walletEnum">連接的錢包</param>
-    private void StartConnect(string walletProviderStr, WalletEnum walletEnum)
+    async private void StartConnect(string walletProviderStr, WalletEnum walletEnum)
     {
         #region 開啟連接畫面
 
@@ -1110,6 +1132,9 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
 
         #region 錢包連接
 
+        currConnectingWallet = walletEnum;
+        DownloadWallet_Txt.gameObject.SetActive(DataManager.IsMobilePlatform);
+
         if (DataManager.IsMobilePlatform && 
             DataManager.IsDefaultBrowser &&
             Application.platform != RuntimePlatform.IPhonePlayer)
@@ -1118,9 +1143,44 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
             JSBridgeManager.Instance.OpenNewBrowser(DataManager.LineMail, DataManager.IGIUserIdAndName);
             return;
         }
-        
-        var wc = new WalletConnection(provider: Enum.Parse<WalletProvider>(walletProviderStr), chainId: BigInteger.Parse(_currentChainData.chainId));
-        Connect(wc);
+
+        //非移動平台
+        if (!DataManager.IsMobilePlatform)
+        {
+            if (JSBridgeManager.Instance.WindowCheckWallet(walletEnum))
+            {
+                //有安裝錢包
+                OnConnectWallet();
+            }
+            else
+            {
+                DataManager.IsOpenDownloadWallet = true;
+
+                if (walletEnum == WalletEnum.Coinbase)
+                {
+                    await Task.Delay(2000);
+                    ErrorWalletConnect();
+
+                    OnConnectWallet();
+                }
+                else
+                {
+                    ErrorWalletConnect();
+                }
+            }
+        }
+        else
+        {
+            //在移動平台
+            OnConnectWallet();
+        }
+
+        //連接錢包
+        void OnConnectWallet()
+        {
+            var wc = new WalletConnection(provider: Enum.Parse<WalletProvider>(walletProviderStr), chainId: BigInteger.Parse(_currentChainData.chainId));
+            Connect(wc);
+        }
 
         #endregion
     }

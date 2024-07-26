@@ -353,7 +353,11 @@ public class Entry : UnitySingleton<Entry>
     /// </summary>
     public void OnWindowFocus()
     {
-
+        //跳轉到下載錢包頁面回來
+        if (DataManager.IsOpenDownloadWallet)
+        {
+            JSBridgeManager.Instance.Reload();
+        }
     }
 
     /// <summary>

@@ -40,6 +40,7 @@ public static class DataManager
     public static bool IsMobilePlatform { get; set; }                                                                                //是否為移動平台
     public static bool IsDefaultBrowser { get; set; }                                                                                //是否在預設瀏覽器內
     public static bool IsInCoinbase { get; set; }                                                                                    //是否在Coinbase瀏覽器
+    public static bool IsOpenDownloadWallet { get; set; }                                                                            //是否跳轉到下載錢包頁面
     /// <summary>
     /// 國碼
     /// </summary>

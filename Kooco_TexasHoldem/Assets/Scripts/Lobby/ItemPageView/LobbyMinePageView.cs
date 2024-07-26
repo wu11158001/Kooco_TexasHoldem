@@ -231,7 +231,7 @@ public class LobbyMinePageView : MonoBehaviour
             if (!string.IsNullOrEmpty(WalletAddress_Txt.text))
             {
                 StringUtils.CopyText(DataManager.UserWalletAddress);
-                UnityUtils.Instance.ColorFade(WalletAddress_Txt,
+                UnityUtils.Instance.ColorFade(Copied_Txt,
                                               null,
                                               0.2f,
                                               0.5f,

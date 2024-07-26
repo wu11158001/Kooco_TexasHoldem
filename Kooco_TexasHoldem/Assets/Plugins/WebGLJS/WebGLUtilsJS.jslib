@@ -110,4 +110,72 @@ mergeInto(LibraryManager.library, {
         const intentUrl = `intent://${targetUrl.replace(/^https?:\/\//, '')}#Intent;scheme=http;package=com.android.chrome;end;`;
         window.location.href = intentUrl;
     },
+
+    //開啟下載錢包分頁
+    JS_OpenDownloadWallet: function(walletName) {
+        const wallet = UTF8ToString(walletName);
+
+        if (wallet == 'Metamask') {
+            window.open('https://metamask.io/download.html', '_blank');
+        }         
+        else if (wallet == 'TrustWallet') {
+            window.open('https://trustwallet.com/', '_blank');
+        }
+        else if (wallet == 'OKX') {
+            window.open('https://www.okx.com/web3', '_blank');
+        }
+        else if (wallet == 'Binance') {
+            window.open('https://www.binance.com/zh-TC/download', '_blank');
+        }
+        else if (wallet == 'Coinbase') {
+            window.open('https://www.binance.com/zh-TC/download', '_blank');
+        }
+    },
+
+    //Window檢查錢包
+    JS_WindowCheckWallet: function(walletName) {
+        const wallet = UTF8ToString(walletName);
+
+        if (wallet == 'Metamask') {
+            if (typeof window.ethereum !== 'undefined') {
+                return true;
+            }else {
+                window.open('https://metamask.io/download.html', '_blank');
+                return false;              
+            }  
+        }         
+        else if (wallet == 'TrustWallet') {
+            if (typeof window.trustwallet !== 'undefined') {
+                return true;
+            }else {
+                window.open('https://trustwallet.com/', '_blank');
+                return false;
+            } 
+        }
+        else if (wallet == 'OKX') {
+            if (typeof window.okexchain !== 'undefined') {
+                return true;
+            }else {
+                window.open('https://www.okx.com/web3', '_blank');
+                return false;
+            } 
+        }
+        else if (wallet == 'Binance') {
+            if (typeof window.BinanceChain !== 'undefined') {
+                return true;
+            }else {
+                window.open('https://www.binance.com/zh-TC/download', '_blank');
+                return false;
+            } 
+        }
+        else if (wallet == 'Coinbase') {
+            if (typeof window.coinbaseWallet !== 'undefined') {
+                return true;
+            }else {
+                //Coinbase 使用Third web開啟
+                //window.open('https://www.binance.com/zh-TC/download', '_blank');
+                return false;
+            } 
+        }    
+    },
 });

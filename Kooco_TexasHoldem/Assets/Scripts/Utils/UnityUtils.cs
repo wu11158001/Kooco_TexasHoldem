@@ -135,7 +135,7 @@ public class UnityUtils : UnitySingleton<UnityUtils>
         rt.gameObject.SetActive(isSlideIn);
     }
 
-    Coroutine fadeCorotine;
+    Dictionary<TextMeshProUGUI, Coroutine> fadeCorotineDic = new ();
     /// <summary>
     /// 物件顏色淡入淡出
     /// </summary>
@@ -146,16 +146,20 @@ public class UnityUtils : UnitySingleton<UnityUtils>
     /// <param name="during">完整顯示時間</param>
     public void ColorFade(TextMeshProUGUI text, Image image, float fadeInTime, float fadeOutTime, float during)
     {
-        if (fadeCorotine != null)
+        if (fadeCorotineDic.ContainsKey(text))
         {
-            StopCoroutine(fadeCorotine);
+            StopCoroutine(fadeCorotineDic[text]);
+            fadeCorotineDic.Remove(text);
         }
 
-        fadeCorotine = StartCoroutine(IColorFade(text,
-                                                 image,
-                                                 fadeInTime,
-                                                 fadeOutTime,
-                                                 during));
+
+        Coroutine fadeCorotine = StartCoroutine(IColorFade(text,
+                                                           image,
+                                                           fadeInTime,
+                                                           fadeOutTime,
+                                                           during));
+
+        fadeCorotineDic.Add(text, fadeCorotine);
     }
     private IEnumerator IColorFade(TextMeshProUGUI text, Image image, float fadeInTime, float fadeOutTime, float during)
     {
