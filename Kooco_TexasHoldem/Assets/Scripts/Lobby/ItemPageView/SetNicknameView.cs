@@ -32,7 +32,7 @@ public class SetNicknameView : MonoBehaviour
 
     private void Awake()
     {
-        LanguageManager.Instance.AddUpdateLanguageFunc(UpdateLanguage);
+        LanguageManager.Instance.AddUpdateLanguageFunc(UpdateLanguage, gameObject);
 
         Error_Txt.text = "";
 

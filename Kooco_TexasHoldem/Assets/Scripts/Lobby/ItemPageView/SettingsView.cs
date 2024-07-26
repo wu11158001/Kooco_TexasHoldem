@@ -34,11 +34,16 @@ public class SettingsView : MonoBehaviour
 
     private void Awake()
     {
-        LanguageManager.Instance.AddUpdateLanguageFunc(UpdateLanguage);
+        LanguageManager.Instance.AddUpdateLanguageFunc(UpdateLanguage, gameObject);
         ListenerEvent();
 
         Utils.SetOptionsToDropdown(Language_Dd,
                                    LanguageManager.Instance.languageShowName.ToList());
+    }
+
+    private void OnEnable()
+    {
+        Language_Dd.value = LanguageManager.Instance.GetCurrLanguageIndex();
     }
 
     /// <summary>

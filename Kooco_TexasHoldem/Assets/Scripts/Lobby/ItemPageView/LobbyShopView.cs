@@ -47,6 +47,8 @@ public class LobbyShopView : MonoBehaviour
     TextMeshProUGUI MallMsgInfo;
     [SerializeField]
     Button Cencle, Confirm,CloseBtn;
+    [SerializeField]
+    GameObject PurchaseSuccessUI;
 
 
     Dictionary<ItemType,GameObject> ItemList;
@@ -267,6 +269,8 @@ public class LobbyShopView : MonoBehaviour
             }
             else
             {
+                PurchaseSuccessUI.SetActive(!PurchaseSuccessUI.activeSelf);
+                
                 switch (itemName)
                 {
                     case "Stamina":

@@ -191,7 +191,7 @@ public class LobbyMinePageView : MonoBehaviour
 
     private void Awake()
     {
-        LanguageManager.Instance.AddUpdateLanguageFunc(UpdateLanguage);
+        LanguageManager.Instance.AddUpdateLanguageFunc(UpdateLanguage, gameObject);
         ListenerEvent();
 
         //錢包地址已複製文字
@@ -280,7 +280,7 @@ public class LobbyMinePageView : MonoBehaviour
         //帳戶餘額刷新
         AccountBalanceReflash_Btn.onClick.AddListener(() =>
         {
-            UpdatetAccountBalance("2,000 ETH", 40000, 3000, 5, 30);
+            UpdatetAccountBalance("4,300 ETH", 40000, 3000, 5, 30);
         });
 
         #endregion
@@ -359,7 +359,11 @@ public class LobbyMinePageView : MonoBehaviour
         //開啟設定
         Settings_Btn.onClick.AddListener(() =>
         {
-            Instantiate(SettingsViewObj, transform);
+            LobbyView lobbyView = GameObject.FindFirstObjectByType<LobbyView>();
+            if (lobbyView != null)
+            {
+                Instantiate(SettingsViewObj, lobbyView.transform);
+            }
         });
 
         #endregion
@@ -393,7 +397,7 @@ public class LobbyMinePageView : MonoBehaviour
 
         Viewport.enabled = true;
 
-        UpdatetAccountBalance(string.IsNullOrEmpty(DataManager.UserWalletBalance) ? "0" : DataManager.UserWalletBalance,
+        UpdatetAccountBalance(string.IsNullOrEmpty(DataManager.UserWalletBalance) ? "0 ETH" : DataManager.UserWalletBalance,
                               DataManager.UserVCChips,
                               DataManager.UserGoldChips,
                               DataManager.UserStamina,
@@ -448,13 +452,16 @@ public class LobbyMinePageView : MonoBehaviour
     private void UpdatetAccountBalance(string crypto, double vc, double gold, int Stamina, int ot)
     {
         DataManager.UserWalletBalance = crypto.ToString();
+        DataManager.UserVCChips = vc;
+        DataManager.UserGoldChips = gold;
         DataManager.UserStamina = Stamina;
+        DataManager.UserOTProps = ot;
 
-        CryptoTableValue_Txt.text = crypto.ToString();
-        VCTableValue_Txt.text = StringUtils.SetChipsUnit(vc);
-        GoldValue_Txt.text = StringUtils.SetChipsUnit(gold);
+        CryptoTableValue_Txt.text = string.IsNullOrEmpty(DataManager.UserWalletBalance) ? "0 ETH" : DataManager.UserWalletBalance;
+        VCTableValue_Txt.text = StringUtils.SetChipsUnit(DataManager.UserVCChips);
+        GoldValue_Txt.text = StringUtils.SetChipsUnit(DataManager.UserGoldChips);
         StaminaValue_Txt.text = $"{DataManager.UserStamina}/{DataManager.MaxStaminaValue}";
-        OTPropsValue_Txt.text = $"{ot}";
+        OTPropsValue_Txt.text = $"{DataManager.UserOTProps}";
 
         GameObject.FindAnyObjectByType<LobbyView>().UpdateUserInfo();
     }

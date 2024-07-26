@@ -276,7 +276,7 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
 
     private void Awake()
     {
-        LanguageManager.Instance.AddUpdateLanguageFunc(UpdateLanguage);
+        LanguageManager.Instance.AddUpdateLanguageFunc(UpdateLanguage, gameObject);
 
         recordConnect = new RecordConnect();
         ListenerEvent();
@@ -441,8 +441,9 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
             else
             {
                 RegisterNumberError_Txt.text = "";
-                string phone = StringUtils.GetPhoneAddCode(RegisterNumber_Dd, RegisterNumber_If.text);
-                Debug.Log($"Register Send Code:{phone}");
+                string phoneNumber = StringUtils.GetPhoneAddCode(RegisterNumber_Dd, RegisterNumber_If.text);
+                //FirebaseManager.Instance.SendOTP(phoneNumber);
+                Debug.Log($"Register Send Code:{phoneNumber}");
 
                 SetCodeCountDown();
             }

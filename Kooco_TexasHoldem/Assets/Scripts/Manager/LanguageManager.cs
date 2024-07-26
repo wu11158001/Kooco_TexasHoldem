@@ -46,12 +46,12 @@ public class LanguageManager
     /// <summary>
     /// 紀錄更新語言方法
     /// </summary>
-    List<UnityAction> updateLanguageFuncList = new List<UnityAction>();
+    Dictionary<UnityAction, GameObject> updateLanguageFuncDic = new();
 
     /// <summary>
     /// 翻譯攔名稱
     /// </summary>
-    string[] languageId =
+    readonly string[] languageId =
     {
         "English",              //英文
         "zh_TW",                //繁體中文        
@@ -60,7 +60,7 @@ public class LanguageManager
     /// <summary>
     /// 更換語言顯示
     /// </summary>
-    public string[] languageShowName =
+    readonly public string[] languageShowName =
     {
         "English",              //英文
         "繁體中文"              //繁體中文
@@ -97,6 +97,15 @@ public class LanguageManager
     public class ThisData
     {
         public int CurrLanguageIndex;       //當前語言Index
+    }
+
+    /// <summary>
+    /// 獲取當前語言Index
+    /// </summary>
+    /// <returns></returns>
+    public int GetCurrLanguageIndex()
+    {
+        return thisData.CurrLanguageIndex;
     }
 
     /// <summary>
@@ -153,10 +162,11 @@ public class LanguageManager
     /// 添加更新語言方法
     /// </summary>
     /// <param name="updateFunc"></param>
-    public void AddUpdateLanguageFunc(UnityAction updateFunc)
+    /// <param name="obj"></param>
+    public void AddUpdateLanguageFunc(UnityAction updateFunc, GameObject obj)
     {
         updateFunc();
-        updateLanguageFuncList.Add(updateFunc);
+        updateLanguageFuncDic.Add(updateFunc, obj);
     }
 
     /// <summary>
@@ -165,9 +175,9 @@ public class LanguageManager
     /// <param name="func"></param>
     public void RemoveLanguageFun(UnityAction func)
     {
-        if (updateLanguageFuncList.Contains(func))
+        if (updateLanguageFuncDic.ContainsKey(func))
         {
-            updateLanguageFuncList.Remove(func);
+            updateLanguageFuncDic.Remove(func);
         }
         else
         {
@@ -182,9 +192,16 @@ public class LanguageManager
     {
         Debug.Log($"Change Language:{languageId[thisData.CurrLanguageIndex]}");
 
-        foreach (var func in updateLanguageFuncList)
+        foreach (var func in updateLanguageFuncDic)
         {
-            func?.Invoke();
+            if (func.Value != null)
+            {
+                func.Key?.Invoke();
+            }
+            else
+            {
+                Debug.LogError($"Update Language Error : {func.Value.name}");
+            }
         }
     }
 

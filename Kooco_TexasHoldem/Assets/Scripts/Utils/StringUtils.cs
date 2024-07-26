@@ -16,7 +16,8 @@ public static class StringUtils
     /// </summary>
     /// <param name="textComponent"></param>
     /// <param name="img"></param>
-    public static void TextInFrontOfImageFollow(TextMeshProUGUI textComponent, Image img)
+    /// <param name="space">間距</param>
+    public static void TextInFrontOfImageFollow(TextMeshProUGUI textComponent, Image img, float space = 2)
     {
         float txtWidth = textComponent.preferredWidth;
 
@@ -29,7 +30,7 @@ public static class StringUtils
         img.rectTransform.anchorMin = new Vector2(0, 0.5f);
         img.rectTransform.pivot = new Vector2(0, 0.5f);
         img.rectTransform.sizeDelta = size;
-        img.rectTransform.anchoredPosition = new Vector2(-size.x, 0);
+        img.rectTransform.anchoredPosition = new Vector2(-size.x - space, 0);
     }
 
     /// <summary>

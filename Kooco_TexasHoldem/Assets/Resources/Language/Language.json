@@ -247,7 +247,12 @@
   {
     "ID": "CASH",
     "English": "CASH",
-    "zh_TW": "現金"
+    "zh_TW": "加密貨幣"
+  },
+  {
+    "ID": "Cash",
+    "English": "Cash",
+    "zh_TW": "加密貨幣"
   },
   {
     "ID": "GOLD",
@@ -263,11 +268,6 @@
     "ID": "OF",
     "English": "OF",
     "zh_TW": "之"
-  },
-  {
-    "ID": "Cash",
-    "English": "Cash",
-    "zh_TW": "現金"
   },
   {
     "ID": "Points",

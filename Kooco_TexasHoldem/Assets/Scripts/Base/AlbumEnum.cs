@@ -12,6 +12,7 @@ public enum AlbumEnum
     LinkAlbum,                          //連接圖集
     TransactionStatusAlbum,             //交易狀態圖集
     BillboardAlbum,                     //廣告刊版圖集
+    CurrencyAlbum,                      //貨幣圖集
     BonusRocketAlbum,                   //Bonus火箭圖集
     Shop_StaminaAlbum,
     Shop_GoldAlbum,

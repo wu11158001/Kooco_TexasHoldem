@@ -24,7 +24,6 @@ public class QuestBonus : MonoBehaviour
     private void Awake()
     {
         DataManager.BonusMax = 100;             //  設置初始紅利最大值
-        DataManager.CurrentBonusAmount = 42;    //  設置當前紅利
 
         BonusIndex = DataManager.BonusMax / RocketParent.transform.childCount;
 

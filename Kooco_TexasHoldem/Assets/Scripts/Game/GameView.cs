@@ -221,9 +221,12 @@ public class GameView : MonoBehaviour
     {
         #region 操作按鈕
 
-        FoldBtn_Txt.text = LanguageManager.Instance.GetText(strData.FoldStr);
-        CallBtn.text = LanguageManager.Instance.GetText(strData.CallStr) + strData.CallValueStr;
-        RaiseBtn_Txt.text = LanguageManager.Instance.GetText(strData.RaiseStr) + strData.RaiseValueStr;
+        if (strData != null)
+        {
+            FoldBtn_Txt.text = LanguageManager.Instance.GetText(strData.FoldStr);
+            CallBtn.text = LanguageManager.Instance.GetText(strData.CallStr) + strData.CallValueStr;
+            RaiseBtn_Txt.text = LanguageManager.Instance.GetText(strData.RaiseStr) + strData.RaiseValueStr;
+        }
         BackToSitBtn_Txt.text = LanguageManager.Instance.GetText("Back To Sit");
 
         #endregion
@@ -258,6 +261,16 @@ public class GameView : MonoBehaviour
         SetSitOutDisplay();
     }
 
+    public void Awake()
+    {
+        objPool = new ObjPool(transform, MaxChatCount);
+
+        ListenerEvent();
+
+        //初始底池位置
+        InitPotPointPos = Pot_Img.rectTransform.anchoredPosition;
+    }
+
     private void OnDisable()
     {
         OnRemoveData();
@@ -267,16 +280,6 @@ public class GameView : MonoBehaviour
     {
         LanguageManager.Instance.RemoveLanguageFun(UpdateLanguage);
         OnRemoveData();
-    }
-
-    public void Awake()
-    {
-        objPool = new ObjPool(transform, MaxChatCount);
-
-        ListenerEvent();
-
-        //初始底池位置
-        InitPotPointPos = Pot_Img.rectTransform.anchoredPosition;
     }
 
     /// <summary>
@@ -602,7 +605,6 @@ public class GameView : MonoBehaviour
 
         Init();
         GameInit();
-        LanguageManager.Instance.AddUpdateLanguageFunc(UpdateLanguage);
     }
 
     private void Start()
@@ -614,6 +616,8 @@ public class GameView : MonoBehaviour
         MenuPage_Tr.gameObject.SetActive(false);
         ChatPage_Tr.gameObject.SetActive(false);
         HandHistoryPage_Tr.gameObject.SetActive(false);
+
+        LanguageManager.Instance.AddUpdateLanguageFunc(UpdateLanguage, gameObject);
     }
 
     private void Update()

@@ -101,24 +101,24 @@ public static class DataManager
     //  每日任務資料
     public static List<QuestInfo> DailyQuestList = new List<QuestInfo>
     {
-        new QuestInfo(){ QuestName = "Daily Check-in",GetPoint = 30,FinishProgress = 5,CurrentProgress = 0,GetCoin = 3000},
-        new QuestInfo(){ QuestName = "Cash Bet 1000 Amount",GetPoint = 10,FinishProgress = 1000,CurrentProgress = 0,GetCoin = 1000},
-        new QuestInfo(){ QuestName = "Cash Bet 2000 Amount",GetPoint = 20,FinishProgress = 2000,CurrentProgress = 0,GetCoin = 2000},
-        new QuestInfo(){ QuestName = "Cash Bet 3000 Amount",GetPoint = 30,FinishProgress = 3000,CurrentProgress = 0,GetCoin = 3000},
-        new QuestInfo(){ QuestName = "Cash Bet 4000 Amount",GetPoint = 40,FinishProgress = 4000,CurrentProgress = 0,GetCoin = 4000},
-        new QuestInfo(){ QuestName = "Cash Bet 5000 Amount",GetPoint = 50,FinishProgress = 5000,CurrentProgress = 0,GetCoin = 5000},
-        new QuestInfo(){ QuestName = "Cash Bet 6000 Amount",GetPoint = 60,FinishProgress = 6000,CurrentProgress = 0,GetCoin = 6000},
-        new QuestInfo(){ QuestName = "Cash Bet 7000 Amount",GetPoint = 70,FinishProgress = 7000,CurrentProgress = 0,GetCoin = 7000}
+        new QuestInfo(){ QuestName = "Daily Check-in",GetPoint = 30,FinishProgress = 5,CurrentProgress = 5,GetCoin = 3000,Received = false},
+        new QuestInfo(){ QuestName = "Cash Bet 1000 Amount",GetPoint = 10,FinishProgress = 1000,CurrentProgress = 0,GetCoin = 1000,Received = false},
+        new QuestInfo(){ QuestName = "Cash Bet 2000 Amount",GetPoint = 20,FinishProgress = 2000,CurrentProgress = 0,GetCoin = 2000,Received = false},
+        new QuestInfo(){ QuestName = "Cash Bet 3000 Amount",GetPoint = 30,FinishProgress = 3000,CurrentProgress = 0,GetCoin = 3000,Received = false},
+        new QuestInfo(){ QuestName = "Cash Bet 4000 Amount",GetPoint = 40,FinishProgress = 4000,CurrentProgress = 0,GetCoin = 4000,Received = false},
+        new QuestInfo(){ QuestName = "Cash Bet 5000 Amount",GetPoint = 50,FinishProgress = 5000,CurrentProgress = 0,GetCoin = 5000,Received = false},
+        new QuestInfo(){ QuestName = "Cash Bet 6000 Amount",GetPoint = 60,FinishProgress = 6000,CurrentProgress = 0,GetCoin = 6000, Received = false},
+        new QuestInfo(){ QuestName = "Cash Bet 7000 Amount",GetPoint = 70,FinishProgress = 7000,CurrentProgress = 0,GetCoin = 7000, Received = false}
     };
     //  每周任務資料
-    public static List<QuestInfo> WeekQuestList = new List<QuestInfo>
+    public static List<QuestInfo> WeeklyQuestList = new List<QuestInfo>
     {
-        new QuestInfo(){ QuestName = "Weekly Check-in",GetPoint = 100,FinishProgress = 7,CurrentProgress = 0,GetCoin = 50000},
-        new QuestInfo(){ QuestName = "Cash Bet 1000 Amount",GetPoint = 100,FinishProgress = 1000,CurrentProgress = 0,GetCoin = 5000},
-        new QuestInfo(){ QuestName = "Cash Bet 2000 Amount",GetPoint = 200,FinishProgress = 2000,CurrentProgress = 0,GetCoin = 6000},
-        new QuestInfo(){ QuestName = "Cash Bet 3000 Amount",GetPoint = 300,FinishProgress = 3000,CurrentProgress = 0,GetCoin = 7000},
-        new QuestInfo(){ QuestName = "Cash Bet 4000 Amount",GetPoint = 400,FinishProgress = 4000,CurrentProgress = 0,GetCoin = 8000},
-        new QuestInfo(){ QuestName = "Cash Bet 5000 Amount",GetPoint = 500,FinishProgress = 5000,CurrentProgress = 0,GetCoin = 9000},
+        new QuestInfo(){ QuestName = "Weekly Check-in",GetPoint = 100,FinishProgress = 7,CurrentProgress = 0,GetCoin = 50000, Received = false},
+        new QuestInfo(){ QuestName = "Cash Bet 1000 Amount",GetPoint = 100,FinishProgress = 1000,CurrentProgress = 0,GetCoin = 5000, Received = false},
+        new QuestInfo(){ QuestName = "Cash Bet 2000 Amount",GetPoint = 200,FinishProgress = 2000,CurrentProgress = 0,GetCoin = 6000, Received = false},
+        new QuestInfo(){ QuestName = "Cash Bet 3000 Amount",GetPoint = 300,FinishProgress = 3000,CurrentProgress = 0,GetCoin = 7000, Received = false},
+        new QuestInfo(){ QuestName = "Cash Bet 4000 Amount",GetPoint = 400,FinishProgress = 4000,CurrentProgress = 0,GetCoin = 8000, Received = false},
+        new QuestInfo(){ QuestName = "Cash Bet 5000 Amount",GetPoint = 500,FinishProgress = 5000,CurrentProgress = 0,GetCoin = 9000, Received = false},
     };
     public static int CurrentBonusAmount { get; set; }                     //  當前任務紅利進度
     public static int BonusMax { get; set; }                               //  任務紅利最大值

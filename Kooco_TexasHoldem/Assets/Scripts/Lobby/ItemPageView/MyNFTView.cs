@@ -77,7 +77,7 @@ public class MyNFTView : MonoBehaviour
 
     private void Awake()
     {
-        LanguageManager.Instance.AddUpdateLanguageFunc(UpdateLanguage);
+        LanguageManager.Instance.AddUpdateLanguageFunc(UpdateLanguage, gameObject);
 
         //返回
         Back_Btn.onClick.AddListener(() =>

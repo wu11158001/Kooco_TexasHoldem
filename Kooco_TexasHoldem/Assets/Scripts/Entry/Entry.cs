@@ -37,10 +37,12 @@ public class Entry : UnitySingleton<Entry>
 
         #region 測試用
 
+        DataManager.UserId = "LocalUser";
         DataManager.UserCryptoChips = 11000;
         DataManager.UserVCChips = 230200;
+        DataManager.UserGoldChips = 65000;
         DataManager.UserStamina = 45;
-        DataManager.UserId = "LocalUser";
+        DataManager.UserOTProps = 8;
 
         #endregion
     }
@@ -79,7 +81,7 @@ public class Entry : UnitySingleton<Entry>
             HandHistoryManager.Instance.OnDeleteHistoryData();
         }
 
-        //更換語言_英文
+        /*//更換語言_英文
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
             LanguageManager.Instance.ChangeLanguage(0);
@@ -88,7 +90,7 @@ public class Entry : UnitySingleton<Entry>
         if (Input.GetKeyDown(KeyCode.Alpha2))
         {
             LanguageManager.Instance.ChangeLanguage(1);
-        }
+        }*/
 
         #endregion
 

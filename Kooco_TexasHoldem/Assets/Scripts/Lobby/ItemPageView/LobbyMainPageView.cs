@@ -62,7 +62,7 @@ public class LobbyMainPageView : MonoBehaviour
 
     private void Awake()
     {
-        LanguageManager.Instance.AddUpdateLanguageFunc(UpdateLanguage);
+        LanguageManager.Instance.AddUpdateLanguageFunc(UpdateLanguage, gameObject);
 
         billboardSizeWidth = BillboardSample.GetComponent<RectTransform>().rect.width;
     }

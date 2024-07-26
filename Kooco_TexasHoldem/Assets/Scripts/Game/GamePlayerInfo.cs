@@ -114,7 +114,7 @@ public class GamePlayerInfo : MonoBehaviour
 
     private void Awake()
     {
-        LanguageManager.Instance.AddUpdateLanguageFunc(UpdateLanguage);
+        LanguageManager.Instance.AddUpdateLanguageFunc(UpdateLanguage, gameObject);
         StopCountDown();
         Chat_Obj.SetActive(false);
         IsOpenInfoMask = true;

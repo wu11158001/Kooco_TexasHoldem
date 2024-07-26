@@ -31,7 +31,7 @@ public class LobbyHandHistoryView : MonoBehaviour
 
     private void Awake()
     {
-        LanguageManager.Instance.AddUpdateLanguageFunc(UpdateLanguage);
+        LanguageManager.Instance.AddUpdateLanguageFunc(UpdateLanguage, gameObject);
 
         //返回按鈕
         Back_Btn.onClick.AddListener(() =>

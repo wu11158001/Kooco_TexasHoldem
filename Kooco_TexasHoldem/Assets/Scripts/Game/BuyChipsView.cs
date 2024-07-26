@@ -8,6 +8,8 @@ using TMPro;
 public class BuyChipsView : MonoBehaviour
 {
     [SerializeField]
+    Image SB_Img, BB_Img;
+    [SerializeField]
     Slider BuyChips_Sli;
     [SerializeField]
     Button Cancel_Btn, Buy_Btn, BuyPlus_Btn, BuyMinus_Btn;
@@ -43,7 +45,7 @@ public class BuyChipsView : MonoBehaviour
 
     public void Awake()
     {
-        LanguageManager.Instance.AddUpdateLanguageFunc(UpdateLanguage);
+        LanguageManager.Instance.AddUpdateLanguageFunc(UpdateLanguage, gameObject);
         ListenerEvent();
     }
 
@@ -126,18 +128,22 @@ public class BuyChipsView : MonoBehaviour
             case TableTypeEnum.CryptoTable:
                 titleStr = "CRYPTO TABLE";
                 maxBuyChipsStr = $"{StringUtils.SetChipsUnit(DataManager.UserCryptoChips)}";
+                SB_Img.sprite = AssetsManager.Instance.GetAlbumAsset(AlbumEnum.CurrencyAlbum).album[0];
+                BB_Img.sprite = AssetsManager.Instance.GetAlbumAsset(AlbumEnum.CurrencyAlbum).album[0];
                 break;
 
             //虛擬貨幣桌
             case TableTypeEnum.VCTable:
                 titleStr = "VIRTUAL CURRENCY TABLE";
                 maxBuyChipsStr = $"{StringUtils.SetChipsUnit(DataManager.UserVCChips)}";
+                SB_Img.sprite = AssetsManager.Instance.GetAlbumAsset(AlbumEnum.CurrencyAlbum).album[1];
+                BB_Img.sprite = AssetsManager.Instance.GetAlbumAsset(AlbumEnum.CurrencyAlbum).album[1];
                 break;
         }
         Title_Txt.text = LanguageManager.Instance.GetText(titleStr);
 
-        SB_Txt.text = $"{smallBlind} /";
-        BB_Txt.text = $"{smallBlind * 2}";
+        SB_Txt.text = $"{StringUtils.SetChipsUnit(smallBlind)}";
+        BB_Txt.text = $"{StringUtils.SetChipsUnit(smallBlind * 2)}";
 
         thisData.SmallBlind = smallBlind;
 

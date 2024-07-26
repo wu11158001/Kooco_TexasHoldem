@@ -65,7 +65,7 @@ public class GameServer : MonoBehaviour
         maxRoomPeople = RoomType == TableTypeEnum.IntegralTable ? 2 : 6;
 
         //測試用
-        int initPlayerCount = 2;//RoomType == TableTypeEnum.IntegralTable ? 1 : UnityEngine.Random.Range(2, 6);
+        int initPlayerCount = RoomType == TableTypeEnum.IntegralTable ? 1 : UnityEngine.Random.Range(2, 6);
         gameRoomData.ButtonSeat = UnityEngine.Random.Range(0, initPlayerCount);
         for (int i = 0; i < initPlayerCount; i++)
         {

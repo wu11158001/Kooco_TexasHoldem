@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
+using System;
+using Amazon.Lambda.Model;
 
 public class QuestView : MonoBehaviour
 {
@@ -29,11 +32,15 @@ public class QuestView : MonoBehaviour
     [Header("Button滑塊")]
     [SerializeField]
     GameObject MaskObject;
-    Text MaskText;
+    TextMeshProUGUI MaskText;
+
+    [Header("領取完成顯示遮罩")]
+    [SerializeField]
+    GameObject ReceivedMask;
 
     private void Awake()
     {
-        MaskText = MaskObject.transform.GetChild(0).GetComponent<Text>();
+        MaskText = MaskObject.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
 
         DailyBtn.onClick.AddListener(() =>
         {
@@ -41,7 +48,6 @@ public class QuestView : MonoBehaviour
             {
                 DailyQuestParent.gameObject.SetActive(true);
                 WeeklyQuestParent.gameObject.SetActive(false);
-
 
                 MaskMove(DailyQuestParent.parent.gameObject);
             }
@@ -70,6 +76,16 @@ public class QuestView : MonoBehaviour
 
         CreateQuestView();
     }
+
+    private void Update()
+    {
+        //  更新任務測試
+        if (Input.GetKeyDown(KeyCode.X))
+        {
+            UpdateQuestInfo("Cash Bet", 200);
+        }
+    }
+
     public void CreateQuestView()
     {
         
@@ -92,4 +108,35 @@ public class QuestView : MonoBehaviour
         Maskrect.localPosition = QuestMaskRect.localPosition;
         MaskText.text = QuestMask.name;
     }
+
+    /// <summary>
+    /// 更新任務測試
+    /// </summary>
+    public void UpdateQuestInfo(string updateQuestName, int UpdateAmount)
+    {
+        foreach (var QuestInfo in DataManager.DailyQuestList)
+        {
+            if (QuestInfo.QuestName.Contains(updateQuestName))
+            {
+                QuestInfo.CurrentProgress += UpdateAmount;
+            }
+        }
+
+        foreach (var QuestInfo in DataManager.WeeklyQuestList)
+        {
+            if (QuestInfo.QuestName.Contains(updateQuestName))
+            {
+                QuestInfo.CurrentProgress += UpdateAmount;
+            }
+        }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public void ReceiveMaskActive()
+    {
+        ReceivedMask.SetActive(!ReceivedMask.activeSelf);
+    }
+
 }

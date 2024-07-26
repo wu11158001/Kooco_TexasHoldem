@@ -19,7 +19,7 @@ public class QuestPageView : MonoBehaviour
 
     [Header("任務pageList")]
     [SerializeField]
-    List<QuestPageBtn> QuestPageList;
+    public List<QuestPageBtn> QuestPageList;
 
     private void Awake()
     {
@@ -30,18 +30,8 @@ public class QuestPageView : MonoBehaviour
                 break;
 
             case QuestEnum.Weekly:
-                CreateQuest(DataManager.WeekQuestList);
+                CreateQuest(DataManager.WeeklyQuestList);
                 break;
-        }
-    }
-
-    private void Update()
-    {
-
-        //  更新任務測試
-        if (Input.GetKeyDown(KeyCode.X))
-        {
-            UpdateQuestInfo("Cash Bet", 200);
         }
     }
 
@@ -66,27 +56,4 @@ public class QuestPageView : MonoBehaviour
             rect.localScale = Vector3.one;
         }
     }
-
-    /// <summary>
-    /// 更新任務進程
-    /// </summary>
-    public void UpdateQuestInfo(string updateQuestName, int UpdateAmount)
-    {
-        foreach (var page in QuestPageList)
-        {
-            if (page.GetQuestName().Contains(updateQuestName))
-            {
-                string[] Progress = page.GetQuestProgress().Split("/");
-                int num = Int32.Parse(Progress[0]);
-                num += UpdateAmount;
-                page.SetQuestProgress(num + "/" + Int32.Parse(Progress[1]));
-                if (num >= Int32.Parse(Progress[1]))
-                {
-                    page.ReceiveActive(true);
-                }
-
-            }
-        }
-    }
-
 }
