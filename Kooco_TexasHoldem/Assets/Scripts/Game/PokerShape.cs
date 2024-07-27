@@ -289,7 +289,7 @@ public static class PokerShape
     {
         foreach (var poker in pokerList)
         {
-            poker.PokerFrameEnable = false;
+            poker.PokerEffectEnable = false;
         }
 
         //符合牌開啟外框
@@ -301,7 +301,7 @@ public static class PokerShape
             {
                 if (poker.PokerNum == matchNum)
                 {
-                    poker.PokerFrameEnable = true;
+                    poker.PokerEffectEnable = true;
 
                     if (isWinEffect)
                     {

@@ -96,10 +96,11 @@ public class Entry : UnitySingleton<Entry>
 
         if (Input.GetKeyDown(KeyCode.K))
         {
-            Test();
+            //Test();
         }
     }
 
+   /* 獲勝機率測試 
     public List<int> hands1;
     public List<int> hands2;
     public List<int> hands3;
@@ -120,7 +121,7 @@ public class Entry : UnitySingleton<Entry>
             Debug.LogError($"Time={(System.DateTime.Now - startTime).TotalSeconds}");
             Debug.LogError($"Rate={winRate}");
         });        
-    }
+    }*/
 
     #region Instagram登入
 

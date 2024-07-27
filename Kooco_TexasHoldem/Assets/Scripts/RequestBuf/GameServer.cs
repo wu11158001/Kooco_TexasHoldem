@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using UnityEngine.Events;
-using System.Threading;
+using System.Threading.Tasks;
 using System;
 
 using RequestBuf;
@@ -425,7 +425,7 @@ public class GameServer : MonoBehaviour
 
                 pack.PlayerActedPack = playerActedPack;
 
-                StartCoroutine(Request_PlayerActed(pack));
+                yield return Request_PlayerActed(pack);
 
                 yield return new WaitForSeconds(1);
             }

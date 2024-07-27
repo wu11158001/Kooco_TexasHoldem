@@ -525,6 +525,16 @@
     "zh_TW": "排名"
   },
   {
+    "ID": "存提款",
+    "English": null,
+    "zh_TW": null
+  },
+  {
+    "ID": "Transfers",
+    "English": "Transfers",
+    "zh_TW": "存提款"
+  },
+  {
     "ID": "交易紀錄",
     "English": null,
     "zh_TW": null

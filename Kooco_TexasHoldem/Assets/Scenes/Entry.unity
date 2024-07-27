@@ -119,6 +119,22 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!224 &312381467 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 2393589969454604811, guid: 0abfb256ca5afce46a47d627a63cc82f, type: 3}
+  m_PrefabInstance: {fileID: 3151687746463192382}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &312381470 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2922197897413261631, guid: 0abfb256ca5afce46a47d627a63cc82f, type: 3}
+  m_PrefabInstance: {fileID: 3151687746463192382}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &330564113
 GameObject:
   m_ObjectHideFlags: 0
@@ -194,6 +210,25 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330564113}
   m_CullTransparentMesh: 1
+--- !u!1 &874619037 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4559879947427259486, guid: 0abfb256ca5afce46a47d627a63cc82f, type: 3}
+  m_PrefabInstance: {fileID: 3151687746463192382}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &874619040
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 874619037}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3245ec927659c4140ac4f8d17403cc18, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_HorizontalFit: 2
+  m_VerticalFit: 0
 --- !u!1 &963194225
 GameObject:
   m_ObjectHideFlags: 0
@@ -542,6 +577,14 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2532252652223830062, guid: 0abfb256ca5afce46a47d627a63cc82f, type: 3}
+      propertyPath: GoLobby_Btn
+      value: 
+      objectReference: {fileID: 312381470}
+    - target: {fileID: 2532252652223830062, guid: 0abfb256ca5afce46a47d627a63cc82f, type: 3}
+      propertyPath: GoLobbyBtn_Tr
+      value: 
+      objectReference: {fileID: 312381467}
     - target: {fileID: 4107987229392824485, guid: 0abfb256ca5afce46a47d627a63cc82f, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -582,6 +625,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5208936023220959873, guid: 0abfb256ca5afce46a47d627a63cc82f, type: 3}
+      propertyPath: m_Name
+      value: GoLobby_Btn
+      objectReference: {fileID: 0}
+    - target: {fileID: 5208936023220959873, guid: 0abfb256ca5afce46a47d627a63cc82f, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6689726745126147366, guid: 0abfb256ca5afce46a47d627a63cc82f, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -602,10 +653,17 @@ PrefabInstance:
       propertyPath: m_Name
       value: GameRoomManager
       objectReference: {fileID: 0}
+    - target: {fileID: 7708268745242368702, guid: 0abfb256ca5afce46a47d627a63cc82f, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 4559879947427259486, guid: 0abfb256ca5afce46a47d627a63cc82f, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 874619040}
   m_SourcePrefab: {fileID: 100100000, guid: 0abfb256ca5afce46a47d627a63cc82f, type: 3}
 --- !u!1001 &3553075993660297562
 PrefabInstance:

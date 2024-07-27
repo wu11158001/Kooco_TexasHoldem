@@ -53,6 +53,7 @@ public class JoinRoomView : MonoBehaviour
         //取消
         Cancel_Btn.onClick.AddListener(() =>
         {
+            GameRoomManager.Instance.IsCanMoveSwitch = true;
             AudioManager.Instance.PlayCancelClick();
             gameObject.SetActive(false);
         });
@@ -60,7 +61,6 @@ public class JoinRoomView : MonoBehaviour
         //購買
         Buy_Btn.onClick.AddListener(() =>
         {
-            AudioManager.Instance.PlayConfirmClick();
             baseRequest.SendRequest_JoinRoom(tableType,
                                              smallBlind, 
                                              BuyChips_Sli.value, 

@@ -47,7 +47,6 @@ public class VCTableBtnSample : MonoBehaviour
 
         Launch_Btn.onClick.AddListener(() =>
         {
-            AudioManager.Instance.PlayConfirmClick();
             if (GameRoomManager.Instance.JudgeIsCanBeCreateRoom())
             {
                 JoinRoomView joinRoomView = ViewManager.Instance.CreateViewInCurrCanvas<JoinRoomView>(JoinRoomViewObj);

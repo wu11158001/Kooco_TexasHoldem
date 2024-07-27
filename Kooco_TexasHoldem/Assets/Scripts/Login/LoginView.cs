@@ -1147,27 +1147,38 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
         //非移動平台
         if (!DataManager.IsMobilePlatform)
         {
-            if (JSBridgeManager.Instance.WindowCheckWallet(walletEnum))
+            if (walletProviderStr == "Coinbase")
             {
-                //有安裝錢包
+                //Coinbase 使用 Thirdweb
+
                 OnConnectWallet();
             }
             else
             {
-                DataManager.IsOpenDownloadWallet = true;
+                //其他錢包判斷是否有安裝錢包擴充
 
-                if (walletEnum == WalletEnum.Coinbase)
+                if (JSBridgeManager.Instance.WindowCheckWallet(walletEnum))
                 {
-                    await Task.Delay(2000);
-                    ErrorWalletConnect();
-
+                    //有安裝錢包
                     OnConnectWallet();
                 }
                 else
                 {
-                    ErrorWalletConnect();
+                    DataManager.IsOpenDownloadWallet = true;
+
+                    if (walletEnum == WalletEnum.Coinbase)
+                    {
+                        await Task.Delay(2000);
+                        ErrorWalletConnect();
+
+                        OnConnectWallet();
+                    }
+                    else
+                    {
+                        ErrorWalletConnect();
+                    }
                 }
-            }
+            }           
         }
         else
         {

@@ -10,7 +10,7 @@ using TMPro;
 public class LobbyView : MonoBehaviour
 {
     [SerializeField]
-    Request_LobbyView baseRequest;
+    public Request_LobbyView baseRequest;
 
     [Header("遮罩物件")]
     [SerializeField]
@@ -18,29 +18,19 @@ public class LobbyView : MonoBehaviour
 
     [Header("用戶訊息")]
     [SerializeField]
-    Button Avatar_Btn;
-    [SerializeField]
     TextMeshProUGUI Nickname_Txt, Stamina_Txt, CryptoChips_Txt;
 
     [Header("用戶資源列表")]
     [SerializeField]
-    Button ShowAssets_Btn;
+    Button Avatar_Btn;
     [SerializeField]
     GameObject AssetList_Obj;
-    [SerializeField]
-    Image ShowAssetsBtn_Img;
     [SerializeField]
     TextMeshProUGUI Assets_CryptoChips_Txt, Assets_CryptoChipsValue_Txt,
                     Assets_VCChips_Txt, Assets_VCValue_Txt,
                     Assets_Gold_Txt, Assets_GoldValue_Txt,
                     Assets_Stamina_Txt, Assets_StaminaValue_Txt,
                     Assets_OTProps_Txt, Assets_OTPropsValue_Txt;
-
-    [Header("積分房")]
-    [SerializeField]
-    Button Integral_Btn;
-    [SerializeField]
-    TextMeshProUGUI IntegralBtn_Txt;
 
     [Header("提示")]
     [SerializeField]
@@ -72,6 +62,10 @@ public class LobbyView : MonoBehaviour
     [Header("存提款介面")]
     [SerializeField]
     GameObject Transfers_AnteView;
+    [SerializeField]
+    Button Transfers_Btn;
+    [SerializeField]
+    TextMeshProUGUI TransfersBtn_Txt;
 
 
     /// <summary>
@@ -94,8 +88,6 @@ public class LobbyView : MonoBehaviour
     /// </summary>
     private void UpdateLanguage()
     {
-        IntegralBtn_Txt.text = LanguageManager.Instance.GetText("INTEGRAL");
-
         #region 用戶資源列表
 
         Assets_CryptoChips_Txt.text = LanguageManager.Instance.GetText("Crypto Table");
@@ -114,6 +106,12 @@ public class LobbyView : MonoBehaviour
         RankingBtn_Txt.text = LanguageManager.Instance.GetText("Ranking");
 
         #endregion
+
+        #region 存提款
+
+        TransfersBtn_Txt.text = LanguageManager.Instance.GetText("Transfers");
+
+        #endregion
     }
 
     private void OnDestroy()
@@ -124,8 +122,6 @@ public class LobbyView : MonoBehaviour
 
     private void Awake()
     {
-        battleData = new BattleData();
-
         LanguageManager.Instance.AddUpdateLanguageFunc(UpdateLanguage, gameObject);
         ListenerEvent();
     }
@@ -135,41 +131,11 @@ public class LobbyView : MonoBehaviour
     /// </summary>
     private void ListenerEvent()
     {
-        //頭像按鈕
-        Avatar_Btn.onClick.AddListener(() =>
-        {
-            OpenItemPage(ItemType.Mine);
-        });
-
         //顯示用戶資源列表
-        ShowAssets_Btn.onClick.AddListener(() =>
+        Avatar_Btn.onClick.AddListener(() =>
         {
             isShowAssetList = !isShowAssetList;
             SetIsShowAssetList = isShowAssetList;
-        });
-
-        //積分房
-        Integral_Btn.onClick.AddListener(() =>
-        {
-            if (battleData.isPairing)
-            {
-                //正在配對取消配對
-                EndPair();
-            }
-            else
-            {
-                if (GameRoomManager.Instance.JudgeIsCanBeCreateRoom())
-                {
-                    //開始配對
-                    battleData.isPairing = true;
-                    battleData.startPairTime = DateTime.Now;
-                }
-                else
-                {
-                    //房間數已達上限
-                    ShowMaxRoomTip();
-                }
-            }
         });
 
         #region 項目按鈕
@@ -199,6 +165,11 @@ public class LobbyView : MonoBehaviour
         });
 
         #endregion
+
+        Transfers_Btn.onClick.AddListener(() =>
+        {
+            DisplayFloor4UI(Transfers_AnteView);
+        });
     }
 
     private void OnEnable()
@@ -227,34 +198,15 @@ public class LobbyView : MonoBehaviour
 
     private void Update()
     {
-        //積分配對計時器
-        if (battleData.isPairing)
-        {
-            TimeSpan waitingTime = DateTime.Now - battleData.startPairTime;
-            IntegralBtn_Txt.text = $"{LanguageManager.Instance.GetText("Pairing")}:{(int)waitingTime.TotalMinutes} : {waitingTime.Seconds:00}";
-
-            if (waitingTime.Seconds >= 3)
-            {
-                baseRequest.SendRequest_InBattleRoom();
-                EndPair();
-            }
-        }
-
         //  任務生成測試
         if (Input.GetKeyDown(KeyCode.Q))
         {
             DisplayFloor4UI(QuestView);
-        }
-
-        //  存提款介面測試
-        if (Input.GetKeyDown(KeyCode.S))
-        {
-            DisplayFloor4UI(Transfers_AnteView);
-        }
-        
+        }        
 
 #if UNITY_EDITOR
 
+        //測試_返回登入
         if (Input.GetKeyDown(KeyCode.E))
         {
             WalletManager.Instance.OnWalletDisconnect();
@@ -285,9 +237,6 @@ public class LobbyView : MonoBehaviour
         set
         {
             AssetList_Obj.SetActive(value);
-            ShowAssetsBtn_Img.sprite = value == false ?
-                           AssetsManager.Instance.GetAlbumAsset(AlbumEnum.ArrowAlbum).album[1] :
-                           AssetsManager.Instance.GetAlbumAsset(AlbumEnum.ArrowAlbum).album[0];
         }
     }
 
@@ -349,25 +298,6 @@ public class LobbyView : MonoBehaviour
         Assets_GoldValue_Txt.text = StringUtils.SetChipsUnit(DataManager.UserGoldChips);
         Assets_StaminaValue_Txt.text = $"{DataManager.UserStamina}/{DataManager.MaxStaminaValue}";
         Assets_OTPropsValue_Txt.text = $"{DataManager.UserOTProps}";
-    }
-
-    /// <summary>
-    /// 積分房資料
-    /// </summary>
-    private BattleData battleData;
-    public class BattleData
-    {
-        public bool isPairing;              //是否正在配對中
-        public DateTime startPairTime;      //開始配對時間
-    }
-
-    /// <summary>
-    /// 結束配對
-    /// </summary>
-    private void EndPair()
-    {
-        IntegralBtn_Txt.text = LanguageManager.Instance.GetText("INTEGRAL");
-        battleData.isPairing = false;
     }
 
     /// <summary>

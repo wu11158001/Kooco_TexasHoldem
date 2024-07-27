@@ -47,7 +47,6 @@ public class CryptoTableBtnSample : MonoBehaviour
 
         Launch_Btn.onClick.AddListener(() =>
         {
-            AudioManager.Instance.PlayConfirmClick();
             if (GameRoomManager.Instance.JudgeIsCanBeCreateRoom())
             {
                 JoinRoomView joinRoomView = ViewManager.Instance.CreateViewInCurrCanvas<JoinRoomView>(JoinRoomViewObj);

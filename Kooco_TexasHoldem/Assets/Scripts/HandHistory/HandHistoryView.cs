@@ -41,7 +41,8 @@ public class HandHistoryView : MonoBehaviour
             if (resultDatas[i] == null)
             {
                 Debug.LogError("Hand History Data Error!!!");
-                return;
+                HandHistoryManager.Instance.OnDeleteHistoryData();
+                continue;
             }
 
             HistorySample historySample = Instantiate(HistorySampleObj, HistroyParent).GetComponent<HistorySample>();

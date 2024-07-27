@@ -1617,10 +1617,10 @@ public class GameView : MonoBehaviour
 
         List<Poker> pokers = CommunityPokerList.Concat(handPoker.ToList()).ToList();
 
-        //關閉所有外框
+        //關閉公共牌撲克效果
         foreach (var poker in pokers)
         {
-            poker.PokerFrameEnable = false;
+            poker.PokerEffectEnable = false;
         }
 
         //判斷牌型
@@ -1677,20 +1677,7 @@ public class GameView : MonoBehaviour
 
         foreach (var winner in pack.WinnerPack.WinnerDic)
         {
-            //關閉所有撲克外框
-            List<Poker> playersPoker = new List<Poker>();
-            foreach (var p in gamePlayerInfoList)
-            {
-                foreach (var poker in p.GetHandPoker)
-                {
-                    playersPoker.Add(poker);
-                }
-            }
-            List<Poker> allPokerList = CommunityPokerList.Concat(playersPoker.ToList()).ToList();
-            foreach (var poker in allPokerList)
-            {
-                poker.PokerFrameEnable = false;
-            }
+            CloseAllPokerEffect();
 
             GamePlayerInfo player = GetPlayer(winner.Key);
             player.IsOpenInfoMask = false;
@@ -1787,11 +1774,6 @@ public class GameView : MonoBehaviour
         thisData.SideWinnerList = new List<string>();
         thisData.SideWinChips = 0;
 
-        foreach (var common in CommunityPokerList)
-        {
-            common.PokerFrameEnable = false;
-        }
-
         //開啟遮罩
         foreach (var player in gamePlayerInfoList)
         {
@@ -1803,6 +1785,8 @@ public class GameView : MonoBehaviour
         thisData.SideWinnerList = new List<string>();
         foreach (var sideWinner in pack.SidePack.SideWinnerDic)
         {
+            CloseAllPokerEffect();
+
             //邊池贏家非主池贏家
             bool isShow = !thisData.PotWinnerList.Contains(sideWinner.Key);
             if (!isShow)
@@ -1816,21 +1800,6 @@ public class GameView : MonoBehaviour
             thisData.SideWinnerList.Add(sideWinner.Key);
 
             GamePlayerInfo player = GetPlayer(sideWinner.Key);
-
-            //關閉所有撲克外框
-            List<Poker> playersPoker = new List<Poker>();
-            foreach (var p in gamePlayerInfoList)
-            {
-                foreach (var poker in p.GetHandPoker)
-                {
-                    playersPoker.Add(poker);
-                }
-            }
-            List<Poker> allPokerList = CommunityPokerList.Concat(playersPoker.ToList()).ToList();
-            foreach (var poker in allPokerList)
-            {
-                poker.PokerFrameEnable = false;
-            }
 
             thisData.SideWinChips = sideWinner.Value;
 
@@ -1864,7 +1833,7 @@ public class GameView : MonoBehaviour
             List<Poker> pokerList = CommunityPokerList.Concat(handPoker.ToList()).ToList();
             foreach (var poker in pokerList)
             {
-                poker.PokerFrameEnable = false;
+                poker.PokerEffectEnable = false;
             }
         }
 
@@ -1908,6 +1877,26 @@ public class GameView : MonoBehaviour
             processHistoryData.processStepHistoryDataList.Add(processStepHistoryData);
         }
 
+    }
+
+    /// <summary>
+    /// 關閉所有撲克效果
+    /// </summary>
+    private void CloseAllPokerEffect()
+    {
+        List<Poker> playersPoker = new List<Poker>();
+        foreach (var p in gamePlayerInfoList)
+        {
+            foreach (var poker in p.GetHandPoker)
+            {
+                playersPoker.Add(poker);
+            }
+        }
+        List<Poker> allPokerList = CommunityPokerList.Concat(playersPoker.ToList()).ToList();
+        foreach (var poker in allPokerList)
+        {
+            poker.PokerEffectEnable = false;
+        }
     }
 
     /// <summary>

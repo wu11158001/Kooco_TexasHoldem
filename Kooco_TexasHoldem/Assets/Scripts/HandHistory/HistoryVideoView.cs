@@ -538,7 +538,7 @@ public class HistoryVideoView : MonoBehaviour
             List<Poker> allPokerList = CommunityPokser.ToList().Concat(pokers).ToList();
             foreach (var poker in allPokerList)
             {
-                poker.PokerFrameEnable = false;
+                poker.PokerEffectEnable = false;
             }
         }
 

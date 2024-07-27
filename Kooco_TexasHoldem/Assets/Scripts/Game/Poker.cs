@@ -8,19 +8,15 @@ using System;
 public class Poker : MonoBehaviour
 {
     [SerializeField]
+    RectTransform thisRt;
+    [SerializeField]
     Image poker_Img, frame_Img, Pattern_Img, SmallPattern_Img;
     [SerializeField]
     GameObject shining_Obj, PokerBack_Obj;
     [SerializeField]
     TextMeshProUGUI Num_Txt;
 
-    RectTransform thisRt;
     int pokerNumber;    //撲克數字(-1=背面)
-
-    private void Awake()
-    {
-        thisRt = gameObject.GetComponent<RectTransform>();
-    }
 
     private void OnEnable()
     {
@@ -32,9 +28,8 @@ public class Poker : MonoBehaviour
     /// </summary>
     public void PokerInit()
     {
-        PokerFrameEnable = false;
+        PokerEffectEnable = false;
         shining_Obj.SetActive(false);
-        thisRt.localScale = Vector3.one;
     }
 
     /// <summary>
@@ -99,15 +94,15 @@ public class Poker : MonoBehaviour
     }
 
     /// <summary>
-    /// 外框激活
+    /// 撲克效果激活
     /// </summary>
-    public bool PokerFrameEnable
+    public bool PokerEffectEnable
     {
         set
         {
             frame_Img.enabled = false;
             shining_Obj.SetActive(value);
-            poker_Img.rectTransform.localScale = Vector3.one;
+            thisRt.localScale = Vector3.one;
 
             /*frame_Img.enabled = value;
             poker_Img.rectTransform.localScale = Vector3.one;

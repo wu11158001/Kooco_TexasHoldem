@@ -14,6 +14,12 @@ public class LobbyMainPageView : MonoBehaviour
     [SerializeField]
     RectTransform BillboardContent, BillboardPoints;
 
+    [Header("積分房")]
+    [SerializeField]
+    Button Integral_Btn;
+    [SerializeField]
+    TextMeshProUGUI IntegralBtn_Txt;
+
     [Header("加密貨幣桌")]
     [SerializeField]
     GameObject CryptoTableBtnSample;
@@ -47,10 +53,21 @@ public class LobbyMainPageView : MonoBehaviour
     DateTime billboardStartTime;                            //廣告刊版輪播起始時間
 
     /// <summary>
+    /// 積分房資料
+    /// </summary>
+    private IntegralData integralData;
+    public class IntegralData
+    {
+        public bool isPairing;              //是否正在配對中
+        public DateTime startPairTime;      //開始配對時間
+    }
+
+    /// <summary>
     /// 更新文本翻譯
     /// </summary>
     private void UpdateLanguage()
     {
+        IntegralBtn_Txt.text = LanguageManager.Instance.GetText("INTEGRAL");
         CryptoTableTital_Txt.text = LanguageManager.Instance.GetText("CRYPTO TABLE");
         VCTableTital_Txt.text = LanguageManager.Instance.GetText("VIRTUAL CURRENCY TABLE");
     }
@@ -62,9 +79,42 @@ public class LobbyMainPageView : MonoBehaviour
 
     private void Awake()
     {
+        integralData = new IntegralData();
+
+        ListenerEvent();
         LanguageManager.Instance.AddUpdateLanguageFunc(UpdateLanguage, gameObject);
 
         billboardSizeWidth = BillboardSample.GetComponent<RectTransform>().rect.width;
+    }
+
+    /// <summary>
+    /// 事件聆聽
+    /// </summary>
+    private void ListenerEvent()
+    {
+        //積分房
+        Integral_Btn.onClick.AddListener(() =>
+        {
+            if (integralData.isPairing)
+            {
+                //正在配對取消配對
+                IntegralEndPair();
+            }
+            else
+            {
+                if (GameRoomManager.Instance.JudgeIsCanBeCreateRoom())
+                {
+                    //開始配對
+                    integralData.isPairing = true;
+                    integralData.startPairTime = DateTime.Now;
+                }
+                else
+                {
+                    //房間數已達上限
+                    lobbyView.ShowMaxRoomTip();
+                }
+            }
+        });
     }
 
     private void Start()
@@ -135,7 +185,26 @@ public class LobbyMainPageView : MonoBehaviour
         }
 
         #endregion
+
+        #region 積分房
+
+        //積分配對計時器
+        if (integralData.isPairing)
+        {
+            TimeSpan waitingTime = DateTime.Now - integralData.startPairTime;
+            IntegralBtn_Txt.text = $"{LanguageManager.Instance.GetText("Pairing")}:{(int)waitingTime.TotalMinutes} : {waitingTime.Seconds:00}";
+
+            if (waitingTime.Seconds >= 3)
+            {
+                lobbyView.baseRequest.SendRequest_InBattleRoom();
+                IntegralEndPair();
+            }
+        }
+
+        #endregion
     }
+
+    #region 廣告刊版
 
     /// <summary>
     /// 初始儣告勘版
@@ -301,6 +370,21 @@ public class LobbyMainPageView : MonoBehaviour
                                                       .i;
         billboardPointList[billboardIndex].color = new Color(1, 1, 1, 1);
     }
+
+    #endregion
+
+    #region 積分房
+
+    /// <summary>
+    /// 積分房結束配對
+    /// </summary>
+    private void IntegralEndPair()
+    {
+        IntegralBtn_Txt.text = LanguageManager.Instance.GetText("INTEGRAL");
+        integralData.isPairing = false;
+    }
+
+    #endregion
 
     /// <summary>
     /// 創建房間按鈕

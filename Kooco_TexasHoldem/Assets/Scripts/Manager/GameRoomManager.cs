@@ -24,11 +24,9 @@ public class GameRoomManager : UnitySingleton<GameRoomManager>
 
     [Header("房間按鈕")]
     [SerializeField]
-    RectTransform SwitchBtnSample;
+    RectTransform SwitchBtnSample, SwitchBtnParent, GoLobbyBtn_Tr;
     [SerializeField]
-    Button AddRoom_Btn;
-    [SerializeField]
-    RectTransform SwitchBtnParent, AddRoomBtn_Tr;
+    Button GoLobby_Btn;
 
     [Header("背景遮罩")]
     [SerializeField]
@@ -148,7 +146,7 @@ public class GameRoomManager : UnitySingleton<GameRoomManager>
     private void ListenerEnent()
     {
         //新增房間按鈕(返回大廳)
-        AddRoom_Btn.onClick.AddListener(() =>
+        GoLobby_Btn.onClick.AddListener(() =>
         {
             OnGoLobby();
         });
@@ -203,16 +201,12 @@ public class GameRoomManager : UnitySingleton<GameRoomManager>
         {
             IsShow = value;
 
-            if (value == true)
-            {
-                GameRoomCanvas.sortingOrder = 50;
-                AddRoom_Btn.interactable = true;
-            }
-            else
-            {
-                GameRoomCanvas.sortingOrder = -1;
-                AddRoom_Btn.interactable = false;
-            }
+            GoLobby_Btn.gameObject.SetActive(value);
+            GoLobby_Btn.interactable = value;
+
+            GameRoomCanvas.sortingOrder = value == true ?
+                                         50 :
+                                         -1;
         }
     }
 
@@ -329,7 +323,7 @@ public class GameRoomManager : UnitySingleton<GameRoomManager>
         thisData.RoomNameIndex++;
         thisData.RoomDic.Add(roomName, (room, switchRoomBtn));
 
-        AddRoomBtn_Tr.SetSiblingIndex(GetRoomCount + 1);
+        GoLobbyBtn_Tr.SetSiblingIndex(GetRoomCount + 1);
 
         BgMask_Obj.SetActive(true);
         IsCanMoveSwitch = true;
