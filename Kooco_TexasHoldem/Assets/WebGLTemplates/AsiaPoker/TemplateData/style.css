@@ -111,6 +111,11 @@ body {
   }
 }
 
+/*grecaptcha小工具顯示*/
+.grecaptcha-badge {
+    visibility: visible;
+}
+
 .unity-mobile #unity-canvas {
   width: 100%;
   height: 100%;

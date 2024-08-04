@@ -6,6 +6,9 @@ public class ViewManager : UnitySingleton<ViewManager>
 {
     Canvas mainCanvas;
 
+    //紀錄產生的等待介面
+    Dictionary<Transform, WaitingView> waitingViewDic = new();
+
     public override void Awake()
     {
         base.Awake();
@@ -45,7 +48,9 @@ public class ViewManager : UnitySingleton<ViewManager>
         view.anchoredPosition = Vector2.zero;
         view.localScale = Vector3.one;
         view.eulerAngles = Vector3.zero;
-        view.name = viewName;
+        view.name = string.IsNullOrEmpty(viewName) ?
+                    view.name.Replace("(Clone)", "") :
+                    viewName;
         view.SetSiblingIndex(100);
     }
 
@@ -66,7 +71,7 @@ public class ViewManager : UnitySingleton<ViewManager>
 
         RectTransform rt = Instantiate(obj).GetComponent<RectTransform>();
         rt.SetParent(parent);
-        InitViewTr(rt, rt.name.Replace("(Clone)", ""));
+        InitViewTr(rt);
 
         if (rt.TryGetComponent<T>(out T component))
         {
@@ -79,6 +84,8 @@ public class ViewManager : UnitySingleton<ViewManager>
         }
     }
 
+    #region 確認介面
+
     /// <summary>
     /// 開啟確認介面
     /// </summary>
@@ -88,4 +95,63 @@ public class ViewManager : UnitySingleton<ViewManager>
         GameObject obj = Resources.Load<GameObject>("Prefab/CommonView/ConfirmView");
         return CreateViewInCurrCanvas<ConfirmView>(obj);
     }
+
+    #endregion
+
+    #region 提示訊息介面
+
+    /// <summary>
+    /// 開啟提示訊息介面
+    /// </summary>
+    /// <param name="parent">產生介面</param>
+    /// <param name="msg">訊息內容</param>
+    /// <returns></returns>
+    public void OpenTipMsgView(Transform parent, string msg)
+    {
+        GameObject obj = Resources.Load<GameObject>("Prefab/CommonView/TipMsgView");
+        RectTransform rt = Instantiate(obj, parent).GetComponent<RectTransform>();
+        InitViewTr(rt);
+
+        TipMsgView tipMsgView = rt.GetComponent<TipMsgView>();
+        tipMsgView.SetTipMsg(msg);
+    }
+
+    #endregion
+
+    #region 等待介面
+
+    /// <summary>
+    /// 開啟等待介面
+    /// </summary>
+    /// <param name="parent">產生介面</param>
+    /// <param name="waitTime">自動關閉時間</param>
+    /// <returns></returns>
+    public WaitingView OpenWaitingView(Transform parent, float waitTime = 5)
+    {
+        GameObject obj = Resources.Load<GameObject>("Prefab/CommonView/WaitingView");
+        RectTransform rt = Instantiate(obj, parent).GetComponent<RectTransform>();
+        InitViewTr(rt);
+
+        WaitingView waitingView = rt.GetComponent<WaitingView>();
+        waitingView.SetWaitingDate(parent, waitTime);
+
+        waitingViewDic.Add(parent, waitingView);
+
+        return waitingView;
+    }
+
+    /// <summary>
+    /// 關閉等待介面
+    /// </summary>
+    /// <param name="rt"></param>
+    public void CloseWaitingView(Transform rt)
+    {
+        if (waitingViewDic.ContainsKey(rt))
+        {
+            Destroy(waitingViewDic[rt].gameObject);
+            waitingViewDic.Remove(rt);
+        }
+    }
+
+    #endregion
 }

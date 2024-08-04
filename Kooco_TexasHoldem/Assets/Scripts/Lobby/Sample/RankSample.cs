@@ -20,7 +20,7 @@ public class RankSample : MonoBehaviour
     public void SetRankData(RankData rankData, int rank, string pointStr)
     {
         int avatarIndex = rankData.nickname == DataManager.UserNickname ?
-                          DataManager.UserAvatar :
+                          DataManager.UserAvatarIndex :
                           rankData.avatar;
         Avatar_Img.sprite = AssetsManager.Instance.GetAlbumAsset(AlbumEnum.AvatarAlbum).album[avatarIndex];
         Nickname_Txt.text = rankData.nickname == DataManager.UserNickname ?

@@ -12,9 +12,32 @@
     <script src="https://c0f4f41c-2f55-4863-921b-sdk-docs.github.io/cdn/metamask-sdk-unity.js"></script>
     <script src="https://connect.facebook.net/en_US/sdk.js"></script>
     <script src="https://docs.cloud.coinbase.com/wallet-sdk/docs/injected-provider"></script>
+
+    <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-database-compat.js"></script>
+
+    <script src="Firebase/FirebaseFun.js"></script>
+
+    <style>
+        /*recaptcha小工具隱藏*/
+        #recaptcha-container {
+            display: none;
+        }
+        /*recaptcha驗證按鈕*/
+        #recaptcha-button {            
+            position: absolute;
+            opacity: 0; /* 设置透明度为0 */
+            pointer-events: none; /* 禁用指针事件 */
+            display: none; /* 隐藏按钮 */
+        }
+    </style>
 </head>
 <body class="{{{ SPLASH_SCREEN_STYLE.toLowerCase() }}}">
     <div id="unity-container" class="unity-desktop">
+        <div id="recaptcha-container"></div><!--recaptcha小工具隱藏-->
+        <button id="recaptcha-button"></button><!--recaptcha驗證按鈕-->
         <canvas id="unity-canvas" style="width: 100%; height: 100%;"></canvas>
     </div>
     <div id="loading-cover" style="display: none">
@@ -27,7 +50,6 @@
     </div>
     <div id="unity-fullscreen-button" style="display: none"></div>
     <script>
-
         //重定向Url
         window.callbackUrl = 'https://kooco.github.io/ACEdemo/demo.asiapoker/index.html';
         //IG APP ID
@@ -168,12 +190,12 @@
                         const state = urlParams.get('state');
                         if (code && state) {
                             //Line登入回傳
-                            onLineLoginCallback(code, state);
+                            window.unityInstance.SendMessage('ThirdLoginManager', 'OnLineLoginCallback', code);
                         }
-                        if(code) {
+                        if(code && state == null) {
                             //IG登入回傳
-                            onIGLoginCallback(code);
-                        }
+                            window.unityInstance.SendMessage('Entry', 'OnIGLoginCallback', code);
+                        }                        
 
                         // 放置接收代碼的 JavaScript
                         function getQueryParams() {
@@ -188,10 +210,15 @@
                         }
                         //新開頁面解析URL
                         const queryParams = getQueryParams();
+                        //Line郵箱
                         const lineMail = queryParams['linemail'];
+                        //IG Id與名子
                         const igIdAndName = queryParams['igIdAndName'];
+                        //邀請碼
+                        const invitationCode = queryParams['invitationCode'];
                         instance.SendMessage('Entry', 'HtmlDebug', 'lineMail:'+lineMail);
                         instance.SendMessage('Entry', 'HtmlDebug', 'igIdAndName:'+igIdAndName);
+                        instance.SendMessage('Entry', 'HtmlDebug', 'invitationCode:'+invitationCode);
                         if(lineMail) {
                             //Line
                             instance.SendMessage('Entry', 'ReceiveLineMail', lineMail);
@@ -199,9 +226,11 @@
                         if(igIdAndName) {
                             //IG
                             instance.SendMessage('Entry', 'ReceiveIGInfo', igIdAndName);
-                        }                      
-
-                        
+                        }
+                        if(invitationCode) {
+                            //接收邀請碼
+                            window.unityInstance.SendMessage('Entry', 'ReceiveInvitationCode', invitationCode);
+                        }
 
                     }).catch((message) => {
                         alert(message);
@@ -210,28 +239,6 @@
             };
             document.body.appendChild(script);
         };
-
-        //Line登入傳遞授權碼
-        function onLineLoginCallback(code, state) {
-            if (window.unityInstance) {
-                console.log("Line Login And Get Code:" + code + ' Line State:' + state);
-                window.unityInstance.SendMessage('Entry', 'OnLineLoginCallback', code);
-
-            } else {
-                console.error("Unity instance not found.");
-            }
-        }
-
-        //IG登入傳遞授權碼
-        function onIGLoginCallback(code) {
-            if (window.unityInstance) {
-                console.log("IG Login And Get Code:" + code);
-                window.unityInstance.SendMessage('Entry', 'OnIGLoginCallback', code);
-
-            } else {
-                console.error("Unity instance not found.");
-            }
-        }
 
     </script>
 </body>

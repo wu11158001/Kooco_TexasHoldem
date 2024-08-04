@@ -34,12 +34,12 @@ public class TransactionHistoryView : MonoBehaviour
     [SerializeField]
     Transform HistoryArea;
     [SerializeField]
-    Toggle Cash_Tog, Gold_Tog;
+    Toggle UCoin_Tog, ACoin_Tog, Gold_Tog;
     [SerializeField]
     Image Tip_Img;
     [SerializeField]
     TextMeshProUGUI Title_Txt, Tip_Txt,
-                    CashTog_Txt, GoldTog_Txt, VirtualCode_Txt,
+                    UCoinTog_Txt, ACoinTog_Txt, GoldTog_Txt,
                     ItemType_Txt, ItemTitle_Txt, ItemStatus_Txt, ItemPL_Txt,
                     CurrPage_Txt;
 
@@ -83,7 +83,8 @@ public class TransactionHistoryView : MonoBehaviour
     const string expandTopBgName = "TopBg";                                     //收起上方物件名稱
     const float expandTIme = 0.1f;                                              //內容展開時間
 
-    List<TransactionHistoryData> cashDataList;
+    List<TransactionHistoryData> uCoinDataList;
+    List<TransactionHistoryData> aCoinDataList;
     List<TransactionHistoryData> goldDataList;
     List<TransactionHistoryData> displayDataList;
     int currPage;
@@ -128,9 +129,9 @@ public class TransactionHistoryView : MonoBehaviour
         StringUtils.TextInFrontOfImageFollow(Tip_Txt,
                                      Tip_Img);
         Title_Txt.text = LanguageManager.Instance.GetText("TRANSACTION HISTORY");        
-        CashTog_Txt.text = LanguageManager.Instance.GetText("CASH");
+        UCoinTog_Txt.text = LanguageManager.Instance.GetText("U COIN");
+        ACoinTog_Txt.text = LanguageManager.Instance.GetText("A COIN");
         GoldTog_Txt.text = LanguageManager.Instance.GetText("GOLD");
-        VirtualCode_Txt.text = LanguageManager.Instance.GetText("VIRTUAL CODE");
         ItemType_Txt.text = LanguageManager.Instance.GetText("Type");
         ItemTitle_Txt.text = LanguageManager.Instance.GetText("Title");
         ItemStatus_Txt.text = LanguageManager.Instance.GetText("Status");
@@ -206,18 +207,29 @@ public class TransactionHistoryView : MonoBehaviour
             DisplayHistory(displayDataList, currPage);
         });
 
-        //顯示Cash紀錄
-        Cash_Tog.onValueChanged.AddListener((isOn) =>
+        //U幣紀錄
+        UCoin_Tog.onValueChanged.AddListener((isOn) =>
         {
             if (isOn)
             {
-                displayDataList = cashDataList;
+                displayDataList = uCoinDataList;
                 currPage = 1;
                 DisplayHistory(displayDataList, currPage);
             }
         });
 
-        //顯示Gold紀錄
+        //U幣紀錄
+        ACoin_Tog.onValueChanged.AddListener((isOn) =>
+        {
+            if (isOn)
+            {
+                displayDataList = aCoinDataList;
+                currPage = 1;
+                DisplayHistory(displayDataList, currPage);
+            }
+        });
+
+        //Gold紀錄
         Gold_Tog.onValueChanged.AddListener((isOn) =>
         {
             if (isOn)
@@ -289,14 +301,14 @@ public class TransactionHistoryView : MonoBehaviour
             Filter_Rt.gameObject.SetActive(false);
 
             //顯示篩選後資料
-            if (Cash_Tog.isOn)
+            if (UCoin_Tog.isOn)
             {
                 Gold_Tog.isOn = true;
-                Cash_Tog.isOn = true;
+                UCoin_Tog.isOn = true;
             }
             if (Gold_Tog.isOn)
             {
-                Cash_Tog.isOn = true;
+                UCoin_Tog.isOn = true;
                 Gold_Tog.isOn = true;
             }
         });
@@ -458,7 +470,7 @@ public class TransactionHistoryView : MonoBehaviour
 
     private void OnEnable()
     {
-        List<TransactionHistoryData> cashList = new List<TransactionHistoryData>()
+        List<TransactionHistoryData> uCoinList = new List<TransactionHistoryData>()
         {
             new TransactionHistoryData(){ type = "Pledge", time = Utils.ConvertDateTimeToTimestamp(new DateTime(2024,06,15,10,30,0)).ToString(), title1 = "XT123", title2 = "0x1123as456scas12315423156x123", status = 0, pl = "+6400"},
             new TransactionHistoryData(){ type = "Buy-In", time = Utils.ConvertDateTimeToTimestamp(new DateTime(2024,06,15,10,30,0)).ToString(), title1 = "Cash $20,200/20,200", title2 = "1234654684", status = 1, pl = "-400"},
@@ -466,6 +478,10 @@ public class TransactionHistoryView : MonoBehaviour
             new TransactionHistoryData(){ type = "Buy-In", time = Utils.ConvertDateTimeToTimestamp(new DateTime(2024,06,13,10,30,0)).ToString(), title1 = "Cash $20,200/20,200", title2 = "1234654684", status = 1, pl = "-1400"},
             new TransactionHistoryData(){ type = "Pledge", time = Utils.ConvertDateTimeToTimestamp(new DateTime(2024,05,15,10,30,0)).ToString(), title1 = "XT123", title2 = "0x1123as456scas12315423156x123", status = 0, pl = "+400"},
             new TransactionHistoryData(){ type = "Pledge", time = Utils.ConvertDateTimeToTimestamp(new DateTime(2024,04,15,10,30,0)).ToString(), title1 = "XT123", title2 = "0x1123as456scas12315423156x123", status = -1, pl = "+2400"},
+        };
+
+        List<TransactionHistoryData> aCoinList = new List<TransactionHistoryData>()
+        {
         };
 
         List<TransactionHistoryData> goldList = new List<TransactionHistoryData>()
@@ -499,12 +515,13 @@ public class TransactionHistoryView : MonoBehaviour
         Filter_Rt.gameObject.SetActive(false);
         SetDateRange_Obj.SetActive(false);
 
-        cashDataList = cashList;
+        uCoinDataList = uCoinList;
+        aCoinDataList = aCoinList;
         goldDataList = goldList;
-        displayDataList = cashDataList;
+        displayDataList = uCoinDataList;
         currPage = 1;
 
-        Cash_Tog.isOn = true;
+        UCoin_Tog.isOn = true;
         TypeAll_Tog.isOn = true;
         AllStatus_Tog.isOn = true;
 

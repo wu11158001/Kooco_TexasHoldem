@@ -62,16 +62,22 @@ public class GameView : MonoBehaviour
     [SerializeField]
     List<Poker> CommunityPokerList;
 
+    [Header("離開按鈕")]
+    [SerializeField]
+    Button LogOut_Btn;
+    [SerializeField]
+    TextMeshProUGUI LogOutBtn_Txt;
+
     [Header("選單")]
     [SerializeField]
     RectTransform MenuPage_Tr;
     [SerializeField]
-    Button Menu_Btn, MenuClose_Btn, SitOut_Btn, BuyChips_Btn, LogOut_Btn, HandHistory_Btn;
+    Button Menu_Btn, MenuClose_Btn, SitOut_Btn, BuyChips_Btn, HandHistory_Btn;
     [SerializeField]
     Image MenuAvatar_Img;
     [SerializeField]
     TextMeshProUGUI MenuCloseBtn_Txt, SitOutBtn_Txt, BuyChipsBtn_Txt, HandHistoryBtn_Txt,
-                    LogOutBtn_Txt, GameSettingsBtn_Txt,
+                    GameSettingsBtn_Txt,
                     MenuNickname_Txt, MenuWalletAddr_Txt;
 
     [Header("聊天")]
@@ -599,7 +605,7 @@ public class GameView : MonoBehaviour
         //選單玩家訊息
         StringUtils.StrExceedSize(DataManager.UserWalletAddress, MenuWalletAddr_Txt);
         MenuNickname_Txt.text = $"@{DataManager.UserNickname}";
-        MenuAvatar_Img.sprite = AssetsManager.Instance.GetAlbumAsset(AlbumEnum.AvatarAlbum).album[DataManager.UserAvatar];
+        MenuAvatar_Img.sprite = AssetsManager.Instance.GetAlbumAsset(AlbumEnum.AvatarAlbum).album[DataManager.UserAvatarIndex];
 
         SetNotReadChatCount = 0;
 
@@ -1900,6 +1906,21 @@ public class GameView : MonoBehaviour
     }
 
     /// <summary>
+    /// 判斷勝率
+    /// </summary>
+    private void JudgeWinRate()
+    {
+        DateTime startTime = DateTime.Now;
+        List<int> judgeHand = thisData.LocalGamePlayerInfo.GetHandPoker.Select(x => x.PokerNum).ToList();
+        PokerWinRateCalculator pokerWinRateCalculator = new PokerWinRateCalculator(judgeHand, thisData.CurrCommunityPoker);
+        pokerWinRateCalculator.CalculateWinRate((winRate) =>
+        {
+            Debug.Log($"Judge Win Rate Time : {(DateTime.Now - startTime).TotalSeconds}");
+            Debug.Log($"Win Rate : {winRate}");
+        });
+    }
+
+    /// <summary>
     /// 遊戲階段
     /// </summary>
     /// <returns></returns>
@@ -1941,6 +1962,7 @@ public class GameView : MonoBehaviour
                 HandPokerLicensing(pack.LicensingStagePack.HandPokerDic);
                 SetButtonSeat(pack.LicensingStagePack.ButtonSeatId);
                 SetSitOutDisplay();
+                JudgeWinRate();
                 break;
 
             //大小盲
@@ -1957,18 +1979,21 @@ public class GameView : MonoBehaviour
             case FlowEnum.Flop:
                 yield return IFlopCommunityPoker(pack.CommunityPokerPack.CurrCommunityPoker);
                 RountInit();
+                JudgeWinRate();
                 break;
 
             //轉牌
             case FlowEnum.Turn:
                 yield return IFlopCommunityPoker(pack.CommunityPokerPack.CurrCommunityPoker);
                 RountInit();
+                JudgeWinRate();
                 break;
 
             //河牌
             case FlowEnum.River:
                 yield return IFlopCommunityPoker(pack.CommunityPokerPack.CurrCommunityPoker);
                 RountInit();
+                JudgeWinRate();
                 break;
 
             //主池結果
@@ -2171,7 +2196,7 @@ public class GameView : MonoBehaviour
         }
 
         baseRequest.SendRequestRequest_Chat(Chat_If.text);
-        CreateChatContent(DataManager.UserAvatar,
+        CreateChatContent(DataManager.UserAvatarIndex,
                           DataManager.UserNickname,
                           Chat_If.text,
                           true);

@@ -12,6 +12,23 @@ using TMPro;
 public static class StringUtils
 {
     /// <summary>
+    /// 產生隨機字串
+    /// </summary>
+    /// <param name="length"></param>
+    /// <returns></returns>
+    public static string GenerateRandomString(int length)
+    {
+        const string chars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        System.Random random = new ();
+        char[] result = new char[length];
+        for (int i = 0; i < length; i++)
+        {
+            result[i] = chars[random.Next(chars.Length)];
+        }
+        return new string(result);
+    }
+
+    /// <summary>
     /// 文字前方圖片跟隨(提示類驚嘆號等功能)
     /// </summary>
     /// <param name="textComponent"></param>
@@ -82,7 +99,7 @@ public static class StringUtils
 
 #endif
 
-        Debug.Log($"Copy Text:{str}");    
+        Debug.Log($"Copy Text : {str}");    
     }
 
     /// <summary>
@@ -311,13 +328,13 @@ public static class StringUtils
         }
 
         string countryCode = dropdown.options[dropdown.value].text;
-        countryCode = countryCode.Replace("+", "");
+        //countryCode = countryCode.Replace("+", "");
         if (phoneNumber[0] == '0')
         {
             phoneNumber = phoneNumber.Substring(1);
         }
         
-        return $"{countryCode}-{phoneNumber}";
+        return $"{countryCode}{phoneNumber}";
     }
 
     /// <summary>
@@ -344,7 +361,9 @@ public static class StringUtils
     /// <returns></returns>
     public static bool CheckPhoneNumber(string phone)
     {
-        if (string.IsNullOrEmpty(phone) || phone.Length < 9)
+        if (string.IsNullOrEmpty(phone) || 
+            phone.Length < 7 ||
+            phone.Length > 11)
         {
             return false;
         }

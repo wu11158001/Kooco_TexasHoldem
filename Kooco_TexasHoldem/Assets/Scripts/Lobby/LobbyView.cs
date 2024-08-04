@@ -12,10 +12,6 @@ public class LobbyView : MonoBehaviour
     [SerializeField]
     public Request_LobbyView baseRequest;
 
-    [Header("遮罩物件")]
-    [SerializeField]
-    GameObject Mask_Obj;
-
     [Header("用戶訊息")]
     [SerializeField]
     TextMeshProUGUI Nickname_Txt, Stamina_Txt, CryptoChips_Txt;
@@ -31,12 +27,6 @@ public class LobbyView : MonoBehaviour
                     Assets_Gold_Txt, Assets_GoldValue_Txt,
                     Assets_Stamina_Txt, Assets_StaminaValue_Txt,
                     Assets_OTProps_Txt, Assets_OTPropsValue_Txt;
-
-    [Header("提示")]
-    [SerializeField]
-    Image Tip_Img;
-    [SerializeField]
-    TextMeshProUGUI Tip_Txt;
 
     [Header("項目按鈕")]
     [SerializeField]
@@ -67,7 +57,6 @@ public class LobbyView : MonoBehaviour
     [SerializeField]
     TextMeshProUGUI TransfersBtn_Txt;
 
-
     /// <summary>
     /// 項目按鈕類型
     /// </summary>
@@ -80,7 +69,6 @@ public class LobbyView : MonoBehaviour
         Ranking,
     }
 
-    Coroutine tipCorutine;
     bool isShowAssetList;               //是否顯示用戶資源列表
 
     /// <summary>
@@ -117,6 +105,7 @@ public class LobbyView : MonoBehaviour
     private void OnDestroy()
     {
         LanguageManager.Instance.RemoveLanguageFun(UpdateLanguage);
+        JSBridgeManager.Instance.StopListeningForDataChanges($"{Entry.Instance.releaseType}/{FirebaseManager.USER_DATA_PATH}{DataManager.UserLoginType}/{DataManager.UserLoginPhoneNumber}");
         WalletManager.Instance.CancelCheckConnect();
     }
 
@@ -174,26 +163,31 @@ public class LobbyView : MonoBehaviour
 
     private void OnEnable()
     {
-        //提示
-        Color tipColor = Tip_Txt.color;
-        tipColor.a = 0;
-        Tip_Txt.color = tipColor;
-        Color tipBgColor = Tip_Img.color;
-        tipBgColor.a = 0;
-        Tip_Img.color = tipBgColor;
-
         isShowAssetList = false;
         SetIsShowAssetList = isShowAssetList;
 
         HandHistoryManager.Instance.LoadHandHistoryData();
 
-        UpdateUserInfo();
         OpenItemPage(ItemType.Main);
     }
 
     private void Start()
     {
-        StartCoroutine(IOpenSetNickname());
+
+#if UNITY_EDITOR
+
+        Instantiate(SetNicknameViewObj, transform);
+        return;
+
+#endif
+
+
+        ViewManager.Instance.OpenWaitingView(transform);
+        DataManager.ReciveRankData();
+        JSBridgeManager.Instance.StartListeningForDataChanges($"{Entry.Instance.releaseType}/{FirebaseManager.USER_DATA_PATH}{DataManager.UserLoginType}/{DataManager.UserLoginPhoneNumber}",
+                                                               gameObject.name,
+                                                               nameof(GetDataCallback));
+        //UpdateUserData();
     }
 
     private void Update()
@@ -217,16 +211,105 @@ public class LobbyView : MonoBehaviour
     }
 
     /// <summary>
-    /// 開啟設置暱稱
+    /// 更新用戶訊息
     /// </summary>
-    /// <returns></returns>
-    private IEnumerator IOpenSetNickname()
+    public void UpdateUserData()
     {
-        Mask_Obj.SetActive(true);
-        yield return new WaitForSeconds(0.5f);
+#if UNITY_EDITOR
+        UpdateUserInfo();
+        return;
 
-        Instantiate(SetNicknameViewObj, transform);
-        Mask_Obj.SetActive(false);
+#endif
+
+        JSBridgeManager.Instance.ReadDataFromFirebase($"{Entry.Instance.releaseType}/{FirebaseManager.USER_DATA_PATH}{DataManager.UserLoginType}/{DataManager.UserLoginPhoneNumber}",
+                                                      gameObject.name,
+                                                      nameof(GetDataCallback));
+    }
+
+    /// <summary>
+    /// 獲取資料回傳
+    /// </summary>
+    /// <param name="jsonData">回傳資料</param>
+    public void GetDataCallback(string jsonData)
+    {
+        ViewManager.Instance.CloseWaitingView(transform);
+        AccountData loginData = FirebaseManager.Instance.OnFirebaseDataRead<AccountData>(jsonData);
+
+        DataManager.UserId = loginData.userId;
+        DataManager.UserLoginPhoneNumber = loginData.phoneNumber;
+        DataManager.UserNickname = loginData.nickname;
+        DataManager.UserAvatarIndex = loginData.avatarIndex;
+        DataManager.UserInvitationCode = loginData.invitationCode;
+        DataManager.UserBoundInviterId = loginData.boundInviterId;
+        DataManager.UserLineToken = loginData.lineToken;
+
+        //開啟設置暱稱
+        if (string.IsNullOrEmpty(loginData.nickname))
+        {
+            Instantiate(SetNicknameViewObj, transform);
+        }
+
+        //使用邀請碼登入
+        if (string.IsNullOrEmpty(DataManager.UserBoundInviterId) &&
+            !string.IsNullOrEmpty(DataManager.GetInvitationCode))
+        {
+            Debug.Log($"Update Inviter Data:{DataManager.GetInvitationCode} % UserID: {DataManager.UserId}");
+            JSBridgeManager.Instance.UpdateBoundInviterId(DataManager.GetInvitationCode,
+                                                          DataManager.UserId);
+
+            JSBridgeManager.Instance.ClearUrlQueryString();
+        }
+
+        //有Line Toke
+        if (string.IsNullOrEmpty(DataManager.UserLineToken) &&
+            !string.IsNullOrEmpty(DataManager.GetLineToken))
+        {
+            //修改資料
+            Dictionary<string, object> dataDic = new()
+            {
+                { FirebaseManager.LINE_TOKEN, DataManager.GetLineToken },
+            };
+            JSBridgeManager.Instance.UpdateDataFromFirebase($"{Entry.Instance.releaseType}/{FirebaseManager.USER_DATA_PATH}{DataManager.UserLoginType}/{DataManager.UserLoginPhoneNumber}",
+                                                            dataDic);
+
+            JSBridgeManager.Instance.ClearUrlQueryString();
+        }
+
+        //更新主頁邀請碼訊息
+        LobbyMinePageView lobbyMinePageView = GameObject.FindAnyObjectByType<LobbyMinePageView>();
+        if (lobbyMinePageView != null)
+        {
+            lobbyMinePageView.UpdateInvitationCodeInfo();
+        }
+
+        UpdateUserInfo();
+    }
+
+    /// <summary>
+    /// 更新用戶訊息
+    /// </summary>
+    public void UpdateUserInfo()
+    {
+        Nickname_Txt.text = $"@{DataManager.UserNickname}";
+        Avatar_Btn.image.sprite = AssetsManager.Instance.GetAlbumAsset(AlbumEnum.AvatarAlbum).album[DataManager.UserAvatarIndex];
+        Stamina_Txt.text = $"{DataManager.UserStamina}/{DataManager.MaxStaminaValue}";
+        CryptoChips_Txt.text = string.IsNullOrEmpty(DataManager.UserWalletBalance) ? "0 ETH" : DataManager.UserWalletBalance;
+
+        //資源列表
+        Assets_CryptoChipsValue_Txt.text = string.IsNullOrEmpty(DataManager.UserWalletBalance) ? "0 ETH" : DataManager.UserWalletBalance;
+        Assets_VCValue_Txt.text = StringUtils.SetChipsUnit(DataManager.UserVCChips);
+        Assets_GoldValue_Txt.text = StringUtils.SetChipsUnit(DataManager.UserGoldChips);
+        Assets_StaminaValue_Txt.text = $"{DataManager.UserStamina}/{DataManager.MaxStaminaValue}";
+        Assets_OTPropsValue_Txt.text = $"{DataManager.UserOTProps}";
+    }
+
+    /// <summary>
+    /// 頭像更換成Line頭貼
+    /// </summary>
+    /// <param name="linePicture">Line頭貼</param>
+    public void AvatarChangeToLinePicture(Sprite linePicture)
+    {
+        Avatar_Btn.image.sprite = linePicture;
     }
 
     /// <summary>
@@ -283,94 +366,12 @@ public class LobbyView : MonoBehaviour
     }
 
     /// <summary>
-    /// 更新用戶訊息
-    /// </summary>
-    public void UpdateUserInfo()
-    {
-        Nickname_Txt.text = $"@{DataManager.UserNickname}";
-        Avatar_Btn.image.sprite = AssetsManager.Instance.GetAlbumAsset(AlbumEnum.AvatarAlbum).album[DataManager.UserAvatar];
-        Stamina_Txt.text = $"{DataManager.UserStamina}/{DataManager.MaxStaminaValue}";
-        CryptoChips_Txt.text = string.IsNullOrEmpty(DataManager.UserWalletBalance) ? "0 ETH" : DataManager.UserWalletBalance;
-
-        //資源列表
-        Assets_CryptoChipsValue_Txt.text = string.IsNullOrEmpty(DataManager.UserWalletBalance) ? "0 ETH" : DataManager.UserWalletBalance;
-        Assets_VCValue_Txt.text = StringUtils.SetChipsUnit(DataManager.UserVCChips);
-        Assets_GoldValue_Txt.text = StringUtils.SetChipsUnit(DataManager.UserGoldChips);
-        Assets_StaminaValue_Txt.text = $"{DataManager.UserStamina}/{DataManager.MaxStaminaValue}";
-        Assets_OTPropsValue_Txt.text = $"{DataManager.UserOTProps}";
-    }
-
-    /// <summary>
     /// 顯示已達房間數量提示
     /// </summary>
     public void ShowMaxRoomTip()
     {
-        if (tipCorutine != null) StopCoroutine(tipCorutine);
-        tipCorutine = StartCoroutine(IShowTip(LanguageManager.Instance.GetText("MaxRoomTip")));
-    }
-
-    /// <summary>
-    /// 顯示提示
-    /// </summary>
-    /// <param name="tipContent">提示內容</param>
-    /// <returns></returns>
-    public IEnumerator IShowTip(string tipContent)
-    {
-        float showTime = 0.5f;
-        float imgMaxAlpha = 0.5f;
-
-        Tip_Txt.text = tipContent;
-        Color tipColor = Tip_Txt.color;
-        tipColor.a = 0;
-        Color tipBgColor = Tip_Img.color;
-        tipBgColor.a = 0;
-        Tip_Img.color = tipBgColor;
-
-        DateTime startTime = DateTime.Now;
-
-        while ((DateTime.Now - startTime).TotalSeconds < showTime)
-        {
-            float progress = (float)(DateTime.Now - startTime).TotalSeconds / showTime;
-
-            float txtAlpha = Mathf.Lerp(0, 1, progress);
-            tipColor.a = txtAlpha;
-            Tip_Txt.color = tipColor;
-
-            float imgAlpha = Mathf.Lerp(0, imgMaxAlpha, progress);
-            tipBgColor.a = imgAlpha;
-            Tip_Img.color = tipBgColor;
-
-            yield return null;
-        }
-
-        tipColor.a = 1;
-        Tip_Txt.color = tipColor;
-        tipBgColor.a = imgMaxAlpha;
-        Tip_Img.color = tipBgColor;
-
-        yield return new WaitForSeconds(2.5f);
-
-        startTime = DateTime.Now;
-
-        while ((DateTime.Now - startTime).TotalSeconds < showTime)
-        {
-            float progress = (float)(DateTime.Now - startTime).TotalSeconds / showTime;
-
-            float txtAlpha = Mathf.Lerp(1, 0, progress);
-            tipColor.a = txtAlpha;
-            Tip_Txt.color = tipColor;
-
-            float imgAlpha = Mathf.Lerp(imgMaxAlpha, 0, progress);
-            tipBgColor.a = imgAlpha;
-            Tip_Img.color = tipBgColor;
-
-            yield return null;
-        }
-
-        tipColor.a = 0;
-        Tip_Txt.color = tipColor;
-        tipBgColor.a = 0;
-        Tip_Img.color = tipBgColor;
+        ViewManager.Instance.OpenTipMsgView(transform,
+                                            LanguageManager.Instance.GetText("MaxRoomTip"));
     }
 
     /// <summary>

@@ -54,7 +54,6 @@ public class JoinRoomView : MonoBehaviour
         Cancel_Btn.onClick.AddListener(() =>
         {
             GameRoomManager.Instance.IsCanMoveSwitch = true;
-            AudioManager.Instance.PlayCancelClick();
             gameObject.SetActive(false);
         });
 

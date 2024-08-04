@@ -8,7 +8,8 @@ using RequestBuf;
 public class DemoControl : MonoBehaviour
 {
     [SerializeField]
-    Button AddNewPlayer_Btn, Exit_Btn, Fold_Btn, Raise_Btn, CallAndCheck_Btn, AllIn_Btn, Chat_Btn;
+    Button Switch_Btn,
+           AddNewPlayer_Btn, Exit_Btn, Fold_Btn, Raise_Btn, CallAndCheck_Btn, AllIn_Btn, Chat_Btn;
 
     [SerializeField]
     GameServer gameServer;
@@ -18,11 +19,18 @@ public class DemoControl : MonoBehaviour
 
     private void Awake()
     {
+        OtherControl_Tr.SetActive(false);
         IsShowDemoControl(false);
     }
 
     private void Start()
     {
+        Switch_Btn.onClick.AddListener(() =>
+        {
+            OtherControl_Tr.SetActive(!OtherControl_Tr.activeSelf);
+        });
+
+
         AddNewPlayer_Btn.onClick.AddListener(() =>
         {
             if (gameServer.clientList.Count < gameServer.maxRoomPeople)
@@ -87,7 +95,7 @@ public class DemoControl : MonoBehaviour
 
     public void IsShowDemoControl(bool isShow)
     {
-        OtherControl_Tr.SetActive(true);
+        //OtherControl_Tr.SetActive(false);
         //OtherControl_Tr.SetActive(isShow);
     }
 }

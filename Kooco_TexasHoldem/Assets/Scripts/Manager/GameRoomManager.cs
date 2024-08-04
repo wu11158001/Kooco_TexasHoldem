@@ -201,7 +201,15 @@ public class GameRoomManager : UnitySingleton<GameRoomManager>
         {
             IsShow = value;
 
-            GoLobby_Btn.gameObject.SetActive(value);
+            if (IsShow)
+            {
+                JudgeShowGoLobbyBtn();
+            }
+            else
+            {
+                GoLobby_Btn.gameObject.SetActive(false);
+            }
+            
             GoLobby_Btn.interactable = value;
 
             GameRoomCanvas.sortingOrder = value == true ?
@@ -385,6 +393,16 @@ public class GameRoomManager : UnitySingleton<GameRoomManager>
         //房間列表
         GameRoomList_Tr.sizeDelta = new Vector2(Entry.Instance.resolution.x * GetRoomCount, 0);
         ChangeRoom(GetRoomCount - 1);
+
+        JudgeShowGoLobbyBtn();
+    }
+
+    /// <summary>
+    /// 判斷返回大廳按鈕顯示
+    /// </summary>
+    private void JudgeShowGoLobbyBtn()
+    {
+        GoLobby_Btn.gameObject.SetActive(GetRoomCount < maxRoomCount);
     }
 
     /// <summary>
@@ -463,6 +481,7 @@ public class GameRoomManager : UnitySingleton<GameRoomManager>
         if (thisData.RoomDic.Count > 0)
         {
             Time.timeScale = isPause == true ? 0 : 1;
+            IsCanMoveSwitch = !isPause;
         }        
 
         foreach (var room in thisData.RoomDic)

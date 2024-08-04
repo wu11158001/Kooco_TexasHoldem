@@ -15,25 +15,22 @@ var WebGLInput = {
             if(typeof Runtime === "undefined") Runtime = { dynCall : dynCall }
         }
     },
-    WebGLInputCreate: function (canvasId, x, y, width, height, fontsize, text, placeholder, isMultiLine, isPassword, isHidden, isMobile) {
+    WebGLInputCreate: function (canvasId, x, y, width, height, fontsize, text, placeholder, isMultiLine, isPassword, isHidden, isMobile, backgroundColor, textColor, borderColor) {
 
         var container = document.getElementById(UTF8ToString(canvasId));
         var canvas = container.getElementsByTagName('canvas')[0];
 
         // if container is null and have canvas
-        if (!container && canvas)
-        {
+        if (!container && canvas) {
             // set the container to canvas.parentNode
             container = canvas.parentNode;
         }
 
-        if(canvas)
-        {
+        if (canvas) {
             var scaleX = container.offsetWidth / canvas.width;
             var scaleY = container.offsetHeight / canvas.height;
 
-            if(scaleX && scaleY)
-            {
+            if (scaleX && scaleY) {
                 x *= scaleX;
                 width *= scaleX;
                 y *= scaleY;
@@ -41,14 +38,14 @@ var WebGLInput = {
             }
         }
 
-        var input = document.createElement(isMultiLine?"textarea":"input");
+        var input = document.createElement(isMultiLine ? "textarea" : "input");
         input.style.position = "absolute";
 
-        if(isMobile) {
+        if (isMobile) {
             input.style.bottom = 1 + "vh";
             input.style.left = 5 + "vw";
             input.style.width = 90 + "vw";
-            input.style.height = (isMultiLine? 18 : 10) + "vh";
+            input.style.height = (isMultiLine ? 18 : 10) + "vh";
             input.style.fontSize = 5 + "vh";
             input.style.borderWidth = 5 + "px";
             input.style.borderColor = "#000000";
@@ -61,7 +58,7 @@ var WebGLInput = {
         }
 
         input.style.outlineWidth = 1 + 'px';
-        input.style.opacity = isHidden?0:1;
+        input.style.opacity = isHidden ? 0 : 1;
         input.style.resize = 'none'; // for textarea
         input.style.padding = '0px 1px';
         input.style.cursor = "default";
@@ -71,18 +68,24 @@ var WebGLInput = {
         input.value = UTF8ToString(text);
         input.placeholder = UTF8ToString(placeholder);
         input.style.outlineColor = 'black';
-        
-        if(isPassword){
+
+        // Apply colors
+        input.style.backgroundColor = UTF8ToString(backgroundColor);
+        input.style.color = UTF8ToString(textColor);
+        input.style.borderColor = UTF8ToString(borderColor);
+
+        if (isPassword) {
             input.type = 'password';
         }
 
-        if(isMobile) {
+        if (isMobile) {
             document.body.appendChild(input);
         } else {
             container.appendChild(input);
         }
         return instances.push(input) - 1;
     },
+
     WebGLInputEnterSubmit: function(id, falg){
         var input = instances[id];
         // for enter key

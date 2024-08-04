@@ -21,10 +21,23 @@ public class ShopSample : MonoBehaviour
     /// <param name="shopData">商店資料</param>
     /// <param name="index">圖集index</param>
     /// <param name="albumEnum">圖集枚舉</param>
-    public void SetShopItemData(ShopData shopData,int index,AlbumEnum albumEnum)
+    public void SetShopItemData(GameObject sample,ShopData shopData,int index,AlbumEnum albumEnum)
     {
         ItemIcon.sprite = AssetsManager.Instance.GetAlbumAsset(albumEnum).album[index];
-        Buff_Text.text = $"+ {shopData.BuffAmount} {shopData.BuffName}";
+
+        switch (sample.name)
+        {
+            case "Stamina":
+                Buff_Text.text = $"+ {shopData.BuffAmount} {LanguageManager.Instance.GetText("Percentage")}";
+                break;
+            case "Gold":
+                Buff_Text.text = $"+ {shopData.BuffAmount} {LanguageManager.Instance.GetText("Points")}";
+                break;
+            case "ExtraTime":
+                Buff_Text.text = $"+ {shopData.BuffAmount} {LanguageManager.Instance.GetText("Second")}";
+                break;
+
+        }
         CostAmount_Text.text = $"{shopData.CostCoin}";
     }
     
@@ -43,7 +56,19 @@ public class ShopSample : MonoBehaviour
         {
             MallMsg.SetActive(!MallMsg.activeSelf);
             img.sprite = ItemIcon.sprite;
-            info.text = $"purchase {shopData.BuffAmount} {ItemName}";
+
+            switch (ItemName)
+            {
+                case "Stamina":
+                    info.text = $"{LanguageManager.Instance.GetText("Purchase")} {shopData.BuffAmount} {LanguageManager.Instance.GetText("Stamina")}";
+                    break;
+                case "Gold":
+                    info.text = $"{LanguageManager.Instance.GetText("Purchase")} {shopData.BuffAmount} {LanguageManager.Instance.GetText("Gold")}";
+                    break;
+                case "ExtraTime":
+                    info.text = $"{LanguageManager.Instance.GetText("Purchase")} {shopData.BuffAmount} {LanguageManager.Instance.GetText("ExtraTime")}";
+                    break;
+            }
 
             shopView.GetComponent<LobbyShopView>().OnBuyingPopupUI(this,shopData,ItemName);
         });
@@ -57,7 +82,7 @@ public class ShopSample : MonoBehaviour
     public void InsufficientBalance(Image img, TextMeshProUGUI info)
     {
         img.gameObject.SetActive(false);
-        info.text = $"Insufficient balance.\nPlease proceed with collateralization.";
+        info.text = $"{LanguageManager.Instance.GetText("Insufficient balance")} \n {LanguageManager.Instance.GetText("Please proceed with collateralization")}";
     }
 
 }

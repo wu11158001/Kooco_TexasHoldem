@@ -86,7 +86,6 @@ public class PokerWinRateCalculator
                 opponentBestHand = bestHand;
             });
 
-            Debug.Log($"{playerScore} / {opponentScore}");
             if (playerScore < opponentScore)
             {
                 wins++;

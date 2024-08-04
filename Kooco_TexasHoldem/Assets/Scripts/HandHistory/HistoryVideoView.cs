@@ -273,7 +273,7 @@ public class HistoryVideoView : MonoBehaviour
             {
                 //本地玩家
                 nickname = DataManager.UserNickname;
-                avatarIndex = DataManager.UserAvatar;
+                avatarIndex = DataManager.UserAvatarIndex;
             }
 
             Players[seatIndex].SetInitPlayerInfo(gameInitsHistoryData.SeatList[i],

@@ -1,37 +1,92 @@
 using UnityEngine;
 using UnityEngine.Networking;
 using System.Collections;
+using System.Collections.Generic;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
 
 public class FirebaseManager : UnitySingleton<FirebaseManager>
 {
-    private string apiKey = "AIzaSyDdhkPzYHHJndpTV3QARMdToXXws-n89X0"; // 確保這是你的 Firebase Web API 鑰匙
+    [Header("用戶資料路徑名稱")]
+    public const string USER_DATA_PATH = "user/";                                           //Database用戶資料路徑
 
-    public void SendOTP(string phoneNumber)
+    [Header("用戶資料內容路徑名稱")]
+    public const string USER_ID = "userId";                                                 //用戶ID
+    public const string PHONE_NUMBER = "phoneNumber";                                       //登入手機號
+    public const string PASSWORD = "password";                                              //登入密碼
+    public const string NICKNAME = "nickname";                                              //暱稱
+    public const string AVATAR_INDEX = "avatarIndex";                                       //頭像編號
+    public const string INVITATION_CODE = "invitationCode";                                 //邀請碼
+    public const string BOUND_INVITER_ID = "boundInviterId";                                //綁定的邀請者Id
+    public const string LINE_TOKEN = "lineToken";                                           //Line Token
+
+    public override void Awake()
     {
-        StartCoroutine(SendVerificationCodeCoroutine(phoneNumber));
+        base.Awake();
     }
 
-    private IEnumerator SendVerificationCodeCoroutine(string phoneNumber)
+    /// <summary>
+    /// 讀取資料回傳
+    /// </summary>
+    /// <param name="jsonData"></param>
+    public T OnFirebaseDataRead<T>(string jsonData) where T : class
     {
-        string url = $"https://identitytoolkit.googleapis.com/v1/accounts:sendVerificationCode?key={apiKey}";
-        string json = "{\"phoneNumber\":\"" + phoneNumber + "\",\"recaptchaToken\":\"RECAPTCHA_TOKEN\"}"; // 添加 recaptchaToken
+        var data = JsonConvert.DeserializeObject<T>(jsonData);
 
-        UnityWebRequest request = new UnityWebRequest(url, "POST");
-        byte[] bodyRaw = new System.Text.UTF8Encoding().GetBytes(json);
-        request.uploadHandler = new UploadHandlerRaw(bodyRaw);
-        request.downloadHandler = new DownloadHandlerBuffer();
-        request.SetRequestHeader("Content-Type", "application/json");
-
-        yield return request.SendWebRequest();
-
-        if (request.result != UnityWebRequest.Result.Success)
+        if (data == null)
         {
-            Debug.LogError(request.error);
-            Debug.LogError(request.downloadHandler.text);
+            Debug.LogError("Firebase read error or data is null.");
+            return default;
         }
         else
         {
-            Debug.Log("OTP sent successfully: " + request.downloadHandler.text);
+            Debug.Log("Firebase data read: " + JsonUtility.ToJson(data, true));
+            return data;
         }
     }
+
+
+    /// <summary>
+    /// 移除資料
+    /// </summary>
+    [Serializable]
+    public class RemoveData
+    {
+        public bool success;
+        public string error;
+    }
+    /// <summary>
+    /// 移除資料回傳
+    /// </summary>
+    /// <param name="jsonData"></param>
+    public void OnRemoveDataCallback(string jsonData)
+    {
+        var data = JsonUtility.FromJson<RemoveData>(jsonData);
+
+        if (data.error != null)
+        {
+            Debug.LogError("Firebase delete error: " + data.error);
+        }
+        else
+        {
+            Debug.Log("Firebase data deleted successfully.");
+        }
+    }
+}
+
+/// <summary>
+/// 帳號資料
+/// </summary>
+[Serializable]
+public class AccountData
+{
+    public string userId;                   //用戶ID
+    public string phoneNumber;              //登入手機號
+    public string password;                 //登入密碼
+    public string nickname;                 //暱稱
+    public int avatarIndex;                 //頭像編號
+    public string invitationCode;           //邀請碼
+    public string boundInviterId;           //綁定的邀請者Id
+    public string lineToken;                //Line Token
 }

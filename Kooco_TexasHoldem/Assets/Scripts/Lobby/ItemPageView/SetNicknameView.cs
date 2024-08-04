@@ -7,12 +7,23 @@ using TMPro;
 public class SetNicknameView : MonoBehaviour
 {
     [SerializeField]
-    Button Close_Btn, Subimt_Btn;
+    Button Subimt_Btn;
     [SerializeField]
     TMP_InputField SetNickname_If;
     [SerializeField]
     TextMeshProUGUI SetNicknameTitle_Txt, Title_Txt, SetNicknameIf_Placeholder,
                     Error_Txt, SubimtBtn_Txt;
+
+    [Header("暱稱檢測")]
+    [SerializeField]
+    GameObject CheckNickname_Obj;
+    [SerializeField]
+    Image CheckNickname1_Img, CheckNickname2_Img;
+    [SerializeField]
+    TextMeshProUGUI CheckNickname1_Txt, CheckNickname2_Txt;
+
+    bool isNucknameCorrect;                                     //是否暱稱正確
+    string currNickname;                                        //當前暱稱
 
     /// <summary>
     /// 更新文本翻譯
@@ -35,6 +46,7 @@ public class SetNicknameView : MonoBehaviour
         LanguageManager.Instance.AddUpdateLanguageFunc(UpdateLanguage, gameObject);
 
         Error_Txt.text = "";
+        CheckNickname_Obj.SetActive(true);
 
         ListenerEvent();
     }
@@ -44,19 +56,18 @@ public class SetNicknameView : MonoBehaviour
     /// </summary>
     private void ListenerEvent()
     {
-        //關閉
-        Close_Btn.onClick.AddListener(() =>
-        {
-            DataManager.UserNickname = "User3ab457";
-            GameObject.FindAnyObjectByType<LobbyView>().UpdateUserInfo();
-            DataManager.ReciveRankData();
-            Destroy(gameObject);
-        });
-
         //提交
         Subimt_Btn.onClick.AddListener(() =>
         {
             OnSubmit();
+        });
+
+        //暱稱輸入變化
+        SetNickname_If.onValueChanged.AddListener((value) =>
+        {
+            Error_Txt.text = "";
+            bool check1 = GameUtils.CnahgeCheckIcon(value.Length > 0, CheckNickname1_Img);
+            bool check2 = GameUtils.CnahgeCheckIcon(SetNickname_If.text.Length <= 10, CheckNickname2_Img);
         });
     }
 
@@ -81,18 +92,59 @@ public class SetNicknameView : MonoBehaviour
     /// </summary>
     private void OnSubmit()
     {
-        if (SetNickname_If.text.Length <= 0)
+#if UNITY_EDITOR
+
+        DataManager.UserNickname = SetNickname_If.text.Trim();
+        SetNicknameSuccess();
+        return;
+
+#endif
+
+
+        if (SetNickname_If.text.Trim().Length <= 0)
         {
-            Error_Txt.text = LanguageManager.Instance.GetText("User Name Entered Incorrectly, Please Try Again.");
+            Error_Txt.text = LanguageManager.Instance.GetText("Please Enter A Nickname.");
         }
         else
         {
             string nickname = SetNickname_If.text.Trim();
-
-            DataManager.UserNickname = nickname;
-            GameObject.FindAnyObjectByType<LobbyView>().UpdateUserInfo();
-            DataManager.ReciveRankData();
-            Destroy(gameObject);
+            currNickname = nickname;
+            ViewManager.Instance.OpenWaitingView(transform);
+            JSBridgeManager.Instance.CheckUserDataExist(currNickname,
+                                                        gameObject.name,
+                                                        nameof(CheckNicknameCallback));
         }
+    }
+
+    /// <summary>
+    /// 暱稱重複檢查
+    /// </summary>
+    /// <param name="isExist">是否已存在回傳結果(true/false)</param>
+    public void CheckNicknameCallback(string isExist)
+    {
+        if (isExist == "true")
+        {
+            Error_Txt.text = LanguageManager.Instance.GetText("Duplicate Nickname, Please Try Again.");
+            return;
+        }
+
+        //修改資料
+        Dictionary<string, object> dataDic = new()
+        {
+            { FirebaseManager.NICKNAME, currNickname },
+        };
+        JSBridgeManager.Instance.UpdateDataFromFirebase($"{Entry.Instance.releaseType}/{FirebaseManager.USER_DATA_PATH}{DataManager.UserLoginType}/{DataManager.UserLoginPhoneNumber}",
+                                                        dataDic);
+
+        SetNicknameSuccess();
+    }
+
+    /// <summary>
+    /// 設置暱稱成功
+    /// </summary>
+    private void SetNicknameSuccess()
+    {
+        DataManager.UserNickname = currNickname;
+        Destroy(gameObject);
     }
 }

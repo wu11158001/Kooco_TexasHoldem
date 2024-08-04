@@ -5,89 +5,14 @@
     "zh_TW": null
   },
   {
+    "ID": "Asia Poker",
+    "English": "Asia Poker",
+    "zh_TW": "亞洲撲克"
+  },
+  {
     "ID": "Retry",
     "English": "RETRY",
     "zh_TW": "重新嘗試"
-  },
-  {
-    "ID": "Wallet",
-    "English": "Wallet",
-    "zh_TW": "錢包"
-  },
-  {
-    "ID": "Mobile",
-    "English": "Mobile",
-    "zh_TW": "手機"
-  },
-  {
-    "ID": "MobileNumber",
-    "English": "Mobile Number",
-    "zh_TW": "手機號碼"
-  },
-  {
-    "ID": "OTP Code",
-    "English": "OTP Code",
-    "zh_TW": "一次性代碼"
-  },
-  {
-    "ID": "RESEND",
-    "English": "RESEND",
-    "zh_TW": "重發"
-  },
-  {
-    "ID": "SEND CODE",
-    "English": "SEND CODE",
-    "zh_TW": "傳送代碼"
-  },
-  {
-    "ID": "Password",
-    "English": "Password",
-    "zh_TW": "密碼"
-  },
-  {
-    "ID": "Reset Password",
-    "English": "Reset Password",
-    "zh_TW": "重新設密碼"
-  },
-  {
-    "ID": "SIGN IN",
-    "English": "SIGN IN",
-    "zh_TW": "登入"
-  },
-  {
-    "ID": "Sign Up",
-    "English": "Sign Up",
-    "zh_TW": "報名"
-  },
-  {
-    "ID": "REGISTER",
-    "English": "REGISTER",
-    "zh_TW": "註冊"
-  },
-  {
-    "ID": "Lost Password",
-    "English": "Lost Password",
-    "zh_TW": "忘記密碼"
-  },
-  {
-    "ID": "Please Enter Here",
-    "English": "Please Enter Here",
-    "zh_TW": "請在此輸入"
-  },
-  {
-    "ID": "Please Enter The OTP Code",
-    "English": "Please Enter The OTP Code",
-    "zh_TW": "請輸入一次性密碼"
-  },
-  {
-    "ID": "Your Phone Number",
-    "English": "Your Phone Number",
-    "zh_TW": "您的手機號碼"
-  },
-  {
-    "ID": "Remember Me",
-    "English": "Remember Me",
-    "zh_TW": "記住帳號密碼"
   },
   {
     "ID": "SUBMIT",
@@ -168,6 +93,16 @@
     "ID": "At Least 8 Chars.",
     "English": "At Least 8 Chars.",
     "zh_TW": "至少 8 個字元。"
+  },
+  {
+    "ID": "Enter Nickname.",
+    "English": "Enter Nickname.",
+    "zh_TW": "輸入暱稱。"
+  },
+  {
+    "ID": "Less Than 10 Chars.",
+    "English": "Less Than 10 Chars.",
+    "zh_TW": "少於 10 個字元。"
   },
   {
     "ID": "INTEGRAL",
@@ -253,6 +188,16 @@
     "ID": "Cash",
     "English": "Cash",
     "zh_TW": "加密貨幣"
+  },
+  {
+    "ID": "U COIN",
+    "English": "U COIN",
+    "zh_TW": "U幣"
+  },
+  {
+    "ID": "A COIN",
+    "English": "A COIN",
+    "zh_TW": "A幣"
   },
   {
     "ID": "GOLD",
@@ -362,7 +307,7 @@
   {
     "ID": "User Name Entered Incorrectly, Please Try Again.",
     "English": "User Name Entered Incorrectly, Please Try Again.",
-    "zh_TW": "手機號格式錯誤。"
+    "zh_TW": "手機號格式錯誤，請重新輸入"
   },
   {
     "ID": "Invalid Code, Please Try Again.",
@@ -375,9 +320,109 @@
     "zh_TW": "請同意隱私權政策。"
   },
   {
+    "ID": "Mobile Number Has Been Used, Please Try Again.",
+    "English": "Mobile Number Has Been Used, Please Try Again.",
+    "zh_TW": "手機號已使用，請重新輸入。"
+  },
+  {
+    "ID": "Duplicate Nickname, Please Try Again.",
+    "English": "Duplicate Nickname, Please Try Again.",
+    "zh_TW": "暱稱重複，請重新輸入。"
+  },
+  {
+    "ID": "Please Enter A Nickname.",
+    "English": "Please Enter A Nickname.",
+    "zh_TW": "請輸入暱稱。"
+  },
+  {
     "ID": "登入(LoginView)",
     "English": null,
     "zh_TW": null
+  },
+  {
+    "ID": "Sent OTP to SMS",
+    "English": "Sent OTP to SMS",
+    "zh_TW": "已發送 OTP 至簡訊"
+  },
+  {
+    "ID": "Wallet",
+    "English": "Wallet",
+    "zh_TW": "錢包"
+  },
+  {
+    "ID": "Mobile",
+    "English": "Mobile",
+    "zh_TW": "手機"
+  },
+  {
+    "ID": "MobileNumber",
+    "English": "Mobile Number",
+    "zh_TW": "手機號碼"
+  },
+  {
+    "ID": "OTP Code",
+    "English": "OTP Code",
+    "zh_TW": "一次性代碼"
+  },
+  {
+    "ID": "RESEND",
+    "English": "RESEND",
+    "zh_TW": "重發"
+  },
+  {
+    "ID": "SEND CODE",
+    "English": "SEND CODE",
+    "zh_TW": "傳送代碼"
+  },
+  {
+    "ID": "Password",
+    "English": "Password",
+    "zh_TW": "密碼"
+  },
+  {
+    "ID": "Reset Password",
+    "English": "Reset Password",
+    "zh_TW": "重新設密碼"
+  },
+  {
+    "ID": "SIGN IN",
+    "English": "SIGN IN",
+    "zh_TW": "登入"
+  },
+  {
+    "ID": "Sign Up",
+    "English": "Sign Up",
+    "zh_TW": "報名"
+  },
+  {
+    "ID": "REGISTER",
+    "English": "REGISTER",
+    "zh_TW": "註冊"
+  },
+  {
+    "ID": "Lost Password",
+    "English": "Lost Password",
+    "zh_TW": "忘記密碼"
+  },
+  {
+    "ID": "Please Enter Here",
+    "English": "Please Enter Here",
+    "zh_TW": "請在此輸入"
+  },
+  {
+    "ID": "Please Enter The OTP Code",
+    "English": "Please Enter The OTP Code",
+    "zh_TW": "請輸入一次性密碼"
+  },
+  {
+    "ID": "Your Phone Number",
+    "English": "Your Phone Number",
+    "zh_TW": "您的手機號碼"
+  },
+  {
+    "ID": "Remember Me",
+    "English": "Remember Me",
+    "zh_TW": "記住帳號密碼"
   },
   {
     "ID": "錢包連接頁面",
@@ -460,14 +505,29 @@
     "zh_TW": null
   },
   {
+    "ID": "<size=14><color=#FFFFFF>Registration Successful</color></size>\\n<size=12><color=#C6C2C2>Account Successfully Created</color></size>",
+    "English": "<size=14><color=#FFFFFF>Registration Successful</color></size>\\n<size=12><color=#C6C2C2>Account Successfully Created</color></size>",
+    "zh_TW": "<size=14><color=#FFFFFF>註冊成功</color></size>\\n<size=12><color=#C6C2C2>成功建立帳戶</color></size>"
+  },
+  {
+    "ID": "隱私權政策",
+    "English": null,
+    "zh_TW": null
+  },
+  {
     "ID": "Agree To The <color=#79E84B><link=Terms><u>Terms</u></link></color> & <color=#79E84B><link=Privacy Policy><u>Privacy Policy</u></link></color>",
     "English": "Agree To The <color=#79E84B><link=Terms><u>Terms</u></link></color> & <color=#79E84B><link=Privacy Policy><u>Privacy Policy</u></link></color>",
     "zh_TW": "同意 <color=#79E84B><link=Terms><u>條款</u></link></color> & <color=#79E84B><link=Privacy Policy><u>隱私權政策</u></link></color>"
   },
   {
-    "ID": "<size=14><color=#FFFFFF>Registration Successful</color></size>\\n<size=12><color=#C6C2C2>Account Successfully Created</color></size>",
-    "English": "<size=14><color=#FFFFFF>Registration Successful</color></size>\\n<size=12><color=#C6C2C2>Account Successfully Created</color></size>",
-    "zh_TW": "<size=14><color=#FFFFFF>註冊成功</color></size>\\n<size=12><color=#C6C2C2>成功建立帳戶</color></size>"
+    "ID": "Privacy Policy",
+    "English": "Privacy Policy",
+    "zh_TW": "隱私權政策"
+  },
+  {
+    "ID": "Terms",
+    "English": "Terms",
+    "zh_TW": "條款"
   },
   {
     "ID": "設置暱稱",
@@ -690,6 +750,26 @@
     "zh_TW": "尚未連結"
   },
   {
+    "ID": "Invitation Code",
+    "English": "Invitation Code",
+    "zh_TW": "邀請碼"
+  },
+  {
+    "ID": "Bound Inviter",
+    "English": "Bound Inviter",
+    "zh_TW": "綁定的邀請者"
+  },
+  {
+    "ID": "Bound",
+    "English": "Bound",
+    "zh_TW": "已綁定"
+  },
+  {
+    "ID": "Share",
+    "English": "Share",
+    "zh_TW": "分享"
+  },
+  {
     "ID": "手牌紀錄",
     "English": null,
     "zh_TW": null
@@ -868,5 +948,70 @@
     "ID": "HightCard",
     "English": "Hight Card",
     "zh_TW": "高牌"
+  },
+  {
+    "ID": "商城",
+    "English": null,
+    "zh_TW": null
+  },
+  {
+    "ID": "STAMINA",
+    "English": "STAMINA",
+    "zh_TW": "耐力"
+  },
+  {
+    "ID": "EXTRATIME",
+    "English": "EXTRA TIME",
+    "zh_TW": "加時道具"
+  },
+  {
+    "ID": "ExtraTime",
+    "English": "ExtraTime",
+    "zh_TW": "加時道具"
+  },
+  {
+    "ID": "Percentage",
+    "English": "Percentage",
+    "zh_TW": "百分比"
+  },
+  {
+    "ID": "Second",
+    "English": "Second",
+    "zh_TW": "秒"
+  },
+  {
+    "ID": "Mall Message",
+    "English": "Mall Message",
+    "zh_TW": "商城訊息"
+  },
+  {
+    "ID": "Purchase",
+    "English": "Purchase",
+    "zh_TW": "購買"
+  },
+  {
+    "ID": "CANCLE",
+    "English": "CANCLE",
+    "zh_TW": "取消"
+  },
+  {
+    "ID": "CONFIRM",
+    "English": "CONFIRM",
+    "zh_TW": "確認"
+  },
+  {
+    "ID": "PurchaseSuccess",
+    "English": "Purchase Success!!",
+    "zh_TW": "購買完成!!"
+  },
+  {
+    "ID": "Insufficient balance",
+    "English": "Insufficient balance.",
+    "zh_TW": "餘額不足"
+  },
+  {
+    "ID": "Please proceed with collateralization",
+    "English": "Please proceed with collateralization.",
+    "zh_TW": "請繼續抵押"
   }
 ]

@@ -23,6 +23,10 @@ public class Entry : UnitySingleton<Entry>
 
     [Header("版本號")]
     public string version;
+    [Header("發布環境")]
+    public ReleaseEnvironmentEnum releaseType;
+    [Header("使用測試重定向URL")]
+    public bool isUsingTestRedirectUri;
     [Header("解析度")]
     public Vector2 resolution;
     [Header("Debug工具")]
@@ -30,9 +34,12 @@ public class Entry : UnitySingleton<Entry>
     [SerializeField] 
     GameObject ReporterObj;
 
-
     public override void Awake()
     {
+#if !UNITY_EDITOR
+        JSBridgeManager.Instance.SetupRecaptchaVerifier();
+#endif
+
         base.Awake();
 
         #region 測試用
@@ -43,6 +50,7 @@ public class Entry : UnitySingleton<Entry>
         DataManager.UserGoldChips = 65000;
         DataManager.UserStamina = 45;
         DataManager.UserOTProps = 8;
+        DataManager.UserInvitationCode = "S84f66s78As";
 
         #endregion
     }
@@ -81,47 +89,17 @@ public class Entry : UnitySingleton<Entry>
             HandHistoryManager.Instance.OnDeleteHistoryData();
         }
 
-        /*//更換語言_英文
-        if (Input.GetKeyDown(KeyCode.Alpha1))
+        //移除帳號
+        if (Input.GetKeyDown(KeyCode.Escape))
         {
-            LanguageManager.Instance.ChangeLanguage(0);
+            JSBridgeManager.Instance.RemoveDataFromFirebase($"{Entry.Instance.releaseType}/{FirebaseManager.USER_DATA_PATH}{LoginType.phoneUser}/{DataManager.UserLoginPhoneNumber}",
+                                                            "FirebaseManager",
+                                                            "OnRemoveDataCallback");
+            LoadSceneManager.Instance.LoadScene(SceneEnum.Login);
         }
-        //更換語言_繁體中文
-        if (Input.GetKeyDown(KeyCode.Alpha2))
-        {
-            LanguageManager.Instance.ChangeLanguage(1);
-        }*/
 
         #endregion
-
-        if (Input.GetKeyDown(KeyCode.K))
-        {
-            //Test();
-        }
     }
-
-   /* 獲勝機率測試 
-    public List<int> hands1;
-    public List<int> hands2;
-    public List<int> hands3;
-    public List<int> hands4;
-    public List<int> hands5;
-    public List<int> hands6;
-    public int num;
-    public List<int> community;
-    public int numSimulations;
-
-    void Test()
-    {
-        Debug.Log("Start");
-        System.DateTime startTime = DateTime.Now;
-        PokerWinRateCalculator pokerWinRateCalculator = new PokerWinRateCalculator(hands1, community);
-        pokerWinRateCalculator.CalculateWinRate((winRate) =>
-        {
-            Debug.LogError($"Time={(System.DateTime.Now - startTime).TotalSeconds}");
-            Debug.LogError($"Rate={winRate}");
-        });        
-    }*/
 
     #region Instagram登入
 
@@ -224,117 +202,16 @@ public class Entry : UnitySingleton<Entry>
 
     #endregion
 
-    #region LINE
+    #region 邀請碼
 
     /// <summary>
-    /// 接收獲取Line信箱
+    /// 接收邀請碼
     /// </summary>
-    /// <param name="mail"></param>
-    public void ReceiveLineMail(string mail)
+    /// <param name="invitationCode">受邀的邀請碼</param>
+    public void ReceiveInvitationCode(string invitationCode)
     {
-        DataManager.LineMail = mail;
-    }
-
-    [System.Serializable]
-    public class LineTokenResponse
-    {
-        public string access_token;
-        public string token_type;
-        public string refresh_token;
-        public string expires_in;
-        public string scope;
-        public string id_token;
-    }
-
-    [System.Serializable]
-    public class LineUserProfile
-    {
-        public string iss;
-        public string sub;
-        public string aud;
-        public int exp;
-        public int iat;
-        public string nonce;
-        public string[] amr;
-        public string name;
-        public string picture;
-        public string email;
-    }
-    /// <summary>
-    /// Line登入回傳
-    /// </summary>
-    /// <param name="code"></param>
-    public void OnLineLoginCallback(string code)
-    {
-        Debug.Log("Recive Line Login Callback:" + code);
-        StartCoroutine(IGetLineAccessToken(code));
-    }
-    /// <summary>
-    /// 獲取LineToken
-    /// </summary>
-    /// <param name="authorizationCode"></param>
-    /// <returns></returns>
-    private IEnumerator IGetLineAccessToken(string authorizationCode)
-    {
-        string tokenUrl = "https://api.line.me/oauth2/v2.1/token";
-        WWWForm form = new WWWForm();
-        form.AddField("grant_type", "authorization_code");
-        form.AddField("code", authorizationCode);
-        form.AddField("redirect_uri", DataManager.RedirectUri);
-        form.AddField("client_id", DataManager.LineChannelId);
-        form.AddField("client_secret", DataManager.LineChannelSecret);
-
-        using (UnityWebRequest www = UnityWebRequest.Post(tokenUrl, form))
-        {
-            yield return www.SendWebRequest();
-
-            if (www.result != UnityWebRequest.Result.Success)
-            {
-                Debug.LogError(www.error);
-            }
-            else
-            {
-                // 解析访问令牌响应
-                var tokenResponse = JsonUtility.FromJson<LineTokenResponse>(www.downloadHandler.text);
-                string idToken = tokenResponse.id_token;
-
-                // 验证 ID 令牌并获取用户信息
-                StartCoroutine(LineVerifyIdToken(idToken));
-            }
-        }
-    }
-    /// <summary>
-    /// Line驗證ID令牌並獲取用戶訊息
-    /// </summary>
-    /// <param name="idToken"></param>
-    /// <returns></returns>
-    private IEnumerator LineVerifyIdToken(string idToken)
-    {
-        string verifyUrl = "https://api.line.me/oauth2/v2.1/verify";
-        WWWForm form = new WWWForm();
-        form.AddField("id_token", idToken);
-        form.AddField("client_id", DataManager.LineChannelId);
-
-        using (UnityWebRequest www = UnityWebRequest.Post(verifyUrl, form))
-        {
-            yield return www.SendWebRequest();
-
-            if (www.result != UnityWebRequest.Result.Success)
-            {
-                Debug.LogError(www.error);
-            }
-            else
-            {
-                // 解析用户信息响应
-                var userProfile = JsonUtility.FromJson<LineUserProfile>(www.downloadHandler.text);
-                Debug.Log("User ID: " + userProfile.sub);
-                Debug.Log("Name: " + userProfile.name);
-                Debug.Log("Picture: " + userProfile.picture);
-                Debug.Log("Email: " + userProfile.email);
-
-                DataManager.LineMail = userProfile.email;
-            }
-        }
+        Debug.Log($"Receive invitation code : {invitationCode}");
+        DataManager.GetInvitationCode = invitationCode;
     }
 
     #endregion
@@ -378,7 +255,6 @@ public class Entry : UnitySingleton<Entry>
         DataManager.IsDefaultBrowser = isDefaultBrowser == "true";
         Debug.Log($"isDefaultBrowser:{isDefaultBrowser}");
     }
-
 
     /// <summary>
     /// 是否在Coinbase瀏覽器內

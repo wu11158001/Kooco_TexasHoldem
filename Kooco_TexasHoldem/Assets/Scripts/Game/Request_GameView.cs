@@ -150,7 +150,7 @@ public class Request_GameView : BaseRequest
         ChatPack chatPack = new ChatPack();
         chatPack.Id = DataManager.UserId;
         chatPack.Nickname = DataManager.UserNickname;
-        chatPack.Avatar = DataManager.UserAvatar;
+        chatPack.Avatar = DataManager.UserAvatarIndex;
         chatPack.Content = chatContent;
 
         pack.ChatPack = chatPack;

@@ -124,7 +124,7 @@ public static class Utils
     /// </summary>
     /// <param name="text"></param>
     /// <returns></returns>
-    public static Texture2D GenerateQRCodeTexture(string text)
+    public static Sprite GenerateQRCodeTexture(string text)
     {
         BarcodeWriter barcodeWriter = new BarcodeWriter
         {
@@ -141,7 +141,8 @@ public static class Utils
         qrCodeTexture.SetPixels32(pixels);
         qrCodeTexture.Apply();
 
-        return qrCodeTexture;
+        Sprite sprite = Sprite.Create(qrCodeTexture, new Rect(0, 0, qrCodeTexture.width, qrCodeTexture.height), Vector2.zero);
+        return sprite;
     }
 
     /// <summary>

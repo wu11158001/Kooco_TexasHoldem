@@ -7,6 +7,8 @@ using TMPro;
 
 public class LanguageManager
 {
+    const string LanguagePlayerPrefsKey = "AsiaPoker_LanguageDataList";
+
     private static readonly object lockObject = new object();
     private static LanguageManager language = null;
     public static LanguageManager Instance
@@ -134,8 +136,8 @@ public class LanguageManager
             languageDic.Add(serchName, lang);
         }
 
-        //預設語言
-        ChangeLanguage(0);
+        //讀取紀錄語言資料
+        ChangeLanguage(PlayerPrefs.GetInt(LanguagePlayerPrefsKey));
     }
 
     /// <summary>
@@ -219,6 +221,8 @@ public class LanguageManager
         }
 
         thisData.CurrLanguageIndex = index;
+        PlayerPrefs.SetInt(LanguagePlayerPrefsKey, thisData.CurrLanguageIndex);
+
         ChangeFont();
         UpdateLanguage();
     }

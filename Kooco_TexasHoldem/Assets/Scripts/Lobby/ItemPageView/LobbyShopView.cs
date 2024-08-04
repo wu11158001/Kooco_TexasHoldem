@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using Unity.VisualScripting;
 
 public class LobbyShopView : MonoBehaviour
 {
@@ -11,6 +12,10 @@ public class LobbyShopView : MonoBehaviour
 
     [SerializeField]
     GameObject All_Area,Stamina_Area, Gold_Area, ExtraTime_Area;
+    [SerializeField]
+    TextMeshProUGUI ALLTog_Text,StaminaTog_Text, GoldTog_Text, ExtraTimeTog_Text;
+    [SerializeField]
+    TextMeshProUGUI StaminaTitle_Text, GoldTitle_Text, ExtraTimeTitle_Text;
 
     [Header("全部商品欄位")]
     [SerializeField]
@@ -25,30 +30,38 @@ public class LobbyShopView : MonoBehaviour
     GameObject Stamina_Sample;
     [SerializeField]
     GameObject Stamina_Parent;
+    [SerializeField]
+    TextMeshProUGUI StaminaTitle;
 
     [Header("金幣商品欄位")]
     [SerializeField]
     GameObject Gold_Sample;
     [SerializeField]
     GameObject Gold_Parent;
+    [SerializeField]
+    TextMeshProUGUI GoldTitle;
 
     [Header("加時商品欄位")]
     [SerializeField]
     GameObject ExtraTime_Sample;
     [SerializeField]
     GameObject ExtraTime_Parent;
+    [SerializeField]
+    TextMeshProUGUI ExtraTimeTitle;
 
     [Header("購買彈窗")]
     [SerializeField]
     GameObject MallMsg;
     [SerializeField]
+    TextMeshProUGUI MallMsgTitle;
+    [SerializeField]
     Image iconSprite;
     [SerializeField]
-    TextMeshProUGUI MallMsgInfo;
-    [SerializeField]
-    Button Cencle, Confirm,CloseBtn;
+    Button Cancle, Confirm,CloseBtn;
     [SerializeField]
     GameObject PurchaseSuccessUI;
+    [SerializeField]
+    TextMeshProUGUI MallMsgInfo,Cancle_Text,Confirm_Text,PurchaseSuccessText;
 
 
     Dictionary<ItemType,GameObject> ItemList;
@@ -68,12 +81,36 @@ public class LobbyShopView : MonoBehaviour
         ExtraTime,
     }
 
+    private void UpdateLanguage()
+    {
+        ALLTog_Text.text = LanguageManager.Instance.GetText("ALL");
+        //StaminaTog_Text.text = LanguageManager.Instance.GetText("STAMINA");
+        GoldTog_Text.text = LanguageManager.Instance.GetText("GOLD");
+        //ExtraTimeTog_Text.text = LanguageManager.Instance.GetText("EXTRATIME");
+
+        StaminaTitle_Text.text = LanguageManager.Instance.GetText("Stamina");
+        GoldTitle_Text.text = LanguageManager.Instance.GetText("Gold");
+        ExtraTimeTitle_Text.text = LanguageManager.Instance.GetText("EXTRATIME");
+
+        StaminaTitle.text =  LanguageManager.Instance.GetText("Stamina");
+        GoldTitle.text = LanguageManager.Instance.GetText("Gold");
+        ExtraTimeTitle.text = LanguageManager.Instance.GetText("EXTRATIME");
+
+        Cancle_Text.text = LanguageManager.Instance.GetText("CANCLE");
+        Confirm_Text.text = LanguageManager.Instance.GetText("CONFIRM");
+
+        MallMsgTitle.text = LanguageManager.Instance.GetText("Mall Message");
+        PurchaseSuccessText.text = LanguageManager.Instance.GetText("PurchaseSuccess");
+    }
+
 
     private void Awake()
     {
         AddItemList();
         ListenerEvent();
         InitShop();
+
+        LanguageManager.Instance.AddUpdateLanguageFunc(UpdateLanguage, gameObject);
     }
 
 
@@ -82,7 +119,11 @@ public class LobbyShopView : MonoBehaviour
         itemType = ItemType.All;
         MallMsg.gameObject.SetActive(false);
         OpenShopItem();
-        ShopLayoutGroup();
+        //ShopLayoutGroup();
+    }
+    private void OnDestroy()
+    {
+        LanguageManager.Instance.RemoveLanguageFun(UpdateLanguage);
     }
 
 
@@ -128,11 +169,11 @@ public class LobbyShopView : MonoBehaviour
 
             if ((All_ShopItem_Sample[i-1].transform.parent.childCount - 1)  % 3 > 0)
             {
-                NextRect.localPosition = new Vector2(CurrentRect.localPosition.x, ((CurrentRect.localPosition.y - 200)) - (index * 180));
+                NextRect.localPosition = new Vector2(CurrentRect.localPosition.x, ((CurrentRect.localPosition.y - 170)) - (index * 143));
             }
             else
             {
-                NextRect.localPosition = new Vector2(CurrentRect.localPosition.x, ((CurrentRect.localPosition.y - 200)) - ((index - 1) * 180));
+                NextRect.localPosition = new Vector2(CurrentRect.localPosition.x, ((CurrentRect.localPosition.y - 170)) - ((index - 1) * 143));
             }
         }
 
@@ -202,7 +243,7 @@ public class LobbyShopView : MonoBehaviour
             Confirm.onClick.RemoveAllListeners();       //  取消事件訂閱
         });
         //  取消Buying
-        Cencle.onClick.AddListener(() =>
+        Cancle.onClick.AddListener(() =>
         {
             MallMsg.SetActive(!MallMsg.activeSelf);
             iconSprite.gameObject.SetActive(true);
@@ -244,7 +285,7 @@ public class LobbyShopView : MonoBehaviour
             RectTransform rect = Instantiate(Sample, SampleParent.transform).GetComponent<RectTransform>();
             rect.gameObject.SetActive(true);
             var shopSample = rect.GetComponent<ShopSample>();
-            shopSample.SetShopItemData(shopDatas[i], i, albumEnum);
+            shopSample.SetShopItemData(Sample,shopDatas[i], i, albumEnum);
             shopSample.OnBuyAddListener(this,MallMsg,shopDatas[i], iconSprite, MallMsgInfo,Sample.name);
         }
     }
@@ -264,7 +305,7 @@ public class LobbyShopView : MonoBehaviour
             if (DataManager.UserVCChips < shopData.BuffAmount)
             {
                 shopSample.InsufficientBalance(iconSprite, MallMsgInfo);
-                Debug.Log("餘額不足");
+                //Debug.Log("餘額不足");
                 return;
             }
             else
@@ -284,11 +325,11 @@ public class LobbyShopView : MonoBehaviour
                         break;
                 }
 
-                Debug.Log($"您已購買 {itemName} {shopData.BuffAmount}");
+                //Debug.Log($"您已購買 {itemName} {shopData.BuffAmount}");
                 DataManager.UserVCChips -= shopData.BuffAmount;
-                Debug.Log($"餘額 {DataManager.UserVCChips}");
+                //Debug.Log($"餘額 {DataManager.UserVCChips}");
             }
-            
+
         });
     }
 

@@ -1,7 +1,41 @@
 mergeInto(LibraryManager.library, {
 
+    //清除URL資料
+    JS_ClearUrlQueryString: function() {
+        // 获取当前的URL
+        var url = window.location.href;
+
+        // 如果URL中包含查询字符串，则清除它
+        if (url.indexOf('?') > -1) {
+            // 使用history.replaceState来替换当前的URL
+            var newUrl = url.split('?')[0];
+            window.history.replaceState({}, document.title, newUrl);
+        }
+    },
+
+    //分享
+    JS_Share: function(titleStr, contentStr, urlStr){
+        var title = UTF8ToString(titleStr);
+        var content = UTF8ToString(contentStr);
+        var url = UTF8ToString(urlStr);
+
+        if (navigator.share) {
+            navigator.share({
+                title: title,                          //示例標題
+                text: content,                         //示例文本。
+                url: url          
+            }).then(() => {
+                console.log('分享成功');
+            }).catch((error) => {
+                console.log('分享失敗', error);
+            });
+        } else {
+            alert('分享不支持這個瀏覽器');
+        }
+    },
+
     //複製文字
-    JS_CopyString: function (strPtr) {
+    JS_CopyString: function(strPtr) {
         var str = UTF8ToString(strPtr);
         var textarea = document.createElement("textarea");
         textarea.value = str;

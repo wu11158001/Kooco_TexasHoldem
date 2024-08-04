@@ -19,9 +19,12 @@ public static class DataManager
 
     #region Line
 
-    public static string LineChannelId = "2005465224";                                                                                  //Line頻道ID
-    public static string LineChannelSecret = "2ce90d03cf058e20c60f1c8a421889c6";                                                        //Line密鑰
+    public static string LineChannelId { get { return "2005465224"; } }                                                                 //Line頻道ID
+    public static string LineChannelSecret { get { return "66a52567d19ebe9e184a3549f4c85f7e"; } }                                       //Line密鑰
+    public static string LineVerifyUrl { get { return "https://api.line.me/oauth2/v2.1/verify"; } }                                     //Line驗證URL
+    public static string GetLineToken { get; set; }                                                                                     //Line Token
     public static string LineMail { get; set; }                                                                                         //Line信箱
+    public static string LinePicture { get; set; }                                                                                      //Line頭貼
 
     #endregion
 
@@ -35,20 +38,33 @@ public static class DataManager
 
     #region 公用
 
-    public static string RedirectUri = "https://kooco.github.io/ACEdemo/demo.asiapoker/index.html";                                  //重定向Url
-    public static bool IsNotFirstInLogin { get; set; }                                                                               //非首次進入登入
-    public static bool IsMobilePlatform { get; set; }                                                                                //是否為移動平台
-    public static bool IsDefaultBrowser { get; set; }                                                                                //是否在預設瀏覽器內
-    public static bool IsInCoinbase { get; set; }                                                                                    //是否在Coinbase瀏覽器
-    public static bool IsOpenDownloadWallet { get; set; }                                                                            //是否跳轉到下載錢包頁面
+    public static string RedirectUri { get { return "https://kooco.github.io/ACEdemo/demo.asiapoker/index.html"; } }                        //重定向Url
+    public static string TestRedirectUri { get { return "https://wu11158001.github.io/asiapoker_self/demo.asiapoker/index.html"; } }        //測試重定向Url
+    /// <summary>
+    /// 獲取重定向Url
+    /// </summary>
+    /// <returns></returns>
+    public static string GetRedirectUri()
+    {
+        //測試用/正式用
+        return Entry.Instance.isUsingTestRedirectUri ?
+               TestRedirectUri :
+               RedirectUri;
+    }
+
+    public static bool IsNotFirstInLogin { get; set; }                                                                                      //非首次進入登入
+    public static bool IsMobilePlatform { get; set; }                                                                                       //是否為移動平台
+    public static bool IsDefaultBrowser { get; set; }                                                                                       //是否在預設瀏覽器內
+    public static bool IsInCoinbase { get; set; }                                                                                           //是否在Coinbase瀏覽器
+    public static bool IsOpenDownloadWallet { get; set; }                                                                                   //是否跳轉到下載錢包頁面
     /// <summary>
     /// 國碼
     /// </summary>
-    public static List<string> CountryCode = new()                                                                                  
+    public static readonly List<string> CountryCode = new()                                                                                  
     {
-        "+886",
-        "+885",
-        "+884",
+        "+886",     //台灣
+        "+86",      //中國
+        "+852",     //香港
     };
 
     #endregion
@@ -61,16 +77,23 @@ public static class DataManager
 
     #region 用戶訊息
 
+    public static string GetInvitationCode { get; set; }            //受邀的邀請碼
+    public static LoginType UserLoginType { get; set; }             //用戶登入類型
+    public static string UserLoginPhoneNumber { get; set; }         //用戶登入手機號
+    public static string UserLoginPassword { get; set; }            //用戶登入密碼
     public static string UserWalletAddress { get; set; }            //用戶錢包地址
     public static string UserWalletBalance { get; set; }            //用戶錢包餘額
+    public static string UserInvitationCode { get; set; }           //用戶邀請碼
+    public static string UserBoundInviterId { get; set; }           //用戶綁定的邀請者
     public static string UserId { get; set; }                       //用戶ID
     public static string UserNickname { get; set; }                 //用戶暱稱
-    public static int UserAvatar { get; set; }                      //用戶頭像
+    public static string UserLineToken { get; set; }                    //用戶LineToken
+    public static int UserAvatarIndex { get; set; }                      //用戶頭像
     public static int UserStamina { get; set; }                     //用戶耐力
     public static int UserOTProps { get; set; }                     //用戶加時道具數量
     public static double UserCryptoChips { get; set; }              //用戶加密貨幣籌碼
     public static double UserVCChips { get; set; }                  //用戶虛擬貨幣籌碼
-    public static double UserGoldChips { get; set; }                 //用戶Gold籌碼
+    public static double UserGoldChips { get; set; }                //用戶Gold籌碼
 
     #endregion
 
@@ -80,11 +103,11 @@ public static class DataManager
     public static int MaxStaminaValue { get { return 50; } }                                      //最大耐力值
     public static int MinMagnification { get { return 40; } }                                     //購買籌碼最小倍率
     public static int MaxMagnification { get { return 200; } }                                    //購買籌碼最大倍率
-    public static List<double> CryptoSmallBlindList = new List<double>                            //加密貨幣桌小盲值
+    public static readonly List<double> CryptoSmallBlindList = new List<double>                   //加密貨幣桌小盲值
     {
         50, 100, 200, 400,
     };
-    public static List<double> VCSmallBlindList = new List<double>                                //虛擬貨幣桌小盲值
+    public static readonly List<double> VCSmallBlindList = new List<double>                       //虛擬貨幣桌小盲值
     {
         200, 400, 800, 1000,
     };
@@ -93,7 +116,7 @@ public static class DataManager
 
     #region NFT
 
-    public static string NFTApiKey = "3ba7e50212234586a43a5d9ac50b7cd0";
+    public static string NFTApiKey { get { return "3ba7e50212234586a43a5d9ac50b7cd0"; } }               //NFT APT 金鑰
 
     #endregion
 
@@ -142,33 +165,33 @@ public static class DataManager
     //  體力商品資料
     public static List<ShopData> Stamina_Shop = new List<ShopData>()
     {
-        new ShopData(){BuffName = "Percentage",BuffAmount = 10,CostCoin = 30 },
-        new ShopData(){BuffName = "Percentage",BuffAmount = 50,CostCoin = 150 },
-        new ShopData(){BuffName = "Percentage",BuffAmount = 100,CostCoin = 300},
+        new ShopData(){BuffAmount = 10,CostCoin = 30 },
+        new ShopData(){BuffAmount = 50,CostCoin = 150 },
+        new ShopData(){BuffAmount = 100,CostCoin = 300},
         //new ShopData(){BuffName = "rrr",BuffAmount = 29328392,CostCoin = 8787},
     };
 
     //  金幣商品資料
     public static List<ShopData> Gold_Shop = new List<ShopData>()
     {
-        new ShopData(){BuffName = "Points", BuffAmount = 100,CostCoin = 30},
-        new ShopData(){BuffName = "Points", BuffAmount = 300,CostCoin = 90},
-        new ShopData(){BuffName = "Points", BuffAmount = 400,CostCoin = 120},
-        new ShopData(){BuffName = "Points", BuffAmount = 500,CostCoin = 150},
-        new ShopData(){BuffName = "Points", BuffAmount = 850,CostCoin = 250},
-        new ShopData(){BuffName = "Points", BuffAmount = 1000,CostCoin = 300},
+        new ShopData(){BuffAmount = 100,CostCoin = 30},
+        new ShopData(){BuffAmount = 300,CostCoin = 90},
+        new ShopData(){BuffAmount = 400,CostCoin = 120},
+        new ShopData(){BuffAmount = 500,CostCoin = 150},
+        new ShopData(){BuffAmount = 850,CostCoin = 250},
+        new ShopData(){BuffAmount = 1000,CostCoin = 300},
         //new ShopData(){BuffName = "Testtttt", BuffAmount = 23333333,CostCoin = 888888},
     };
 
     //  加時商品資料
     public static List<ShopData> ExtraTime_Shop = new List<ShopData>()
     {
-        new ShopData(){BuffName = "Second", BuffAmount = 10,CostCoin = 30},
-        new ShopData(){BuffName = "Second", BuffAmount = 30,CostCoin = 90},
-        new ShopData(){BuffName = "Second", BuffAmount = 40,CostCoin = 120},
-        new ShopData(){BuffName = "Second", BuffAmount = 50,CostCoin = 150},
-        new ShopData(){BuffName = "Second", BuffAmount = 85,CostCoin = 250},
-        new ShopData(){BuffName = "Second", BuffAmount = 100,CostCoin = 300},
+        new ShopData(){BuffAmount = 10,CostCoin = 30},
+        new ShopData(){BuffAmount = 30,CostCoin = 90},
+        new ShopData(){BuffAmount = 40,CostCoin = 120},
+        new ShopData(){BuffAmount = 50,CostCoin = 150},
+        new ShopData(){BuffAmount = 85,CostCoin = 250},
+        new ShopData(){BuffAmount = 100,CostCoin = 300},
     };
 
 
@@ -218,7 +241,7 @@ public static class DataManager
             new RankData() { avatar = 2, nickname = "PP", point = 900, award = 80 },
             new RankData() { avatar = 3, nickname = "DD", point = 850, award = 70 },
             new RankData() { avatar = 4, nickname = "YY", point = 800, award = 60 },
-            new RankData() { avatar = UserAvatar, nickname = UserNickname, point = 750, award = 60 },
+            new RankData() { avatar = UserAvatarIndex, nickname = UserNickname, point = 750, award = 60 },
             new RankData() { avatar = 6, nickname = "LL", point = 700, award = 60 },
             new RankData() { avatar = 7, nickname = "HH", point = 650, award = 60 },
             new RankData() { avatar = 6, nickname = "II", point = 600, award = 60 },
@@ -233,7 +256,7 @@ public static class DataManager
             new RankData() { avatar = 1, nickname = "BB", point = 1000, award = 90 },
             new RankData() { avatar = 2, nickname = "AA", point = 900, award = 80 },
             new RankData() { avatar = 3, nickname = "DD", point = 880, award = 70 },
-            new RankData() { avatar = UserAvatar, nickname = UserNickname, point = 800, award = 60 },
+            new RankData() { avatar = UserAvatarIndex, nickname = UserNickname, point = 800, award = 60 },
             new RankData() { avatar = 5, nickname = "FF", point = 780, award = 60 },
             new RankData() { avatar = 6, nickname = "UU", point = 710, award = 60 },
             new RankData() { avatar = 7, nickname = "HH", point = 650, award = 60 },
@@ -246,7 +269,7 @@ public static class DataManager
         {
             new RankData() { avatar = 0, nickname = "AA", point = 1005, award = 100 },
             new RankData() { avatar = 1, nickname = "BB", point = 1000, award = 90 },
-            new RankData() { avatar = UserAvatar, nickname = UserNickname, point = 900, award = 80 },
+            new RankData() { avatar = UserAvatarIndex, nickname = UserNickname, point = 900, award = 80 },
             new RankData() { avatar = 3, nickname = "TT", point = 880, award = 70 },
             new RankData() { avatar = 4, nickname = "EE", point = 800, award = 60 },
             new RankData() { avatar = 5, nickname = "FF", point = 780, award = 60 },
@@ -260,7 +283,7 @@ public static class DataManager
         //當季Golden排名
         CurrSeasonGoldenRankList = new List<RankData>()
         {
-            new RankData() { avatar = UserAvatar, nickname = UserNickname, point = 2000, award = 100 },
+            new RankData() { avatar = UserAvatarIndex, nickname = UserNickname, point = 2000, award = 100 },
             new RankData() { avatar = 1, nickname = "AA", point = 1500, award = 90 },
             new RankData() { avatar = 2, nickname = "BB", point = 900, award = 80 },
             new RankData() { avatar = 3, nickname = "DD", point = 870, award = 70 },
@@ -301,8 +324,8 @@ public static class DataManager
 
     #region 遊戲
 
-    public static int MaxPlayerCount = 6;                                           //最大遊戲人數
-    public static int MaxVideoSaveCount = 20;                                       //最大紀錄影片數量
+    public static int MaxPlayerCount { get { return 6; } }                            //最大遊戲人數
+    public static int MaxVideoSaveCount { get { return 20; } }                        //最大紀錄影片數量
 
     #endregion
 }
@@ -319,7 +342,6 @@ public class RankData
 //  商店商品資料
 public class ShopData
 {
-    public string BuffName;
     public int BuffAmount;
     public int CostCoin;
 }

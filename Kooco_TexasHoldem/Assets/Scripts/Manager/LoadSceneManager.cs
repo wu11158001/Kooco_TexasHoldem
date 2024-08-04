@@ -18,6 +18,8 @@ public class LoadSceneManager : UnitySingleton<LoadSceneManager>
     [SerializeField]
     GameObject LoginViewObj, LobbyViewObj;
 
+    public bool isGetUserData { get; set; }
+
     DateTime startYieldTime;
 
     public override void Awake()
@@ -38,6 +40,10 @@ public class LoadSceneManager : UnitySingleton<LoadSceneManager>
         {
             StartCoroutine(ILoadScene(sceneEnum));
         }
+        else if (SceneManager.GetActiveScene().name == "Login")
+        {
+            StartCoroutine(IEntryInToLobby(sceneEnum));
+        }
         else
         {
             StartCoroutine(IEntryInToLogin(sceneEnum));
@@ -57,6 +63,32 @@ public class LoadSceneManager : UnitySingleton<LoadSceneManager>
         while (!asyncLoad.isDone)
         {            
             if (asyncLoad.progress >= 0.9f)
+            {
+                asyncLoad.allowSceneActivation = true;
+                yield return new WaitForSeconds(0.1f);
+
+                DataManager.CurrScene = sceneEnum;
+                ViewManager.Instance.Init();
+                JudgeIntoScene(sceneEnum);
+            }
+
+            yield return null;
+        }
+    }
+
+    /// <summary>
+    /// 進入大廳場景
+    /// </summary>
+    /// <returns></returns>
+    private IEnumerator IEntryInToLobby(SceneEnum sceneEnum)
+    {
+        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneEnum.ToString());
+        asyncLoad.allowSceneActivation = false;
+
+        // 等待加载完成
+        while (!asyncLoad.isDone)
+        {
+            if (asyncLoad.progress >= 0.9f && isGetUserData)
             {
                 asyncLoad.allowSceneActivation = true;
                 yield return new WaitForSeconds(0.1f);
@@ -117,7 +149,6 @@ public class LoadSceneManager : UnitySingleton<LoadSceneManager>
                 ViewManager.Instance.Init();
                 JudgeIntoScene(sceneEnum);
 
-                yield return new WaitForSeconds(0.5f);
                 lodingView.gameObject.SetActive(false);
             }
 
@@ -134,11 +165,17 @@ public class LoadSceneManager : UnitySingleton<LoadSceneManager>
         switch (sceneEnum)
         {
             case SceneEnum.Login:
+#if !UNITY_EDITOR
+                JSBridgeManager.Instance.OpenRecaptchaTool();
+#endif
                 NFTManager.Instance.CancelUpdate();
                 ViewManager.Instance.CreateViewInCurrCanvas<LoginView>(LoginViewObj);
                 break;
 
             case SceneEnum.Lobby:
+#if !UNITY_EDITOR
+                JSBridgeManager.Instance.CloseRecaptchaTool();
+#endif
                 DataManager.ReciveRankData();
                 ViewManager.Instance.CreateViewInCurrCanvas<LobbyView>(LobbyViewObj);
                 break;
