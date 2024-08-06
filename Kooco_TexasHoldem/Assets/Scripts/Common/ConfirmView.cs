@@ -37,9 +37,9 @@ public class ConfirmView : MonoBehaviour
     /// 設定確認介面按鈕
     /// </summary>
     /// <param name="confirmCallback">確認按鈕回傳</param>
-    /// <param name="cancelCallback">取消按鈕回傳</param>
     /// <param name="showCancel">顯示取消</param>
-    public void SetBnt(UnityAction confirmCallback, UnityAction cancelCallback = null, bool showCancel = true)
+    /// <param name="cancelCallback">取消按鈕回傳</param>
+    public void SetBnt(UnityAction confirmCallback, bool showCancel = true, UnityAction cancelCallback = null)
     {
         //確認按鈕執行
         Confirm_Btn.onClick.AddListener(() =>

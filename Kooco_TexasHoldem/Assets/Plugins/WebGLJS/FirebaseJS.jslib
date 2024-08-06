@@ -129,24 +129,41 @@ mergeInto(LibraryManager.library, {
         });
     },
 
-    // 檢查用戶資料是否已存在(邀請碼/UserID)
+    // 檢查用戶資料是否已存在
+    // keyPtr = 查詢關鍵字
+    // valuePtr = 查詢的值
+    // releaseTypePtr = 發布環境
     // objNamePtr = 回傳物件名
     // callbackFunPtr = 回傳方法名
-    JS_CheckUserDataExist: async function(keyPtr, objNamePtr, callbackFunPtr) {
+    JS_CheckUserDataExist: async function(keyPtr, valuePtr, releaseTypePtr, objNamePtr, callbackFunPtr) {
         const key = UTF8ToString(keyPtr);
+        const valueToSearch = UTF8ToString(valuePtr);
+        const releaseType = UTF8ToString(releaseTypePtr);
         const gameObjectName = UTF8ToString(objNamePtr);
         const callbackFunctionName = UTF8ToString(callbackFunPtr);
 
-        const values = new Set();  // 使用 Set 來追蹤唯一值
-        let hasDuplicates = false;
+        let foundPhoneNumber = "";
 
         try {
-            // Fetch data from the 'user' node
-            const userRef = firebase.database().ref('user');
+            // Fetch data from the 'releaseType/user' node
+            const userRef = firebase.database().ref(releaseType + '/user');
             const snapshot = await userRef.get();
 
             if (snapshot.exists()) {
                 const userData = snapshot.val();
+                console.log("Fetched userData:", userData);  // 調試輸出
+
+                // Check phoneUser
+                if (userData.phoneUser) {
+                    for (const phoneNumberKey in userData.phoneUser) {
+                        const phoneNumberData = userData.phoneUser[phoneNumberKey];
+                        if (phoneNumberData[key] && phoneNumberData[key] === valueToSearch) {
+                            foundPhoneNumber = phoneNumberData.phoneNumber;
+                            console.log("Found phoneNumber in phoneUser:", foundPhoneNumber);  // 調試輸出
+                            break;
+                        }
+                    }
+                }
 
                 // Check walletUser
                 if (userData.walletUser) {
@@ -154,35 +171,10 @@ mergeInto(LibraryManager.library, {
                         const walletUserData = userData.walletUser[walletUserKey];
                         for (const phoneNumberKey in walletUserData) {
                             const phoneNumberData = walletUserData[phoneNumberKey];
-                            for (const itemKey in phoneNumberData) {
-                                const item = phoneNumberData[itemKey];
-                                if (item[key]) {
-                                    const value = item[key];
-                                    if (values.has(value)) {
-                                        hasDuplicates = true;
-                                    }
-                                    values.add(value);
-                                }
-                            }
-                        }
-                    }
-                }
-
-                // Check phoneUser
-                if (userData.phoneUser) {
-                    for (const phoneUserKey in userData.phoneUser) {
-                        const phoneUserData = userData.phoneUser[phoneUserKey];
-                        for (const phoneNumberKey in phoneUserData) {
-                            const phoneNumberData = phoneUserData[phoneNumberKey];
-                            for (const itemKey in phoneNumberData) {
-                                const item = phoneNumberData[itemKey];
-                                if (item[key]) {
-                                    const value = item[key];
-                                    if (values.has(value)) {
-                                        hasDuplicates = true;
-                                    }
-                                    values.add(value);
-                                }
+                            if (phoneNumberData[key] && phoneNumberData[key] === valueToSearch) {
+                                foundPhoneNumber = phoneNumberData.phoneNumber;
+                                console.log("Found phoneNumber in walletUser:", foundPhoneNumber);  // 調試輸出
+                                break;
                             }
                         }
                     }
@@ -192,53 +184,17 @@ mergeInto(LibraryManager.library, {
             }
 
             // Output result
-            if (hasDuplicates) {
-                // 資料已存在
-                console.log(`There are duplicate ${key}s.`);
-                window.unityInstance.SendMessage(gameObjectName, callbackFunctionName, "true");
-
+            if (foundPhoneNumber) {
+                console.log(`Found phoneNumber for ${key}:`, foundPhoneNumber);
+                window.unityInstance.SendMessage(gameObjectName, callbackFunctionName, JSON.stringify({exists: "true", phoneNumber: foundPhoneNumber}));
             } else {
-                // 資料不存在
-                console.log(`No duplicate ${key}s found.`);
-                window.unityInstance.SendMessage(gameObjectName, callbackFunctionName, "false");
+                console.log(`No phoneNumber found for ${key}`);
+                window.unityInstance.SendMessage(gameObjectName, callbackFunctionName, JSON.stringify({exists: "false", phoneNumber: ""}));
             }
 
         } catch (error) {
             console.error('Error fetching data:', error);
-        }
-    },
-
-    // 更新邀請碼對象的綁定邀請者
-    // invitationCode = 查找的邀請碼
-    // boundInviterId = 被邀請的用戶ID
-    JS_UpdateBoundInviterId: function(invitationCode, boundInviterId) {
-        updateBoundInviterId('walletUser', UTF8ToString(invitationCode), UTF8ToString(boundInviterId));
-        updateBoundInviterId('phoneUser', UTF8ToString(invitationCode), UTF8ToString(boundInviterId));
-
-        // 查找並更新
-        function updateBoundInviterId(loginType, invitationCode, newboundInviterId) {
-            const ref = firebase.database().ref(`user/${loginType}`);
-            ref.orderByChild('invitationCode').equalTo(invitationCode).once('value')
-                .then(snapshot => {
-                    snapshot.forEach(childSnapshot => {
-                        const key = childSnapshot.key;
-                        const childData = childSnapshot.val();
-
-                        if (!childData.boundInviterId) {
-                            // 如果boundInviterId不存在或為空，則更新它
-                            ref.child(key).update({ boundInviterId: newboundInviterId })
-                                .then(() => {
-                                    console.log(`Updated inviterId for ${key}`);
-                                })
-                                .catch(error => {
-                                    console.error(`Failed to update inviterId for ${key}:`, error);
-                                });
-                        }
-                    });
-                })
-                .catch(error => {
-                    console.error('Error fetching data:', error);
-                });
+            window.unityInstance.SendMessage(gameObjectName, callbackFunctionName, JSON.stringify({exists: "error", phoneNumber: "", error: error.toString()}));
         }
     },
 });

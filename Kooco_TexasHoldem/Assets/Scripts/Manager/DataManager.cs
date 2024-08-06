@@ -75,9 +75,15 @@ public static class DataManager
 
     #endregion
 
-    #region 用戶訊息
+    #region 邀請碼
 
     public static string GetInvitationCode { get; set; }            //受邀的邀請碼
+    public static string GetInviterId { get; set; }                //獲取的邀請者ID
+
+    #endregion
+
+    #region 用戶訊息
+
     public static LoginType UserLoginType { get; set; }             //用戶登入類型
     public static string UserLoginPhoneNumber { get; set; }         //用戶登入手機號
     public static string UserLoginPassword { get; set; }            //用戶登入密碼
@@ -87,8 +93,8 @@ public static class DataManager
     public static string UserBoundInviterId { get; set; }           //用戶綁定的邀請者
     public static string UserId { get; set; }                       //用戶ID
     public static string UserNickname { get; set; }                 //用戶暱稱
-    public static string UserLineToken { get; set; }                    //用戶LineToken
-    public static int UserAvatarIndex { get; set; }                      //用戶頭像
+    public static string UserLineToken { get; set; }                //用戶LineToken
+    public static int UserAvatarIndex { get; set; }                 //用戶頭像
     public static int UserStamina { get; set; }                     //用戶耐力
     public static int UserOTProps { get; set; }                     //用戶加時道具數量
     public static double UserCryptoChips { get; set; }              //用戶加密貨幣籌碼

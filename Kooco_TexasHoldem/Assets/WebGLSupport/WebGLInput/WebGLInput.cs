@@ -10,6 +10,7 @@ using AOT;
 using System.Runtime.InteropServices; // for DllImport
 using System.Collections;
 using UnityEngine.EventSystems;
+using TMPro;
 
 namespace WebGLSupport
 {
@@ -128,8 +129,11 @@ namespace WebGLSupport
         public IInputField input { get; private set; }
         bool blurBlock = false;
 
+        //設定在這
         [TooltipAttribute("show input element on canvas. this will make you select text by drag.")]
         public bool showHtmlElement = false;
+        public TextMeshProUGUI contenText;
+        public TMP_InputField TMP_InputField;
 
         private IInputField Setup()
         {
@@ -163,6 +167,9 @@ namespace WebGLSupport
                     enabled = false;
                 }
             }
+
+
+
         }
 
         /// <summary>
@@ -195,14 +202,54 @@ namespace WebGLSupport
             if (id != -1) throw new Exception("OnSelect : id != -1");
 
             var rect = GetElemetRect();
-            bool isPassword = input.contentType == ContentType.Password;
+            //bool isPassword = input.contentType == ContentType.Password;
 
-            var fontSize = Mathf.Max(14, input.fontSize); // limit font size : 14 !!
+            //var fontSize = Mathf.Max(14, input.fontSize); // limit font size : 14 !!
 
             // モバイルの場合、強制表示する
-            var isHidden = !(showHtmlElement || Application.isMobilePlatform);
+
+            string text = input.text;
+            string placeholder = input.placeholder;
+            bool isMultiLine = input.lineType != LineType.SingleLine;
+            bool isHidden = true;
+            bool isMobile = Application.isMobilePlatform;
+            bool isPassword = input.contentType == ContentType.Password;
+
+            // 获取字体大小和颜色
+            int fontSize = (int)contenText.fontSize;
+            string backgroundColor = "#202332"; // 背景颜色
+            string textColor = ColorUtility.ToHtmlStringRGBA(contenText.color); // 文本颜色
+            string borderColor = "#7592CC"; // 假设边框颜色是固定的
+
+            // 获取输入框的位置和大小
+            RectTransform rectTransform = TMP_InputField.GetComponent<RectTransform>();
+            Vector2 position = rectTransform.anchoredPosition;
+            Vector2 size = rectTransform.sizeDelta;
+
+            // 调用WebGLInputCreate创建输入框
+            id = WebGLInputPlugin.WebGLInputCreate(
+                WebGLInput.CanvasId,
+                (int)position.x,
+                (int)position.y,
+                (int)size.x,
+                (int)size.y,
+                fontSize,
+                text,
+                placeholder,
+                isMultiLine,
+                isPassword,
+                isHidden,
+                isMobile,
+                "#" + backgroundColor,
+                "#" + textColor,
+                borderColor
+            );
+
+
+
+            /*var isHidden = !(showHtmlElement || Application.isMobilePlatform);
             id = WebGLInputPlugin.WebGLInputCreate(WebGLInput.CanvasId, rect.x, rect.y, rect.width, rect.height, fontSize, input.text, input.placeholder, input.lineType != LineType.SingleLine, isPassword, isHidden, Application.isMobilePlatform,
-                "#1A1E2F", "#FFFFFF", "#7592CC");
+                "#1A1E2F", "#FFFFFF", "#7592CC");*/
 
             instances[id] = this;
             WebGLInputPlugin.WebGLInputEnterSubmit(id, input.lineType != LineType.MultiLineNewline);

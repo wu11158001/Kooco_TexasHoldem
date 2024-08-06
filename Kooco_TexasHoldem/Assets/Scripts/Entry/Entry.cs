@@ -204,14 +204,22 @@ public class Entry : UnitySingleton<Entry>
 
     #region 邀請碼
 
+    [System.Serializable]
+    public class InvitationData
+    {
+        public string invitationCode;     //邀請人的邀請碼
+        public string inviterId;          //邀請人ID
+    }
     /// <summary>
     /// 接收邀請碼
     /// </summary>
-    /// <param name="invitationCode">受邀的邀請碼</param>
-    public void ReceiveInvitationCode(string invitationCode)
+    /// <param name="jsonData">回傳資料</param>
+    public void ReceiveInvitationCode(string jsonData)
     {
-        Debug.Log($"Receive invitation code : {invitationCode}");
-        DataManager.GetInvitationCode = invitationCode;
+        var data = JsonUtility.FromJson<InvitationData>(jsonData);
+        Debug.Log($"Receive invitation code : {data.invitationCode} / inviterId: {data.inviterId}");
+        DataManager.GetInvitationCode = data.invitationCode;
+        DataManager.GetInviterId = data.inviterId;
     }
 
     #endregion

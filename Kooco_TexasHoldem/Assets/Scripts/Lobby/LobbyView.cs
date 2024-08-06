@@ -48,7 +48,6 @@ public class LobbyView : MonoBehaviour
     [SerializeField]
     GameObject SetNicknameViewObj;
 
-
     [Header("存提款介面")]
     [SerializeField]
     GameObject Transfers_AnteView;
@@ -56,6 +55,8 @@ public class LobbyView : MonoBehaviour
     Button Transfers_Btn;
     [SerializeField]
     TextMeshProUGUI TransfersBtn_Txt;
+
+    bool isFirstIn;                         //是否首次登入
 
     /// <summary>
     /// 項目按鈕類型
@@ -111,6 +112,7 @@ public class LobbyView : MonoBehaviour
 
     private void Awake()
     {
+        isFirstIn = true;
         LanguageManager.Instance.AddUpdateLanguageFunc(UpdateLanguage, gameObject);
         ListenerEvent();
     }
@@ -244,19 +246,28 @@ public class LobbyView : MonoBehaviour
         DataManager.UserLineToken = loginData.lineToken;
 
         //開啟設置暱稱
-        if (string.IsNullOrEmpty(loginData.nickname))
+        if (isFirstIn &&
+            string.IsNullOrEmpty(loginData.nickname))
         {
             Instantiate(SetNicknameViewObj, transform);
         }
 
         //使用邀請碼登入
         if (string.IsNullOrEmpty(DataManager.UserBoundInviterId) &&
-            !string.IsNullOrEmpty(DataManager.GetInvitationCode))
+            !string.IsNullOrEmpty(DataManager.GetInvitationCode) &&
+            !string.IsNullOrEmpty(DataManager.GetInviterId))
         {
-            Debug.Log($"Update Inviter Data:{DataManager.GetInvitationCode} % UserID: {DataManager.UserId}");
-            JSBridgeManager.Instance.UpdateBoundInviterId(DataManager.GetInvitationCode,
-                                                          DataManager.UserId);
+            //寫入資料
+            Dictionary<string, object> dataDic = new()
+            {
+                { FirebaseManager.BOUND_INVITER_ID, DataManager.GetInviterId },
+            };
+            JSBridgeManager.Instance.UpdateDataFromFirebase($"{Entry.Instance.releaseType}/{FirebaseManager.USER_DATA_PATH}{DataManager.UserLoginType}/{DataManager.UserLoginPhoneNumber}",
+                                                            dataDic);
 
+            //清除紀錄資料
+            DataManager.GetInvitationCode = "";
+            DataManager.GetInviterId = "";
             JSBridgeManager.Instance.ClearUrlQueryString();
         }
 
@@ -283,6 +294,8 @@ public class LobbyView : MonoBehaviour
         }
 
         UpdateUserInfo();
+
+        isFirstIn = false;
     }
 
     /// <summary>

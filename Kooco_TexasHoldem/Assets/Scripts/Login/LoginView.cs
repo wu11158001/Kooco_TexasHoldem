@@ -941,8 +941,10 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
     private void MobileSignInSubmit()
     {
 #if UNITY_EDITOR
+
         LoadSceneManager.Instance.LoadScene(SceneEnum.Lobby);
         return;
+
 #endif
 
 
@@ -1730,11 +1732,13 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
         //用戶ID
         currUserId = StringUtils.GenerateRandomString(UserIdLength);
 
-        JSBridgeManager.Instance.CheckUserDataExist(currInviteCode,
+        JSBridgeManager.Instance.CheckUserDataExist(FirebaseManager.INVITATION_CODE,
+                                                    currInviteCode,
                                                     gameObject.name,
                                                     nameof(CheckInviteCodeCallBack));
 
-        JSBridgeManager.Instance.CheckUserDataExist(currUserId,
+        JSBridgeManager.Instance.CheckUserDataExist(FirebaseManager.USER_ID,
+                                                    currUserId,
                                                     gameObject.name,
                                                     nameof(CheckUserIdCallBack));
     }
@@ -1742,13 +1746,16 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
     /// <summary>
     /// 邀請碼重複檢測回傳
     /// </summary>
-    /// <param name="isExist">是否已存在回傳結果(true/false)</param>
-    public void CheckInviteCodeCallBack(string isExist)
+    /// <param name="jsonData">回傳結果(true/false)</param>
+    public void CheckInviteCodeCallBack(string jsonData)
     {
-        if (isExist == "true")
+        var data = JsonUtility.FromJson<CheckUserData>(jsonData);
+
+        if (data.exists == "true")
         {
             currInviteCode = StringUtils.GenerateRandomString(InviteCodeLength);
-            JSBridgeManager.Instance.CheckUserDataExist(currInviteCode,
+            JSBridgeManager.Instance.CheckUserDataExist(FirebaseManager.INVITATION_CODE,
+                                                        currInviteCode,
                                                         gameObject.name,
                                                         nameof(CheckInviteCodeCallBack));
 
@@ -1761,13 +1768,15 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
     /// <summary>
     /// UserId重複檢測回傳
     /// </summary>
-    /// <param name="isExist">是否已存在回傳結果(true/false)</param>
-    public void CheckUserIdCallBack(string isExist)
+    /// <param name="jsonData">回傳結果(true/false)</param>
+    public void CheckUserIdCallBack(string jsonData)
     {
-        if (isExist == "true")
+        var data = JsonUtility.FromJson<CheckUserData>(jsonData);
+        if (data.exists == "true")
         {
             currUserId = StringUtils.GenerateRandomString(UserIdLength);
-            JSBridgeManager.Instance.CheckUserDataExist(currUserId,
+            JSBridgeManager.Instance.CheckUserDataExist(FirebaseManager.USER_ID,
+                                                        currUserId,
                                                         gameObject.name,
                                                         nameof(CheckUserIdCallBack));
 

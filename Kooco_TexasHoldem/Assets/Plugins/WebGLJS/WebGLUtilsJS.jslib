@@ -212,4 +212,12 @@ mergeInto(LibraryManager.library, {
             } 
         }    
     },
+
+    //Line加客服測試
+    JS_LineService: function(Url){
+        const url = UTF8ToString(Url);
+        var newTab =  window.open(url,'_blank','width = 500,height = 500');
+    },
+
+
 });

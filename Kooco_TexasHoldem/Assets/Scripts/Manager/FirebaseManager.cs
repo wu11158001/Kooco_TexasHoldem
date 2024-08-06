@@ -76,7 +76,18 @@ public class FirebaseManager : UnitySingleton<FirebaseManager>
 }
 
 /// <summary>
-/// 帳號資料
+/// 用戶資料查詢
+/// </summary>
+[Serializable]
+public class CheckUserData
+{
+    public string exists;                   //差尋結果(true/false)
+    public string phoneNumber;              //資料符合的用戶手機號
+    public string error;                    //錯誤訊息
+}
+
+/// <summary>
+/// 用戶資料
 /// </summary>
 [Serializable]
 public class AccountData

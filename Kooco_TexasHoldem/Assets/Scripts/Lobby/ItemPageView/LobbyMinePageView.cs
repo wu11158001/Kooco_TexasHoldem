@@ -74,13 +74,16 @@ public class LobbyMinePageView : MonoBehaviour
 
     [Header("邀請碼")]
     [SerializeField]
-    Button InvitationCodeShare_Btn, CopyInvitationCode_Btn;
+    Button InvitationCodeShare_Btn, InviationCodeSubmit_Btn, CopyInvitationCode_Btn;
+    [SerializeField]
+    TMP_InputField BoundInviterId_If;
     [SerializeField]
     Image InvitationQRCode_Img;
     [SerializeField]
-    TextMeshProUGUI InvitationCodeTitle_Txt, InvitationCodeShareBtn_Txt,
-                    InvitationCodeContentTitle_Txt, InvitationCode_Txt, CopiedInvitationCode_Txt,
-                    BoundInviterTitle_Txt, BoundInviterId_Txt, HasBoundInviter_Txt;
+    TextMeshProUGUI InvitationCodeTitle_Txt, InvitationCodeShareBtn_Txt, MyInvitationCode_Txt,
+                    InvitationCode_Txt, CopiedInvitationCode_Txt,
+                    BoundInviterTitle_Txt, BoundInviterIdf_Placeholder, InviationCodeSubmitBtn_Txt,
+                    InviationCodeError_Txt;
 
     [Header("交易紀錄")]
     [SerializeField]
@@ -118,6 +121,7 @@ public class LobbyMinePageView : MonoBehaviour
     const string expandTopBgName = "TopBg";                                     //收起上方物件名稱
     const float expandTIme = 0.1f;                                              //內容展開時間
 
+    string invitationCodeUrl;                                                   //邀請碼URL
     List<Button> avatarBtnList;                                                 //頭像按鈕
     int tempAvatarIndex;                                                        //零時頭像index
     bool isAccountBalanceExpand;                                                //是否展開帳戶餘額
@@ -171,10 +175,10 @@ public class LobbyMinePageView : MonoBehaviour
         #region 邀請碼
 
         InvitationCodeTitle_Txt.text = LanguageManager.Instance.GetText("Invitation Code");
-        HasBoundInviter_Txt.text = LanguageManager.Instance.GetText("Bound");
-        InvitationCodeContentTitle_Txt.text = LanguageManager.Instance.GetText("Invitation Code");
-        BoundInviterTitle_Txt.text = LanguageManager.Instance.GetText("Bound Inviter");
         InvitationCodeShareBtn_Txt.text = LanguageManager.Instance.GetText("Share");
+        BoundInviterIdf_Placeholder.text = LanguageManager.Instance.GetText("Enter Invitation Code");
+        InviationCodeSubmitBtn_Txt.text = LanguageManager.Instance.GetText("SUBMIT");
+        MyInvitationCode_Txt.text = LanguageManager.Instance.GetText("My Invitation Code");
 
         #endregion
 
@@ -221,10 +225,6 @@ public class LobbyMinePageView : MonoBehaviour
         CopiedWalletAddress_Txt.color = color;
         //邀請碼已複製文字
         CopiedInvitationCode_Txt.color = color;
-
-        //邀請碼內容
-        StringUtils.StrExceedSize(DataManager.UserInvitationCode,
-                                  InvitationCode_Txt);
 
         ChangeAvatar_Tr.gameObject.SetActive(false);
 
@@ -316,7 +316,8 @@ public class LobbyMinePageView : MonoBehaviour
         //帳戶餘額刷新
         AccountBalanceReflash_Btn.onClick.AddListener(() =>
         {
-            UpdatetAccountBalance("4,300 ETH", 40000, 3000, 5, 30);
+
+            //UpdatetAccountBalance("4,300 ETH", 40000, 3000, 5, 30);
         });
 
         #endregion
@@ -347,12 +348,36 @@ public class LobbyMinePageView : MonoBehaviour
         {
             string title = LanguageManager.Instance.GetText("Invitation Code");
             string content = $"{LanguageManager.Instance.GetText("Asia Poker")}\n" +
-                             $"{LanguageManager.Instance.GetText("InvitationCode")} : {DataManager.UserInvitationCode}";
-            string url = $"{DataManager.GetRedirectUri()}" +
-                         $"?{FirebaseManager.INVITATION_CODE}={DataManager.UserInvitationCode}";
+                             $"{LanguageManager.Instance.GetText("Invitation Code")} : {DataManager.UserInvitationCode}";
+
             JSBridgeManager.Instance.Share(title,
                                            content,
-                                           url);
+                                           invitationCodeUrl);
+        });
+
+        //提交邀請碼
+        InviationCodeSubmit_Btn.onClick.AddListener(() =>
+        {
+            InviationCodeError_Txt.text = "";
+
+            if (BoundInviterId_If.text == DataManager.UserInvitationCode)
+            {
+                InviationCodeError_Txt.text = LanguageManager.Instance.GetText("Wrong Invitation Code.");
+                return;
+            }
+
+            //顯示提示框
+            ConfirmView confirmView = ViewManager.Instance.OpenConfirmView();
+            confirmView.SetContent(LanguageManager.Instance.GetText("Prompt"),
+                                   LanguageManager.Instance.GetText("Cannot be changed after binding!!!"));
+            confirmView.SetBnt(() =>
+            {
+                ViewManager.Instance.OpenWaitingView(transform);
+                JSBridgeManager.Instance.CheckUserDataExist(FirebaseManager.INVITATION_CODE,
+                                                            BoundInviterId_If.text,
+                                                            gameObject.name,
+                                                            nameof(SubmitInvitationCodeCallback));
+            });
         });
 
         //複製邀請碼
@@ -438,6 +463,8 @@ public class LobbyMinePageView : MonoBehaviour
 
     private void Start()
     {
+        InviationCodeError_Txt.text = "";
+
         //產生選擇的頭像
         avatarBtnList = new List<Button>();
         AvatarSapmle.gameObject.SetActive(false);
@@ -507,6 +534,10 @@ public class LobbyMinePageView : MonoBehaviour
         LineLinked_Img.sprite = string.IsNullOrEmpty(DataManager.GetLineToken) ?
                                 AssetsManager.Instance.GetAlbumAsset(AlbumEnum.LinkAlbum).album[0] :
                                 AssetsManager.Instance.GetAlbumAsset(AlbumEnum.LinkAlbum).album[1];
+
+        invitationCodeUrl = $"{DataManager.GetRedirectUri()}" +
+                    $"?invitationCode={DataManager.UserInvitationCode}" +
+                    $"&inviterId={DataManager.UserId}";
     }
 
     /// <summary>
@@ -638,19 +669,75 @@ public class LobbyMinePageView : MonoBehaviour
 
     #endregion
 
+    #region 邀請碼
+
+    /// <summary>
+    /// 提交邀請碼回傳
+    /// </summary>
+    /// <param name="jsonData"></param>
+    public void SubmitInvitationCodeCallback(string jsonData)
+    {
+        ViewManager.Instance.CloseWaitingView(transform);
+
+        var data = JsonUtility.FromJson<CheckUserData>(jsonData);
+
+        //查詢失敗/沒有資料
+        if (!string.IsNullOrEmpty(data.error) ||
+            data.exists == "false")
+        {
+            InviationCodeError_Txt.text = LanguageManager.Instance.GetText("Wrong Invitation Code.");
+            return;
+        }
+
+        JSBridgeManager.Instance.ReadDataFromFirebase($"{Entry.Instance.releaseType}/{FirebaseManager.USER_DATA_PATH}{DataManager.UserLoginType}/{data.phoneNumber}",
+                                                       gameObject.name,
+                                                       nameof(SubmitGetUserDataCallback));
+    }
+
+    /// <summary>
+    /// 提交獲取用戶資料回傳
+    /// </summary>
+    /// <param name="jsonData"></param>
+    public void SubmitGetUserDataCallback(string jsonData)
+    {
+        var data = JsonUtility.FromJson<AccountData>(jsonData);
+
+        //寫入資料
+        Dictionary<string, object> dataDic = new()
+        {
+            { FirebaseManager.BOUND_INVITER_ID, data.userId },
+        };
+        JSBridgeManager.Instance.UpdateDataFromFirebase($"{Entry.Instance.releaseType}/{FirebaseManager.USER_DATA_PATH}{DataManager.UserLoginType}/{DataManager.UserLoginPhoneNumber}",
+                                                        dataDic);
+
+        ViewManager.Instance.OpenTipMsgView(transform,
+                                            LanguageManager.Instance.GetText("Binding Successful"));
+    }
+
     /// <summary>
     /// 更新邀請碼訊息
     /// </summary>
     public void UpdateInvitationCodeInfo()
     {
-        //綁定的邀請者ID
-        StringUtils.StrExceedSize(DataManager.UserBoundInviterId,
-                                  BoundInviterId_Txt);
+        //邀請人Title
+        BoundInviterTitle_Txt.text = string.IsNullOrEmpty(DataManager.UserBoundInviterId) ?
+                                     LanguageManager.Instance.GetText("Enter Invitation Code") :
+                                     LanguageManager.Instance.GetText("Bound Inviter");
+        //邀請人ID
+        BoundInviterId_If.text = !string.IsNullOrEmpty(DataManager.UserBoundInviterId) ?
+                                  DataManager.UserBoundInviterId :
+                                  "";
+        BoundInviterId_If.interactable = string.IsNullOrEmpty(DataManager.UserBoundInviterId);
+
+        //提交按鈕
+        InviationCodeSubmit_Btn.gameObject.SetActive(string.IsNullOrEmpty(DataManager.UserBoundInviterId));
+
         //產生分享RQ Code
         InvitationQRCode_Img.sprite = Utils.GenerateQRCodeTexture($"{DataManager.GetRedirectUri()}?{FirebaseManager.INVITATION_CODE}={DataManager.UserInvitationCode}");
-        //邀請碼區域顯示設定
-        InvitationQRCode_Img.gameObject.SetActive(string.IsNullOrEmpty(DataManager.UserBoundInviterId));
-        HasBoundInviter_Txt.gameObject.SetActive(!string.IsNullOrEmpty(DataManager.UserBoundInviterId));
-        InvitationCodeShare_Btn.interactable = string.IsNullOrEmpty(DataManager.UserBoundInviterId);
+
+        //邀請碼
+        InvitationCode_Txt.text = DataManager.UserInvitationCode;
     }
+
+    #endregion
 }

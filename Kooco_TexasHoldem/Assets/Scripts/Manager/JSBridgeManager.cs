@@ -163,31 +163,21 @@ public class JSBridgeManager : UnitySingleton<JSBridgeManager>
     }
 
     [DllImport("__Internal")]
-    private static extern bool JS_CheckUserDataExist(string keyPtr, string objNamePtr, string callbackFunPtr);
+    private static extern bool JS_CheckUserDataExist(string keyPtr, string valuePtr, string releaseTypePtr, string objNamePtr, string callbackFunPtr);
     /// <summary>
-    /// 檢查用戶資料是否已存在(邀請碼/UserID/暱稱)
+    /// 檢查用戶資料是否已存在
     /// </summary>
     /// <param name="keyPtr">資料路徑</param>
+    /// <param name="valuePtr">查詢的值</param>
     /// <param name="objNamePtr">回傳物件名</param>
     /// <param name="callbackFunPtr">回傳方法名</param>
-    public void CheckUserDataExist(string keyPtr, string objNamePtr, string callbackFunPtr)
+    public void CheckUserDataExist(string keyPtr, string valuePtr, string objNamePtr, string callbackFunPtr)
     {
         JS_CheckUserDataExist(keyPtr,
+                              valuePtr,
+                              $"{Entry.Instance.releaseType}",
                               objNamePtr,
                               callbackFunPtr);
-    }
-
-    [DllImport("__Internal")]
-    private static extern bool JS_UpdateBoundInviterId(string inviteCode, string inviterId);
-    /// <summary>
-    /// 更新邀請碼對象的綁定邀請者
-    /// </summary>
-    /// <param name="inviteCode">資料路徑</param>
-    /// <param name="inviterId">回傳物件名</param>
-    public void UpdateBoundInviterId(string inviteCode, string inviterId)
-    {
-        JS_UpdateBoundInviterId(inviteCode,
-                                inviterId);
     }
 
     #endregion
@@ -307,4 +297,14 @@ public class JSBridgeManager : UnitySingleton<JSBridgeManager>
     }
 
     #endregion
+
+    //  Line加客服好友
+    [DllImport("__Internal")]
+    private static extern void JS_LineService(string url);
+
+    public void onLineService(string url)
+    {
+        JS_LineService(url);
+    }
+
 }

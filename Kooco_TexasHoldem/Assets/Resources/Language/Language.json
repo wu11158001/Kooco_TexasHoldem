@@ -80,6 +80,11 @@
     "zh_TW": "語言"
   },
   {
+    "ID": "Prompt",
+    "English": "Prompt",
+    "zh_TW": "提示"
+  },
+  {
     "ID": "Enter New Password.",
     "English": "Enter New Password.",
     "zh_TW": "輸入新密碼。"
@@ -300,6 +305,11 @@
     "zh_TW": "如果您現在離開，您將無法取回質押的籌碼。"
   },
   {
+    "ID": "Cannot be changed after binding!!!",
+    "English": "Cannot be changed after binding!!!",
+    "zh_TW": "綁定後不能變更!!!"
+  },
+  {
     "ID": "錯誤訊息",
     "English": null,
     "zh_TW": null
@@ -333,6 +343,11 @@
     "ID": "Please Enter A Nickname.",
     "English": "Please Enter A Nickname.",
     "zh_TW": "請輸入暱稱。"
+  },
+  {
+    "ID": "Wrong Invitation Code.",
+    "English": "Wrong Invitation Code.",
+    "zh_TW": "錯誤的邀請碼。"
   },
   {
     "ID": "登入(LoginView)",
@@ -757,17 +772,27 @@
   {
     "ID": "Bound Inviter",
     "English": "Bound Inviter",
-    "zh_TW": "綁定的邀請者"
+    "zh_TW": "邀請人"
   },
   {
-    "ID": "Bound",
-    "English": "Bound",
-    "zh_TW": "已綁定"
+    "ID": "Enter Invitation Code",
+    "English": "Enter Invitation Code",
+    "zh_TW": "輸入邀請碼"
+  },
+  {
+    "ID": "My Invitation Code",
+    "English": "My Invitation Code",
+    "zh_TW": "我的邀請碼"
   },
   {
     "ID": "Share",
     "English": "Share",
     "zh_TW": "分享"
+  },
+  {
+    "ID": "Binding Successful",
+    "English": "Binding Successful",
+    "zh_TW": "綁定成功"
   },
   {
     "ID": "手牌紀錄",

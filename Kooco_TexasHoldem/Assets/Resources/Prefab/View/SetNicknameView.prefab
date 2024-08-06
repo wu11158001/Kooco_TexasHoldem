@@ -1186,6 +1186,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   showHtmlElement: 1
+  contenText: {fileID: 5648405664562001441}
+  TMP_InputField: {fileID: 6538862511574322412}
 --- !u!222 &5941879602328353655
 CanvasRenderer:
   m_ObjectHideFlags: 0

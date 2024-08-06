@@ -110,7 +110,8 @@ public class SetNicknameView : MonoBehaviour
             string nickname = SetNickname_If.text.Trim();
             currNickname = nickname;
             ViewManager.Instance.OpenWaitingView(transform);
-            JSBridgeManager.Instance.CheckUserDataExist(currNickname,
+            JSBridgeManager.Instance.CheckUserDataExist(FirebaseManager.NICKNAME,
+                                                        currNickname,
                                                         gameObject.name,
                                                         nameof(CheckNicknameCallback));
         }
@@ -119,10 +120,12 @@ public class SetNicknameView : MonoBehaviour
     /// <summary>
     /// 暱稱重複檢查
     /// </summary>
-    /// <param name="isExist">是否已存在回傳結果(true/false)</param>
-    public void CheckNicknameCallback(string isExist)
+    /// <param name="jsonData">回傳結果(true/false)</param>
+    public void CheckNicknameCallback(string jsonData)
     {
-        if (isExist == "true")
+        var data = JsonUtility.FromJson<CheckUserData>(jsonData);
+
+        if (data.exists == "true")
         {
             Error_Txt.text = LanguageManager.Instance.GetText("Duplicate Nickname, Please Try Again.");
             return;

@@ -36,6 +36,10 @@ public class LobbyMainPageView : MonoBehaviour
     [SerializeField]
     TextMeshProUGUI VCTableTital_Txt;
 
+    [Header("Line客服")]
+    [SerializeField]
+    Button LineService;
+
     const string BillbpardBtnName = "BillbpardBtn";         //點擊判斷名稱
     const float BillboardChangeTime = 5;                    //廣告刊版更換時間
 
@@ -115,6 +119,13 @@ public class LobbyMainPageView : MonoBehaviour
                 }
             }
         });
+
+        //  Line客服
+        LineService.onClick.AddListener(() =>
+        {
+            StartLineLogin();
+        });
+
     }
 
     private void Start()
@@ -421,4 +432,31 @@ public class LobbyMainPageView : MonoBehaviour
         }
         VCTableParent.anchoredPosition = Vector2.zero;
     }
+
+    #region Line客服加好友
+    public void StartLineLogin()
+    {
+        string state = GenerateRandomString();
+        string nonce = GenerateRandomString();
+        string authUrl = $"https://line.me/R/ti/p/%40linedevelopers";
+        /*
+                    +
+                     $"client_id={DataManager.LineChannelId}&" +
+                     $"redirect_uri={DataManager.RedirectUri}&" +
+                     $"state={state}&" +
+                     $"scope=profile%20openid%20email&nonce={nonce}";
+        */
+
+        //JSBridgeManager.Instance.LocationHref(authUrl);
+
+       JSBridgeManager.Instance.onLineService(authUrl);
+    }
+    private string GenerateRandomString(int length = 16)
+    {
+        const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        var random = new System.Random();
+        return new string(Enumerable.Repeat(chars, length).Select(s => s[random.Next(s.Length)]).ToArray());
+    }
+    #endregion
+
 }
