@@ -4,7 +4,7 @@ using UnityEngine;
 
 using RequestBuf;
 
-public class Request_CreateCashRoom : BaseRequest
+public class Request_JoinRoom : BaseRequest
 {
     [SerializeField]
     JoinRoomView thisView;
@@ -36,10 +36,11 @@ public class Request_CreateCashRoom : BaseRequest
     /// <param name="smallBlind">小盲值</param>
     /// <param name="carryChips">攜帶籌碼</param>
     /// <param name="createCount">創建數量</param>
-    public void SendRequest_JoinRoom(TableTypeEnum tableType, double smallBlind, double carryChips, int createCount)
+    /// <param name="queryRoomPath">查詢房間資料路徑</param>
+    /*public void SendRequest_JoinRoom(TableTypeEnum tableType, double smallBlind, double carryChips, int createCount, string queryRoomPath)
     {
-        StartCoroutine(ICreateRoom(tableType, smallBlind, carryChips, createCount));
-    }
+        StartCoroutine(ICreateRoom(tableType, smallBlind, carryChips, createCount, queryRoomPath));
+    }*/
 
     /// <summary>
     /// 創建現金房
@@ -48,8 +49,9 @@ public class Request_CreateCashRoom : BaseRequest
     /// <param name="smallBlind">小盲值</param>
     /// <param name="carryChips">攜帶籌碼</param>
     /// <param name="createCount">創建數量</param>
+    /// <param name="queryRoomPath">查詢房間資料路徑</param>
     /// <returns></returns>
-    private IEnumerator ICreateRoom(TableTypeEnum tableType, double smallBlind, double carryChips, int createCount)
+    /*private IEnumerator ICreateRoom(TableTypeEnum tableType, double smallBlind, double carryChips, int createCount, string queryRoomPath)
     {
         for (int i = 0; i < createCount; i++)
         {
@@ -57,8 +59,8 @@ public class Request_CreateCashRoom : BaseRequest
             pack.ActionCode = ActionCode.Request_PlayerInOutRoom;
 
             PlayerInfoPack playerInfoPack = new PlayerInfoPack();
-            playerInfoPack.UserID = Entry.TestInfoData.LocalUserId;
-            playerInfoPack.NickName = Entry.TestInfoData.NickName;
+            playerInfoPack.UserID = DataManager.UserId;
+            playerInfoPack.NickName = DataManager.UserNickname;
             playerInfoPack.Chips = carryChips;
             playerInfoPack.Avatar = DataManager.UserAvatarIndex;
 
@@ -68,13 +70,13 @@ public class Request_CreateCashRoom : BaseRequest
 
             pack.PlayerInOutRoomPack = playerInOutRoomPack;
 
-            GameRoomManager.Instance.CerateGameRoom(pack, tableType, smallBlind);
+            GameRoomManager.Instance.CreateGameRoom(pack, tableType, smallBlind, queryRoomPath);
 
             yield return new WaitForSeconds(0.1f);
         }
 
         gameObject.SetActive(false);
-    }
+    }*/
 
     public override void OnDestroy()
     {

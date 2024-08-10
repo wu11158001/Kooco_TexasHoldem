@@ -125,7 +125,7 @@ public class BuyChipsView : MonoBehaviour
         switch (tableTypeEnum)
         {
             //加密貨幣桌
-            case TableTypeEnum.CryptoTable:
+            case TableTypeEnum.Cash:
                 titleStr = "CRYPTO TABLE";
                 maxBuyChipsStr = $"{StringUtils.SetChipsUnit(DataManager.UserCryptoChips)}";
                 SB_Img.sprite = AssetsManager.Instance.GetAlbumAsset(AlbumEnum.CurrencyAlbum).album[0];

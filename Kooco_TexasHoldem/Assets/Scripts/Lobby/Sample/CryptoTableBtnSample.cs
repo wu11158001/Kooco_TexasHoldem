@@ -50,7 +50,7 @@ public class CryptoTableBtnSample : MonoBehaviour
             if (GameRoomManager.Instance.JudgeIsCanBeCreateRoom())
             {
                 JoinRoomView joinRoomView = ViewManager.Instance.CreateViewInCurrCanvas<JoinRoomView>(JoinRoomViewObj);
-                joinRoomView.SetCreatRoomViewInfo(TableTypeEnum.CryptoTable, smallBlind);
+                joinRoomView.SetCreatRoomViewInfo(TableTypeEnum.Cash, smallBlind);
             }
             else
             {

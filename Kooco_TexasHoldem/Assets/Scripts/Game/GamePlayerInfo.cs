@@ -272,11 +272,11 @@ public class GamePlayerInfo : MonoBehaviour
     /// <param name="seatIndex">座位編號</param>
     /// <param name="userId">userId</param>
     /// <param name="nickName">暱稱</param>
-    /// <param name="initChips">初始籌碼</param>
+    /// <param name="initChips">攜帶籌碼</param>
     /// <param name="avatar">頭像</param>
     public void SetInitPlayerInfo(int seatIndex, string userId, string nickName, double initChips, int avatar)
     {
-        Init();
+        //Init();
 
         UserId = userId;
         Nickname = nickName;
@@ -322,7 +322,6 @@ public class GamePlayerInfo : MonoBehaviour
     /// <param name="handPoker1"></param>
     public void SetHandPoker(int hand0, int hand1)
     {
-        Init();
         StopCountDown();
 
         IsPlaying = true;
@@ -378,11 +377,11 @@ public class GamePlayerInfo : MonoBehaviour
     }
 
     /// <summary>
-    /// 開始倒數
+    /// 倒數
     /// </summary>
     /// <param name="cdTime">倒數總時間</param>
     /// <param name="cd">倒數</param>
-    public void StartCountDown(int cdTime, int cd)
+    public void CountDown(int cdTime, int cd)
     {
         cdCoroutine = StartCoroutine(ICountDown(cdTime, cd));
     }
@@ -394,18 +393,21 @@ public class GamePlayerInfo : MonoBehaviour
     /// <param name="cd">倒數</param>
     private IEnumerator ICountDown(int cdTime, int cd)
     {
-        float currFillAmount = CDMask_Img.fillAmount;
         float target = ((float)cdTime - (cd - 1)) / (float)cdTime;
-
+        float curr = ((float)cdTime - cd) / (float)cdTime;
+        Debug.Log($"倒數效果curr:{curr}");
+        Debug.Log($"倒數效果target:{target}");
         DateTime startTime = DateTime.Now;
         while ((DateTime.Now - startTime).TotalSeconds < 1)
         {
             float process = Mathf.Clamp01((float)(DateTime.Now - startTime).TotalSeconds / 1);
-            float value = Mathf.Lerp(currFillAmount, target, process);
+            float value = Mathf.Lerp(curr, target, process);
 
             CDMask_Img.fillAmount = value;
             yield return null;
         }
+
+        CDMask_Img.fillAmount = target;
     }
 
     /// <summary>
@@ -426,6 +428,8 @@ public class GamePlayerInfo : MonoBehaviour
     /// <param name="chips">玩家籌碼</param>
     public void PlayerBet(double betValue, double chips)
     {
+        Debug.Log($"玩家下注~~~~:{betValue}/{chips}");
+
         BetChips_Tr.gameObject.SetActive(true);
         PlayerRoomChips = chips;
         CurrBetValue = betValue;
@@ -460,7 +464,7 @@ public class GamePlayerInfo : MonoBehaviour
     public void DisplayBetAction(bool isShow, double betValue = 0, BetActionEnum betActionEnum = BetActionEnum.None, bool isEffect = true)
     {
         Action_Img.gameObject.SetActive(isShow);
-
+        Debug.Log($"顯示行動:{isShow}");
         switch (betActionEnum)
         {
             case BetActionEnum.Fold:
@@ -522,11 +526,13 @@ public class GamePlayerInfo : MonoBehaviour
     /// <param name="actionEnum">行動</param>
     /// <param name="betValue">下注值</param>
     /// <param name="chips">玩家籌碼</param>
-    public void PlayerAction(ActingEnum actionEnum, double betValue, double chips)
+    public void PlayerAction(BetActingEnum actionEnum, double betValue, double chips)
     {
         if (!gameObject.activeSelf) return;
-
-        StopCountDown();
+        Debug.Log($"玩家行動:{actionEnum}");
+        Debug.Log($"玩家行動:{betValue}");
+        Debug.Log($"玩家行動:{chips}");
+        //StopCountDown();
         ActionFrame = false;
 
         CurrBetAction = (BetActionEnum)Convert.ToInt32(actionEnum);
@@ -538,12 +544,12 @@ public class GamePlayerInfo : MonoBehaviour
         switch (actionEnum)
         {
             //大小盲
-            case ActingEnum.Blind:
+            case BetActingEnum.Blind:
                 PlayerBet(betValue, chips);
                 break;
 
             //棄牌
-            case ActingEnum.Fold:
+            case BetActingEnum.Fold:
                 IsFold = true;
                 foreach (var poker in HandPokers)
                 {
@@ -554,21 +560,21 @@ public class GamePlayerInfo : MonoBehaviour
                 break;
 
             //過牌
-            case ActingEnum.Check:
+            case BetActingEnum.Check:
                 break;
 
             //加注
-            case ActingEnum.Raise:
+            case BetActingEnum.Raise:
                 PlayerBet(betValue, chips);
                 break;
 
             //跟注
-            case ActingEnum.Call:
+            case BetActingEnum.Call:
                 PlayerBet(betValue, chips);
                 break;
 
             //All In
-            case ActingEnum.AllIn:
+            case BetActingEnum.AllIn:
                 IsAllIn = true;
                 PlayerBet(betValue, chips);
                 break;

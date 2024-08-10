@@ -882,9 +882,9 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
     /// </summary>
     private void LocalDataSave() 
     {
-        PlayerPrefs.SetInt(LocalCountryCodeIndex, SignInNumber_Dd.value);
+        PlayerPrefs.SetInt(LocalCountryCodeIndex, recodeCountryCodeIndex);
         PlayerPrefs.SetString(LocalPhoneNumber, recodePhoneNumber);
-        PlayerPrefs.SetString(LocalPaswword, currVerifyPsw);
+        PlayerPrefs.SetString(LocalPaswword, recodePassword);
     }
 
 #endregion

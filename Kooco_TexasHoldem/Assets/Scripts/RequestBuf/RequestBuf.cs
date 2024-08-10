@@ -11,34 +11,16 @@ namespace RequestBuf
         RoomBroadcast,  //房間廣播
     }
 
-    public enum FlowEnum
-    {
-        Licensing,          //發牌
-        SetBlind,           //大小盲
-        Flop,               //翻牌
-        Turn,               //轉牌
-        River,              //河牌
-        PotResult,          //遊戲結果
-    }
-
+    /*
     public enum PlayerStateEnum
     {
         Waiting,        //等待下局
         Playing,        //遊戲中
         AllIn,          //All In狀態
         Fold,           //棄牌
-    }
+    }*/
 
-    public enum ActingEnum
-    {
-        None,
-        Blind,      //大小盲
-        Fold,       //棄牌
-        Check,      //過牌
-        Raise,      //加注
-        Call,       //跟注
-        AllIn,      //All In
-    }
+
 
     public enum ActionCode
     {
@@ -140,7 +122,7 @@ namespace RequestBuf
     /// </summary>
     public class UpdateRoomInfoPack
     {
-        public FlowEnum flowEnum;                           //遊戲階段
+        public GameFlowEnum flowEnum;                           //遊戲階段
         public double TotalPot;                             //底池籌碼
         public List<string> playingIdList;                  //遊戲中玩家ID
     }
@@ -158,7 +140,7 @@ namespace RequestBuf
     /// </summary>
     public class GameStagePack
     {
-        public FlowEnum flowEnum;        //遊戲階段
+        public GameFlowEnum flowEnum;        //遊戲階段
         public double SmallBlind;        //小盲值
     }
 
@@ -212,7 +194,7 @@ namespace RequestBuf
     public class PlayerActedPack
     {
         public string ActPlayerId;          //行動玩家ID
-        public ActingEnum ActingEnum;       //採取動作
+        public BetActingEnum ActingEnum;       //採取動作
         public double BetValue;             //下注值
         public double PlayerChips;          //玩家籌碼
     }

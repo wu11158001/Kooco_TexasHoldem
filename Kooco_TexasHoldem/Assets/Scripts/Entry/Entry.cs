@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using UnityEngine.Networking;
-
+using UnityEngine.UI;
 public class Entry : UnitySingleton<Entry>
 {
     #region 測試
@@ -87,15 +87,6 @@ public class Entry : UnitySingleton<Entry>
         if (Input.GetKeyDown(KeyCode.F8))
         {
             HandHistoryManager.Instance.OnDeleteHistoryData();
-        }
-
-        //移除帳號
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            JSBridgeManager.Instance.RemoveDataFromFirebase($"{Entry.Instance.releaseType}/{FirebaseManager.USER_DATA_PATH}{LoginType.phoneUser}/{DataManager.UserLoginPhoneNumber}",
-                                                            "FirebaseManager",
-                                                            "OnRemoveDataCallback");
-            LoadSceneManager.Instance.LoadScene(SceneEnum.Login);
         }
 
         #endregion
@@ -231,7 +222,7 @@ public class Entry : UnitySingleton<Entry>
     /// </summary>
     public void OnWindowBlur()
     {
-        GameRoomManager.Instance.OnGamePause(true);
+        //GameRoomManager.Instance.OnGamePause(true);
     }
 
     /// <summary>

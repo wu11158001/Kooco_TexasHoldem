@@ -186,6 +186,7 @@ public class LobbyView : MonoBehaviour
 
         ViewManager.Instance.OpenWaitingView(transform);
         DataManager.ReciveRankData();
+
         JSBridgeManager.Instance.StartListeningForDataChanges($"{Entry.Instance.releaseType}/{FirebaseManager.USER_DATA_PATH}{DataManager.UserLoginType}/{DataManager.UserLoginPhoneNumber}",
                                                                gameObject.name,
                                                                nameof(GetDataCallback));

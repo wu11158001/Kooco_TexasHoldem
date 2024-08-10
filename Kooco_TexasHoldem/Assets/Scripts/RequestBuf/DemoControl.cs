@@ -59,31 +59,31 @@ public class DemoControl : MonoBehaviour
 
         Exit_Btn.onClick.AddListener(() =>
         {
-            gameServer.TextPlayerAction(ActingEnum.Fold, true);
+            gameServer.TextPlayerAction(BetActingEnum.Fold, true);
             IsShowDemoControl(false);
         });
 
         Fold_Btn.onClick.AddListener(() =>
         {
-            gameServer.TextPlayerAction(ActingEnum.Fold);
+            gameServer.TextPlayerAction(BetActingEnum.Fold);
             IsShowDemoControl(false);
         });
 
         Raise_Btn.onClick.AddListener(() =>
         {
-            gameServer.TextPlayerAction(ActingEnum.Raise);
+            gameServer.TextPlayerAction(BetActingEnum.Raise);
             IsShowDemoControl(false);
         });
 
         CallAndCheck_Btn.onClick.AddListener(() =>
         {
-            gameServer.TextPlayerAction(ActingEnum.Call);
+            gameServer.TextPlayerAction(BetActingEnum.Call);
             IsShowDemoControl(false);
         });
 
         AllIn_Btn.onClick.AddListener(() =>
         {
-            gameServer.TextPlayerAction(ActingEnum.AllIn);
+            gameServer.TextPlayerAction(BetActingEnum.AllIn);
             IsShowDemoControl(false);
         });
 

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Linq;
 
 public static class TexasHoldemUtil
 {
@@ -34,7 +35,7 @@ public static class TexasHoldemUtil
         switch (tableTypeEnum)
         {
             //加密貨幣桌
-            case TableTypeEnum.CryptoTable:
+            case TableTypeEnum.Cash:
                 maxValue = (float)DataManager.UserCryptoChips;
                 break;
 
@@ -82,5 +83,31 @@ public static class TexasHoldemUtil
         }
 
         return newRaiseValue;
+    }
+
+    /// <summary>
+    /// 設置遊戲內座位
+    /// </summary>
+    /// <param name="gameRoomData">房間資料</param>
+    /// <returns></returns>
+    public static int SetGameSeat(GameRoomData gameRoomData)
+    {
+        int robotSeat = 0;
+        int maxRoomPeople = DataManager.MaxPlayerCount;
+        int currMaxSeat = gameRoomData.playerDataDic.Values.OrderByDescending(x => x.gameSeat).FirstOrDefault().gameSeat;
+        int temp = (currMaxSeat + 1) % maxRoomPeople;
+        for (int i = 0; i < maxRoomPeople; i++)
+        {
+            bool seated = gameRoomData.playerDataDic.Values.Any(x => x.gameSeat == temp);
+            if (seated == false)
+            {
+                robotSeat = temp;
+                break;
+            }
+
+            temp = (temp + 1) % maxRoomPeople;
+        }
+
+        return robotSeat;
     }
 }

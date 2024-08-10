@@ -27,13 +27,13 @@ mergeInto(LibraryManager.library, {
     // callbackFunPtr = 回傳方法名
     JS_StartListeningForDataChanges: function(pathPtr, objNamePtr, callbackFunPtr) {
         const refPath = UTF8ToString(pathPtr);
-        window.ListeningGameObjectName = UTF8ToString(objNamePtr);
-        window.ListeningCallbackFunctionName = UTF8ToString(callbackFunPtr);
+        const ListeningGameObjectName = UTF8ToString(objNamePtr);
+        const ListeningCallbackFunctionName = UTF8ToString(callbackFunPtr);
 
         var dbRef = firebase.database().ref(refPath);
         dbRef.on('value', function(snapshot) {
             var jsonData = JSON.stringify(snapshot.val());
-            window.unityInstance.SendMessage(window.ListeningGameObjectName, window.ListeningCallbackFunctionName, jsonData);
+            window.unityInstance.SendMessage(ListeningGameObjectName, ListeningCallbackFunctionName, jsonData);
         });
     },
 
@@ -145,7 +145,6 @@ mergeInto(LibraryManager.library, {
         let foundPhoneNumber = "";
 
         try {
-            // Fetch data from the 'releaseType/user' node
             const userRef = firebase.database().ref(releaseType + '/user');
             const snapshot = await userRef.get();
 
@@ -195,6 +194,74 @@ mergeInto(LibraryManager.library, {
         } catch (error) {
             console.error('Error fetching data:', error);
             window.unityInstance.SendMessage(gameObjectName, callbackFunctionName, JSON.stringify({exists: "error", phoneNumber: "", error: error.toString()}));
+        }
+    },
+
+    // 初始化在線狀態監測
+    // pathPtr = 監測路徑
+    // idPtr = 監測ID
+    JS_StartListenerConnectState: function(pathPtr) {
+        const path = UTF8ToString(pathPtr);
+        window.initializePresence(path, path);
+    },
+
+    // 移除在線狀態監測
+    // idPtr = 監測ID
+    JS_RemoveListenerConnectState: function(idPtr) {
+        const id = UTF8ToString(idPtr);
+        window.removePresenceListener(id);
+    },
+
+    // 加入遊戲房間查詢
+    // pathPtr = 查詢路徑
+    // maxPlayerPtr = 最大遊戲人數
+    // idPtr = 玩家ID
+    // objNamePtr = 回傳物件名
+    // callbackFunPtr = 回傳方法名
+    JS_JoinRoomQueryData: async function(pathPtr, maxPlayerPtr, idPtr, objNamePtr, callbackFunPtr) {
+        const path = UTF8ToString(pathPtr);
+        const maxPlayer = Number(UTF8ToString(maxPlayerPtr));
+        const id = UTF8ToString(idPtr);
+        const gameObjectName = UTF8ToString(objNamePtr);
+        const callbackFunctionName = UTF8ToString(callbackFunPtr);
+
+        let getRoomName = "false";
+        let roomCount = 0;
+
+        try {
+            const roomRef = firebase.database().ref(path);
+            const snapshot = await roomRef.once('value');
+            if (snapshot.exists()) {
+                const roomsType = snapshot.val();
+                roomCount = Object.keys(roomsType).length;
+                console.log("房間重複!!!" + roomCount);
+
+                for (let roomName in roomsType) {
+                    const room = roomsType[roomName];
+                
+                    if (Object.keys(room.playerDataDic).length < maxPlayer) {
+                        let playerFound = false;
+
+                        for (let playerKey in room.playerDataDic) {
+                            const player = room.playerDataDic[playerKey];
+                            console.log("房間重複1!!!" + player.userId);
+                            console.log("房間重複3!!!" + id);
+                            if (player.userId == id) {                              
+                                playerFound = true;
+                                break;
+                            }
+                        }
+
+                        if (!playerFound) {
+                            getRoomName = roomName;
+                            break;
+                        }
+                    }
+                }
+            }
+            window.unityInstance.SendMessage(gameObjectName, callbackFunctionName, JSON.stringify({getRoomName: getRoomName, roomCount: roomCount}));
+        } catch (error) {
+            window.unityInstance.SendMessage(gameObjectName, callbackFunctionName, JSON.stringify({error: error.message}));
         }
     },
 });

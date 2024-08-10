@@ -53,7 +53,7 @@ public class Request_GameView : BaseRequest
             //更新房間訊息
             case ActionCode.Request_UpdateRoomInfo:
                 isStartReceiveRequest = true;
-                thisView.UpdateGameRoomInfo(pack);
+               // thisView.UpdateGameRoomInfo(pack);
                 break;
 
             //本地玩家行動回合
@@ -75,7 +75,7 @@ public class Request_GameView : BaseRequest
 
     public override void HandleRoomBroadcast(MainPack pack)
     {
-        if (isStartReceiveRequest == false || thisView.gameObject.activeSelf == false) return;
+       /* if (isStartReceiveRequest == false || thisView.gameObject.activeSelf == false) return;
 
         switch (pack.ActionCode)
         {
@@ -89,12 +89,12 @@ public class Request_GameView : BaseRequest
                 if (pack.PlayerInOutRoomPack.IsInRoom)
                 {
                     //新玩家進入
-                    thisView.AddPlayer(pack.PlayerInOutRoomPack.PlayerInfoPack);
+                    //thisView.AddPlayer(pack.PlayerInOutRoomPack.PlayerInfoPack);
                 }
                 else
                 {
                     //玩家退出
-                    thisView.PlayerExitRoom(pack.PlayerInOutRoomPack.PlayerInfoPack.UserID);
+                    //thisView.PlayerExitRoom(pack.PlayerInOutRoomPack.PlayerInfoPack.UserID);
                 }
                 break;
 
@@ -135,7 +135,7 @@ public class Request_GameView : BaseRequest
             case ActionCode.BroadCastRequest_BattleResult:
                 thisView.SetBattleResult(pack.BattleResultPack.FailPlayerId != Entry.TestInfoData.LocalUserId);
                 break;
-        }
+        }*/
     }
 
     /// <summary>
@@ -174,7 +174,7 @@ public class Request_GameView : BaseRequest
     /// <param name="id">玩家ID</param>
     /// <param name="acting">採取行動</param>
     /// <param name="betValue">下注值</param>
-    public void SendRequest_PlayerActed(string id, ActingEnum acting, double betValue)
+    public void SendRequest_PlayerActed(string id, BetActingEnum acting, double betValue)
     {
         MainPack pack = new MainPack();
         pack.ActionCode = ActionCode.Request_PlayerActed;

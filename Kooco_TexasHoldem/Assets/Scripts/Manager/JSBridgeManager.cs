@@ -77,6 +77,30 @@ public class JSBridgeManager : UnitySingleton<JSBridgeManager>
     }
 
     [DllImport("__Internal")]
+    private static extern bool JS_StartListenerConnectState(string pathPtr);
+    /// <summary>
+    /// 監測連線狀態
+    /// </summary>
+    /// <param name="pathPtr">監測路徑</param>
+    /// <param name="id">監測用戶ID</param>
+    public void StartListenerConnectState(string pathPtr)
+    {
+        JS_StartListenerConnectState(pathPtr);
+    }
+
+    [DllImport("__Internal")]
+    private static extern bool JS_RemoveListenerConnectState(string IdPtr);
+    /// <summary>
+    /// 移除監測連線狀態
+    /// </summary>
+    /// <param name="pathPtr">監測路徑</param>
+    /// <param name="id">監測ID</param>
+    public void RemoveListenerConnectState(string IdPtr)
+    {
+        JS_RemoveListenerConnectState(IdPtr);
+    }
+
+    [DllImport("__Internal")]
     private static extern bool JS_StartListeningForDataChanges(string pathPtr, string objNamePtr, string callbackFunPtr);
     /// <summary>
     /// 開始監聽資料
@@ -155,11 +179,19 @@ public class JSBridgeManager : UnitySingleton<JSBridgeManager>
     /// <param name="refPathPtr">資料路徑</param>
     /// <param name="objNamePtr">回傳物件名</param>
     /// <param name="callbackFunPtr">回傳方法名</param>
-    public void RemoveDataFromFirebase(string refPathPtr, string objNamePtr, string callbackFunPtr)
+    public void RemoveDataFromFirebase(string refPathPtr, string objNamePtr = "", string callbackFunPtr = "")
     {
+        string objName = string.IsNullOrEmpty(objNamePtr) ?
+                         "FirebaseManager" :
+                         objNamePtr;
+
+        string callbackFun = string.IsNullOrEmpty(callbackFunPtr) ?
+                            "OnRemoveDataCallback" :
+                            callbackFunPtr;
+
         JS_RemoveDataFromFirebase(refPathPtr,
-                                  objNamePtr,
-                                  callbackFunPtr);
+                                  objName,
+                                  callbackFun);
     }
 
     [DllImport("__Internal")]
@@ -178,6 +210,24 @@ public class JSBridgeManager : UnitySingleton<JSBridgeManager>
                               $"{Entry.Instance.releaseType}",
                               objNamePtr,
                               callbackFunPtr);
+    }
+
+    [DllImport("__Internal")]
+    private static extern bool JS_JoinRoomQueryData(string pathPtr, string maxPlayerPtr, string idPtr, string objNamePtr, string callbackFunPtr);
+    /// <summary>
+    /// 加入遊戲房間查詢
+    /// </summary>
+    /// <param name="pathPtr">柴尋路徑</param>
+    /// <param name="maxPlayerPtr">最大房間人數</param>
+    /// <param name="objNamePtr">回傳物件名</param>
+    /// <param name="callbackFunPtr">回傳方法名</param>
+    public void JoinRoomQueryData(string pathPtr, string maxPlayerPtr, string idPtr, string objNamePtr, string callbackFunPtr)
+    {
+        JS_JoinRoomQueryData(pathPtr,
+                             maxPlayerPtr,
+                             idPtr,
+                             objNamePtr,
+                             callbackFunPtr);
     }
 
     #endregion
@@ -296,8 +346,6 @@ public class JSBridgeManager : UnitySingleton<JSBridgeManager>
         JS_CopyString(copyStr);
     }
 
-    #endregion
-
     //  Line加客服好友
     [DllImport("__Internal")]
     private static extern void JS_LineService(string url);
@@ -306,5 +354,7 @@ public class JSBridgeManager : UnitySingleton<JSBridgeManager>
     {
         JS_LineService(url);
     }
+
+    #endregion
 
 }

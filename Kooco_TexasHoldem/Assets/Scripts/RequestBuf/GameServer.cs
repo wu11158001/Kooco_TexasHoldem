@@ -21,7 +21,7 @@ public class GameServer : MonoBehaviour
 
     int countDownTime = 20;                     //倒數時間
     int autoActionTime = 2;                    //自動行動時間
-    int accumulationPlayer;                     //房間累積人數
+    //int accumulationPlayer;                     //房間累積人數
     public int maxRoomPeople;                   //房間最大人數
     Client currTestClient;
 
@@ -31,11 +31,9 @@ public class GameServer : MonoBehaviour
         "Club", "Diamond","Heart","Spade"
     };
 
-    /// <summary>
-    /// 小盲注
-    /// </summary>
     public double SmallBlind { get; set; }
     public TableTypeEnum RoomType { get; set; }
+    public string QueryRoomPath { get; set; }       //查詢房間資料路徑
 
     private void Awake()
     {
@@ -57,10 +55,10 @@ public class GameServer : MonoBehaviour
     /// <param name="roomType">房間類型</param>
     public void ServerStart(TableTypeEnum roomType)
     {
-        StartCoroutine(ITest(roomType));
+        //StartCoroutine(ITest(roomType));
     }
 
-    private IEnumerator ITest(TableTypeEnum roomType)
+    /*private IEnumerator ITest(TableTypeEnum roomType)
     {
         maxRoomPeople = RoomType == TableTypeEnum.IntegralTable ? 2 : 6;
 
@@ -78,7 +76,7 @@ public class GameServer : MonoBehaviour
             playerInfoPack.Chips = RoomType == TableTypeEnum.IntegralTable ? 10000 : ((SmallBlind * 2) * 40) + 1000 + (i * 4000);
             playerInfoPack.Avatar = UnityEngine.Random.Range(1, 3);
 
-            /* if (i == 0)
+             if (i == 0)
              {
                  playerInfoPack.Chips = 1200;
              }
@@ -89,7 +87,7 @@ public class GameServer : MonoBehaviour
              else
              {
                  playerInfoPack.Chips = 500;
-             }*/
+             }
 
             PlayerInOutRoomPack playerInOutRoomPack = new PlayerInOutRoomPack();
             playerInOutRoomPack.IsInRoom = true;
@@ -99,7 +97,7 @@ public class GameServer : MonoBehaviour
             Request_PlayerInOutRoom(pack);
         }
 
-        if (roomType == TableTypeEnum.CryptoTable || roomType == TableTypeEnum.VCTable)
+        if (roomType == TableTypeEnum.Cash || roomType == TableTypeEnum.VCTable)
         {
             SetPoker();
             gameRoomData.CurrFlow = FlowEnum.PotResult;
@@ -117,12 +115,12 @@ public class GameServer : MonoBehaviour
         yield return new WaitForSeconds(1);
 
         yield return SendRequest_NextGameStage();
-    }
+    }*/
 
     /// <summary>
     /// 測試玩家加操作
     /// </summary>
-    public void TextPlayerAction(ActingEnum acting, bool isExit = false)
+    public void TextPlayerAction(BetActingEnum acting, bool isExit = false)
     {
         if (gameRoomData.CurrActingPlayer == null ||
             gameRoomData.CurrActingPlayer.UserId == Entry.TestInfoData.LocalUserId ||
@@ -154,22 +152,22 @@ public class GameServer : MonoBehaviour
             return;
         }
 
-        bool isJustAllIn = gameRoomData.CurrActingPlayer.RoomChips <= gameRoomData.CurrCallValue;
+        bool isJustAllIn = gameRoomData.CurrActingPlayer.CurrRoomChips <= gameRoomData.CurrCallValue;
 
         double betValue = 0;
-        if (acting == ActingEnum.Raise)
+        if (acting == BetActingEnum.Raise)
         {
             if (isJustAllIn)
             {
-                acting = ActingEnum.AllIn;
-                betValue = gameRoomData.CurrActingPlayer.RoomChips;
+                acting = BetActingEnum.AllIn;
+                betValue = gameRoomData.CurrActingPlayer.CurrRoomChips;
             }
             else
             {
-                if (gameRoomData.CurrActingPlayer.RoomChips <= gameRoomData.CurrCallValue * 2)
+                if (gameRoomData.CurrActingPlayer.CurrRoomChips <= gameRoomData.CurrCallValue * 2)
                 {
-                    acting = ActingEnum.AllIn;
-                    betValue = gameRoomData.CurrActingPlayer.RoomChips;
+                    acting = BetActingEnum.AllIn;
+                    betValue = gameRoomData.CurrActingPlayer.CurrRoomChips;
                 }
                 else
                 {
@@ -177,12 +175,12 @@ public class GameServer : MonoBehaviour
                 }
             }
         }
-        else if (acting == ActingEnum.Call)
+        else if (acting == BetActingEnum.Call)
         {
             if (isJustAllIn)
             {
-                acting = ActingEnum.AllIn;
-                betValue = gameRoomData.CurrActingPlayer.RoomChips;
+                acting = BetActingEnum.AllIn;
+                betValue = gameRoomData.CurrActingPlayer.CurrRoomChips;
             }
             else
             {
@@ -190,7 +188,7 @@ public class GameServer : MonoBehaviour
                 {
                     if (gameRoomData.CurrCallValue == SmallBlind)
                     {
-                        acting = ActingEnum.Check;
+                        acting = BetActingEnum.Check;
                     }
                     else
                     {
@@ -201,7 +199,7 @@ public class GameServer : MonoBehaviour
                 {
                     if (gameRoomData.CurrActingPlayer.CurrBetValue == gameRoomData.CurrCallValue)
                     {
-                        acting = ActingEnum.Check;
+                        acting = BetActingEnum.Check;
                     }
                     else
                     {
@@ -210,9 +208,9 @@ public class GameServer : MonoBehaviour
                 }
             }
         }
-        else if (acting == ActingEnum.AllIn)
+        else if (acting == BetActingEnum.AllIn)
         {
-            betValue = gameRoomData.CurrActingPlayer.RoomChips;
+            betValue = gameRoomData.CurrActingPlayer.CurrRoomChips;
         }
 
         MainPack pack = new MainPack();
@@ -237,12 +235,12 @@ public class GameServer : MonoBehaviour
         public string UserId;       //ID
         public string NickName;     //暱稱
         public int Avatar;          //頭像
-        public double RoomChips;    //房間內持有籌碼
+        public double CurrRoomChips;    //房間內持有籌碼
         public int HandPoker0;      //手牌0
         public int HandPoker1;      //手牌1
 
         public PlayerStateEnum State;           //玩家狀態
-        public ActingEnum PreActingEnum;        //上回行動
+        public BetActingEnum PreActingEnum;        //上回行動
         public double CurrBetValue;             //當前下注值
         public double AllBetValue;              //總下注直
         public bool IsActionTaken;              //該回合是否已行動過
@@ -260,7 +258,7 @@ public class GameServer : MonoBehaviour
         public List<int> CurrCommunityPoker;                    //當前公共牌
 
         public Client CurrActingPlayer;            //當前行動玩家
-        public FlowEnum CurrFlow;                  //當前遊戲階段
+        public GameFlowEnum CurrFlow;                  //當前遊戲階段
         public bool IsFirstRaisePlayer;            //首位加注玩家
         public int ButtonSeat;                     //button座位玩家
         public double TotalPot;                    //底池籌碼
@@ -420,7 +418,7 @@ public class GameServer : MonoBehaviour
 
                 PlayerActedPack playerActedPack = new PlayerActedPack();
                 playerActedPack.ActPlayerId = client.UserId;
-                playerActedPack.ActingEnum = ActingEnum.Fold;
+                playerActedPack.ActingEnum = BetActingEnum.Fold;
                 playerActedPack.BetValue = 0;
 
                 pack.PlayerActedPack = playerActedPack;
@@ -459,18 +457,15 @@ public class GameServer : MonoBehaviour
     /// <param name="initchips"></param>
     public void AddNewPlayer(PlayerInfoPack playerInfoPack)
     {
-        accumulationPlayer++;
-
         Client client = new Client()
         {
             UserId = playerInfoPack.UserID,
             NickName = playerInfoPack.NickName,
-            RoomChips = playerInfoPack.Chips,
+            CurrRoomChips = playerInfoPack.Chips,
             State = PlayerStateEnum.Waiting,
             Avatar = playerInfoPack.Avatar,
         };
         clientList.Add(client);
-
 
 
         //座位
@@ -490,7 +485,10 @@ public class GameServer : MonoBehaviour
         }
         client.Seat = seat;
 
-        MainPack pack = new MainPack();
+        /*//監測連線狀態
+        JSBridgeManager.Instance.StartListenerConnectState($"{QueryRoomPath}",
+                                                           client.UserId);*/
+        /*MainPack pack = new MainPack();
         pack.ActionCode = ActionCode.Request_PlayerInOutRoom;
         pack.SendModeCode = SendModeCode.RoomBroadcast;
 
@@ -502,7 +500,7 @@ public class GameServer : MonoBehaviour
 
         pack.PlayerInOutRoomPack = playerInOutRoomPack;
         bool isExclude = client.UserId == Entry.TestInfoData.LocalUserId;
-        SendRoomBroadCast(pack, isExclude);
+        SendRoomBroadCast(pack, isExclude);*/
     }
 
     /// <summary>
@@ -529,7 +527,7 @@ public class GameServer : MonoBehaviour
         foreach (var client in clientList)
         {
             //籌碼 < 小盲注
-            if (client.RoomChips <= SmallBlind)
+            if (client.CurrRoomChips <= SmallBlind)
             {
                 NotEnoughChipsPlayerList.Add(client);
             }
@@ -547,7 +545,7 @@ public class GameServer : MonoBehaviour
                 }
                 else
                 {
-                    client.RoomChips = 7000;
+                    client.CurrRoomChips = 7000;
                     /*MainPack exitPack = new MainPack();
                     exitPack.ActionCode = ActionCode.Request_PlayerInOutRoom;
 
@@ -625,7 +623,7 @@ public class GameServer : MonoBehaviour
         foreach (var client in clientList)
         {
             //籌碼 < 小盲注 || 離座
-            if (client.RoomChips <= SmallBlind ||
+            if (client.CurrRoomChips <= SmallBlind ||
                 client.IsSitOut == true)
             {
                 continue;
@@ -777,7 +775,7 @@ public class GameServer : MonoBehaviour
         Dictionary<string, double> allPlayerChipsDic = new Dictionary<string, double>();
         foreach (var client in clientList)
         {
-            allPlayerChipsDic.Add(client.UserId, client.RoomChips);
+            allPlayerChipsDic.Add(client.UserId, client.CurrRoomChips);
         }
 
         return allPlayerChipsDic;
@@ -845,7 +843,7 @@ public class GameServer : MonoBehaviour
 
         bool isAllPlayerActionTaken = judgePlayerList.All(x => x.IsActionTaken == true);
         double minAllBetValue = judgePlayerList.Min(x => x.AllBetValue);
-        bool isAllBetValueSmae = judgePlayerList.All(x => x.AllBetValue >= minAllBetValue && (x.AllBetValue >= gameRoomData.CurrCallValue || x.RoomChips == 0));
+        bool isAllBetValueSmae = judgePlayerList.All(x => x.AllBetValue >= minAllBetValue && (x.AllBetValue >= gameRoomData.CurrCallValue || x.CurrRoomChips == 0));
         return isAllPlayerActionTaken && isAllBetValueSmae && isBetSame;
     }
 
@@ -853,12 +851,12 @@ public class GameServer : MonoBehaviour
     /// 獲取下個遊戲階段
     /// </summary>
     /// <returns></returns>
-    private FlowEnum GetNextFlow()
+    private GameFlowEnum GetNextFlow()
     {
         int curr = (int)gameRoomData.CurrFlow;
-        int next = (curr + 1) % Enum.GetValues(typeof(FlowEnum)).Length;
+        int next = (curr + 1) % Enum.GetValues(typeof(GameFlowEnum)).Length;
 
-        return (FlowEnum)next;
+        return (GameFlowEnum)next;
     }
 
     /// <summary>
@@ -900,7 +898,7 @@ public class GameServer : MonoBehaviour
             playerInfoPack.Seat = player.Seat;
             playerInfoPack.UserID = player.UserId;
             playerInfoPack.NickName = player.NickName;
-            playerInfoPack.Chips = player.RoomChips;
+            playerInfoPack.Chips = player.CurrRoomChips;
             playerInfoPack.Avatar = player.Avatar;
             playerInfoPack.CurrBetValue = player.CurrBetValue;
             
@@ -948,32 +946,32 @@ public class GameServer : MonoBehaviour
         switch (gameRoomData.CurrFlow)
         {
             //發牌
-            case FlowEnum.Licensing:
+            case GameFlowEnum.Licensing:
                 yield return SendRequest_GameStage_Licensing(pack, gameStagePack);
                 break;
 
             //大小盲
-            case FlowEnum.SetBlind:
+            case GameFlowEnum.SetBlind:
                 yield return SendRequest_GameStage_SetBlind(pack, gameStagePack);
                 break;
 
             //翻牌
-            case FlowEnum.Flop:
+            case GameFlowEnum.Flop:
                 yield return SendRequest_TurnStage(pack, gameStagePack, 3);
                 break;
 
             //轉牌
-            case FlowEnum.Turn:
+            case GameFlowEnum.Turn:
                 yield return SendRequest_TurnStage(pack, gameStagePack, 4);
                 break;
 
             //河牌
-            case FlowEnum.River:
+            case GameFlowEnum.River:
                 yield return SendRequest_TurnStage(pack, gameStagePack, 5);
                 break;
 
             //遊戲結果
-            case FlowEnum.PotResult:
+            case GameFlowEnum.PotResult:
                 yield return SendRequest_GameResult(pack, gameStagePack);
                 break;
         }
@@ -1042,8 +1040,8 @@ public class GameServer : MonoBehaviour
         int sbPlayerSeat = (currButtonSeatIndex + 1) % playingList.Count;
         int bbPlayerSeat = (sbPlayerSeat + 1) % playingList.Count;      
 
-        playingList[sbPlayerSeat].RoomChips -= SmallBlind;
-        playingList[bbPlayerSeat].RoomChips -= SmallBlind * 2;
+        playingList[sbPlayerSeat].CurrRoomChips -= SmallBlind;
+        playingList[bbPlayerSeat].CurrRoomChips -= SmallBlind * 2;
 
         playingList[sbPlayerSeat].CurrBetValue = SmallBlind;
         playingList[bbPlayerSeat].CurrBetValue = SmallBlind * 2;
@@ -1056,14 +1054,14 @@ public class GameServer : MonoBehaviour
         gameRoomData.TotalPot = (SmallBlind + SmallBlind * 2);
         gameRoomData.CurrCallValue = SmallBlind * 2;
 
-        gameStagePack.flowEnum = FlowEnum.SetBlind;
+        gameStagePack.flowEnum = GameFlowEnum.SetBlind;
         gameStagePack.SmallBlind = SmallBlind;
 
         BlindStagePack blindStagePack = new BlindStagePack();
         blindStagePack.SBPlayerId = playingList[sbPlayerSeat].UserId;
         blindStagePack.BBPlayerId = playingList[bbPlayerSeat].UserId;
-        blindStagePack.SBPlayerChips = playingList[sbPlayerSeat].RoomChips;
-        blindStagePack.BBPlayerChips = playingList[bbPlayerSeat].RoomChips;
+        blindStagePack.SBPlayerChips = playingList[sbPlayerSeat].CurrRoomChips;
+        blindStagePack.BBPlayerChips = playingList[bbPlayerSeat].CurrRoomChips;
 
         pack.BlindStagePack = blindStagePack;
         pack.GameRoomInfoPack = GetGameRoomInfoPack();
@@ -1097,7 +1095,7 @@ public class GameServer : MonoBehaviour
             {
                 double allInMin = allInDic.Min(x => x.Value);
                 IsUnableRaise = allInDic.Count() == playingList.Count - 1 ||
-                                (gameRoomData.CurrCallValue == allInMin && preClient.PreActingEnum == ActingEnum.Call);
+                                (gameRoomData.CurrCallValue == allInMin && preClient.PreActingEnum == BetActingEnum.Call);
             }
 
             MainPack pack = new MainPack();
@@ -1108,7 +1106,7 @@ public class GameServer : MonoBehaviour
             playerActingRoundPack.IsFirstRaisePlayer = gameRoomData.IsFirstRaisePlayer;
             playerActingRoundPack.CurrCallValue = gameRoomData.CurrCallValue;
             playerActingRoundPack.CallDifference = gameRoomData.CurrCallValue - gameRoomData.CurrActingPlayer.CurrBetValue;
-            playerActingRoundPack.PlayerChips = gameRoomData.CurrActingPlayer.RoomChips;
+            playerActingRoundPack.PlayerChips = gameRoomData.CurrActingPlayer.CurrRoomChips;
             playerActingRoundPack.PlayerCurrBryValue = gameRoomData.CurrActingPlayer.CurrBetValue;
             playerActingRoundPack.IsUnableRaise = IsUnableRaise;
             playerActingRoundPack.TotalPot = gameRoomData.TotalPot;
@@ -1159,19 +1157,19 @@ public class GameServer : MonoBehaviour
             //AI自動
             if (i == autoActionTime && gameRoomData.CurrActingPlayer.UserId != Entry.TestInfoData.LocalUserId)
             {
-                ActingEnum aiActing = ActingEnum.Fold;
+                BetActingEnum aiActing = BetActingEnum.Fold;
                 double aiBetValue = 0;
                 int foldRate = new System.Random().Next(0, 100);
       
-                bool isJustAllIn = gameRoomData.CurrActingPlayer.RoomChips <= gameRoomData.CurrCallValue;
+                bool isJustAllIn = gameRoomData.CurrActingPlayer.CurrRoomChips <= gameRoomData.CurrCallValue;
                 if (foldRate > 10)
                 {
-                    aiActing = ActingEnum.Call;
+                    aiActing = BetActingEnum.Call;
 
                     if (isJustAllIn)
                     {
-                        aiActing = ActingEnum.AllIn;
-                        aiBetValue = gameRoomData.CurrActingPlayer.RoomChips;
+                        aiActing = BetActingEnum.AllIn;
+                        aiBetValue = gameRoomData.CurrActingPlayer.CurrRoomChips;
                     }
                     else
                     {
@@ -1179,7 +1177,7 @@ public class GameServer : MonoBehaviour
                         {
                             if (gameRoomData.CurrCallValue == SmallBlind)
                             {
-                                aiActing = ActingEnum.Check;
+                                aiActing = BetActingEnum.Check;
                             }
                             else
                             {
@@ -1190,7 +1188,7 @@ public class GameServer : MonoBehaviour
                         {
                             if (gameRoomData.CurrActingPlayer.CurrBetValue == gameRoomData.CurrCallValue)
                             {
-                                aiActing = ActingEnum.Check;
+                                aiActing = BetActingEnum.Check;
                             }
                             else
                             {
@@ -1216,10 +1214,10 @@ public class GameServer : MonoBehaviour
         }
 
         //倒數結束
-        ActingEnum acting = ActingEnum.Fold;
+        BetActingEnum acting = BetActingEnum.Fold;
 
         //大小盲回合 && 所有玩家Call輪到大盲玩家
-        if (gameRoomData.CurrFlow == FlowEnum.SetBlind)
+        if (gameRoomData.CurrFlow == GameFlowEnum.SetBlind)
         {
             List<Client> judgePlayerList = new List<Client>();
             foreach (var player in playingList)
@@ -1232,7 +1230,7 @@ public class GameServer : MonoBehaviour
             bool isBetSame = judgePlayerList.All(x => x.CurrBetValue == judgePlayerList[0].CurrBetValue);
             if (isBetSame)
             {
-                acting = ActingEnum.Check;
+                acting = BetActingEnum.Check;
             }
         }
 
@@ -1259,22 +1257,22 @@ public class GameServer : MonoBehaviour
 
         yield return null;
 
-        if (pack.PlayerActedPack.ActingEnum == ActingEnum.AllIn)
+        if (pack.PlayerActedPack.ActingEnum == BetActingEnum.AllIn)
         {
             yield return AllInJudge(pack);
         }
         else
         {
             //更新跟注值
-            if (pack.PlayerActedPack.ActingEnum == ActingEnum.Raise)
+            if (pack.PlayerActedPack.ActingEnum == BetActingEnum.Raise)
             {
                 gameRoomData.CurrCallValue = pack.PlayerActedPack.BetValue;
             }
 
             //下注籌碼
             double betChips = 0;
-            if (pack.PlayerActedPack.ActingEnum == ActingEnum.Call ||
-                pack.PlayerActedPack.ActingEnum == ActingEnum.Raise)
+            if (pack.PlayerActedPack.ActingEnum == BetActingEnum.Call ||
+                pack.PlayerActedPack.ActingEnum == BetActingEnum.Raise)
             {
                 gameRoomData.IsFirstRaisePlayer = false;
                 //差額
@@ -1282,14 +1280,14 @@ public class GameServer : MonoBehaviour
             }
 
             //更新玩家訊息
-            if (pack.PlayerActedPack.ActingEnum == ActingEnum.Fold)
+            if (pack.PlayerActedPack.ActingEnum == BetActingEnum.Fold)
             {
                 gameRoomData.CurrActingPlayer.State = PlayerStateEnum.Fold;
             }
             gameRoomData.CurrActingPlayer.IsActionTaken = true;
-            gameRoomData.CurrActingPlayer.RoomChips -= betChips;
-            if (pack.PlayerActedPack.ActingEnum == ActingEnum.Raise ||
-                pack.PlayerActedPack.ActingEnum == ActingEnum.Call)
+            gameRoomData.CurrActingPlayer.CurrRoomChips -= betChips;
+            if (pack.PlayerActedPack.ActingEnum == BetActingEnum.Raise ||
+                pack.PlayerActedPack.ActingEnum == BetActingEnum.Call)
             {
                 gameRoomData.CurrActingPlayer.CurrBetValue = pack.PlayerActedPack.BetValue;
                 gameRoomData.CurrActingPlayer.AllBetValue += pack.PlayerActedPack.BetValue;
@@ -1302,7 +1300,7 @@ public class GameServer : MonoBehaviour
             pack.ActionCode = ActionCode.BroadCastRequest_ShowActing;
             pack.SendModeCode = SendModeCode.RoomBroadcast;
 
-            pack.PlayerActedPack.PlayerChips = gameRoomData.CurrActingPlayer.RoomChips;
+            pack.PlayerActedPack.PlayerChips = gameRoomData.CurrActingPlayer.CurrRoomChips;
 
             SendRoomBroadCast(pack);
 
@@ -1428,7 +1426,7 @@ public class GameServer : MonoBehaviour
     /// <returns></returns>
     private IEnumerator AllInJudge(MainPack pack)
     {       
-        double allInValue = gameRoomData.CurrActingPlayer.RoomChips + gameRoomData.CurrActingPlayer.CurrBetValue;
+        double allInValue = gameRoomData.CurrActingPlayer.CurrRoomChips + gameRoomData.CurrActingPlayer.CurrBetValue;
         allInDic.Add(gameRoomData.CurrActingPlayer.UserId, allInValue);
 
         //更新跟注值
@@ -1447,7 +1445,7 @@ public class GameServer : MonoBehaviour
         gameRoomData.CurrActingPlayer.IsActionTaken = true;
         gameRoomData.CurrActingPlayer.CurrBetValue = allInValue;
         gameRoomData.CurrActingPlayer.AllBetValue = allInValue;
-        gameRoomData.CurrActingPlayer.RoomChips = 0;      
+        gameRoomData.CurrActingPlayer.CurrRoomChips = 0;      
 
         //更新底池
         gameRoomData.TotalPot += betChips;
@@ -1457,7 +1455,7 @@ public class GameServer : MonoBehaviour
         pack.SendModeCode = SendModeCode.RoomBroadcast;
 
         pack.PlayerActedPack.BetValue = gameRoomData.CurrActingPlayer.CurrBetValue;
-        pack.PlayerActedPack.PlayerChips = gameRoomData.CurrActingPlayer.RoomChips;
+        pack.PlayerActedPack.PlayerChips = gameRoomData.CurrActingPlayer.CurrRoomChips;
 
         SendRoomBroadCast(pack);
 
@@ -1566,8 +1564,8 @@ public class GameServer : MonoBehaviour
         winnerPack.WinnerDic = new Dictionary<string, double>();
         foreach (var winnerPlayer in winners)
         {
-            winnerPlayer.RoomChips += winChips;
-            winnerPack.WinnerDic.Add(winnerPlayer.UserId, winnerPlayer.RoomChips);
+            winnerPlayer.CurrRoomChips += winChips;
+            winnerPack.WinnerDic.Add(winnerPlayer.UserId, winnerPlayer.CurrRoomChips);
             gameRoomData.PotWineerList.Add(winnerPlayer);
         }
         winnerPack.WinChips = winChips;
@@ -1612,15 +1610,15 @@ public class GameServer : MonoBehaviour
     /// <returns></returns>
     private IEnumerator SendRequest_SurvivorWinner(Client winner)
     {
-        gameRoomData.CurrFlow = FlowEnum.PotResult;
+        gameRoomData.CurrFlow = GameFlowEnum.PotResult;
 
         MainPack pack = new MainPack();
         pack.ActionCode = ActionCode.BroadCastRequest_GameStage;
         pack.SendModeCode = SendModeCode.RoomBroadcast;
 
-        winner.RoomChips += gameRoomData.TotalPot;
+        winner.CurrRoomChips += gameRoomData.TotalPot;
         WinnerPack winnerPack = new WinnerPack();
-        winnerPack.WinnerDic = new Dictionary<string, double>() { { winner.UserId, winner.RoomChips } };
+        winnerPack.WinnerDic = new Dictionary<string, double>() { { winner.UserId, winner.CurrRoomChips } };
         winnerPack.WinChips = gameRoomData.TotalPot;
 
         Dictionary<string, (int, int)> handPokerDic = new Dictionary<string, (int, int)>();
@@ -1649,7 +1647,7 @@ public class GameServer : MonoBehaviour
     /// <returns></returns>
     private IEnumerator SendRequest_ShowGameResult()
     {
-        gameRoomData.CurrFlow = FlowEnum.PotResult;
+        gameRoomData.CurrFlow = GameFlowEnum.PotResult;
 
         Dictionary<string, (int, int)> handPokerDic = new Dictionary<string, (int, int)>();
         foreach (var player in playingList)
@@ -1689,8 +1687,8 @@ public class GameServer : MonoBehaviour
         winnerPack.WinnerDic = new Dictionary<string, double>();
         foreach (var winnerPlayer in winners)
         {
-            winnerPlayer.RoomChips += winChips;
-            winnerPack.WinnerDic.Add(winnerPlayer.UserId, winnerPlayer.RoomChips);
+            winnerPlayer.CurrRoomChips += winChips;
+            winnerPack.WinnerDic.Add(winnerPlayer.UserId, winnerPlayer.CurrRoomChips);
             gameRoomData.PotWineerList.Add(winnerPlayer);
         }
         winnerPack.WinChips = winChips;
@@ -1768,7 +1766,7 @@ public class GameServer : MonoBehaviour
             if (sidewinnerList.All(x => x.UserId != allInPlayer.Key))
             {
                 Client c = playingList.Where(x => x.UserId == allInPlayer.Key).FirstOrDefault();
-                c.RoomChips += backChips;
+                c.CurrRoomChips += backChips;
 
                 sideValue = Mathf.Max(0, (float)(sideValue - backChips));
             }
@@ -1786,7 +1784,7 @@ public class GameServer : MonoBehaviour
             sideWinnerDic.Add(winner.UserId, winValue);
 
             Client c = playingList.Where(x => x.UserId == winner.UserId).FirstOrDefault();
-            c.RoomChips += winValue;
+            c.CurrRoomChips += winValue;
         }
        
 
@@ -1854,7 +1852,7 @@ public class GameServer : MonoBehaviour
     /// <param testIndex="index">測試玩家編號</param>
     public void TestShowFoldPoker(int index, int testIndex)
     {
-        if (playingList[testIndex].State == PlayerStateEnum.Fold && gameRoomData.CurrFlow == FlowEnum.PotResult)
+        if (playingList[testIndex].State == PlayerStateEnum.Fold && gameRoomData.CurrFlow == GameFlowEnum.PotResult)
         {
             MainPack pack = new MainPack();
             pack.ActionCode = ActionCode.Request_ShowFoldPoker;
@@ -2048,9 +2046,9 @@ public class GameServer : MonoBehaviour
         double buyChips = pack.BuyChipsPack.BuyChipsValue;
 
         Client c = clientList.Where(x => x.UserId == id).FirstOrDefault();
-        c.RoomChips += buyChips;
+        c.CurrRoomChips += buyChips;
 
-        pack.BuyChipsPack.BuyChipsValue = c.RoomChips;
+        pack.BuyChipsPack.BuyChipsValue = c.CurrRoomChips;
         SendRequest(pack);
     }
 

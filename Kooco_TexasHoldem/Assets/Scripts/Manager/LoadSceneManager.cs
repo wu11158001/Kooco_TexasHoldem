@@ -148,12 +148,14 @@ public class LoadSceneManager : UnitySingleton<LoadSceneManager>
 
                 ViewManager.Instance.Init();
                 JudgeIntoScene(sceneEnum);
-
-                lodingView.gameObject.SetActive(false);
             }
 
             yield return null;
         }
+
+        yield return new WaitForSeconds(1);
+
+        lodingView.gameObject.SetActive(false);
     }
 
     /// <summary>

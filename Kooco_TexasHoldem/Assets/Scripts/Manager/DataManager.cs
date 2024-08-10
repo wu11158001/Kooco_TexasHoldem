@@ -60,7 +60,7 @@ public static class DataManager
     /// <summary>
     /// 國碼
     /// </summary>
-    public static readonly List<string> CountryCode = new()                                                                                  
+    public static readonly List<string> CountryCode = new()
     {
         "+886",     //台灣
         "+86",      //中國
@@ -332,6 +332,7 @@ public static class DataManager
 
     public static int MaxPlayerCount { get { return 6; } }                            //最大遊戲人數
     public static int MaxVideoSaveCount { get { return 20; } }                        //最大紀錄影片數量
+    public static int StartCountDownTime{get{ return 20; }}                           //行動倒數時間(秒)
 
     #endregion
 }

@@ -55,11 +55,13 @@ public class ConfirmView : MonoBehaviour
             Cancel_Btn.onClick.AddListener(() =>
             {
                 cancelCallback?.Invoke();
+                Destroy(gameObject);
             });
 
             Close_Btn.onClick.AddListener(() =>
             {
                 cancelCallback?.Invoke();
+                Destroy(gameObject);
             });
         }
         else

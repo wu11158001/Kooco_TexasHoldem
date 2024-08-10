@@ -254,12 +254,12 @@ public class GameRoomManager : UnitySingleton<GameRoomManager>
                 str = "INTEGRAL";
                 break;
 
-            //加密貨幣桌
-            case TableTypeEnum.CryptoTable:
-                str = "CRYPTO";
+            //現金桌
+            case TableTypeEnum.Cash:
+                str = "Cash";
                 break;
 
-            //虛擬貨幣桌
+            //虛擬桌
             case TableTypeEnum.VCTable:
                 str = "VC";
                 break;
@@ -273,7 +273,12 @@ public class GameRoomManager : UnitySingleton<GameRoomManager>
     /// </summary>
     /// <param name="pack"></param>
     /// <param name="roomType">房間類型</param>
-    public void CerateGameRoom(MainPack pack, TableTypeEnum roomType, double smallBlind)
+    /// <param name="smallBlind">小盲值</param>
+    /// <param name="queryRoomPath">查詢房間資料路徑</param>
+    /// <param name="isNewRoom">是否是新房間</param>
+    /// <param name="carryChips">攜帶籌碼</param>
+    /// <param name="seatIndex">座位</param>
+    public void CreateGameRoom(TableTypeEnum roomType, double smallBlind, string queryRoomPath, bool isNewRoom, double carryChips, int seatIndex)
     {
         IsShowGameRoom = true;
         thisData.RoomNameIndex++;
@@ -300,18 +305,44 @@ public class GameRoomManager : UnitySingleton<GameRoomManager>
         room.name = roomName;
         room.anchoredPosition = new Vector2(Entry.Instance.resolution.x * (GetRoomCount - 1), 0);
 
+        //房間腳本
+        GameView gameView = room.GetComponent<GameView>();
+        gameView.RoomType = roomType;
+
+        //遊戲控制
+        GameControl gameControl = room.GetComponent<GameControl>();
+        gameControl.gameView = gameView;
+        gameControl.QueryRoomPath = queryRoomPath;
+        gameControl.SmallBlind = smallBlind;
+        gameControl.RoomType = roomType;
+        gameControl.MaxRoomPeople = roomType == TableTypeEnum.IntegralTable ?
+                                    2 :
+                                    DataManager.MaxPlayerCount;
+        if (isNewRoom)
+        {
+            gameControl.CreateFirstPlayer(carryChips,
+                                          seatIndex);
+
+        }
+        else
+        {
+            gameControl.NewPlayerInRoom(carryChips, 
+                                        seatIndex);
+        }
+
+        /*
         //假Server
         GameServer gameServer = room.GetComponent<GameServer>();
         gameServer.SmallBlind = smallBlind;
         gameServer.RoomType = roomType;
+        gameServer.QueryRoomPath = queryRoomPath;
         gameServer.ServerStart(roomType);
-        gameServer.Request_PlayerInOutRoom(pack);
-        Entry.CurrGameServer = gameServer;
+        gameServer.Request_PlayerInOutRoom(pack);*/
 
         //房間腳本
-        GameView gameView = room.GetComponent<GameView>();
-        gameView.RoomType = roomType;
-        gameView.SendRequest_UpdateRoomInfo();
+        //GameView gameView = room.GetComponent<GameView>();
+        //gameView.RoomType = roomType;
+        //gameView.SendRequest_UpdateRoomInfo();
 
         //關閉其他切換房間按鈕框
         CloseAllBtnFrame();

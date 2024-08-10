@@ -230,7 +230,7 @@
                             instance.SendMessage('Entry', 'ReceiveIGInfo', igIdAndName);
                         }
                         if(invitationCode && inviterId) {
-                            //接收邀請碼
+                            //接收邀請碼，綁定要請者
                             window.unityInstance.SendMessage('Entry', 'ReceiveInvitationCode', JSON.stringify({ invitationCode: invitationCode, inviterId: inviterId }));
                         }
 
