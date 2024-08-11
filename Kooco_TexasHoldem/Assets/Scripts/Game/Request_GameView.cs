@@ -58,7 +58,7 @@ public class Request_GameView : BaseRequest
 
             //本地玩家行動回合
             case ActionCode.BroadCastRequest_PlayerActingRound:
-                thisView.ILocalPlayerRound(pack.PlayerActingRoundPack);
+                //thisView.LocalPlayerRound(pack.PlayerActingRoundPack);
                 break;
 
             //籌碼不足

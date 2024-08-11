@@ -115,7 +115,7 @@ public class GamePlayerInfo : MonoBehaviour
     private void Awake()
     {
         LanguageManager.Instance.AddUpdateLanguageFunc(UpdateLanguage, gameObject);
-        StopCountDown();
+        InitCountDown();
         Chat_Obj.SetActive(false);
         IsOpenInfoMask = true;
 
@@ -322,7 +322,7 @@ public class GamePlayerInfo : MonoBehaviour
     /// <param name="handPoker1"></param>
     public void SetHandPoker(int hand0, int hand1)
     {
-        StopCountDown();
+        InitCountDown();
 
         IsPlaying = true;
 
@@ -368,9 +368,9 @@ public class GamePlayerInfo : MonoBehaviour
     }
 
     /// <summary>
-    /// 停止倒數
+    /// 重製倒數
     /// </summary>
-    public void StopCountDown()
+    public void InitCountDown()
     {
         if(cdCoroutine != null) StopCoroutine(cdCoroutine);
         CDMask_Img.fillAmount = 0;
@@ -395,8 +395,7 @@ public class GamePlayerInfo : MonoBehaviour
     {
         float target = ((float)cdTime - (cd - 1)) / (float)cdTime;
         float curr = ((float)cdTime - cd) / (float)cdTime;
-        Debug.Log($"倒數效果curr:{curr}");
-        Debug.Log($"倒數效果target:{target}");
+
         DateTime startTime = DateTime.Now;
         while ((DateTime.Now - startTime).TotalSeconds < 1)
         {
@@ -428,7 +427,8 @@ public class GamePlayerInfo : MonoBehaviour
     /// <param name="chips">玩家籌碼</param>
     public void PlayerBet(double betValue, double chips)
     {
-        Debug.Log($"玩家下注~~~~:{betValue}/{chips}");
+        Debug.Log($"Player Bet:{betValue}");
+        Debug.Log($"Player Carry Chips:{chips}");
 
         BetChips_Tr.gameObject.SetActive(true);
         PlayerRoomChips = chips;
@@ -464,7 +464,7 @@ public class GamePlayerInfo : MonoBehaviour
     public void DisplayBetAction(bool isShow, double betValue = 0, BetActionEnum betActionEnum = BetActionEnum.None, bool isEffect = true)
     {
         Action_Img.gameObject.SetActive(isShow);
-        Debug.Log($"顯示行動:{isShow}");
+
         switch (betActionEnum)
         {
             case BetActionEnum.Fold:
@@ -529,9 +529,7 @@ public class GamePlayerInfo : MonoBehaviour
     public void PlayerAction(BetActingEnum actionEnum, double betValue, double chips)
     {
         if (!gameObject.activeSelf) return;
-        Debug.Log($"玩家行動:{actionEnum}");
-        Debug.Log($"玩家行動:{betValue}");
-        Debug.Log($"玩家行動:{chips}");
+
         //StopCountDown();
         ActionFrame = false;
 

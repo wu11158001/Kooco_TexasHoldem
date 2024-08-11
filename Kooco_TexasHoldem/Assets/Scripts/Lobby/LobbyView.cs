@@ -199,18 +199,21 @@ public class LobbyView : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Q))
         {
             DisplayFloor4UI(QuestView);
-        }        
-
-#if UNITY_EDITOR
-
-        //測試_返回登入
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            WalletManager.Instance.OnWalletDisconnect();
-            LoadSceneManager.Instance.LoadScene(SceneEnum.Login);
         }
 
-#endif
+        #region 測試
+
+        if (Entry.Instance.releaseType == ReleaseEnvironmentEnum.Test)
+        {
+            //測試_返回登入
+            if (Input.GetKeyDown(KeyCode.E))
+            {
+                WalletManager.Instance.OnWalletDisconnect();
+                LoadSceneManager.Instance.LoadScene(SceneEnum.Login);
+            }
+        }
+
+        #endregion
     }
 
     /// <summary>

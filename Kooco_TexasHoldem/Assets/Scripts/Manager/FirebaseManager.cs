@@ -25,8 +25,9 @@ public class FirebaseManager : UnitySingleton<FirebaseManager>
     [Header("遊戲房間資料內容路徑名稱")]
     public const string ROBOT_ID = "robot_";                                                //機器人ID
     public const string PLAYER_DATA_LIST = "playerDataDic";                                 //房間內所有玩家列表路徑
-    public const string PLAYING_OLAYER_ID = "playingPlayersId";                             //遊戲中玩家ID列表路徑
+    public const string PLAYING_PLAYER_ID = "playingPlayersIdList";                         //遊戲中玩家ID列表路徑
     public const string BET_ACTION_DATA = "betActionDataDic";                               //下注行為資料路徑
+    public const string ALL_IN_PLAYER_DATA = "allInDataDic";                                //AllIn玩家資料路徑
     public const string SMALL_BLIND = "smallBlind";                                         //小盲值
     public const string ROBOT_INDEX = "robotIndex";                                         //機器人編號
     public const string ROOM_HOST_ID = "hostId";                                            //房主ID
@@ -36,17 +37,20 @@ public class FirebaseManager : UnitySingleton<FirebaseManager>
     public const string BUTTON_SEAT = "buttonSeat";                                         //Button座位
     public const string ACTION_CD = "actionCD";                                             //行動倒數時間
     public const string CURR_ACTIONER_ID = "currActionerId";                                //當前行動玩家ID
+    public const string CURR_CALL_VALUE = "currCallValue";                                  //當前跟注值
+    public const string ACTIONP_PLAYER_COUNT = "actionPlayerCount";                         //當前流程行動玩家次數
 
     [Header("遊戲玩家資料路徑名稱")]
     public const string ROOM_NAME = "room_";                                                //房間名
-    public const string CURR_GAME_FLOW = "currGameFlow";                                    //當前遊戲流程(發牌/盲注/翻牌/轉牌/河牌/遊戲結果(主池/邊池))
+    public const string CURR_GAME_FLOW = "currGameFlow";                                    //(GameFlowEnum)當前遊戲流程(發牌/盲注/翻牌/轉牌/河牌/遊戲結果(主池/邊池))
     public const string CARRY_CHIPS = "carryChips";                                         //攜帶籌碼
-    public const string SEAT_CHARACTER = "seatCharacter";                                   //座位角色
+    public const string SEAT_CHARACTER = "seatCharacter";                                   //(SeatCharacterEnum)座位角色(Button/SB/BB)
     public const string GAME_SEAT = "gameSeat";                                             //遊戲座位
     public const string GAME_STATE = "gameState";                                           //遊戲狀態(等待/遊戲中/棄牌/All In)
     public const string HAND_POKER = "handPoker";                                           //手牌
     public const string CURR_ALL_BET_CHIPS = "currAllBetChips";                             //該回合總下注籌碼
     public const string ALL_BET_CHIPS = "allBetChips";                                      //該局總下注籌碼
+    public const string IS_BET = "isBet";                                                   //該流程是否已下注
 
     [Header("下注行為")]
     public const string BET_ACTIONER_ID = "betActionerId";                                  //下注玩家ID
@@ -159,8 +163,10 @@ public class QueryRoom
 public class GameRoomData
 {
     public Dictionary<string, GameRoomPlayerData> playerDataDic;        //房間內玩家資料
+    public Dictionary<string, GameRoomPlayerData> allInDataDic;         //AllIn玩家資料
+    public List<string> playingPlayersIdList;                           //遊戲中玩家ID列表
     public BetActionData betActionDataDic;                              //下注行為資料
-    public int currGameFlow;                                            //(FlowEnum)當前遊戲流程(發牌/盲注/翻牌/轉牌/河牌/遊戲結果(主池/邊池))
+    public int currGameFlow;                                            //(GameFlowEnum)當前遊戲流程(發牌/盲注/翻牌/轉牌/河牌/遊戲結果(主池/邊池))
     public double smallBlind;                                           //小盲值
     public string hostId;                                               //房主ID
     public double potChips;                                             //底池總籌碼
@@ -168,18 +174,10 @@ public class GameRoomData
     public List<int> currCommunityPoker;                                //當前顯示公共牌
     public int buttonSeat;                                              //Button座位
     public int robotIndex;                                              //機器人編號
-    public List<string> playingPlayersId;                               //遊戲中玩家ID
     public int actionCD;                                                //行動倒數時間
     public string currActionerId;                                       //當前行動玩家Id
-}
-
-/// <summary>
-/// 房間內玩家資料
-/// </summary>
-[SerializeField]
-public class RoomPlayerData
-{
-    public Dictionary<string, GameRoomPlayerData> playerDataList;      //房間內玩家資料
+    public double currCallValue;                                        //當前跟注值
+    public int actionPlayerCount;                                       //當前流程行動玩家次數
 }
 
 /// <summary>
@@ -195,11 +193,12 @@ public class GameRoomPlayerData
     public int avatarIndex;                         //頭像編號
     public double carryChips;                       //攜帶籌碼
     public int gameSeat;                            //遊戲座位
-    public int seatCharacter;                       //(SeatCharacterEnum)座位角色
+    public int seatCharacter;                       //(SeatCharacterEnum)座位角色(Button/SB/BB)
     public int gameState;                           //(PlayerStateEnum)遊戲狀態(等待/遊戲中/棄牌/All In)
     public List<int> handPoker;                     //手牌
-    public double currAllBetChips;                  //該回合總下注籌碼
+    public double currAllBetChips;                  //當前流程總下注籌碼
     public double allBetChips;                      //該局總下注籌碼
+    public bool isBet;                              //該流程是否已下注
 }
 
 /// <summary>

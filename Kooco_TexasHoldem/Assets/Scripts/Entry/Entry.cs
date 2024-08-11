@@ -41,18 +41,6 @@ public class Entry : UnitySingleton<Entry>
 #endif
 
         base.Awake();
-
-        #region 測試用
-
-        DataManager.UserId = "LocalUser";
-        DataManager.UserCryptoChips = 11000;
-        DataManager.UserVCChips = 230200;
-        DataManager.UserGoldChips = 65000;
-        DataManager.UserStamina = 45;
-        DataManager.UserOTProps = 8;
-        DataManager.UserInvitationCode = "S84f66s78As";
-
-        #endregion
     }
 
     private IEnumerator Start()
@@ -70,23 +58,34 @@ public class Entry : UnitySingleton<Entry>
         AudioManager.Instance.StartLoadAudioAssets();
 
         LoadSceneManager.Instance.LoadScene(SceneEnum.Login);
+
+
+        #region 測試
+
+        DataManager.UserCryptoChips = 1000000;
+        DataManager.UserVCChips = 1000000;
+
+        #endregion
     }
 
     private void Update()
     {
         #region 測試操作
 
-        //NFT測試
-        if (Input.GetKeyDown(KeyCode.RightControl))
+        if (releaseType == ReleaseEnvironmentEnum.Test)
         {
-            DataManager.UserWalletAddress = "0xef279977cBC232C667082E06cfC252529513B738";
-            NFTManager.Instance.UpdateNFT();
-        }
+            //NFT測試
+            if (Input.GetKeyDown(KeyCode.RightControl))
+            {
+                DataManager.UserWalletAddress = "0xef279977cBC232C667082E06cfC252529513B738";
+                NFTManager.Instance.UpdateNFT();
+            }
 
-        //移除手牌紀錄
-        if (Input.GetKeyDown(KeyCode.F8))
-        {
-            HandHistoryManager.Instance.OnDeleteHistoryData();
+            //移除手牌紀錄
+            if (Input.GetKeyDown(KeyCode.F8))
+            {
+                HandHistoryManager.Instance.OnDeleteHistoryData();
+            }
         }
 
         #endregion

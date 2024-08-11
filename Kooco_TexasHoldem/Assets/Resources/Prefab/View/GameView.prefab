@@ -5627,8 +5627,7 @@ GameObject:
   - component: {fileID: 6670946787786061185}
   - component: {fileID: 7434345039931009829}
   - component: {fileID: 6875628500851460784}
-  - component: {fileID: 1901636849928286105}
-  - component: {fileID: 5378385258410544579}
+  - component: {fileID: 432701657448135999}
   m_Layer: 5
   m_Name: GameView
   m_TagString: Untagged
@@ -5685,7 +5684,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 91625074d96bf2c408186120c616cc01, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseRequest: {fileID: 1901636849928286105}
+  baseRequest: {fileID: 0}
   gameControl: {fileID: 6875628500851460784}
   Mask_Btn: {fileID: 5384433124382939452}
   SeatGamePlayerInfoList:
@@ -5795,35 +5794,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a2d5941c31f13b848bf8aa5bfdd8eb66, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &1901636849928286105
+  gameView: {fileID: 7434345039931009829}
+  RobotControl: {fileID: 432701657448135999}
+--- !u!114 &432701657448135999
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4348048500220203413}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 786c7209c44da5449a0b757bb5d8e8a2, type: 3}
+  m_Script: {fileID: 11500000, guid: 9c7e2ecb81904c8468e29bc705279bc3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameServer: {fileID: 5378385258410544579}
-  thisView: {fileID: 7434345039931009829}
-  demoControl: {fileID: 8460395398395164556}
---- !u!114 &5378385258410544579
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4348048500220203413}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5dce01c3d93afa347b1662d4d64456ef, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  targetBaseRequest: {fileID: 1901636849928286105}
-  maxRoomPeople: 0
+  gameControl: {fileID: 6875628500851460784}
 --- !u!1 &4483950952518531875
 GameObject:
   m_ObjectHideFlags: 0
@@ -14127,10 +14112,6 @@ PrefabInstance:
       propertyPath: Switch_Btn
       value: 
       objectReference: {fileID: 5810696859558965438}
-    - target: {fileID: 2311835330087418901, guid: 69bf25d5a207e1f4095e9a82ce9a1e0c, type: 3}
-      propertyPath: gameServer
-      value: 
-      objectReference: {fileID: 5378385258410544579}
     - target: {fileID: 2413029714067732816, guid: 69bf25d5a207e1f4095e9a82ce9a1e0c, type: 3}
       propertyPath: m_FontData.m_FontSize
       value: 9
@@ -14400,17 +14381,6 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 5190601164037702718, guid: 69bf25d5a207e1f4095e9a82ce9a1e0c, type: 3}
   m_PrefabInstance: {fileID: 6159821693784132505}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &8460395398395164556 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 2311835330087418901, guid: 69bf25d5a207e1f4095e9a82ce9a1e0c, type: 3}
-  m_PrefabInstance: {fileID: 6159821693784132505}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ae4d98aa90e399440a96adfc06455011, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &6461337689445836553
 PrefabInstance:
   m_ObjectHideFlags: 0

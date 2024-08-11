@@ -311,7 +311,6 @@ public class GameRoomManager : UnitySingleton<GameRoomManager>
 
         //遊戲控制
         GameControl gameControl = room.GetComponent<GameControl>();
-        gameControl.gameView = gameView;
         gameControl.QueryRoomPath = queryRoomPath;
         gameControl.SmallBlind = smallBlind;
         gameControl.RoomType = roomType;

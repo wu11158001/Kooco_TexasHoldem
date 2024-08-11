@@ -489,9 +489,9 @@ public class GameView : MonoBehaviour
                                   thisData.LocalPlayerChips :
                                   thisData.CurrRaiseValue;
 
-                    baseRequest.SendRequest_PlayerActed(Entry.TestInfoData.LocalUserId,
-                                                        acting,
-                                                        betValue);
+                    gameControl.UpdateBetAction(DataManager.UserId,
+                                                acting,
+                                                betValue);
                 }
                 else
                 {
@@ -961,9 +961,9 @@ public class GameView : MonoBehaviour
     /// </summary>
     private void OnFold()
     {
-        baseRequest.SendRequest_PlayerActed(Entry.TestInfoData.LocalUserId,
-                                            BetActingEnum.Fold,
-                                            0);
+        gameControl.UpdateBetAction(DataManager.UserId,
+                                    BetActingEnum.Fold,
+                                    0);
     }
 
     /// <summary>
@@ -1001,9 +1001,9 @@ public class GameView : MonoBehaviour
             }
         }
 
-        baseRequest.SendRequest_PlayerActed(Entry.TestInfoData.LocalUserId,
-                                            acting,
-                                            betValue);
+        gameControl.UpdateBetAction(DataManager.UserId,
+                                    acting,
+                                    betValue);
     }
 
     /// <summary>
@@ -1051,25 +1051,55 @@ public class GameView : MonoBehaviour
     /// <summary>
     /// 本地玩家回合
     /// </summary>
-    /// <param name="playerActingRoundPack"></param>
-    public void ILocalPlayerRound(PlayerActingRoundPack playerActingRoundPack)
+    /// <param name="gameRoomData"></param>
+    public void LocalPlayerRound(GameRoomData gameRoomData)
     {
+        GameRoomPlayerData gameRoomPlayerData = gameRoomData.playerDataDic.Where(x => x.Value.userId == DataManager.UserId)
+                                                                          .FirstOrDefault()
+                                                                          .Value;
+
+        //首位加注玩家
+        bool isFirst = false;
+        if ((GameFlowEnum)gameRoomData.currGameFlow == GameFlowEnum.SetBlind &&
+            gameRoomData.actionPlayerCount == 1)
+        {
+            isFirst = true;
+        }
+        else
+        {
+            if (gameRoomData.actionPlayerCount == 0)
+            {
+                isFirst = true;
+            }
+        }
+
+        //是否無法加注
+        double allInMin = gameRoomData.allInDataDic != null ?
+                          gameRoomData.allInDataDic.Values.Min(x => x.currAllBetChips) :
+                          0;
+        bool IsUnableRaise =
+                        (gameRoomData.allInDataDic != null && gameRoomData.playingPlayersIdList != null &&
+                         gameRoomData.allInDataDic.Count() == gameRoomData.playingPlayersIdList.Count - 1) ||
+                        (gameRoomData.currCallValue == allInMin &&
+                         gameRoomData.betActionDataDic != null &&
+                        (BetActingEnum)gameRoomData.betActionDataDic.betAction == BetActingEnum.Call);
+
         SetActionButton = true;
 
         //當前底池
-        thisData.TotalPot = playerActingRoundPack.TotalPot;
+        thisData.TotalPot = gameRoomData.potChips;
         //玩家籌碼
-        thisData.LocalPlayerChips = playerActingRoundPack.PlayerChips;
+        thisData.LocalPlayerChips = gameRoomPlayerData.carryChips;
         //首位加注玩家
-        thisData.IsFirstRaisePlayer = playerActingRoundPack.IsFirstRaisePlayer;
+        thisData.IsFirstRaisePlayer = isFirst;
         //當前跟注值
-        thisData.CurrCallValue = playerActingRoundPack.CurrCallValue;
+        thisData.CurrCallValue = gameRoomData.currCallValue;
         //跟注差額
-        thisData.CallDifference = playerActingRoundPack.CallDifference;
+        thisData.CallDifference = gameRoomData.currCallValue - gameRoomPlayerData.currAllBetChips;
         //玩家當前下注值
-        thisData.LocalPlayerCurrBetValue = playerActingRoundPack.PlayerCurrBryValue;
+        thisData.LocalPlayerCurrBetValue = gameRoomPlayerData.currAllBetChips;
         //無法加注
-        thisData.IsUnableRaise = playerActingRoundPack.IsUnableRaise;
+        thisData.IsUnableRaise = IsUnableRaise;
         //最小加注
         thisData.MinRaiseValue = thisData.CurrCallValue * 2;
         thisData.CurrRaiseValue = thisData.MinRaiseValue;
@@ -1296,7 +1326,7 @@ public class GameView : MonoBehaviour
         {
             GamePlayerInfo gamePlayerInfo = AddPlayer(player);
             if (player.userId != DataManager.UserId &&
-                gamePlayerInfo.IsPlaying)
+                gameRoomData.playingPlayersIdList.Contains(player.userId))
             {
                 gamePlayerInfo.SetHandPoker(-1, -1);
             }
@@ -1356,7 +1386,7 @@ public class GameView : MonoBehaviour
         
 
         gamePlayerInfo.gameObject.SetActive(true);
-
+        Debug.Log($"添加玩家:{playerData.carryChips}");
         gamePlayerInfo.SetInitPlayerInfo(seatIndex,
                                          playerData.userId,
                                          playerData.nickname,
@@ -1443,6 +1473,8 @@ public class GameView : MonoBehaviour
             playerInfo.PlayerAction(actionEnum,
                                     betValue,
                                     chips);
+
+            playerInfo.InitCountDown();
         }
 
         //本地玩家有參與
@@ -2368,7 +2400,7 @@ public class GameView : MonoBehaviour
         Init();
         GameInit();
 
-        foreach (var userId in gameRoomData.playingPlayersId)
+        foreach (var userId in gameRoomData.playingPlayersIdList)
         {
             GamePlayerInfo gamePlayerInfo = GetPlayer(userId);
 
@@ -2459,7 +2491,6 @@ public class GameView : MonoBehaviour
                               gameRoomData.smallBlind,
                               sbPlayerData.carryChips - gameRoomData.smallBlind);
 
-
         //BB下注
         GameRoomPlayerData bbPlayerData = gameRoomData.playerDataDic.Where(x => (SeatCharacterEnum)x.Value.seatCharacter == SeatCharacterEnum.BB)
                                                                      .FirstOrDefault()
@@ -2468,7 +2499,7 @@ public class GameView : MonoBehaviour
         bbPlayer.PlayerAction(BetActingEnum.Blind,
                               gameRoomData.smallBlind * 2,
                               bbPlayerData.carryChips - (gameRoomData.smallBlind * 2));
-      
+
         //房主執行
         if (gameRoomData.hostId == DataManager.UserId)
         {
@@ -2478,7 +2509,9 @@ public class GameView : MonoBehaviour
             double sbNewCarryChips = sbPlayerData.carryChips - gameRoomData.smallBlind;
             data = new Dictionary<string, object>()
             {
-                { FirebaseManager.CARRY_CHIPS, sbNewCarryChips }             //攜帶籌碼
+                { FirebaseManager.CARRY_CHIPS, sbNewCarryChips },                           //攜帶籌碼
+                { FirebaseManager.CURR_ALL_BET_CHIPS, gameRoomData.smallBlind},             //當前流程總下注籌碼
+                { FirebaseManager.ALL_BET_CHIPS, gameRoomData.smallBlind},                  //該局總下注籌碼
             };
             gameControl.UpdataPlayerData(sbPlayerData.userId,
                                          data);
@@ -2487,7 +2520,9 @@ public class GameView : MonoBehaviour
             double bbNewCarryChips = bbPlayerData.carryChips - (gameRoomData.smallBlind * 2);
             data = new Dictionary<string, object>()
             {
-                { FirebaseManager.CARRY_CHIPS, bbNewCarryChips }             //攜帶籌碼
+                { FirebaseManager.CARRY_CHIPS, bbNewCarryChips },                           //攜帶籌碼
+                { FirebaseManager.CURR_ALL_BET_CHIPS, gameRoomData.smallBlind * 2},         //當前流程總下注籌碼
+                { FirebaseManager.ALL_BET_CHIPS, gameRoomData.smallBlind * 2},              //該局總下注籌碼
             };
             gameControl.UpdataPlayerData(bbPlayerData.userId,
                                          data);
@@ -2496,7 +2531,10 @@ public class GameView : MonoBehaviour
             double totalPot = gameRoomData.smallBlind + (gameRoomData.smallBlind * 2);
             data = new Dictionary<string, object>()
             {
-                { FirebaseManager.POT_CHIPS, totalPot }             //底池
+                { FirebaseManager.POT_CHIPS, totalPot },                               //底池
+                { FirebaseManager.CURR_CALL_VALUE, gameRoomData.smallBlind * 2},       //當前跟注值
+                { FirebaseManager.CURR_ACTIONER_ID, bbPlayerData.userId},              //當前行動玩家Id
+                { FirebaseManager.ACTIONP_PLAYER_COUNT, 1},                            //當前流程行動玩家次數
             };
             gameControl.UpdateGameRoomData(data);
         }
