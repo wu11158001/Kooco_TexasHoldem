@@ -206,6 +206,7 @@ public class GameView : MonoBehaviour
         public bool IsSitOut;                              //是否離開座位
         public bool isLocalPlayerTurn;                     //本地玩家回合
         public bool isFold;                                //是否已棄牌
+        public bool isCanCall;                             //是否可以跟注
         public List<int> CurrCommunityPoker;               //當前公共牌
         public List<string> PotWinnerList;                 //主池贏家
         public double PowWinChips;                         //主池贏得籌碼
@@ -973,9 +974,10 @@ public class GameView : MonoBehaviour
     {
         double betValue = 0;
         BetActingEnum acting = BetActingEnum.Call;
+
         if (thisData.IsFirstRaisePlayer)
         {
-            if (thisData.CurrCallValue == thisData.SmallBlindValue)
+            if (thisData.CurrCallValue == thisData.SmallBlindValue * 2)
             {
                 acting = BetActingEnum.Check;
             }
@@ -1084,8 +1086,18 @@ public class GameView : MonoBehaviour
                          gameRoomData.betActionDataDic != null &&
                         (BetActingEnum)gameRoomData.betActionDataDic.betAction == BetActingEnum.Call);
 
+        //是否無法跟注
+        bool isCanCall = true;
+        if (gameRoomData.currCallValue == gameRoomData.smallBlind &&
+            gameRoomData.currGameFlow > (int)GameFlowEnum.SetBlind)
+        {
+            isCanCall = false;
+        }
+
         SetActionButton = true;
 
+        //當前小盲值
+        thisData.SmallBlindValue = gameRoomData.smallBlind;
         //當前底池
         thisData.TotalPot = gameRoomData.potChips;
         //玩家籌碼
@@ -1100,6 +1112,8 @@ public class GameView : MonoBehaviour
         thisData.LocalPlayerCurrBetValue = gameRoomPlayerData.currAllBetChips;
         //無法加注
         thisData.IsUnableRaise = IsUnableRaise;
+        //是否無法跟注
+        thisData.isCanCall = isCanCall;
         //最小加注
         thisData.MinRaiseValue = thisData.CurrCallValue * 2;
         thisData.CurrRaiseValue = thisData.MinRaiseValue;
@@ -1195,6 +1209,7 @@ public class GameView : MonoBehaviour
         //是否無法在加注
         bool IsUnableRaise = thisData.IsUnableRaise;
         bool isJustAllIn = thisData.LocalPlayerChips <= thisData.CurrCallValue;
+        bool isCanCall = thisData.isCanCall;
 
         //棄牌
         Fold_Btn.gameObject.SetActive(true);
@@ -1222,7 +1237,7 @@ public class GameView : MonoBehaviour
         strData.CallValueStr = $"\n{StringUtils.SetChipsUnit(thisData.CurrCallValue - thisData.CallDifference)}";
         if (thisData.IsFirstRaisePlayer == true)
         {
-            if (thisData.CurrCallValue == thisData.SmallBlindValue)
+            if (thisData.CurrCallValue == thisData.SmallBlindValue * 2)
             {
                 strData.CallStr = "Check";
                 strData.CallValueStr = "";
@@ -1247,7 +1262,8 @@ public class GameView : MonoBehaviour
             }
         }
         CallBtn.text = LanguageManager.Instance.GetText(strData.CallStr) + strData.CallValueStr;
-        if (IsUnableRaise == true && isJustAllIn == false)
+
+        if (IsUnableRaise == true && isJustAllIn == false && isCanCall == true)
         {
             Call_Btn.gameObject.SetActive(true);
         }
@@ -1602,8 +1618,9 @@ public class GameView : MonoBehaviour
     /// 翻開公共牌
     /// </summary>
     /// <param name="currCommunityPoker"></param>
+    /// <param name="currCommunityPoker"></param>
     /// <returns></returns>
-    private IEnumerator IFlopCommunityPoker(List<int> currCommunityPoker)
+    public IEnumerator IFlopCommunityPoker(List<int> currCommunityPoker, GameRoomData gameRoomData)
     {
         foreach (var player in gamePlayerInfoList)
         {
@@ -1615,8 +1632,12 @@ public class GameView : MonoBehaviour
 
         thisData.CurrCommunityPoker = currCommunityPoker;
 
+        //本地玩家
+        GameRoomPlayerData localPlayer = gameControl.GetLocalPlayer();
+
         //本地玩家有參與
-        if (thisData.LocalGamePlayerInfo.IsPlaying &&
+        if (((PlayerStateEnum)localPlayer.gameState == PlayerStateEnum.Playing || 
+            (PlayerStateEnum)localPlayer.gameState == PlayerStateEnum.AllIn) &&
             currCommunityPoker.Count > 0)
         {
             //紀錄存檔
@@ -1642,10 +1663,13 @@ public class GameView : MonoBehaviour
 
         yield return new WaitForSeconds(0.6f);
 
+        //判斷牌行
         if (thisData.IsPlaying == true)
         {
-            GamePlayerInfo localPlayer = gamePlayerInfoList.Where(x => x.UserId == Entry.TestInfoData.LocalUserId).FirstOrDefault();
-            JudgePokerShape(localPlayer, true);
+            GamePlayerInfo localPlayerInfo = gamePlayerInfoList.Where(x => x.UserId == DataManager.UserId)
+                                                           .FirstOrDefault();
+            JudgePokerShape(localPlayerInfo, 
+                            true);
         }
     }
 
@@ -1701,7 +1725,7 @@ public class GameView : MonoBehaviour
         thisData.PowWinChips = pack.WinnerPack.WinChips;
 
         yield return IConcentrateBetChips();
-        yield return IFlopCommunityPoker(pack.CommunityPokerPack.CurrCommunityPoker);
+        //yield return IFlopCommunityPoker(pack.CommunityPokerPack.CurrCommunityPoker);
 
         //顯示手牌牌型
         foreach (var handPoker in pack.LicensingStagePack.HandPokerDic)
