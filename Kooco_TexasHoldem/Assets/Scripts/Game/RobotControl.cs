@@ -56,7 +56,7 @@ public class RobotControl : MonoBehaviour
             {
                 if (isFirst == true)
                 {
-                    if (gameRoomData.currCallValue == gameRoomData.smallBlind)
+                    if (gameRoomData.currCallValue == gameRoomData.smallBlind * 2)
                     {
                         action = BetActingEnum.Check;
                     }

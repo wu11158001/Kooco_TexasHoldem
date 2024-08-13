@@ -89,7 +89,7 @@ public class Entry : UnitySingleton<Entry>
         }
 
         #endregion
-    }
+    }    
 
     #region Instagram登入
 

@@ -79,16 +79,31 @@ mergeInto(LibraryManager.library, {
     // 修改與擴充資料
     // refPathPtr = 資料路徑
     // jsonDataPtr = json資料
-    JS_UpdateDataFromFirebase: function(refPathPtr, jsonDataPtr) {
+    // objNamePtr = 回傳物件名
+    // callbackFunPtr = 回傳方法名
+    JS_UpdateDataFromFirebase: function(refPathPtr, jsonDataPtr, objNamePtr = null, callbackFunPtr = null) {
         const refPath = UTF8ToString(refPathPtr);
         const jsonData = UTF8ToString(jsonDataPtr);
-        const data = JSON.parse(jsonData);
 
+        let gameObjectName = null;
+        let callbackFunctionName = null;
+        if (objNamePtr && callbackFunPtr) {
+            gameObjectName = UTF8ToString(objNamePtr);
+            callbackFunctionName = UTF8ToString(callbackFunPtr);
+        }
+
+        const data = JSON.parse(jsonData);
         firebase.database().ref(refPath).update(data, (error) => {
             if (error) {
                 console.error("The update failed... : " + error);
+                if (gameObjectName != null && callbackFunctionName != null) {
+                    window.unityInstance.SendMessage(gameObjectName, callbackFunctionName, "false");
+                }
             } else {
                 console.log("Data updated successfully!");
+                if (gameObjectName != null && callbackFunctionName != null) {
+                    window.unityInstance.SendMessage(gameObjectName, callbackFunctionName, "true");
+                }
             }
         });
     },

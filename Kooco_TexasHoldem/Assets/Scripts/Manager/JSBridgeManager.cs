@@ -143,17 +143,19 @@ public class JSBridgeManager : UnitySingleton<JSBridgeManager>
     }
 
     [DllImport("__Internal")]
-    private static extern bool JS_UpdateDataFromFirebase(string refPathPtr, string jsonDataPtr);
+    private static extern bool JS_UpdateDataFromFirebase(string refPathPtr, string jsonDataPtr, string objNamePtr = null, string callbackFunPtr = null);
     /// <summary>
     /// 修改與擴充資料
     /// </summary>
     /// <param name="refPathPtr">資料路徑</param>
     /// <param name="data">資料</param>
-    public void UpdateDataFromFirebase(string refPathPtr, Dictionary<string, object> data)
+    public void UpdateDataFromFirebase(string refPathPtr, Dictionary<string, object> data, string objNamePtr = null, string callbackFunPtr = null)
     {
         string jsonData = JsonConvert.SerializeObject(data);
         JS_UpdateDataFromFirebase(refPathPtr,
-                                  jsonData);
+                                  jsonData,
+                                  objNamePtr,
+                                  callbackFunPtr);
     }
 
     [DllImport("__Internal")]
