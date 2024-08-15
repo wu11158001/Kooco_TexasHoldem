@@ -350,6 +350,11 @@
     "zh_TW": "錯誤的邀請碼。"
   },
   {
+    "ID": "Duplicate Login.",
+    "English": "Duplicate Login.",
+    "zh_TW": "帳號已登入。"
+  },
+  {
     "ID": "登入(LoginView)",
     "English": null,
     "zh_TW": null

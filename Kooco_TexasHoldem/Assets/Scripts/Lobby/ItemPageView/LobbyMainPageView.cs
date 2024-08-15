@@ -438,7 +438,7 @@ public class LobbyMainPageView : MonoBehaviour
     {
         string state = GenerateRandomString();
         string nonce = GenerateRandomString();
-        string authUrl = $"https://line.me/R/ti/p/%40linedevelopers";
+        string authUrl = $"https://line.me/ti/p/@309jwned";
         /*
                     +
                      $"client_id={DataManager.LineChannelId}&" +

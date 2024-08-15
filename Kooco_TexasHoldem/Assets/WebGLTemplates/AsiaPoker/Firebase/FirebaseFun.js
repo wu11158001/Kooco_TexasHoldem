@@ -99,6 +99,7 @@ window.callbacks = window.callbacks || {};
 // 初始化在線狀態監測
 // path = 監測路徑
 // id = 監測ID
+// roomPathPtr = 監測房間資料路徑
 function initializePresence(path, id) {
     console.log("Start Listener Connection State:" + id);
 
@@ -128,6 +129,7 @@ function initializePresence(path, id) {
             online: false,
             last_changed: firebase.database.ServerValue.TIMESTAMP
         });
+        
     };
 
     connectedRef.on("value", connectedCallback);

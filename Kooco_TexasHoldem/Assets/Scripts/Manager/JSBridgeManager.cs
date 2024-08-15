@@ -82,7 +82,6 @@ public class JSBridgeManager : UnitySingleton<JSBridgeManager>
     /// 監測連線狀態
     /// </summary>
     /// <param name="pathPtr">監測路徑</param>
-    /// <param name="id">監測用戶ID</param>
     public void StartListenerConnectState(string pathPtr)
     {
         JS_StartListenerConnectState(pathPtr);

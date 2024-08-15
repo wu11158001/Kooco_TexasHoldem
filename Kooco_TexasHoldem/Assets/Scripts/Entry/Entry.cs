@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using UnityEngine.Networking;
-using UnityEngine.UI;
+
 public class Entry : UnitySingleton<Entry>
 {
     #region 測試
@@ -62,8 +62,8 @@ public class Entry : UnitySingleton<Entry>
 
         #region 測試
 
-        DataManager.UserCryptoChips = 1000000;
-        DataManager.UserVCChips = 1000000;
+        DataManager.UserCryptoChips = 100000;
+        DataManager.UserVCChips = 100000;
 
         #endregion
     }
@@ -87,9 +87,8 @@ public class Entry : UnitySingleton<Entry>
                 HandHistoryManager.Instance.OnDeleteHistoryData();
             }
         }
-
         #endregion
-    }    
+    }
 
     #region Instagram登入
 
@@ -221,7 +220,7 @@ public class Entry : UnitySingleton<Entry>
     /// </summary>
     public void OnWindowBlur()
     {
-        //GameRoomManager.Instance.OnGamePause(true);
+        GameRoomManager.Instance.OnUpdateGame();
     }
 
     /// <summary>

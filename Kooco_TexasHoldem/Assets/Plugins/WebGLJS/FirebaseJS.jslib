@@ -214,7 +214,6 @@ mergeInto(LibraryManager.library, {
 
     // 初始化在線狀態監測
     // pathPtr = 監測路徑
-    // idPtr = 監測ID
     JS_StartListenerConnectState: function(pathPtr) {
         const path = UTF8ToString(pathPtr);
         window.initializePresence(path, path);
@@ -253,7 +252,25 @@ mergeInto(LibraryManager.library, {
 
                 for (let roomName in roomsType) {
                     const room = roomsType[roomName];
-                
+
+                    // 新增检查所有玩家是否都离线
+                    let allPlayersOffline = true;
+                    for (let playerKey in room.playerDataDic) {
+                        const player = room.playerDataDic[playerKey];
+                        if (player.online === true) {
+                            allPlayersOffline = false;
+                            break;
+                        }
+                    }
+
+                    if (allPlayersOffline) {
+                        console.log("所有玩家都已离线，移除房间: " + roomName);
+                        await roomRef.child(roomName).remove();
+                        roomCount--;
+                        continue; // 继续检查下一个房间
+                    }
+
+                    // 检查是否有空位并且玩家不在房间中
                     if (Object.keys(room.playerDataDic).length < maxPlayer) {
                         let playerFound = false;
 
@@ -261,7 +278,7 @@ mergeInto(LibraryManager.library, {
                             const player = room.playerDataDic[playerKey];
                             console.log("房間重複1!!!" + player.userId);
                             console.log("房間重複3!!!" + id);
-                            if (player.userId == id) {                              
+                            if (player.userId == id) {
                                 playerFound = true;
                                 break;
                             }
@@ -279,4 +296,5 @@ mergeInto(LibraryManager.library, {
             window.unityInstance.SendMessage(gameObjectName, callbackFunctionName, JSON.stringify({error: error.message}));
         }
     },
+
 });

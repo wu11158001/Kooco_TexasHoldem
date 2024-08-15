@@ -106,6 +106,7 @@ public class LobbyView : MonoBehaviour
     private void OnDestroy()
     {
         LanguageManager.Instance.RemoveLanguageFun(UpdateLanguage);
+        JSBridgeManager.Instance.RemoveListenerConnectState($"{Entry.Instance.releaseType}/{FirebaseManager.USER_DATA_PATH}{DataManager.UserLoginType}/{DataManager.UserLoginPhoneNumber}");
         JSBridgeManager.Instance.StopListeningForDataChanges($"{Entry.Instance.releaseType}/{FirebaseManager.USER_DATA_PATH}{DataManager.UserLoginType}/{DataManager.UserLoginPhoneNumber}");
         WalletManager.Instance.CancelCheckConnect();
     }
@@ -183,10 +184,10 @@ public class LobbyView : MonoBehaviour
 
 #endif
 
-
         ViewManager.Instance.OpenWaitingView(transform);
         DataManager.ReciveRankData();
 
+        JSBridgeManager.Instance.StartListenerConnectState($"{Entry.Instance.releaseType}/{FirebaseManager.USER_DATA_PATH}{DataManager.UserLoginType}/{DataManager.UserLoginPhoneNumber}");
         JSBridgeManager.Instance.StartListeningForDataChanges($"{Entry.Instance.releaseType}/{FirebaseManager.USER_DATA_PATH}{DataManager.UserLoginType}/{DataManager.UserLoginPhoneNumber}",
                                                                gameObject.name,
                                                                nameof(GetDataCallback));

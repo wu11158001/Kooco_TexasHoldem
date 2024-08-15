@@ -503,20 +503,13 @@ public class GameRoomManager : UnitySingleton<GameRoomManager>
     }
 
     /// <summary>
-    /// 遊戲暫停/繼續
+    /// 遊戲刷新
     /// </summary>
-    /// <param name="isPause"></param>
-    public void OnGamePause(bool isPause)
+    public void OnUpdateGame()
     {
-        if (thisData.RoomDic.Count > 0)
-        {
-            Time.timeScale = isPause == true ? 0 : 1;
-            IsCanMoveSwitch = !isPause;
-        }        
-
         foreach (var room in thisData.RoomDic)
         {
-            room.Value.Item1.GetComponent<GameView>().GamePause = isPause;
+            room.Value.Item1.GetComponent<GameControl>().UpdateGameRoom();
         }
     }
 }

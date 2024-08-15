@@ -29,19 +29,7 @@ public class RobotControl : MonoBehaviour
         //是否只能All In
         bool isJustAllIn = robotData.carryChips <= gameRoomData.currCallValue;
         //首位加注玩家
-        bool isFirst = false;
-        if ((GameFlowEnum)gameRoomData.currGameFlow == GameFlowEnum.SetBlind &&
-            gameRoomData.actionPlayerCount == 1)
-        {
-            isFirst = true;
-        }
-        else
-        {
-            if (gameRoomData.actionPlayerCount == 0)
-            {
-                isFirst = true;
-            }
-        }
+        bool isFirst = gameRoomData.actionPlayerCount == 0;
 
         if (foldRate > 10)
         {
@@ -56,14 +44,7 @@ public class RobotControl : MonoBehaviour
             {
                 if (isFirst == true)
                 {
-                    if (gameRoomData.currCallValue == gameRoomData.smallBlind * 2)
-                    {
-                        action = BetActingEnum.Check;
-                    }
-                    else
-                    {
-                        betValue = gameRoomData.currCallValue;
-                    }
+                    action = BetActingEnum.Check;
                 }
                 else
                 {

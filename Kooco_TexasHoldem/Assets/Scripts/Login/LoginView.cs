@@ -822,11 +822,13 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
     /// <param name="callBackFunName">回傳方法名</param>
     /// <param name="childNode">資料節點路徑</param>
     private void JudgeDateExists(string callBackFunName, string childNode)
-    {        
+    {
+        string readPath = $"{Entry.Instance.releaseType}/{FirebaseManager.USER_DATA_PATH}{childNode}/{currVerifyPhoneNumber}";
+        Debug.Log($"Duplicate login judge:{readPath}");
         ViewManager.Instance.OpenWaitingView(transform);
-        JSBridgeManager.Instance.ReadDataFromFirebase($"{Entry.Instance.releaseType}/{FirebaseManager.USER_DATA_PATH}{childNode}/{currVerifyPhoneNumber}",
-                                                       gameObject.name,
-                                                       callBackFunName);
+        JSBridgeManager.Instance.ReadDataFromFirebase(readPath,
+                                                      gameObject.name,
+                                                      callBackFunName);
     }
 
     /// <summary>
@@ -979,26 +981,34 @@ public class LoginView : MonoBehaviour, IPointerClickHandler
         {
             if (loginData.password == currVerifyPsw)
             {
-                //登入成功
-                if (RememberMe_Tog.isOn)
+                if (loginData.online == true)
                 {
-                    recodePhoneNumber = SignInNumber_If.text;
-                    recodePassword = SignInPassword_If.text;
-                    recodeCountryCodeIndex = SignInNumber_Dd.value;
-
-                    //有勾選記住帳號密碼
-                    LocalDataSave();
+                    //已登入
+                    MobileSignInError_Txt.text = LanguageManager.Instance.GetText("Duplicate Login.");
                 }
                 else
                 {
-                    //沒勾選清空資料
-                    PlayerPrefs.SetInt(LocalCountryCodeIndex, 0);
-                    PlayerPrefs.SetString(LocalPhoneNumber, "");
-                    PlayerPrefs.SetString(LocalPaswword, "");
-                }
+                    //登入成功
+                    if (RememberMe_Tog.isOn)
+                    {
+                        recodePhoneNumber = SignInNumber_If.text;
+                        recodePassword = SignInPassword_If.text;
+                        recodeCountryCodeIndex = SignInNumber_Dd.value;
 
-                DataManager.UserLoginType = LoginType.phoneUser;
-                OnIntoLobby();
+                        //有勾選記住帳號密碼
+                        LocalDataSave();
+                    }
+                    else
+                    {
+                        //沒勾選清空資料
+                        PlayerPrefs.SetInt(LocalCountryCodeIndex, 0);
+                        PlayerPrefs.SetString(LocalPhoneNumber, "");
+                        PlayerPrefs.SetString(LocalPaswword, "");
+                    }
+
+                    DataManager.UserLoginType = LoginType.phoneUser;
+                    OnIntoLobby();
+                }
             }
             else
             {

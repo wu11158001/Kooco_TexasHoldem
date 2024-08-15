@@ -74,7 +74,11 @@ public class LobbyMinePageView : MonoBehaviour
 
     [Header("邀請碼")]
     [SerializeField]
-    Button InvitationCodeShare_Btn, InviationCodeSubmit_Btn, CopyInvitationCode_Btn;
+    RectTransform Invitation_obj;
+    [SerializeField]
+    Image Invitation_Img;
+    [SerializeField]
+    Button InvitationCodeShare_Btn, InviationCodeSubmit_Btn, CopyInvitationCode_Btn,InviteUIArrow_Btn;
     [SerializeField]
     TMP_InputField BoundInviterId_If;
     [SerializeField]
@@ -83,7 +87,7 @@ public class LobbyMinePageView : MonoBehaviour
     TextMeshProUGUI InvitationCodeTitle_Txt, InvitationCodeShareBtn_Txt, MyInvitationCode_Txt,
                     InvitationCode_Txt, CopiedInvitationCode_Txt,
                     BoundInviterTitle_Txt, BoundInviterIdf_Placeholder, InviationCodeSubmitBtn_Txt,
-                    InviationCodeError_Txt;
+                    InviationCodeError_Txt,BringFriends_Text,InviteCodeTitle_Text;
 
     [Header("交易紀錄")]
     [SerializeField]
@@ -126,6 +130,7 @@ public class LobbyMinePageView : MonoBehaviour
     int tempAvatarIndex;                                                        //零時頭像index
     bool isAccountBalanceExpand;                                                //是否展開帳戶餘額
     bool isScoreRecordExpand;                                                   //是否展開分數紀錄
+    bool isInviteUIExpand;                                                      //是否展開邀請碼介面
 
     /// <summary>
     /// 更新文本翻譯
@@ -174,11 +179,14 @@ public class LobbyMinePageView : MonoBehaviour
 
         #region 邀請碼
 
-        InvitationCodeTitle_Txt.text = LanguageManager.Instance.GetText("Invitation Code");
+        InvitationCodeTitle_Txt.text = LanguageManager.Instance.GetText("Invite Friends");
         InvitationCodeShareBtn_Txt.text = LanguageManager.Instance.GetText("Share");
-        BoundInviterIdf_Placeholder.text = LanguageManager.Instance.GetText("Enter Invitation Code");
-        InviationCodeSubmitBtn_Txt.text = LanguageManager.Instance.GetText("SUBMIT");
-        MyInvitationCode_Txt.text = LanguageManager.Instance.GetText("My Invitation Code");
+        BoundInviterIdf_Placeholder.text = LanguageManager.Instance.GetText("Please Enter Code");
+        InviationCodeSubmitBtn_Txt.text = LanguageManager.Instance.GetText("LINK NOW");
+        MyInvitationCode_Txt.text = LanguageManager.Instance.GetText("Share QR Code");
+        BringFriends_Text.text = LanguageManager.Instance.GetText("Bring Friends");
+        //BoundInviterTitle_Txt.text = LanguageManager.Instance.GetText("InviteCode");
+        InviteCodeTitle_Text.text = LanguageManager.Instance.GetText("InviteCode");
 
         #endregion
 
@@ -338,6 +346,16 @@ public class LobbyMinePageView : MonoBehaviour
         {
             UpdateScoreRecord(70, 33, 25, 60);
         });
+
+        //  邀請碼介面展開
+        InviteUIArrow_Btn.onClick.AddListener(() =>
+        {
+            isInviteUIExpand = !isInviteUIExpand;
+            StartCoroutine(ISwitchContent(isInviteUIExpand,
+                                            Invitation_obj, 
+                                            Invitation_Img));
+        });
+
 
         #endregion
 
@@ -719,10 +737,12 @@ public class LobbyMinePageView : MonoBehaviour
     /// </summary>
     public void UpdateInvitationCodeInfo()
     {
+        
         //邀請人Title
         BoundInviterTitle_Txt.text = string.IsNullOrEmpty(DataManager.UserBoundInviterId) ?
                                      LanguageManager.Instance.GetText("Enter Invitation Code") :
                                      LanguageManager.Instance.GetText("Bound Inviter");
+        
         //邀請人ID
         BoundInviterId_If.text = !string.IsNullOrEmpty(DataManager.UserBoundInviterId) ?
                                   DataManager.UserBoundInviterId :
