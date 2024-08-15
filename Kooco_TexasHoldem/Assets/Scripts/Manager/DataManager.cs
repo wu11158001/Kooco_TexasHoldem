@@ -97,9 +97,14 @@ public static class DataManager
     public static int UserAvatarIndex { get; set; }                 //用戶頭像
     public static int UserStamina { get; set; }                     //用戶耐力
     public static int UserOTProps { get; set; }                     //用戶加時道具數量
-    public static double UserCryptoChips { get; set; }              //用戶加密貨幣籌碼
-    public static double UserVCChips { get; set; }                  //用戶虛擬貨幣籌碼
-    public static double UserGoldChips { get; set; }                //用戶Gold籌碼
+    public static double UserUChips { get; set; }                   //用戶U籌碼
+    public static double UserAChips { get; set; }                   //用戶A籌碼
+    public static double UserGold { get; set; }                     //用戶Gold籌碼
+
+
+    public static double InitGiveUChips{get{ return 100000; }}          //初始給予U幣
+    public static double InitGiveAChips { get { return 100000; } }      //初始給予A幣
+    public static double InitGiveGold { get { return 1000; } }      //初始給予黃金
 
     #endregion
 
@@ -334,6 +339,7 @@ public static class DataManager
     public static int MaxVideoSaveCount { get { return 20; } }                        //最大紀錄影片數量
     public static int StartCountDownTime{get{ return 20; }}                           //行動倒數時間(秒)
     public static int RobotActionTime { get { return 19; } }                          //機器人行動時間(秒)
+    public static int BuyChipsCountDown { get { return 120;} }                        //購買籌碼離開遊戲倒數時間
 
     #endregion
 }

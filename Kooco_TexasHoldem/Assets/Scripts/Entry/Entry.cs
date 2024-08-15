@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using UnityEngine.Networking;
+using UnityEngine.Events;
 
 public class Entry : UnitySingleton<Entry>
 {
@@ -58,14 +59,6 @@ public class Entry : UnitySingleton<Entry>
         AudioManager.Instance.StartLoadAudioAssets();
 
         LoadSceneManager.Instance.LoadScene(SceneEnum.Login);
-
-
-        #region 測試
-
-        DataManager.UserCryptoChips = 100000;
-        DataManager.UserVCChips = 100000;
-
-        #endregion
     }
 
     private void Update()

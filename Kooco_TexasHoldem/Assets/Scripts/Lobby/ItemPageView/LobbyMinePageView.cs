@@ -74,7 +74,7 @@ public class LobbyMinePageView : MonoBehaviour
 
     [Header("邀請碼")]
     [SerializeField]
-    RectTransform Invitation_obj;
+    RectTransform Invitation_Obj;
     [SerializeField]
     Image Invitation_Img;
     [SerializeField]
@@ -241,6 +241,7 @@ public class LobbyMinePageView : MonoBehaviour
         {
             AccountBalance_Obj,     //帳戶餘額
             ScoreRecord_Obj,        //分數紀錄
+            Invitation_Obj,
         };
         foreach (var expandObj in expandObjList)
         {
@@ -352,7 +353,7 @@ public class LobbyMinePageView : MonoBehaviour
         {
             isInviteUIExpand = !isInviteUIExpand;
             StartCoroutine(ISwitchContent(isInviteUIExpand,
-                                            Invitation_obj, 
+                                            Invitation_Obj, 
                                             Invitation_Img));
         });
 
@@ -386,8 +387,8 @@ public class LobbyMinePageView : MonoBehaviour
 
             //顯示提示框
             ConfirmView confirmView = ViewManager.Instance.OpenConfirmView();
-            confirmView.SetContent(LanguageManager.Instance.GetText("Prompt"),
-                                   LanguageManager.Instance.GetText("Cannot be changed after binding!!!"));
+            confirmView.SetContent(LanguageManager.Instance.GetText("Notice"),
+                                   LanguageManager.Instance.GetText("Cannot Be Changed After Linking."));
             confirmView.SetBnt(() =>
             {
                 ViewManager.Instance.OpenWaitingView(transform);
@@ -509,8 +510,8 @@ public class LobbyMinePageView : MonoBehaviour
         Viewport.enabled = true;
 
         UpdatetAccountBalance(string.IsNullOrEmpty(DataManager.UserWalletBalance) ? "0 ETH" : DataManager.UserWalletBalance,
-                              DataManager.UserVCChips,
-                              DataManager.UserGoldChips,
+                              DataManager.UserAChips,
+                              DataManager.UserGold,
                               DataManager.UserStamina,
                               DataManager.UserOTProps);
 
@@ -569,14 +570,14 @@ public class LobbyMinePageView : MonoBehaviour
     private void UpdatetAccountBalance(string crypto, double vc, double gold, int Stamina, int ot)
     {
         DataManager.UserWalletBalance = crypto.ToString();
-        DataManager.UserVCChips = vc;
-        DataManager.UserGoldChips = gold;
+        DataManager.UserAChips = vc;
+        DataManager.UserGold = gold;
         DataManager.UserStamina = Stamina;
         DataManager.UserOTProps = ot;
 
         CryptoTableValue_Txt.text = string.IsNullOrEmpty(DataManager.UserWalletBalance) ? "0 ETH" : DataManager.UserWalletBalance;
-        VCTableValue_Txt.text = StringUtils.SetChipsUnit(DataManager.UserVCChips);
-        GoldValue_Txt.text = StringUtils.SetChipsUnit(DataManager.UserGoldChips);
+        VCTableValue_Txt.text = StringUtils.SetChipsUnit(DataManager.UserAChips);
+        GoldValue_Txt.text = StringUtils.SetChipsUnit(DataManager.UserGold);
         StaminaValue_Txt.text = $"{DataManager.UserStamina}/{DataManager.MaxStaminaValue}";
         OTPropsValue_Txt.text = $"{DataManager.UserOTProps}";
 

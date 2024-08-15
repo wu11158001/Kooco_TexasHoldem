@@ -21,6 +21,9 @@ public class FirebaseManager : UnitySingleton<FirebaseManager>
     public const string INVITATION_CODE = "invitationCode";                                 //邀請碼
     public const string BOUND_INVITER_ID = "boundInviterId";                                //綁定的邀請者Id
     public const string LINE_TOKEN = "lineToken";                                           //Line Token
+    public const string U_CHIPS = "UChips";                                                 //U幣
+    public const string A_CHIPS = "AChips";                                                 //A幣
+    public const string GOLD = "gold";                                                      //黃金
 
     [Header("遊戲房間資料內容路徑名稱")]
     public const string ROBOT_ID = "robot";                                                 //機器人ID
@@ -55,6 +58,7 @@ public class FirebaseManager : UnitySingleton<FirebaseManager>
     public const string ALL_BET_CHIPS = "allBetChips";                                      //該局總下注籌碼
     public const string IS_BET = "isBet";                                                   //該流程是否已下注
     public const string IS_SIT_OUT = "isSitOut";                                            //是否保留座位離開
+    public const string SHOW_HAND_POKER = "showHandPoker";                                  //棄牌後顯示手牌
 
     [Header("下注行為")]
     public const string BET_ACTIONER_ID = "betActionerId";                                  //下注玩家ID
@@ -156,6 +160,9 @@ public class AccountData
     public string invitationCode;           //邀請碼
     public string boundInviterId;           //綁定的邀請者Id
     public string lineToken;                //Line Token
+    public double UChips;                   //U幣
+    public double AChips;                   //A幣
+    public double gold;                     //黃金
 }
 
 #endregion
@@ -219,6 +226,7 @@ public class GameRoomPlayerData
     public double allBetChips;                      //該局總下注籌碼
     public bool isBet;                              //該流程是否已下注
     public bool isSitOut;                           //是否保留座位離開
+    public List<int> showHandPoker;                 //棄牌後顯示手牌
 }
 
 /// <summary>

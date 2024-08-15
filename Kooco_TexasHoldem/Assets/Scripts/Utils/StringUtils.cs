@@ -370,4 +370,28 @@ public static class StringUtils
 
         return true;
     }
+
+    /// <summary>
+    /// 判斷是否包含一個大寫和小寫
+    /// </summary>
+    /// <param name="number"></param>
+    /// <returns></returns>
+    public static bool CheckUppercaseAndLowercase(string number)
+    {
+        Regex regex = new Regex("^(?=.*[A-Z])(?=.*[a-z])");
+        return regex.IsMatch(number);
+    }
+
+    /// <summary>
+    /// 判斷是否包含一個特殊字元
+    /// </summary>
+    /// <param name="number"></param>
+    /// <returns></returns>
+    public static bool CheckSpecialCharacter(string number)
+    {
+        Regex regex = new Regex("^(?=.*[@$!%*?&#])");
+        return regex.IsMatch(number);
+    }
+
+
 }
