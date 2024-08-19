@@ -431,6 +431,13 @@ public class GameView : MonoBehaviour
             strData.RaiseStr = newRaiseValue >= thisData.LocalPlayerChips ?
                                "AllIn" :
                                "RaiseTo";
+
+            if (strData.RaiseStr == "RaiseTo" && 
+                gameRoomData.actionPlayerCount == 0)
+            {
+                strData.RaiseStr = "BetTo";
+            }
+
             strData.RaiseValueStr = newRaiseValue >= thisData.LocalPlayerChips ?
                                     $"\n{StringUtils.SetChipsUnit(thisData.LocalPlayerChips)}" :
                                     $"\n{StringUtils.SetChipsUnit(newRaiseValue)}";
@@ -501,6 +508,13 @@ public class GameView : MonoBehaviour
                                     BetActingEnum.AllIn :
                                     BetActingEnum.Raise;
 
+                //加注
+                if (acting == BetActingEnum.Raise && 
+                    gameRoomData.actionPlayerCount == 0)
+                {
+                    acting = BetActingEnum.Bet;
+                }
+
                 if (Raise_Tr.gameObject.activeSelf || isAllIn == true)
                 {
                     double betValue = isAllIn == true ?
@@ -514,7 +528,9 @@ public class GameView : MonoBehaviour
                 else
                 {
                     Raise_Tr.gameObject.SetActive(true);
-                    strData.RaiseStr = "RaiseTo";
+                    strData.RaiseStr = acting == BetActingEnum.Bet ?
+                                       "BetTo":
+                                       "RaiseTo";
                     strData.RaiseValueStr = $"\n{StringUtils.SetChipsUnit(thisData.CurrRaiseValue)}";
                     //RaiseBtn_Txt.text = LanguageManager.Instance.GetText(strData.RaiseStr) + strData.RaiseValueStr;
                 }
@@ -1336,6 +1352,7 @@ public class GameView : MonoBehaviour
             float multiple = (int)Mathf.Ceil((float)thisData.LocalPlayerChips / (float)(thisData.SmallBlindValue * 2));
             Raise_Sli.maxValue = (float)(thisData.SmallBlindValue * 2) * multiple;
             Raise_Sli.minValue = 0;
+            Raise_Sli.value = 0;
             Raise_Sli.value = (float)thisData.MinRaiseValue;
 
             //加注值
@@ -1552,6 +1569,7 @@ public class GameView : MonoBehaviour
         double chips = gameRoomData.betActionDataDic.updateCarryChips;
         bool isLocalPlayer = id == DataManager.UserId;
 
+        Debug.Log($"接收玩家行動:{actionEnum}");
         //音效播放
         switch (actionEnum)
         {
@@ -1566,6 +1584,9 @@ public class GameView : MonoBehaviour
                 break;
             case BetActingEnum.Raise:
                 PlaySound("SoundRaise");
+                break;
+            case BetActingEnum.Bet:
+                PlaySound("SoundBet");
                 break;
             case BetActingEnum.Call:
                 PlaySound("SoundCall");
