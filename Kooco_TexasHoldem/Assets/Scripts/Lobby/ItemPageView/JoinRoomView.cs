@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
 using TMPro;
+using Proyecto26;
 using System.Threading.Tasks;
 
 public class JoinRoomView : MonoBehaviour
@@ -63,6 +64,28 @@ public class JoinRoomView : MonoBehaviour
         Buy_Btn.onClick.AddListener(() =>
         {
             ViewManager.Instance.OpenWaitingView(transform);
+
+#if UNITY_EDITOR
+
+            dataRoomName = "EditorRoom";
+            //創新房間資料
+            var dataDic = new Dictionary<string, object>()
+            {
+                { FirebaseManager.SMALL_BLIND, smallBlind},                         //小盲值
+                { FirebaseManager.ROOM_HOST_ID, DataManager.UserId},                //房主ID
+                { FirebaseManager.POT_CHIPS, 0},                                    //底池總籌碼
+                { FirebaseManager.COMMUNITY_POKER, new List<int>()},                //公共牌
+                { FirebaseManager.CURR_COMMUNITY_POKER, new List<int>()},           //當前公共牌
+            };
+            JSBridgeManager.Instance.UpdateDataFromFirebase(
+                $"{Entry.Instance.releaseType}/{FirebaseManager.ROOM_DATA_PATH}{tableType}/{smallBlind}/{dataRoomName}",
+                dataDic,
+                gameObject.name,
+                nameof(CreateNewRoomCallback));
+
+            return;
+#endif
+
             JSBridgeManager.Instance.JoinRoomQueryData($"{Entry.Instance.releaseType}/{FirebaseManager.ROOM_DATA_PATH}{tableType}/{smallBlind}",
                                                         $"{DataManager.MaxPlayerCount}",
                                                         $"{DataManager.UserId}",
@@ -73,9 +96,9 @@ public class JoinRoomView : MonoBehaviour
         //購買Slider單位設定
         BuyChips_Sli.onValueChanged.AddListener((value) =>
         {
-            float newRaiseValue = TexasHoldemUtil.SliderValueChange(BuyChips_Sli,
+            double newRaiseValue = TexasHoldemUtil.SliderValueChange(BuyChips_Sli,
                                                                     value,
-                                                                    (float)smallBlind * 2,
+                                                                    smallBlind * 2,
                                                                     BuyChips_Sli.minValue,
                                                                     BuyChips_Sli.maxValue);
             PreBuyChips_Txt.text = StringUtils.SetChipsUnit(newRaiseValue);
@@ -162,6 +185,8 @@ public class JoinRoomView : MonoBehaviour
                 { FirebaseManager.SMALL_BLIND, smallBlind},                         //小盲值
                 { FirebaseManager.ROOM_HOST_ID, DataManager.UserId},                //房主ID
                 { FirebaseManager.POT_CHIPS, 0},                                    //底池總籌碼
+                { FirebaseManager.COMMUNITY_POKER, new List<int>()},                //公共牌
+                { FirebaseManager.CURR_COMMUNITY_POKER, new List<int>()},           //當前公共牌
             };
             JSBridgeManager.Instance.WriteDataFromFirebase(
                 $"{Entry.Instance.releaseType}/{FirebaseManager.ROOM_DATA_PATH}{tableType}/{smallBlind}/{dataRoomName}",

@@ -322,7 +322,7 @@ public class GameRoomManager : UnitySingleton<GameRoomManager>
                                     DataManager.MaxPlayerCount;
         if (isNewRoom)
         {
-            gameControl.CreateFirstPlayer(carryChips,
+            gameControl.CreateFirstPlayer(Math.Ceiling(carryChips),
                                           seatIndex,
                                           pairPlayerId,
                                           integralRoomName);
@@ -330,7 +330,7 @@ public class GameRoomManager : UnitySingleton<GameRoomManager>
         }
         else
         {
-            gameControl.NewPlayerInRoom(carryChips, 
+            gameControl.NewPlayerInRoom(Math.Ceiling(carryChips), 
                                         seatIndex);
         }
 
