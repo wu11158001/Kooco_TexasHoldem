@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Linq;
+using System;
 
 public static class TexasHoldemUtil
 {
@@ -28,25 +29,14 @@ public static class TexasHoldemUtil
     /// 設置購買籌碼Slider
     /// </summary>
     /// <param name="smallBlind">小盲值</param>
-    /// <param name="sli">Slider</param>
-    public static void SetBuySlider(double smallBlind, Slider sli, TableTypeEnum tableTypeEnum)
+    /// <param name="smallBlind">最大購買值</param>
+    /// <param name="sli"></param>
+    /// <param name="tableTypeEnum">遊戲桌類型</param>
+    /// <param name="addMinValue">增加的最小值</param>
+    public static void SetBuySlider(double smallBlind, double maxValue, Slider sli, TableTypeEnum tableTypeEnum, double addMinValue = 0)
     {
-        float maxValue = 0;
-        switch (tableTypeEnum)
-        {
-            //現金桌
-            case TableTypeEnum.Cash:
-                maxValue = (float)DataManager.UserUChips;
-                break;
-
-            //虛擬貨幣桌
-            case TableTypeEnum.VCTable:
-                maxValue = (float)DataManager.UserAChips;
-                break;
-        }
-
-        sli.minValue = (float)smallBlind * DataManager.MinMagnification;
-        sli.maxValue = maxValue;
+        sli.minValue = (float)(smallBlind * DataManager.MinMagnification) + (float)addMinValue;
+        sli.maxValue = (float)maxValue;
         sli.value = sli.minValue;
     }
 
@@ -82,7 +72,8 @@ public static class TexasHoldemUtil
             newRaiseValue = maxValue;
         }
 
-        return newRaiseValue;
+        newRaiseValue = (int)newRaiseValue;
+        return Math.Floor(newRaiseValue);
     }
 
     /// <summary>
@@ -92,7 +83,7 @@ public static class TexasHoldemUtil
     /// <returns></returns>
     public static int SetGameSeat(GameRoomData gameRoomData)
     {
-        int robotSeat = 0;
+        int seat = 0;
         int maxRoomPeople = DataManager.MaxPlayerCount;
         int currMaxSeat = gameRoomData.playerDataDic.Values.OrderByDescending(x => x.gameSeat).FirstOrDefault().gameSeat;
         int temp = (currMaxSeat + 1) % maxRoomPeople;
@@ -101,13 +92,13 @@ public static class TexasHoldemUtil
             bool seated = gameRoomData.playerDataDic.Values.Any(x => x.gameSeat == temp);
             if (seated == false)
             {
-                robotSeat = temp;
+                seat = temp;
                 break;
             }
 
             temp = (temp + 1) % maxRoomPeople;
         }
 
-        return robotSeat;
+        return seat;
     }
 }

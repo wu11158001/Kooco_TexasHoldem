@@ -87,10 +87,6 @@ public class HandHistoryManager : UnitySingleton<HandHistoryManager>
 
     public override void Awake()
     {
-        ResultHistoryPlayerPrefsKey = $"AsiaPoker_ResultHistoryDataList_{DataManager.UserId}";
-        GameInitHistoryPlayerPrefsKey = $"AsiaPoker_GameInifHistoryDataList_{DataManager.UserId}";
-        ProcessHistoryPlayerPrefsKey = $"AsiaPoker_ProcessHistoryDataList_{DataManager.UserId}";
-
         base.Awake();
     }
 
@@ -99,11 +95,13 @@ public class HandHistoryManager : UnitySingleton<HandHistoryManager>
     /// </summary>
     public void LoadHandHistoryData()
     {
+        ResultHistoryPlayerPrefsKey = $"AsiaPoker_ResultHistoryDataList_{DataManager.UserId}";
+        GameInitHistoryPlayerPrefsKey = $"AsiaPoker_GameInifHistoryDataList_{DataManager.UserId}";
+        ProcessHistoryPlayerPrefsKey = $"AsiaPoker_ProcessHistoryDataList_{DataManager.UserId}";
+
         LoadResultData();
         LoadGameInitData();
         LoadProcessData();
-
-        Debug.Log("Loaded Hand History Data!");
     }
 
     /// <summary>
@@ -123,7 +121,9 @@ public class HandHistoryManager : UnitySingleton<HandHistoryManager>
         HandHistoryView handHistoryView = GameObject.FindAnyObjectByType<HandHistoryView>();
         handHistoryView?.UpdateHitoryDate();
 
-        Debug.Log("Deleted Hand History Data!!!");
+
+        //Debug.Log("Deleted Hand History Data!!!");
+
     }
 
 
@@ -186,8 +186,6 @@ public class HandHistoryManager : UnitySingleton<HandHistoryManager>
     /// <returns></returns>
     public GameInitHistoryData SetGameInitData(List<GamePlayerInfo> gamePlayerInfos, double totalPot)
     {
-        Debug.Log($"紀錄_設置初始遊戲資料:{gamePlayerInfos.Count}/{totalPot}");
-
         GameInitHistoryData gameInitHistoryData = new GameInitHistoryData();
         gameInitHistoryData.SeatList = new List<int>();
         gameInitHistoryData.UserIdList = new List<string>();
@@ -202,6 +200,10 @@ public class HandHistoryManager : UnitySingleton<HandHistoryManager>
             if (player.SeatCharacter == SeatCharacterEnum.Button)
             {
                 gameInitHistoryData.ButtonSeat = player.SeatIndex;
+                if (gamePlayerInfos.Count == 2)
+                {
+                    gameInitHistoryData.SBSeat = player.SeatIndex;
+                }
             }
             else if (player.SeatCharacter == SeatCharacterEnum.SB)
             {
@@ -292,8 +294,6 @@ public class HandHistoryManager : UnitySingleton<HandHistoryManager>
         string json = JsonConvert.SerializeObject(processHistoryDataList);
         PlayerPrefs.SetString(ProcessHistoryPlayerPrefsKey, json);
         PlayerPrefs.Save();
-
-        Debug.Log("Video Data Saved!!!");
     }
 
     #endregion

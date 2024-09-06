@@ -5,6 +5,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Linq;
 using TMPro;
+using static LoginView;
+using Microsoft.AspNet.SignalR.Client.Http;
 
 public class LobbyMainPageView : MonoBehaviour
 {
@@ -17,6 +19,8 @@ public class LobbyMainPageView : MonoBehaviour
     GameObject BillboardSample, PointSample;
     [SerializeField]
     RectTransform BillboardContent, BillboardPoints;
+    [SerializeField]
+    GameObject QuestView;
 
     [Header("積分房")]
     [SerializeField]
@@ -50,9 +54,10 @@ public class LobbyMainPageView : MonoBehaviour
     LobbyView lobbyView;
 
     List<RectTransform> billboardList;                      //廣告刊版
-    List<Image> billboardImgList;                           //廣告刊版圖片
+    public List<Image> billboardImgList;                    //廣告刊版圖片
     List<Image> billboardPointList;                         //廣告刊版點
     List<int> billboardDisplayIndexList;                    //廣告刊版顯示
+    QuestView questView;
 
     float billboardSizeWidth;                               //廣告刊版寬度
     bool isStartMoveBillboard;                              //是否開始移動廣告刊版
@@ -71,6 +76,14 @@ public class LobbyMainPageView : MonoBehaviour
         set
         {
             Bg_Img.gameObject.SetActive(value);
+            if (value == true)
+            {
+                if (questView != null)
+                {
+                    Destroy(questView.gameObject);
+                    questView = null;
+                }
+            }
         }
     }
 
@@ -89,9 +102,9 @@ public class LobbyMainPageView : MonoBehaviour
     /// </summary>
     private void UpdateLanguage()
     {
-        IntegralBtn_Txt.text = LanguageManager.Instance.GetText("INTEGRAL");
-        CryptoTableTital_Txt.text = LanguageManager.Instance.GetText("CRYPTO TABLE");
-        VCTableTital_Txt.text = LanguageManager.Instance.GetText("VIRTUAL CURRENCY TABLE");
+        IntegralBtn_Txt.text = LanguageManager.Instance.GetText("GO TO INTEGRAL");
+        CryptoTableTital_Txt.text = LanguageManager.Instance.GetText("Classic Battle");
+        VCTableTital_Txt.text = LanguageManager.Instance.GetText("High Roller Battleground");
     }
 
     private void OnDestroy()
@@ -140,7 +153,7 @@ public class LobbyMainPageView : MonoBehaviour
                         integralData.startPairTime = DateTime.Now;
 
                         //移除未使用積分房
-                        JSBridgeManager.Instance.JoinRoomQueryData($"{Entry.Instance.releaseType}/{TableTypeEnum.IntegralTable}",
+                        JSBridgeManager.Instance.JoinRoomQueryData($"{Entry.Instance.releaseType}/{TableTypeEnum.IntegralTable}/{FirebaseManager.INTEGRAL_ROOM}",
                                             $"{2}",
                                             $"{DataManager.UserId}",
                                             gameObject.name,
@@ -174,10 +187,12 @@ public class LobbyMainPageView : MonoBehaviour
 
         InitBillBoard();
         CreateRoomBtn();
+
     }
 
     private void Update()
     {
+        //檢查目前廣告畫面
         #region 廣告刊版切換
 
         if (!GameRoomManager.Instance.IsShow &&
@@ -236,7 +251,12 @@ public class LobbyMainPageView : MonoBehaviour
         }
 
         #endregion
+        if (Input.GetKeyDown(KeyCode.H))
+        {
+           
+            SwaggerAPIManager.Instance.SendGetAPI("/api/app/banner-images/get-list");
 
+        }
         #region 積分房
 
         //積分配對計時器
@@ -293,6 +313,21 @@ public class LobbyMainPageView : MonoBehaviour
                 if (isBillboardClick)
                 {
                     Debug.Log($"Billbroad Click: {DataManager.CurrBillboardIndex}");
+
+                    questView = Instantiate(QuestView, transform).GetComponent<QuestView>();
+
+                    switch (DataManager.CurrBillboardIndex)
+                    {
+                        //每日任務
+                        case 0:
+                            questView.ShowQuest(QuestEnum.Daily);
+                            break;
+
+                        //每周任務
+                        case 1:
+                            questView.ShowQuest(QuestEnum.Weekly);
+                            break;
+                    }
                 }                
             });
             billboardList.Add(billbpard);
@@ -443,9 +478,6 @@ public class LobbyMainPageView : MonoBehaviour
         var data = new Dictionary<string, object>();
         foreach (var waitPlayer in gameRoomData.integralWaitData)
         {
-            Debug.Log($"配對ID:{waitPlayer.Value.userId}");
-            Debug.Log($"配對:{(waitPlayer.Value.paired == false)}");
-            Debug.Log($"配對3:{string.IsNullOrEmpty(waitPlayer.Value.pairRoomName)}");
             //配對到玩家
             if (waitPlayer.Value.paired == false &&
                 string.IsNullOrEmpty(waitPlayer.Value.pairRoomName))
@@ -519,7 +551,7 @@ public class LobbyMainPageView : MonoBehaviour
                                                 DataManager.IntegralSmallBlind,
                                                 $"{Entry.Instance.releaseType}/{TableTypeEnum.IntegralTable}/{FirebaseManager.INTEGRAL_ROOM}/{dataRoomName}",
                                                 true,
-                                                DataManager.IntegralNeedChips,
+                                                (int)DataManager.IntegralNeedChips,
                                                 0,
                                                 pairPlayerUserId,
                                                 dataRoomName);
@@ -548,7 +580,7 @@ public class LobbyMainPageView : MonoBehaviour
                                                     DataManager.IntegralSmallBlind,
                                                     $"{Entry.Instance.releaseType}/{TableTypeEnum.IntegralTable}/{FirebaseManager.INTEGRAL_ROOM}/{dataRoomName}",
                                                     false,
-                                                    DataManager.IntegralNeedChips,
+                                                    (int)DataManager.IntegralNeedChips,
                                                     3,
                                                     null,
                                                     loginData.pairRoomName);
@@ -577,6 +609,17 @@ public class LobbyMainPageView : MonoBehaviour
     }
 
     #endregion
+
+    public class GetBanner
+    {
+        public string Filter;
+        public string StartDate;
+        public string EndDate;
+        public bool IsEnabled;
+        public string Sorting;
+        public int SkipCount;
+        public int MaxResultCount;
+    }
 
     /// <summary>
     /// 創建房間按鈕

@@ -7,6 +7,9 @@ using TMPro;
 
 public class LanguageManager
 {
+    public bool Languageidex;
+
+
     const string LanguagePlayerPrefsKey = "AsiaPoker_LanguageDataList";
 
     private static readonly object lockObject = new object();
@@ -130,7 +133,7 @@ public class LanguageManager
 
             if (languageDic.ContainsKey(serchName))
             {
-                Debug.LogError($"Add Language Same Key:{serchName}");
+                //Debug.LogError($"Add Language Same Key:{serchName}");
                 continue;
             }
             languageDic.Add(serchName, lang);
@@ -155,7 +158,9 @@ public class LanguageManager
         }
         else
         {
-            Debug.LogError($"{id}:翻譯文本不存在");
+
+            //Debug.LogError($"{id}:翻譯文本不存在");
+
             return id;
         }
     }
@@ -183,7 +188,7 @@ public class LanguageManager
         }
         else
         {
-            Debug.LogError("未找到移除更新語言方法!!!");
+            //Debug.LogError("未找到移除更新語言方法!!!");
         }    
     }
 
@@ -192,8 +197,6 @@ public class LanguageManager
     /// </summary>
     private void UpdateLanguage()
     {
-        Debug.Log($"Change Language:{languageId[thisData.CurrLanguageIndex]}");
-
         foreach (var func in updateLanguageFuncDic)
         {
             if (func.Value != null)
@@ -202,7 +205,7 @@ public class LanguageManager
             }
             else
             {
-                Debug.LogError($"Update Language Error : {func.Value.name}");
+                //Debug.LogError($"Update Language Error : {func.Value.name}");
             }
         }
     }
@@ -216,7 +219,7 @@ public class LanguageManager
         if (index >= languageId.Length || 
             index < 0)
         {
-            Debug.LogError($"Change Language Index:{index}:Error!!!");
+            //Debug.LogError($"Change Language Index:{index}:Error!!!");
             return;
         }
 
@@ -254,4 +257,7 @@ public class LanguageManager
             }
         }
     }
+
+
+   
 }

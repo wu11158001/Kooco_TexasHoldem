@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
 using TMPro;
+using System;
 using Proyecto26;
 using System.Threading.Tasks;
 
@@ -12,29 +13,35 @@ public class JoinRoomView : MonoBehaviour
     [SerializeField]
     Request_JoinRoom baseRequest;
     [SerializeField]
-    Image SB_Img, BB_Img;
+    Image BlindACoin_Img, BlindUCoin_Img,
+          MinBuyACoin_Img, MinBuyUCoin_Img,
+          MaxBuyACoin_Img, MaxBuyUCoin_Img;
     [SerializeField]
     Slider BuyChips_Sli;
     [SerializeField]
-    Button Cancel_Btn, Buy_Btn, BuyPlus_Btn, BuyMinus_Btn;
+    Button Close_Btn, Cancel_Btn, Buy_Btn, BuyPlus_Btn, BuyMinus_Btn;
     [SerializeField]
     TextMeshProUGUI Title_Txt, BlindsTitle_Txt,
-                    SB_Txt, BB_Txt, PreBuyChips_Txt,
+                    Blind_Txt, PreBuyChips_Txt,
                     MinBuyChips_Txt, MaxBuyChips_Txt,
                     CancelBtn_Txt, BuyBtn_Txt;
+    [SerializeField]
+    SliderClickDetection sliderClickDetection;
 
+    LobbyView lobbyView;
     string dataRoomName;                 //查詢資料的房間名稱
     double smallBlind;                   //小盲值
     TableTypeEnum tableType;             //房間類型
+    double newCarryChipsValue;           //更新後的購買籌碼
 
     /// <summary>
     /// 更新文本翻譯
     /// </summary>
     private void UpdateLanguage()
     {
-        BlindsTitle_Txt.text = LanguageManager.Instance.GetText("Blinds");
-        CancelBtn_Txt.text = LanguageManager.Instance.GetText("Cancel");
-        BuyBtn_Txt.text = LanguageManager.Instance.GetText("Buy");
+        BlindsTitle_Txt.text = LanguageManager.Instance.GetText("Blind Bet");
+        CancelBtn_Txt.text = LanguageManager.Instance.GetText("CANCEL");
+        BuyBtn_Txt.text = LanguageManager.Instance.GetText("CONFIRM");
     }
 
     private void OnDestroy()
@@ -46,6 +53,8 @@ public class JoinRoomView : MonoBehaviour
     {
         LanguageManager.Instance.AddUpdateLanguageFunc(UpdateLanguage, gameObject);
         ListenerEvent();
+
+        lobbyView = GameObject.FindAnyObjectByType<LobbyView>();
     }
 
     /// <summary>
@@ -53,18 +62,40 @@ public class JoinRoomView : MonoBehaviour
     /// </summary>
     private void ListenerEvent()
     {
+        //關閉
+        Close_Btn.onClick.AddListener(() =>
+        {
+            GameRoomManager.Instance.IsCanMoveSwitch = false;
+            gameObject.SetActive(false);
+        });
+
         //取消
         Cancel_Btn.onClick.AddListener(() =>
         {
-            GameRoomManager.Instance.IsCanMoveSwitch = true;
+            GameRoomManager.Instance.IsCanMoveSwitch = false;
             gameObject.SetActive(false);
         });
 
         //購買
         Buy_Btn.onClick.AddListener(() =>
         {
-            ViewManager.Instance.OpenWaitingView(transform);
+            //籌碼不足
+            if (tableType == TableTypeEnum.Cash &&
+                newCarryChipsValue > DataManager.UserUChips)
+            {
+                ViewManager.Instance.OpenTipMsgView(lobbyView.transform, LanguageManager.Instance.GetText("Not enough chips."));
+                gameObject.SetActive(false);
+                return;
+            }
+            else if (tableType == TableTypeEnum.VCTable &&
+                     newCarryChipsValue > DataManager.UserAChips)
+            {
+                ViewManager.Instance.OpenTipMsgView(lobbyView.transform, LanguageManager.Instance.GetText("Not enough chips."));
+                gameObject.SetActive(false);
+                return;
+            }
 
+            ViewManager.Instance.OpenWaitingView(transform);
 #if UNITY_EDITOR
 
             dataRoomName = "EditorRoom";
@@ -82,7 +113,6 @@ public class JoinRoomView : MonoBehaviour
                 dataDic,
                 gameObject.name,
                 nameof(CreateNewRoomCallback));
-
             return;
 #endif
 
@@ -96,24 +126,25 @@ public class JoinRoomView : MonoBehaviour
         //購買Slider單位設定
         BuyChips_Sli.onValueChanged.AddListener((value) =>
         {
-            double newRaiseValue = TexasHoldemUtil.SliderValueChange(BuyChips_Sli,
-                                                                    value,
-                                                                    smallBlind * 2,
-                                                                    BuyChips_Sli.minValue,
-                                                                    BuyChips_Sli.maxValue);
-            PreBuyChips_Txt.text = StringUtils.SetChipsUnit(newRaiseValue);
+            newCarryChipsValue = TexasHoldemUtil.SliderValueChange(BuyChips_Sli,
+                                                        value,
+                                                        smallBlind * 2,
+                                                        BuyChips_Sli.minValue,
+                                                        BuyChips_Sli.maxValue,
+                                                        sliderClickDetection);
+            PreBuyChips_Txt.text = StringUtils.SetChipsUnit(newCarryChipsValue);
         });
 
         //購買+按鈕
         BuyPlus_Btn.onClick.AddListener(() =>
         {
-            BuyChips_Sli.value += (float)smallBlind * 2;
+            BuyChips_Sli.value = (float)(newCarryChipsValue + smallBlind * 2);
         });
 
         //購買-按鈕
         BuyMinus_Btn.onClick.AddListener(() =>
         {
-            BuyChips_Sli.value -= (float)smallBlind * 2;
+            BuyChips_Sli.value = (float)(newCarryChipsValue - smallBlind * 2);
         });
     }
 
@@ -128,33 +159,40 @@ public class JoinRoomView : MonoBehaviour
         this.tableType = tableType;
 
         string titleStr = "";
-        string maxBuyChipsStr = "";
         switch (tableType)
         {
             //現金桌
             case TableTypeEnum.Cash:
-                titleStr = "CRYPTO TABLE";
-                maxBuyChipsStr = $"{StringUtils.SetChipsUnit(DataManager.UserUChips)}";
-                SB_Img.sprite = AssetsManager.Instance.GetAlbumAsset(AlbumEnum.CurrencyAlbum).album[0];
-                BB_Img.sprite = AssetsManager.Instance.GetAlbumAsset(AlbumEnum.CurrencyAlbum).album[0];
+                titleStr = "High Roller Battleground";
+                BlindACoin_Img.gameObject.SetActive(true);
+                BlindUCoin_Img.gameObject.SetActive(false);
+                MinBuyACoin_Img.gameObject.SetActive(true);
+                MinBuyUCoin_Img.gameObject.SetActive(false);
+                MaxBuyACoin_Img.gameObject.SetActive(true);
+                MaxBuyUCoin_Img.gameObject.SetActive(false);
                 break;
 
             //虛擬貨幣桌
             case TableTypeEnum.VCTable:
-                titleStr = "VIRTUAL CURRENCY TABLE";
-                maxBuyChipsStr = $"{StringUtils.SetChipsUnit(DataManager.UserAChips)}";
-                SB_Img.sprite = AssetsManager.Instance.GetAlbumAsset(AlbumEnum.CurrencyAlbum).album[1];
-                BB_Img.sprite = AssetsManager.Instance.GetAlbumAsset(AlbumEnum.CurrencyAlbum).album[1];
+                titleStr = "Classic Battle";
+                BlindACoin_Img.gameObject.SetActive(false);
+                BlindUCoin_Img.gameObject.SetActive(true);
+                MinBuyACoin_Img.gameObject.SetActive(false);
+                MinBuyUCoin_Img.gameObject.SetActive(true);
+                MaxBuyACoin_Img.gameObject.SetActive(false);
+                MaxBuyUCoin_Img.gameObject.SetActive(true);
                 break;
         }
         Title_Txt.text = LanguageManager.Instance.GetText(titleStr);
 
-        SB_Txt.text = $"{StringUtils.SetChipsUnit(smallBlind)}";
-        BB_Txt.text = $"{StringUtils.SetChipsUnit(smallBlind * 2)}";
+        Blind_Txt.text = $"{StringUtils.SetChipsUnit(smallBlind)} / " +
+                         $"{StringUtils.SetChipsUnit(smallBlind * 2)}";
 
-        TexasHoldemUtil.SetBuySlider(this.smallBlind, BuyChips_Sli, tableType);
-        MinBuyChips_Txt.text = $"{StringUtils.SetChipsUnit(this.smallBlind * DataManager.MinMagnification)}";
-        MaxBuyChips_Txt.text = maxBuyChipsStr;
+        TexasHoldemUtil.SetBuySlider(this.smallBlind,
+                                     this.smallBlind * DataManager.MaxMagnification,
+                                     BuyChips_Sli, tableType);
+        MinBuyChips_Txt.text = $"{StringUtils.SetChipsUnit((this.smallBlind * 2) * DataManager.MinMagnification)}";
+        MaxBuyChips_Txt.text = $"{StringUtils.SetChipsUnit((this.smallBlind * 2) * DataManager.MaxMagnification)}"; ;
     }
 
     /// <summary>
@@ -166,7 +204,7 @@ public class JoinRoomView : MonoBehaviour
         QueryRoom queryRoom = FirebaseManager.Instance.OnFirebaseDataRead<QueryRoom>(jsonData);
 
         //錯誤
-        if (!string.IsNullOrEmpty(queryRoom.error) )
+        if (!string.IsNullOrEmpty(queryRoom.error))
         {
             Debug.LogError(queryRoom.error);
             return;
@@ -234,10 +272,11 @@ public class JoinRoomView : MonoBehaviour
                                                 smallBlind,
                                                 $"{Entry.Instance.releaseType}/{FirebaseManager.ROOM_DATA_PATH}{tableType}/{smallBlind}/{dataRoomName}",
                                                 true,
-                                                BuyChips_Sli.value,
+                                                newCarryChipsValue,
                                                 0);
 
         ViewManager.Instance.CloseWaitingView(transform);
+
         gameObject.SetActive(false);
     }
 
@@ -255,7 +294,7 @@ public class JoinRoomView : MonoBehaviour
                                                 smallBlind,
                                                 $"{Entry.Instance.releaseType}/{FirebaseManager.ROOM_DATA_PATH}{tableType}/{smallBlind}/{dataRoomName}",
                                                 false,
-                                                BuyChips_Sli.value,
+                                                newCarryChipsValue,
                                                 seat);
 
         ViewManager.Instance.CloseWaitingView(transform);

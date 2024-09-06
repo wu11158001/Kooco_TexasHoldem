@@ -28,8 +28,6 @@ public class Entry : UnitySingleton<Entry>
     public string version;
     [Header("發布環境")]
     public ReleaseEnvironmentEnum releaseType;
-    [Header("使用測試重定向URL")]
-    public bool isUsingTestRedirectUri;
     [Header("解析度")]
     public Vector2 resolution;
     [Header("Debug工具")]
@@ -55,34 +53,18 @@ public class Entry : UnitySingleton<Entry>
             Reporter.I.show = false;
         }
 
+#if !UNITY_EDITOR
+
+        JSBridgeManager.Instance.GetPlayerIPAddress();
+
+#endif
+
         LanguageManager.Instance.LoadLangageJson();
 
         yield return AssetsManager.Instance.ILoadAssets();
         AudioManager.Instance.StartLoadAudioAssets();
 
         LoadSceneManager.Instance.LoadScene(SceneEnum.Login);
-    }
-
-    private void Update()
-    {
-        #region 測試操作
-
-        if (releaseType == ReleaseEnvironmentEnum.Test)
-        {
-            //NFT測試
-            if (Input.GetKeyDown(KeyCode.RightControl))
-            {
-                DataManager.UserWalletAddress = "0xef279977cBC232C667082E06cfC252529513B738";
-                NFTManager.Instance.UpdateNFT();
-            }
-
-            //移除手牌紀錄
-            if (Input.GetKeyDown(KeyCode.F8))
-            {
-                HandHistoryManager.Instance.OnDeleteHistoryData();
-            }
-        }
-        #endregion
     }
 
     #region Instagram登入
@@ -184,9 +166,9 @@ public class Entry : UnitySingleton<Entry>
 
     }
 
-    #endregion
+#endregion
 
-    #region 邀請碼
+#region 邀請碼
 
     [System.Serializable]
     public class InvitationData
@@ -206,9 +188,19 @@ public class Entry : UnitySingleton<Entry>
         DataManager.GetInviterId = data.inviterId;
     }
 
-    #endregion
+#endregion
 
-    #region 工具類 
+#region 工具類 
+
+    /// <summary>
+    /// 獲取IP地址回傳
+    /// </summary>
+    /// <param name="ip"></param>
+    public void GetPlayerIPAddressCallback(string ip)
+    {
+        Debug.Log($"Player IP Address:{ip}");
+        DataManager.PlayerIPAddress = ip;
+    }
 
     /// <summary>
     /// 網頁視窗失去焦點
@@ -268,5 +260,5 @@ public class Entry : UnitySingleton<Entry>
         Debug.Log($"Browser Debug: {str}");
     }
 
-    #endregion
+#endregion
 }

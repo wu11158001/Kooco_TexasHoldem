@@ -38,14 +38,13 @@ public static class DataManager
 
     #region Database
 
-    public static string DatabaseUrl{ get{ return "https://asia-poker-5959b-default-rtdb.firebaseio.com/"; }}   //Database資料庫URL
+    public static string DatabaseUrl { get { return "https://asia-poker-5959b-default-rtdb.firebaseio.com/"; } }   //Database資料庫URL
 
     #endregion
 
     #region 公用
 
-    public static string RedirectUri { get { return "https://kooco.github.io/ACEdemo/demo.asiapoker/index.html"; } }                        //重定向Url
-    public static string TestRedirectUri { get { return "https://wu11158001.github.io/asiapoker_self/demo.asiapoker/index.html"; } }        //測試重定向Url
+    public static string RedirectUri { get { return "https://jf588.com/"; } }                        //重定向Url
     /// <summary>
     /// 獲取重定向Url
     /// </summary>
@@ -53,9 +52,7 @@ public static class DataManager
     public static string GetRedirectUri()
     {
         //測試用/正式用
-        return Entry.Instance.isUsingTestRedirectUri ?
-               TestRedirectUri :
-               RedirectUri;
+        return RedirectUri;
     }
 
     public static bool IsNotFirstInLogin { get; set; }                                                                                      //非首次進入登入
@@ -90,7 +87,11 @@ public static class DataManager
 
     #region 用戶訊息
 
+    public static string PlayerIPAddress { get; set; }              //IP地址
+
     public static LoginType UserLoginType { get; set; }             //用戶登入類型
+    public static string UserAccount { get; set; }                  //登入帳號
+
     public static string UserLoginPhoneNumber { get; set; }         //用戶登入手機號
     public static string UserLoginPassword { get; set; }            //用戶登入密碼
     public static string UserWalletAddress { get; set; }            //用戶錢包地址
@@ -101,33 +102,31 @@ public static class DataManager
     public static string UserNickname { get; set; }                 //用戶暱稱
     public static string UserLineToken { get; set; }                //用戶LineToken
     public static int UserAvatarIndex { get; set; }                 //用戶頭像
-    public static int UserStamina { get; set; }                     //用戶耐力
-    public static int UserOTProps { get; set; }                     //用戶加時道具數量
+    public static int UserEnergy { get; set; }                      //用戶耐力
+    public static int UserMaxEnrtgy { get; set; }                   //用戶最大耐力
+    public static int UserTimer { get; set; }                       //用戶加時道具數量
+    public static int UserTools { get; set; }                       //用戶加時道具數量
     public static double UserUChips { get; set; }                   //用戶U籌碼
     public static double UserAChips { get; set; }                   //用戶A籌碼
     public static double UserGold { get; set; }                     //用戶Gold籌碼
-
-
-    public static double InitGiveUChips{get{ return 100000; }}          //初始給予U幣
-    public static double InitGiveAChips { get { return 100000; } }      //初始給予A幣
-    public static double InitGiveGold { get { return 1000; } }      //初始給予黃金
 
     #endregion
 
     #region 大廳
 
     public static int CurrBillboardIndex { get; set; }                                            //當前廣告刊版Index
-    public static int MaxStaminaValue { get { return 50; } }                                      //最大耐力值
-    public static int MinMagnification { get { return 40; } }                                     //購買籌碼最小倍率
-    public static int MaxMagnification { get { return 200; } }                                    //購買籌碼最大倍率
+    public static int MinMagnification { get { return 20; } }                                     //購買籌碼最小倍率
+    public static int MaxMagnification { get { return 100; } }                                    //購買籌碼最大倍率
     public static readonly List<double> CryptoSmallBlindList = new List<double>                   //加密貨幣桌小盲值
     {
-        50, 100, 200, 400,
+        1, 2, 5, 10,
     };
     public static readonly List<double> VCSmallBlindList = new List<double>                       //虛擬貨幣桌小盲值
     {
-        200, 400, 800, 1000,
+        100, 500, 2500, 5000,
     };
+    public static double IntegralSmallBlind { get { return 100; } }                   //積分房小盲值
+    public static double IntegralNeedChips { get { return 10000; } }                  //積分房配對所需籌碼
 
     #endregion
 
@@ -341,16 +340,22 @@ public static class DataManager
 
     #region 遊戲
 
+    public static bool IsOpenGameTest { get; set; }                                   //是否開啟遊戲測試
+
     public static int RoomTokenLength { get { return 10; } }                          //房間亂碼長度
 
     public static int MaxPlayerCount { get { return 6; } }                            //最大遊戲人數
     public static int MaxVideoSaveCount { get { return 20; } }                        //最大紀錄影片數量
-    public static int StartCountDownTime{get{ return 20; }}                           //行動倒數時間(秒)
+    public static int StartCountDownTime { get { return 20; } }                       //行動倒數時間(秒)
     public static int RobotActionTime { get { return 19; } }                          //機器人行動時間(秒)
-    public static int BuyChipsCountDown { get { return 120;} }                        //購買籌碼離開遊戲倒數時間
+    public static int BuyChipsCountDown { get { return 120; } }                       //購買籌碼離開遊戲倒數時間
 
-    public static double IntegralSmallBlind { get { return 100; } }                    //積分房小盲值
-    public static double IntegralNeedChips { get { return 20000; } }                   //積分房配對所需籌碼
+    #endregion
+
+    #region POP
+    public static bool istipAppear { get; set; }       //顯示提示
+
+    public static string TipText { get; set; } //提示文字
 
     #endregion
 }

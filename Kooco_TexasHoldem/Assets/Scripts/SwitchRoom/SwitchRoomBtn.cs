@@ -9,11 +9,12 @@ public class SwitchRoomBtn : MonoBehaviour
     [SerializeField]
     Button thisBtn;
     [SerializeField]
-    TextMeshProUGUI roomName_Txt;
+    GameObject CurrRoomIcon_Obj, CdIcon_Obj;
     [SerializeField]
-    RectTransform selectFrame_Tr;
+    TextMeshProUGUI roomName_Txt;
 
     private string roomName;
+    private string cdTimeStr;
 
     public int BtnIndex { get; set; }
 
@@ -24,13 +25,18 @@ public class SwitchRoomBtn : MonoBehaviour
     {
         if (!string.IsNullOrEmpty(roomName))
         {
-            roomName_Txt.text = LanguageManager.Instance.GetText(roomName);
+            roomName_Txt.text = string.IsNullOrEmpty(cdTimeStr) ?
+                                $"{LanguageManager.Instance.GetText(roomName)}" :
+                                $"{LanguageManager.Instance.GetText(roomName)} : {cdTimeStr}";
         }
     }
 
     private void Awake()
     {
         LanguageManager.Instance.AddUpdateLanguageFunc(UpdateLanguage, gameObject);
+        CdIcon_Obj.SetActive(false);
+        CurrRoomIcon_Obj.SetActive(false);
+        roomName_Txt.text = "";
     }
 
     /// <summary>
@@ -40,7 +46,33 @@ public class SwitchRoomBtn : MonoBehaviour
     {
         set
         {
-            selectFrame_Tr.gameObject.SetActive(value);
+            CurrRoomIcon_Obj.SetActive(value);
+            if (value)
+            {             
+                transform.GetComponent<Image>().color = new Color(1f, 1f, 1f, 1f);
+                CdIcon_Obj.SetActive(false);
+            }
+            else
+            {              
+                transform.GetComponent<Image>().color = new Color(1f, 1f, 1f, 0.5f);
+            }
+        }
+    }
+
+    /// <summary>
+    /// 設置倒數時間
+    /// </summary>
+    /// <param name="cdTimeStr"></param>
+    public void SetCdTimeText(string cdTimeStr)
+    {
+        this.cdTimeStr = cdTimeStr;
+        roomName_Txt.text = string.IsNullOrEmpty(cdTimeStr) ?
+                            $"{roomName}" :
+                            $"{roomName} : {cdTimeStr}";
+
+        if (!string.IsNullOrEmpty(cdTimeStr))
+        {
+            CdIcon_Obj.SetActive(!CurrRoomIcon_Obj.activeSelf);
         }
     }
 

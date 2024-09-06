@@ -63,18 +63,15 @@ public class JSBridgeManager : UnitySingleton<JSBridgeManager>
     #region Firebase
 
     [DllImport("__Internal")]
-    private static extern bool JS_FirebaseVerifyCode(string code, string objNamePtr, string callbackFunPtr);
+    private static extern bool JS_FirebaseVerifyCode(string code, string typePtr);
     /// <summary>
     /// 驗證OTP
     /// </summary>
     /// <param name="code">OTP Code</param>
-    /// <param name="objNamePtr">回傳物件名</param>
-    /// <param name="callbackFunPtr">回傳方法名</param>
-    public void FirebaseVerifyCode(string code, string objNamePtr, string callbackFunPtr)
+    /// <param name="typePtr">回傳物件名</param>
+    public void FirebaseVerifyCode(string code, string typePtr)
     {
-        JS_FirebaseVerifyCode(code,
-                              objNamePtr,
-                              callbackFunPtr);
+        JS_FirebaseVerifyCode(code, typePtr);
     }
 
     [DllImport("__Internal")]
@@ -97,6 +94,10 @@ public class JSBridgeManager : UnitySingleton<JSBridgeManager>
     /// <param name="id">監測ID</param>
     public void RemoveListenerConnectState(string IdPtr)
     {
+#if UNITY_EDITOR
+        return;
+#endif
+
         JS_RemoveListenerConnectState(IdPtr);
     }
 
@@ -123,6 +124,9 @@ public class JSBridgeManager : UnitySingleton<JSBridgeManager>
     /// <param name="pathPtr">資料路徑</param>
     public void StopListeningForDataChanges(string pathPtr)
     {
+#if UNITY_EDITOR
+        return;
+#endif
         JS_StopListeningForDataChanges(pathPtr);
     }
 
@@ -175,8 +179,6 @@ public class JSBridgeManager : UnitySingleton<JSBridgeManager>
 
         RestClient.Patch($"{DataManager.DatabaseUrl}{refPathPtr}.json", jsonData).Then(response =>
         {
-            Debug.Log("Data patched successfully!");
-
             if (!string.IsNullOrEmpty(objNamePtr) && !string.IsNullOrEmpty(callbackFunPtr))
             {
                 GameObject obj = GameObject.Find(objNamePtr);
@@ -329,6 +331,16 @@ public class JSBridgeManager : UnitySingleton<JSBridgeManager>
     #endregion
 
     #region 工具
+
+    [DllImport("__Internal")]
+    private static extern bool JS_GetPlayerIPAddress();
+    /// <summary>
+    /// 獲取IP地址
+    /// </summary>
+    public void GetPlayerIPAddress()
+    {
+        JS_GetPlayerIPAddress();
+    }
 
     [DllImport("__Internal")]
     private static extern bool JS_ClearUrlQueryString();

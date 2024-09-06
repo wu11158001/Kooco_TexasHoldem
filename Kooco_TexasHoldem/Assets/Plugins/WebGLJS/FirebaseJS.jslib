@@ -2,23 +2,12 @@ mergeInto(LibraryManager.library, {
 
     // 驗證OTP 
     // code = 驗證碼
-    // objNamePtr = 回傳物件名
-    // callbackFunPtr = 回傳方法名
-    JS_FirebaseVerifyCode: function(codeStr, objNamePtr, callbackFunPtr) {
+    // typePtr = 驗證類型(註冊/忘記密碼)
+    JS_FirebaseVerifyCode: function(codeStr, typePtr) {
         const code = UTF8ToString(codeStr);
-        const gameObjectName = UTF8ToString(objNamePtr);
-        const callbackFunctionName = UTF8ToString(callbackFunPtr);
+        const type = UTF8ToString(typePtr);
 
-        window.confirmationResult.confirm(code).then((result) => {
-            console.log("User signed in successfully!!!");
-            const user = result.user;
-
-            window.unityInstance.SendMessage(gameObjectName, callbackFunctionName, "true");
-        }).catch((error) => {
-            console.log("Verify Code Error : " + error);
-
-            window.unityInstance.SendMessage(gameObjectName, callbackFunctionName, "false");
-        });
+        window.verifyCode(code, type);
     },
 
     // 開始監聽資料
@@ -67,8 +56,6 @@ mergeInto(LibraryManager.library, {
                     window.unityInstance.SendMessage(gameObjectName, callbackFunctionName, "false");
                 }
             } else {
-                console.log("Data saved successfully!");
-
                 if (gameObjectName != null && callbackFunctionName != null) {
                     window.unityInstance.SendMessage(gameObjectName, callbackFunctionName, "true");
                 }
@@ -100,7 +87,6 @@ mergeInto(LibraryManager.library, {
                     window.unityInstance.SendMessage(gameObjectName, callbackFunctionName, "false");
                 }
             } else {
-                console.log("Data updated successfully!");
                 if (gameObjectName != null && callbackFunctionName != null) {
                     window.unityInstance.SendMessage(gameObjectName, callbackFunctionName, "true");
                 }
@@ -165,7 +151,6 @@ mergeInto(LibraryManager.library, {
 
             if (snapshot.exists()) {
                 const userData = snapshot.val();
-                console.log("Fetched userData:", userData);  // 調試輸出
 
                 // Check phoneUser
                 if (userData.phoneUser) {
@@ -173,7 +158,6 @@ mergeInto(LibraryManager.library, {
                         const phoneNumberData = userData.phoneUser[phoneNumberKey];
                         if (phoneNumberData[key] && phoneNumberData[key] === valueToSearch) {
                             foundPhoneNumber = phoneNumberData.phoneNumber;
-                            console.log("Found phoneNumber in phoneUser:", foundPhoneNumber);  // 調試輸出
                             break;
                         }
                     }
@@ -187,7 +171,6 @@ mergeInto(LibraryManager.library, {
                             const phoneNumberData = walletUserData[phoneNumberKey];
                             if (phoneNumberData[key] && phoneNumberData[key] === valueToSearch) {
                                 foundPhoneNumber = phoneNumberData.phoneNumber;
-                                console.log("Found phoneNumber in walletUser:", foundPhoneNumber);  // 調試輸出
                                 break;
                             }
                         }
@@ -199,10 +182,8 @@ mergeInto(LibraryManager.library, {
 
             // Output result
             if (foundPhoneNumber) {
-                console.log(`Found phoneNumber for ${key}:`, foundPhoneNumber);
                 window.unityInstance.SendMessage(gameObjectName, callbackFunctionName, JSON.stringify({exists: "true", phoneNumber: foundPhoneNumber}));
             } else {
-                console.log(`No phoneNumber found for ${key}`);
                 window.unityInstance.SendMessage(gameObjectName, callbackFunctionName, JSON.stringify({exists: "false", phoneNumber: ""}));
             }
 
@@ -247,8 +228,7 @@ mergeInto(LibraryManager.library, {
             const snapshot = await roomRef.once('value');
             if (snapshot.exists()) {
                 const roomsType = snapshot.val();
-                roomCount = Object.keys(roomsType).length;
-                console.log("房間重複!!!" + roomCount);
+                roomCount = Object.keys(roomsType).length;    
 
                 for (let roomName in roomsType) {
                     const room = roomsType[roomName];
@@ -256,7 +236,7 @@ mergeInto(LibraryManager.library, {
                     // 新增检查所有玩家是否都离线
                     let allPlayersOffline = true;
                     for (let playerKey in room.playerDataDic) {
-                        const player = room.playerDataDic[playerKey];
+                        const player = room.playerDataDic[playerKey];                   
                         if (player.online === true) {
                             allPlayersOffline = false;
                             break;
@@ -264,7 +244,6 @@ mergeInto(LibraryManager.library, {
                     }
 
                     if (allPlayersOffline) {
-                        console.log("所有玩家都已离线，移除房间: " + roomName);
                         await roomRef.child(roomName).remove();
                         roomCount--;
                         continue; // 继续检查下一个房间

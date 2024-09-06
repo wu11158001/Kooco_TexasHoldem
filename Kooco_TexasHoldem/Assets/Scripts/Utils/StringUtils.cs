@@ -249,7 +249,7 @@ public static class StringUtils
     /// <returns></returns>
     public static double JudgeUnit(string str)
     {
-        if (str.EndsWith("K")) return double.Parse(str.Replace("K", "")) * 10000;
+        if (str.EndsWith("K")) return double.Parse(str.Replace("K", "")) * 1000;
         else if (str.EndsWith("B")) return double.Parse(str.Replace("B", "")) * 1000000;
         else if (str.EndsWith("T")) return double.Parse(str.Replace("T", "")) * 100000000;
         else
@@ -265,27 +265,28 @@ public static class StringUtils
     /// <param name="chips"></param>
     /// <returns></returns>
     public static string SetChipsUnit(double chips)
-    {
+    { 
         if (chips / 10000 < 1)
         {
-            return $"${SetChipsComma(chips.ToString("F0"))}";
+            return $"{SetChipsComma(chips.ToString("F0"))}";
         }
         else if (chips / 10000 < 1000)
         {
             //萬
-            return $"${((double)chips / 10000):f2}K";
+            return $"{(chips / 1000):f2}K";
         }
         else if (chips / 10000000 < 1000)
         {
             //億
-            return $"${((double)chips / 10000000):f2}B";
+            return $"{(chips / 10000000):f2}M";
         }
         else if (chips / 100000000 < 1000)
         {
             //兆
-            return $"${((double)chips / 100000000):f2}T";
+            return $"{(chips / 100000000):f2}B";
         }
-        return $"${chips:f0}";
+        
+        return $"{chips:f0}";
     }
 
     /// <summary>
@@ -305,7 +306,7 @@ public static class StringUtils
             count++;
             if (count == 3 && i != 0)
             {
-                sb.Insert(0, ",");
+               // sb.Insert(0, ",");
                 count = 0;
             }
         }
@@ -323,6 +324,8 @@ public static class StringUtils
     {
         if (string.IsNullOrEmpty(phoneNumber))
         {
+           
+           
             Debug.LogError("Phone Number Empty!!!");
             return "";
         }
@@ -392,6 +395,4 @@ public static class StringUtils
         Regex regex = new Regex("^(?=.*[@$!%*?&#])");
         return regex.IsMatch(number);
     }
-
-
 }

@@ -13,9 +13,16 @@ public class LobbyView : MonoBehaviour
     [SerializeField]
     public Request_LobbyView baseRequest;
 
+    [Header("遊戲測試")]
+    [SerializeField]
+    Button OpenGameTest_Btn;
+    [SerializeField]
+    Toggle GameTest_Tog;
+
     [Header("用戶訊息")]
     [SerializeField]
-    TextMeshProUGUI Nickname_Txt, Stamina_Txt, CryptoChips_Txt;
+    TextMeshProUGUI Nickname_Txt, Stamina_Txt, 
+                    CryptoChips_Txt;
 
     [Header("用戶資源列表")]
     [SerializeField]
@@ -35,7 +42,7 @@ public class LobbyView : MonoBehaviour
     [SerializeField]
     Button Mine_Btn, Shop_Btn, Main_Btn, Activity_Btn, Ranking_Btn;
     [SerializeField]
-    GameObject LobbyMainPageView, LobbyMinePageView, LobbyRankingView, LobbyShopView,LobbyActivityView;
+    GameObject LobbyMainPageView, LobbyMinePageView, LobbyRankingView, LobbyShopView, LobbyActivityView;
     [SerializeField]
     TextMeshProUGUI MineBtn_Txt, ShopBtn_Txt, ActivityBtn_Txt, RankingBtn_Txt;
 
@@ -57,7 +64,11 @@ public class LobbyView : MonoBehaviour
     [SerializeField]
     TextMeshProUGUI TransfersBtn_Txt;
 
-    bool isFirstIn;                         //是否首次登入
+    bool isFirstIn;
+    bool isListenered;
+
+    DateTime gameTestCountTime;             //開啟遊戲測試點擊時間
+    int gameTestTouchCount;                 //開啟遊戲測試點擊次數
 
     /// <summary>
     /// 項目按鈕類型
@@ -107,9 +118,12 @@ public class LobbyView : MonoBehaviour
     private void OnDestroy()
     {
         LanguageManager.Instance.RemoveLanguageFun(UpdateLanguage);
+
+        /*
+        //移除監聽在線狀態
         JSBridgeManager.Instance.RemoveListenerConnectState($"{Entry.Instance.releaseType}/{FirebaseManager.USER_DATA_PATH}{DataManager.UserLoginType}/{DataManager.UserLoginPhoneNumber}");
         JSBridgeManager.Instance.StopListeningForDataChanges($"{Entry.Instance.releaseType}/{FirebaseManager.USER_DATA_PATH}{DataManager.UserLoginType}/{DataManager.UserLoginPhoneNumber}");
-        WalletManager.Instance.CancelCheckConnect();
+        WalletManager.Instance.CancelCheckConnect();*/
     }
 
     private void Awake()
@@ -124,6 +138,23 @@ public class LobbyView : MonoBehaviour
     /// </summary>
     private void ListenerEvent()
     {
+        #region 遊戲測試
+
+        //開啟遊戲測試
+        OpenGameTest_Btn.onClick.AddListener(() =>
+        {
+            gameTestCountTime = DateTime.Now;
+            gameTestTouchCount++;
+        });
+
+        //遊戲測試開關
+        GameTest_Tog.onValueChanged.AddListener((isOn) =>
+        {
+            DataManager.IsOpenGameTest = isOn;
+        });
+
+        #endregion
+
         //顯示用戶資源列表
         Avatar_Btn.onClick.AddListener(() =>
         {
@@ -173,10 +204,10 @@ public class LobbyView : MonoBehaviour
 
     private void OnEnable()
     {
+        GameTest_Tog.gameObject.SetActive(false);
+
         isShowAssetList = false;
         SetIsShowAssetList = isShowAssetList;
-
-        HandHistoryManager.Instance.LoadHandHistoryData();
 
         OpenItemPage(ItemType.Main);
     }
@@ -185,7 +216,7 @@ public class LobbyView : MonoBehaviour
     {
         #region 測試
 
-        //寫入資料
+        /*//寫入資料
         Dictionary<string, object> dataDic = new()
         {
             { FirebaseManager.U_CHIPS, Math.Round(DataManager.InitGiveUChips) },
@@ -194,17 +225,19 @@ public class LobbyView : MonoBehaviour
         };
         JSBridgeManager.Instance.UpdateDataFromFirebase(
             $"{Entry.Instance.releaseType}/{FirebaseManager.USER_DATA_PATH}{DataManager.UserLoginType}/{DataManager.UserLoginPhoneNumber}",
-            dataDic);
+            dataDic);*/
 
         #endregion
 
         ViewManager.Instance.OpenWaitingView(transform);
         DataManager.ReciveRankData();
+        UpdateUserData();
 
+        /*
 #if UNITY_EDITOR
 
         //刷新用戶資料
-        InvokeRepeating(nameof(UpdateUserData), 1, 30);
+        //InvokeRepeating(nameof(UpdateUserData), 1, 30);
 
         return;
 #endif
@@ -217,22 +250,25 @@ public class LobbyView : MonoBehaviour
             nameof(GetDataCallback));
 
         //刷新用戶資料
-        InvokeRepeating(nameof(UpdateUserData), 30, 30);
+        //InvokeRepeating(nameof(UpdateUserData), 30, 30);*/
     }
 
     private void Update()
     {
+        #region 開啟遊戲測試
 
-        #region 測試
-
-        if (Entry.Instance.releaseType == ReleaseEnvironmentEnum.Test)
+        //開啟遊戲測試
+        if ((DateTime.Now - gameTestCountTime).TotalSeconds < 2)
         {
-            //測試_返回登入
-            if (Input.GetKeyDown(KeyCode.E))
+            if (gameTestTouchCount >= 3)
             {
-                WalletManager.Instance.OnWalletDisconnect();
-                LoadSceneManager.Instance.LoadScene(SceneEnum.Login);
+                gameTestTouchCount = 0;
+                GameTest_Tog.gameObject.SetActive(!GameTest_Tog.gameObject.activeSelf);
             }
+        }
+        else
+        {
+            gameTestTouchCount = 0;
         }
 
         #endregion
@@ -245,7 +281,7 @@ public class LobbyView : MonoBehaviour
     {
         //讀取用戶資料
         JSBridgeManager.Instance.ReadDataFromFirebase(
-            $"{Entry.Instance.releaseType}/{FirebaseManager.USER_DATA_PATH}{DataManager.UserLoginType}/{DataManager.UserLoginPhoneNumber}",
+            $"{Entry.Instance.releaseType}/{FirebaseManager.USER_DATA_PATH}{DataManager.UserLoginType}/{DataManager.UserId}",
             gameObject.name,
             nameof(GetDataCallback));
     }
@@ -256,25 +292,53 @@ public class LobbyView : MonoBehaviour
     /// <param name="jsonData">回傳資料</param>
     public void GetDataCallback(string jsonData)
     {
-        ViewManager.Instance.CloseWaitingView(transform);
         AccountData loginData = FirebaseManager.Instance.OnFirebaseDataRead<AccountData>(jsonData);
 
-        DataManager.UserId = loginData.userId;
-        DataManager.UserLoginPhoneNumber = loginData.phoneNumber;
-        DataManager.UserNickname = loginData.nickname;
-        DataManager.UserAvatarIndex = loginData.avatarIndex;
-        DataManager.UserInvitationCode = loginData.invitationCode;
-        DataManager.UserBoundInviterId = loginData.boundInviterId;
-        DataManager.UserLineToken = loginData.lineToken;
-        DataManager.UserUChips = loginData.UChips;
-        DataManager.UserAChips = loginData.AChips;
-        DataManager.UserGold = loginData.gold;
-
-        //開啟設置暱稱
-        if (isFirstIn &&
-            string.IsNullOrEmpty(loginData.nickname))
+        if (loginData != null &&
+            !string.IsNullOrEmpty(loginData.userId) &&
+            !string.IsNullOrEmpty(loginData.nickname))
         {
-            Instantiate(SetNicknameViewObj, transform);
+            ViewManager.Instance.CloseWaitingView(transform);
+
+            DataManager.UserNickname = loginData.nickname;
+            DataManager.UserAvatarIndex = loginData.avatarIndex;
+
+#if !UNITY_EDITOR
+
+            if (!isListenered)
+            {
+                isListenered = true;
+
+                //監聽在線狀態
+                JSBridgeManager.Instance.StartListenerConnectState(
+                    $"{Entry.Instance.releaseType}/{FirebaseManager.USER_DATA_PATH}{DataManager.UserLoginType}/{DataManager.UserId}");
+
+                /*//監聽用戶資料
+                JSBridgeManager.Instance.StartListeningForDataChanges(
+                    $"{Entry.Instance.releaseType}/{FirebaseManager.USER_DATA_PATH}{DataManager.UserLoginType}/{DataManager.UserId}",
+                gameObject.name,
+                nameof(GetDataCallback));*/
+            }
+#endif
+        }
+        else
+        {
+            var data = new Dictionary<string, object>()
+            {
+                { FirebaseManager.USER_ID, DataManager.UserId},
+                { FirebaseManager.AVATAR_INDEX, 0},
+            };
+            JSBridgeManager.Instance.UpdateDataFromFirebase(
+                $"{Entry.Instance.releaseType}/{FirebaseManager.USER_DATA_PATH}{DataManager.UserLoginType}/{DataManager.UserId}",
+                data,
+                gameObject.name,
+                nameof(UpdateUserData));
+
+            //開啟設置暱稱
+            if (isFirstIn)
+            {
+                Instantiate(SetNicknameViewObj, transform);
+            }
         }
 
         //使用邀請碼登入
@@ -319,15 +383,7 @@ public class LobbyView : MonoBehaviour
         }
 
         UpdateUserInfo();
-
-        #region 測試
-
-        if (isFirstIn)
-        {
-            HandHistoryManager.Instance.OnDeleteHistoryData();
-        }
-
-        #endregion
+        HandHistoryManager.Instance.LoadHandHistoryData();
 
         isFirstIn = false;
     }
@@ -339,15 +395,13 @@ public class LobbyView : MonoBehaviour
     {
         Nickname_Txt.text = $"@{DataManager.UserNickname}";
         Avatar_Btn.image.sprite = AssetsManager.Instance.GetAlbumAsset(AlbumEnum.AvatarAlbum).album[DataManager.UserAvatarIndex];
-        Stamina_Txt.text = $"{DataManager.UserStamina}/{DataManager.MaxStaminaValue}";
-        CryptoChips_Txt.text = string.IsNullOrEmpty(DataManager.UserWalletBalance) ? "0 ETH" : DataManager.UserWalletBalance;
+        Stamina_Txt.text = $"{DataManager.UserEnergy}/{DataManager.UserMaxEnrtgy}";
 
-        //資源列表
-        Assets_CryptoChipsValue_Txt.text = string.IsNullOrEmpty(DataManager.UserWalletBalance) ? "0 ETH" : DataManager.UserWalletBalance;
-        Assets_VCValue_Txt.text = StringUtils.SetChipsUnit(DataManager.UserAChips);
+        Assets_CryptoChipsValue_Txt.text = $"{StringUtils.SetChipsUnit(DataManager.UserUChips)}";
+        Assets_VCValue_Txt.text = StringUtils.SetChipsUnit(DataManager.UserAChips);    
         Assets_GoldValue_Txt.text = StringUtils.SetChipsUnit(DataManager.UserGold);
-        Assets_StaminaValue_Txt.text = $"{DataManager.UserStamina}/{DataManager.MaxStaminaValue}";
-        Assets_OTPropsValue_Txt.text = $"{DataManager.UserOTProps}";
+        Assets_StaminaValue_Txt.text = $"{DataManager.UserEnergy}/{DataManager.UserMaxEnrtgy}";
+        Assets_OTPropsValue_Txt.text = $"{DataManager.UserTimer}";
     }
 
     /// <summary>
@@ -366,7 +420,7 @@ public class LobbyView : MonoBehaviour
     {
         set
         {
-            AssetList_Obj.SetActive(value);
+            ///  AssetList_Obj.SetActive(value);
         }
     }
 
@@ -418,7 +472,7 @@ public class LobbyView : MonoBehaviour
             case ItemType.Shop:
                 itemObj = LobbyShopView;
                 break;
-            
+
             //活動
             case ItemType.Activity:
                 itemObj = LobbyActivityView;
@@ -452,7 +506,7 @@ public class LobbyView : MonoBehaviour
         }
         else
         {
-            
+
             Destroy(Floor4.GetChild(0).gameObject);
         }
     }
